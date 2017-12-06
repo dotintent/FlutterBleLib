@@ -1,11 +1,12 @@
+library flutter_ble_lib;
+
 import 'dart:async';
 
+import 'package:fixnum/fixnum.dart';
 import 'package:flutter/services.dart';
+import 'build/bledata.pb.dart' as bleData;
 
-class FlutterBleLib {
-  static const MethodChannel _channel =
-      const MethodChannel('flutter_ble_lib');
+part 'source/lib_method.dart';
+part 'source/lib_core.dart';
+part 'source/lib_models.dart';
 
-  static Future<String> get platformVersion =>
-      _channel.invokeMethod('getPlatformVersion');
-}
