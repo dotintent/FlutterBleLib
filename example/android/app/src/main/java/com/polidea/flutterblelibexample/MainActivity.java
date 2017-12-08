@@ -1,4 +1,4 @@
-package com.yourcompany.flutterblelibexample;
+package com.polidea.flutterblelibexample;
 
 import android.os.Bundle;
 
