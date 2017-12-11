@@ -214,3 +214,87 @@ class ScanResultMessage extends GeneratedMessage {
 
 class _ReadonlyScanResultMessage extends ScanResultMessage with ReadonlyMessageMixin {}
 
+class ConnectToDeviceDataMessage extends GeneratedMessage {
+  static final BuilderInfo _i = new BuilderInfo('ConnectToDeviceDataMessage')
+    ..a<String>(1, 'macAddress', PbFieldType.OS)
+    ..a<bool>(2, 'isAutoConnect', PbFieldType.OB)
+    ..a<int>(3, 'requestMtu', PbFieldType.O3)
+    ..hasRequiredFields = false
+  ;
+
+  ConnectToDeviceDataMessage() : super();
+  ConnectToDeviceDataMessage.fromBuffer(List<int> i, [ExtensionRegistry r = ExtensionRegistry.EMPTY]) : super.fromBuffer(i, r);
+  ConnectToDeviceDataMessage.fromJson(String i, [ExtensionRegistry r = ExtensionRegistry.EMPTY]) : super.fromJson(i, r);
+  ConnectToDeviceDataMessage clone() => new ConnectToDeviceDataMessage()..mergeFromMessage(this);
+  BuilderInfo get info_ => _i;
+  static ConnectToDeviceDataMessage create() => new ConnectToDeviceDataMessage();
+  static PbList<ConnectToDeviceDataMessage> createRepeated() => new PbList<ConnectToDeviceDataMessage>();
+  static ConnectToDeviceDataMessage getDefault() {
+    if (_defaultInstance == null) _defaultInstance = new _ReadonlyConnectToDeviceDataMessage();
+    return _defaultInstance;
+  }
+  static ConnectToDeviceDataMessage _defaultInstance;
+  static void $checkItem(ConnectToDeviceDataMessage v) {
+    if (v is! ConnectToDeviceDataMessage) checkItemFailed(v, 'ConnectToDeviceDataMessage');
+  }
+
+  String get macAddress => $_get(0, 1, '');
+  set macAddress(String v) { $_setString(0, 1, v); }
+  bool hasMacAddress() => $_has(0, 1);
+  void clearMacAddress() => clearField(1);
+
+  bool get isAutoConnect => $_get(1, 2, false);
+  set isAutoConnect(bool v) { $_setBool(1, 2, v); }
+  bool hasIsAutoConnect() => $_has(1, 2);
+  void clearIsAutoConnect() => clearField(2);
+
+  int get requestMtu => $_get(2, 3, 0);
+  set requestMtu(int v) { $_setUnsignedInt32(2, 3, v); }
+  bool hasRequestMtu() => $_has(2, 3);
+  void clearRequestMtu() => clearField(3);
+}
+
+class _ReadonlyConnectToDeviceDataMessage extends ConnectToDeviceDataMessage with ReadonlyMessageMixin {}
+
+class ConnectedDeviceMessage extends GeneratedMessage {
+  static final BuilderInfo _i = new BuilderInfo('ConnectedDeviceMessage')
+    ..a<BleDeviceMessage>(1, 'deviceMessage', PbFieldType.OM, BleDeviceMessage.getDefault, BleDeviceMessage.create)
+    ..a<int>(2, 'rssi', PbFieldType.O3)
+    ..a<int>(3, 'mtu', PbFieldType.O3)
+    ..hasRequiredFields = false
+  ;
+
+  ConnectedDeviceMessage() : super();
+  ConnectedDeviceMessage.fromBuffer(List<int> i, [ExtensionRegistry r = ExtensionRegistry.EMPTY]) : super.fromBuffer(i, r);
+  ConnectedDeviceMessage.fromJson(String i, [ExtensionRegistry r = ExtensionRegistry.EMPTY]) : super.fromJson(i, r);
+  ConnectedDeviceMessage clone() => new ConnectedDeviceMessage()..mergeFromMessage(this);
+  BuilderInfo get info_ => _i;
+  static ConnectedDeviceMessage create() => new ConnectedDeviceMessage();
+  static PbList<ConnectedDeviceMessage> createRepeated() => new PbList<ConnectedDeviceMessage>();
+  static ConnectedDeviceMessage getDefault() {
+    if (_defaultInstance == null) _defaultInstance = new _ReadonlyConnectedDeviceMessage();
+    return _defaultInstance;
+  }
+  static ConnectedDeviceMessage _defaultInstance;
+  static void $checkItem(ConnectedDeviceMessage v) {
+    if (v is! ConnectedDeviceMessage) checkItemFailed(v, 'ConnectedDeviceMessage');
+  }
+
+  BleDeviceMessage get deviceMessage => $_get(0, 1, null);
+  set deviceMessage(BleDeviceMessage v) { setField(1, v); }
+  bool hasDeviceMessage() => $_has(0, 1);
+  void clearDeviceMessage() => clearField(1);
+
+  int get rssi => $_get(1, 2, 0);
+  set rssi(int v) { $_setUnsignedInt32(1, 2, v); }
+  bool hasRssi() => $_has(1, 2);
+  void clearRssi() => clearField(2);
+
+  int get mtu => $_get(2, 3, 0);
+  set mtu(int v) { $_setUnsignedInt32(2, 3, v); }
+  bool hasMtu() => $_has(2, 3);
+  void clearMtu() => clearField(3);
+}
+
+class _ReadonlyConnectedDeviceMessage extends ConnectedDeviceMessage with ReadonlyMessageMixin {}
+
