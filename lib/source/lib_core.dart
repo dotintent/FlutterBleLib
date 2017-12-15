@@ -7,10 +7,10 @@ class FlutterBleLib {
   static FlutterBleLib get instance => _newInstance;
 
   static const MethodChannel _mainMethodChannel =
-  const MethodChannel('flutter_ble_lib');
+  const MethodChannel(flutter_ble_lib);
 
   static const EventChannel _scanDevicesChanel =
-  const EventChannel('flutter_ble_lib/scanDevices');
+  const EventChannel(flutter_ble_lib_scanDevices);
 
   final StreamController<MethodCall> _methodStreamController =
   new StreamController.broadcast();
@@ -23,10 +23,13 @@ class FlutterBleLib {
   }
 
 
-  Stream<ScanResult> scan({
-    int scanMode,
-    int callbackType,
-  }) async* {
+  Future<Null> createClient() =>
+      _mainMethodChannel.invokeMethod(_createClient);
+
+  Future<Null> destroyClient() =>
+      _mainMethodChannel.invokeMethod(_destroyClient);
+
+  Stream<ScanResult> startDeviceScan(int scanMode, int callbackType) async* {
     var settings = bleData.ScanSettingsMessage.create()
       ..scanMode = scanMode
       ..callbackType = callbackType;
@@ -43,7 +46,8 @@ class FlutterBleLib {
       },
     );
 
-    await _mainMethodChannel.invokeMethod(scanDevices, settings.writeToBuffer());
+    await _mainMethodChannel.invokeMethod(
+        _startDeviceScan, settings.writeToBuffer());
 
     subscription = _scanDevicesChanel.receiveBroadcastStream().listen(
       controller.add,
@@ -56,5 +60,19 @@ class FlutterBleLib {
         .map((scanResultMessage) => ScanResult.fromMessage(scanResultMessage));
   }
 
-  Future<Null> stopScan() => _mainMethodChannel.invokeMethod(stopScanDevices);
+  Future<Null> stopDeviceScan() =>
+      _mainMethodChannel.invokeMethod(_stopDeviceScan);
+
+  Future<ConnectedDevice> connectToDevice(String macAddress, {bool isAutoConnect,
+    int requestMtu}) async {
+    bleData.ConnectToDeviceDataMessage connectToDeviceDataMessage
+    = new bleData.ConnectToDeviceDataMessage()
+      ..macAddress = macAddress
+      ..isAutoConnect = isAutoConnect?? false
+      ..requestMtu = requestMtu ?? -1;
+    return await _mainMethodChannel.invokeMethod(
+        _connectToDevice, connectToDeviceDataMessage.writeToBuffer())
+        .then((byteData) => new bleData.ConnectedDeviceMessage.fromBuffer(byteData))
+        .then((connectedDeviceMessage) => ConnectedDevice.fromMessage(connectedDeviceMessage));
+  }
 }

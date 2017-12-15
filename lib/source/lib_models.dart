@@ -31,6 +31,33 @@ class ScanResult {
 
 
   bool hasTheSameDeviceAs(ScanResult scanResult) =>
-     this.bleDevice.macAddress == scanResult.bleDevice.macAddress;
+      this.bleDevice.macAddress == scanResult.bleDevice.macAddress;
 
+  update(ScanResult scanResultItem) {
+    bleDevice
+      ..macAddress = scanResultItem.bleDevice.macAddress
+      ..name = scanResultItem.bleDevice.name;
+    rssi = scanResultItem.rssi;
+    timestampNanos = scanResultItem.timestampNanos;
+    scanCallbackType = scanResultItem.scanCallbackType;
+  }
+}
+
+
+class ConnectedDevice {
+  BleDevice bleDevice;
+  int rssi;
+  int mtu;
+
+  ConnectedDevice(this.bleDevice,
+      this.rssi,
+      this.mtu);
+
+  static ConnectedDevice fromMessage(
+      bleData.ConnectedDeviceMessage connectedDeviceMessage) =>
+      new ConnectedDevice(
+          BleDevice.fromMessage(connectedDeviceMessage.deviceMessage),
+          connectedDeviceMessage.rssi,
+          connectedDeviceMessage.mtu
+      );
 }

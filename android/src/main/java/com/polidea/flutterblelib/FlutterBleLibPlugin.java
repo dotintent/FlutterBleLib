@@ -2,8 +2,10 @@ package com.polidea.flutterblelib;
 
 
 import android.content.Context;
+import android.util.Log;
 
 import com.polidea.flutterblelib.chanelhandler.ScanDevicesHandler;
+import com.polidea.flutterblelib.listener.Namespace;
 import com.polidea.flutterblelib.listener.OnErrorAction;
 import com.polidea.flutterblelib.listener.OnSuccessAction;
 
@@ -28,8 +30,8 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
     }
 
     public static void registerWith(Registrar registrar) {
-        final MethodChannel channel = new MethodChannel(registrar.messenger(), "flutter_ble_lib");
-        final EventChannel scanDevicesChannel = new EventChannel(registrar.messenger(), "flutter_ble_lib/" + BleMethod.scanDevices);
+        final MethodChannel channel = new MethodChannel(registrar.messenger(), Namespace.flutter_ble_lib);
+        final EventChannel scanDevicesChannel = new EventChannel(registrar.messenger(), Namespace.flutter_ble_lib_scanDevices);
         final FlutterBleLibPlugin handler = new FlutterBleLibPlugin(registrar.activity().getApplicationContext());
         channel.setMethodCallHandler(handler);
         scanDevicesChannel.setStreamHandler(handler.scanDevicesHandler);
@@ -38,12 +40,24 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
     @Override
     public void onMethodCall(MethodCall call, Result result) {
         switch (call.method) {
-            case BleMethod.scanDevices: {
-                scanDevices(call, result);
+            case BleMethod.createClient: {
+                bleHelper.createClient();
                 return;
             }
-            case BleMethod.stopScanDevices: {
-                bleHelper.stopScanDevices();
+            case BleMethod.destroyClient: {
+                bleHelper.destroyClient();
+                return;
+            }
+            case BleMethod.startDeviceScan: {
+                startDeviceScan(call, result);
+                return;
+            }
+            case BleMethod.stopDeviceScan: {
+                bleHelper.stopDeviceScan();
+                return;
+            }
+            case BleMethod.connectToDevice: {
+                connectToDevice(call, result);
                 return;
             }
             default:
@@ -52,9 +66,9 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
         }
     }
 
-    private void scanDevices(MethodCall call, final Result result) {
-        final byte[] scanSettingsByte = call.arguments();
-        bleHelper.scanDevices(scanSettingsByte,
+    private void startDeviceScan(MethodCall call, final Result result) {
+        final byte[] scanResultMessageByte = call.arguments();
+        bleHelper.startDeviceScan(scanResultMessageByte,
                 new OnSuccessAction<BleData.ScanResultMessage>() {
                     @Override
                     public void onSuccess(BleData.ScanResultMessage scanResultMessage) {
@@ -70,4 +84,25 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
         );
         result.success(null);
     }
+
+    private void connectToDevice(final MethodCall call, final Result result) {
+        final byte[] connectToDeviceDataMessageByte = call.arguments();
+        bleHelper.connectToDevice(
+                connectToDeviceDataMessageByte,
+                new OnSuccessAction<BleData.ConnectedDeviceMessage>() {
+                    @Override
+                    public void onSuccess(BleData.ConnectedDeviceMessage connectedDeviceMessage) {
+                        result.success(connectedDeviceMessage.toByteArray());
+                    }
+                },
+                new OnErrorAction() {
+                    @Override
+                    public void onError(Throwable t) {
+                        result.error("Error occours", t.getMessage(), t);
+                    }
+                }
+
+        );
+    }
+
 }

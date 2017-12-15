@@ -46,3 +46,21 @@ const ScanResultMessage$json = const {
   ],
 };
 
+const ConnectToDeviceDataMessage$json = const {
+  '1': 'ConnectToDeviceDataMessage',
+  '2': const [
+    const {'1': 'macAddress', '3': 1, '4': 1, '5': 9, '10': 'macAddress'},
+    const {'1': 'isAutoConnect', '3': 2, '4': 1, '5': 8, '10': 'isAutoConnect'},
+    const {'1': 'requestMtu', '3': 3, '4': 1, '5': 5, '10': 'requestMtu'},
+  ],
+};
+
+const ConnectedDeviceMessage$json = const {
+  '1': 'ConnectedDeviceMessage',
+  '2': const [
+    const {'1': 'deviceMessage', '3': 1, '4': 1, '5': 11, '6': '.BleDeviceMessage', '10': 'deviceMessage'},
+    const {'1': 'rssi', '3': 2, '4': 1, '5': 5, '10': 'rssi'},
+    const {'1': 'mtu', '3': 3, '4': 1, '5': 5, '10': 'mtu'},
+  ],
+};
+

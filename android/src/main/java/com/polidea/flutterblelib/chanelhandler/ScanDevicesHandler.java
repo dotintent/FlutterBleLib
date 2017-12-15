@@ -18,9 +18,9 @@ public class ScanDevicesHandler implements EventChannel.StreamHandler {
         scanDevicesSlink = null;
     }
 
-    public void handleScanDevice(BleData.ScanResultMessage scanResultDTO) {
+    public void handleScanDevice(BleData.ScanResultMessage scanResultMessage) {
         if (scanDevicesSlink != null) {
-            scanDevicesSlink.success(scanResultDTO.toByteArray());
+            scanDevicesSlink.success(scanResultMessage.toByteArray());
         }
     }
 }

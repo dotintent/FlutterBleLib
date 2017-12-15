@@ -43,3 +43,14 @@ message ScanResultMessage {
 }
 
 
+message ConnectToDeviceDataMessage {
+    string macAddress = 1;
+    bool isAutoConnect = 2;
+    int32 requestMtu = 3;
+}
+
+message ConnectedDeviceMessage {
+    BleDeviceMessage deviceMessage = 1;
+    int32 rssi = 2;
+    int32 mtu = 3;
+}
