@@ -3,7 +3,6 @@ package com.polidea.flutterblelib;
 
 import android.content.Context;
 import android.os.Build;
-import android.util.Log;
 
 import com.polidea.flutterblelib.exception.RxBleDeviceNotFoundException;
 import com.polidea.flutterblelib.listener.OnErrorAction;
@@ -12,6 +11,7 @@ import com.polidea.flutterblelib.utils.StringUtils;
 import com.polidea.rxandroidble.RxBleClient;
 import com.polidea.rxandroidble.RxBleConnection;
 import com.polidea.rxandroidble.RxBleDevice;
+import com.polidea.rxandroidble.internal.RxBleLog;
 import com.polidea.rxandroidble.scan.ScanResult;
 
 import rx.Observable;
@@ -36,6 +36,8 @@ public class BleHelper {
     private RxBleClient rxBleClient;
 
     private Subscription scanDevicesSubscription;
+
+    private int currentLogLevel = RxBleLog.NONE;
 
     BleHelper(Context context) {
         this.context = context;
@@ -91,6 +93,16 @@ public class BleHelper {
                         }
                 );
     }
+
+    void setLogLevel(BleData.LogLevelMessage logLevel) {
+        currentLogLevel = converter.convertLogLevelMessageToInt(logLevel);
+        RxBleClient.setLogLevel(currentLogLevel);
+    }
+
+    void logLevel(OnSuccessAction<BleData.LogLevelMessage> success) {
+        success.onSuccess(converter.convertIntToLogLevel(currentLogLevel));
+    }
+
 
     void stopDeviceScan() {
         if (scanDevicesSubscription != null && !scanDevicesSubscription.isUnsubscribed()) {

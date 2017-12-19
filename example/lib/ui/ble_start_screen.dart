@@ -2,7 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 import 'package:flutter_ble_lib_example/ui/screen_names.dart' as ScreenNames;
 
-class BleStartScreen extends StatelessWidget {
+class BleStartScreen extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return new BleStartScreenState();
+  }
+}
+
+class BleStartScreenState extends State<BleStartScreen> {
+
+  LogLevel _currentLogLevel = LogLevel.NONE;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +35,9 @@ class BleStartScreen extends StatelessWidget {
                     fontSize: 16.0,),
                 ),
               ),
-              new MaterialButton(
+              new Container (
+                margin: const EdgeInsets.only(bottom: 18.0),
+                child: new MaterialButton(
                   child: new Text(
                     "Create BleClient and start",
                     style: new TextStyle(color: Colors.white),
@@ -37,12 +48,56 @@ class BleStartScreen extends StatelessWidget {
                     FlutterBleLib.instance.createClient();
                     Navigator.of(context).pushNamed(
                         ScreenNames.bleDevicesScreen);
-                  }
+                  },
+                ),
+              ),
+              new Container (
+                margin: const EdgeInsets.only(bottom: 18.0),
+                child: new PopupMenuButton<LogLevel>( // overflow menu
+                  child: new Container(
+                    padding: const EdgeInsets.all(12.0),
+                    child: new Text(
+                      _currentLogLevel.toString(),
+                      style: new TextStyle(color: Colors.white),
+                    ),
+                    color: Colors.blue,
+                  ),
+                  onSelected: (logLevel) => _onSelect(logLevel),
+                  itemBuilder: (BuildContext context) {
+                    return LogLevel.values.map((LogLevel choice) {
+                      return new PopupMenuItem<LogLevel>(
+                        value: choice,
+                        child: new Text(choice.toString()),
+                      );
+                    }).toList();
+                  },
+                ),
+              ),
+              new Container (
+                margin: const EdgeInsets.only(bottom: 18.0),
+                child: new MaterialButton(
+                    child: new Text(
+                      "Get log level",
+                      style: new TextStyle(color: Colors.white),
+                    ),
+                    textColor: Colors.white,
+                    color: Colors.blue,
+                    onPressed: () =>
+                        FlutterBleLib.instance.logLevel().then((logLevel) =>
+                            print(logLevel))
+                ),
               ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  _onSelect(LogLevel logLevel) {
+    FlutterBleLib.instance.setLogLevel(logLevel);
+    setState(() {
+      _currentLogLevel = logLevel;
+    });
   }
 }

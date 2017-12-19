@@ -10,6 +10,8 @@ import 'dart:core' show int, bool, double, String, List, override;
 import 'package:fixnum/fixnum.dart';
 import 'package:protobuf/protobuf.dart';
 
+export 'bledata.pbenum.dart';
+
 class ScanSettingsMessage extends GeneratedMessage {
   static final BuilderInfo _i = new BuilderInfo('ScanSettingsMessage')
     ..a<int>(1, 'scanMode', PbFieldType.O3)

@@ -4,6 +4,18 @@
 // ignore_for_file: non_constant_identifier_names,library_prefixes
 library bledata_pbjson;
 
+const LogLevelMessage$json = const {
+  '1': 'LogLevelMessage',
+  '2': const [
+    const {'1': 'VERBOSE', '2': 0},
+    const {'1': 'DEBUG', '2': 1},
+    const {'1': 'INFO', '2': 2},
+    const {'1': 'WARNING', '2': 3},
+    const {'1': 'ERROR', '2': 4},
+    const {'1': 'NONE', '2': 5},
+  ],
+};
+
 const ScanSettingsMessage$json = const {
   '1': 'ScanSettingsMessage',
   '2': const [

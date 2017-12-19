@@ -61,3 +61,52 @@ class ConnectedDevice {
           connectedDeviceMessage.mtu
       );
 }
+
+enum LogLevel {
+  VERBOSE,
+  DEBUG,
+  INFO,
+  WARNING,
+  ERROR,
+  NONE,
+}
+
+class LogLevelConverter {
+  static LogLevel fromMessage(bleData.LogLevelMessage logLevelMessage) {
+    switch (logLevelMessage) {
+      case bleData.LogLevelMessage.VERBOSE :
+        return LogLevel.VERBOSE;
+      case bleData.LogLevelMessage.DEBUG :
+        return LogLevel.DEBUG;
+      case bleData.LogLevelMessage.INFO :
+        return LogLevel.INFO;
+      case bleData.LogLevelMessage.WARNING :
+        return LogLevel.WARNING;
+      case bleData.LogLevelMessage.ERROR :
+        return LogLevel.ERROR;
+      case bleData.LogLevelMessage.NONE :
+        return LogLevel.NONE;
+      default :
+        throw new Exception("Invalid argument $logLevelMessage");
+    }
+  }
+
+  static bleData.LogLevelMessage toMessage(LogLevel logLevel) {
+    switch (logLevel) {
+      case LogLevel.VERBOSE :
+        return bleData.LogLevelMessage.VERBOSE;
+      case LogLevel.DEBUG :
+        return bleData.LogLevelMessage.DEBUG;
+      case LogLevel.INFO :
+        return bleData.LogLevelMessage.INFO;
+      case LogLevel.WARNING :
+        return bleData.LogLevelMessage.WARNING;
+      case LogLevel.ERROR :
+        return bleData.LogLevelMessage.ERROR;
+      case LogLevel.NONE :
+        return bleData.LogLevelMessage.NONE;
+      default :
+        throw new Exception("Invalid argument $logLevel");
+    }
+  }
+}
