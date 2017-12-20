@@ -110,3 +110,57 @@ class LogLevelConverter {
     }
   }
 }
+
+
+enum BluetoothState {
+  UNKNOWN,
+  RESETTING,
+  UNSUPPORTED,
+  UNAUTHORIZED,
+  POWERED_OFF,
+  POWERED_ON,
+}
+
+
+class BluetoothStateConverter {
+  static BluetoothState fromMessage(
+      bleData.BluetoothStateMessage bluetoothStateMessage) {
+    switch (bluetoothStateMessage) {
+      case bleData.BluetoothStateMessage.UNKNOWN :
+        return BluetoothState.UNKNOWN;
+      case bleData.BluetoothStateMessage.RESETTING :
+        return BluetoothState.RESETTING;
+      case bleData.BluetoothStateMessage.UNSUPPORTED :
+        return BluetoothState.UNSUPPORTED;
+      case bleData.BluetoothStateMessage.UNAUTHORIZED :
+        return BluetoothState.UNAUTHORIZED;
+      case bleData.BluetoothStateMessage.POWERED_OFF :
+        return BluetoothState.POWERED_OFF;
+      case bleData.BluetoothStateMessage.POWERED_ON :
+        return BluetoothState.POWERED_ON;
+      default :
+        throw new Exception("Invalid argument $bluetoothStateMessage");
+    }
+  }
+
+  static bleData.BluetoothStateMessage toMessage(
+      BluetoothState bluetoothState) {
+    switch (bluetoothState) {
+      case BluetoothState.UNKNOWN :
+        return bleData.BluetoothStateMessage.UNKNOWN;
+      case BluetoothState.RESETTING :
+        return bleData.BluetoothStateMessage.RESETTING;
+      case BluetoothState.UNSUPPORTED :
+        return bleData.BluetoothStateMessage.UNSUPPORTED;
+      case BluetoothState.UNAUTHORIZED :
+        return bleData.BluetoothStateMessage.UNAUTHORIZED;
+      case BluetoothState.POWERED_OFF :
+        return bleData.BluetoothStateMessage.POWERED_OFF;
+      case BluetoothState.POWERED_ON :
+        return bleData.BluetoothStateMessage.POWERED_ON;
+      default :
+        throw new Exception("Invalid argument $bluetoothState");
+    }
+  }
+}
+

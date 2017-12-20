@@ -55,11 +55,20 @@ message ConnectedDeviceMessage {
     int32 mtu = 3;
 }
 
-enum LogLevelMessage{
+enum LogLevelMessage {
     VERBOSE = 0;
     DEBUG = 1;
     INFO = 2;
     WARNING = 3;
     ERROR = 4;
     NONE = 5;
+}
+
+enum BluetoothStateMessage {
+    UNKNOWN = 0;
+    RESETTING = 1;
+    UNSUPPORTED = 2;
+    UNAUTHORIZED = 3;
+    POWERED_OFF = 4;
+    POWERED_ON = 5;
 }

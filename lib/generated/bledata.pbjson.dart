@@ -16,6 +16,18 @@ const LogLevelMessage$json = const {
   ],
 };
 
+const BluetoothStateMessage$json = const {
+  '1': 'BluetoothStateMessage',
+  '2': const [
+    const {'1': 'UNKNOWN', '2': 0},
+    const {'1': 'RESETTING', '2': 1},
+    const {'1': 'UNSUPPORTED', '2': 2},
+    const {'1': 'UNAUTHORIZED', '2': 3},
+    const {'1': 'POWERED_OFF', '2': 4},
+    const {'1': 'POWERED_ON', '2': 5},
+  ],
+};
+
 const ScanSettingsMessage$json = const {
   '1': 'ScanSettingsMessage',
   '2': const [

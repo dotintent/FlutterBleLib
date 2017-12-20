@@ -13,6 +13,9 @@ class FlutterBleLib {
   static const EventChannel _scanDevicesChanel =
   const EventChannel(flutter_ble_lib_scanDevices);
 
+  static const EventChannel _bluetoothStateChanel =
+  const EventChannel(flutter_ble_lib_stateChange);
+
   final StreamController<MethodCall> _methodStreamController =
   new StreamController.broadcast();
 
@@ -42,6 +45,20 @@ class FlutterBleLib {
           .then((logLevelByte) => bleData.LogLevelMessage.valueOf(logLevelByte))
           .then((logLevelMessage) =>
           LogLevelConverter.fromMessage(logLevelMessage));
+
+  Future<BluetoothState> state() =>
+      _mainMethodChannel.invokeMethod(_state)
+          .then((bluetoothStateByte) =>
+          bleData.BluetoothStateMessage.valueOf(bluetoothStateByte))
+          .then((bluetoothStateMessage) =>
+          BluetoothStateConverter.fromMessage(bluetoothStateMessage));
+
+  Stream<BluetoothState> onStateChange() {
+    return _bluetoothStateChanel.receiveBroadcastStream()
+        .map((data) => bleData.BluetoothStateMessage.valueOf(data))
+        .map((bluetoothStateMessage) =>
+        BluetoothStateConverter.fromMessage(bluetoothStateMessage));
+  }
 
   Stream<ScanResult> startDeviceScan(int scanMode, int callbackType) async* {
     var settings = bleData.ScanSettingsMessage.create()

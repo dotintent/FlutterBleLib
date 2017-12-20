@@ -4,6 +4,7 @@ package com.polidea.flutterblelib;
 import android.content.Context;
 import android.util.Log;
 
+import com.polidea.flutterblelib.chanelhandler.BluetoothStateHandler;
 import com.polidea.flutterblelib.chanelhandler.ScanDevicesHandler;
 import com.polidea.flutterblelib.listener.Namespace;
 import com.polidea.flutterblelib.listener.OnErrorAction;
@@ -20,6 +21,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
 
     public static final String TAG = "FlutterBleLibPlugin";
     private ScanDevicesHandler scanDevicesHandler;
+    private BluetoothStateHandler bluetoothStateHandler;
 
     private BleHelper bleHelper;
 
@@ -27,21 +29,29 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
     private FlutterBleLibPlugin(Context context) {
         bleHelper = new BleHelper(context);
         scanDevicesHandler = new ScanDevicesHandler();
+        bluetoothStateHandler = new BluetoothStateHandler();
     }
 
     public static void registerWith(Registrar registrar) {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), Namespace.flutter_ble_lib);
         final EventChannel scanDevicesChannel = new EventChannel(registrar.messenger(), Namespace.flutter_ble_lib_scanDevices);
+        final EventChannel bluetoothStateChanel = new EventChannel(registrar.messenger(), Namespace.flutter_ble_lib_stateChange);
         final FlutterBleLibPlugin handler = new FlutterBleLibPlugin(registrar.activity().getApplicationContext());
         channel.setMethodCallHandler(handler);
         scanDevicesChannel.setStreamHandler(handler.scanDevicesHandler);
+        bluetoothStateChanel.setStreamHandler(handler.bluetoothStateHandler);
     }
 
     @Override
     public void onMethodCall(MethodCall call, final Result result) {
         switch (call.method) {
             case BleMethod.createClient: {
-                bleHelper.createClient();
+                bleHelper.createClient(new OnSuccessAction<BleData.BluetoothStateMessage>() {
+                    @Override
+                    public void onSuccess(BleData.BluetoothStateMessage success) {
+                        bluetoothStateHandler.handleBluetoothState(success);
+                    }
+                });
                 return;
             }
             case BleMethod.destroyClient: {
@@ -57,6 +67,15 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                     @Override
                     public void onSuccess(BleData.LogLevelMessage logLevelMessage) {
                         result.success(logLevelMessage.ordinal());
+                    }
+                });
+                return;
+            }
+            case BleMethod.state: {
+                bleHelper.state(new OnSuccessAction<BleData.BluetoothStateMessage>() {
+                    @Override
+                    public void onSuccess(BleData.BluetoothStateMessage success) {
+                        result.success(success.ordinal());
                     }
                 });
                 return;

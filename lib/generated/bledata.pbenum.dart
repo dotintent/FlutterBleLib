@@ -34,3 +34,29 @@ class LogLevelMessage extends ProtobufEnum {
   const LogLevelMessage._(int v, String n) : super(v, n);
 }
 
+class BluetoothStateMessage extends ProtobufEnum {
+  static const BluetoothStateMessage UNKNOWN = const BluetoothStateMessage._(0, 'UNKNOWN');
+  static const BluetoothStateMessage RESETTING = const BluetoothStateMessage._(1, 'RESETTING');
+  static const BluetoothStateMessage UNSUPPORTED = const BluetoothStateMessage._(2, 'UNSUPPORTED');
+  static const BluetoothStateMessage UNAUTHORIZED = const BluetoothStateMessage._(3, 'UNAUTHORIZED');
+  static const BluetoothStateMessage POWERED_OFF = const BluetoothStateMessage._(4, 'POWERED_OFF');
+  static const BluetoothStateMessage POWERED_ON = const BluetoothStateMessage._(5, 'POWERED_ON');
+
+  static const List<BluetoothStateMessage> values = const <BluetoothStateMessage> [
+    UNKNOWN,
+    RESETTING,
+    UNSUPPORTED,
+    UNAUTHORIZED,
+    POWERED_OFF,
+    POWERED_ON,
+  ];
+
+  static final Map<int, dynamic> _byValue = ProtobufEnum.initByValue(values);
+  static BluetoothStateMessage valueOf(int value) => _byValue[value] as BluetoothStateMessage;
+  static void $checkItem(BluetoothStateMessage v) {
+    if (v is! BluetoothStateMessage) checkItemFailed(v, 'BluetoothStateMessage');
+  }
+
+  const BluetoothStateMessage._(int v, String n) : super(v, n);
+}
+
