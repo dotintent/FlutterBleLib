@@ -38,7 +38,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
     }
 
     @Override
-    public void onMethodCall(MethodCall call, Result result) {
+    public void onMethodCall(MethodCall call, final Result result) {
         switch (call.method) {
             case BleMethod.createClient: {
                 bleHelper.createClient();
@@ -46,6 +46,19 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
             }
             case BleMethod.destroyClient: {
                 bleHelper.destroyClient();
+                return;
+            }
+            case BleMethod.setLogLevel: {
+                bleHelper.setLogLevel(BleData.LogLevelMessage.valueOf(call.arguments.toString()));
+                return;
+            }
+            case BleMethod.logLevel: {
+                bleHelper.logLevel(new OnSuccessAction<BleData.LogLevelMessage>() {
+                    @Override
+                    public void onSuccess(BleData.LogLevelMessage logLevelMessage) {
+                        result.success(logLevelMessage.ordinal());
+                    }
+                });
                 return;
             }
             case BleMethod.startDeviceScan: {

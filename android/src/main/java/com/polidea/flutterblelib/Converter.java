@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.polidea.rxandroidble.RxBleDevice;
+import com.polidea.rxandroidble.internal.RxBleLog;
 import com.polidea.rxandroidble.scan.ScanResult;
 import com.polidea.rxandroidble.scan.ScanSettings;
 
@@ -59,5 +60,43 @@ public class Converter {
             return null;
         }
 
+    }
+
+    int convertLogLevelMessageToInt(BleData.LogLevelMessage logLevel) {
+        switch (logLevel){
+            case VERBOSE:
+                return RxBleLog.VERBOSE;
+            case DEBUG:
+                return RxBleLog.DEBUG;
+            case INFO:
+            return RxBleLog.INFO;
+            case WARNING:
+                return RxBleLog.WARN;
+            case ERROR:
+                return RxBleLog.ERROR;
+            case NONE:
+            case UNRECOGNIZED:
+            default:
+                return RxBleLog.NONE;
+        }
+    }
+
+    BleData.LogLevelMessage convertIntToLogLevel(int logLevel) {
+        switch (logLevel){
+            case RxBleLog.VERBOSE:
+                return BleData.LogLevelMessage.VERBOSE;
+            case RxBleLog.DEBUG:
+                return BleData.LogLevelMessage.DEBUG;
+            case RxBleLog.INFO:
+            return BleData.LogLevelMessage.INFO;
+            case RxBleLog.WARN:
+                return BleData.LogLevelMessage.WARNING;
+            case RxBleLog.ERROR:
+                return BleData.LogLevelMessage.ERROR;
+            case RxBleLog.NONE:
+                return BleData.LogLevelMessage.NONE;
+            default:
+                return BleData.LogLevelMessage.UNRECOGNIZED;
+        }
     }
 }

@@ -2,6 +2,7 @@ part of flutter_ble_lib;
 
 class FlutterBleLib {
 
+  static const int _unknownRssi = -1;
   static FlutterBleLib _newInstance = new FlutterBleLib._();
 
   static FlutterBleLib get instance => _newInstance;
@@ -22,12 +23,25 @@ class FlutterBleLib {
     });
   }
 
-
   Future<Null> createClient() =>
       _mainMethodChannel.invokeMethod(_createClient);
 
   Future<Null> destroyClient() =>
       _mainMethodChannel.invokeMethod(_destroyClient);
+
+  Future<Null> setLogLevel(LogLevel logLevel) =>
+      _mainMethodChannel.invokeMethod(
+          _setLogLevel,
+          LogLevelConverter
+              .toMessage(logLevel)
+              .name
+      );
+
+  Future<LogLevel> logLevel() =>
+      _mainMethodChannel.invokeMethod(_logLevel)
+          .then((logLevelByte) => bleData.LogLevelMessage.valueOf(logLevelByte))
+          .then((logLevelMessage) =>
+          LogLevelConverter.fromMessage(logLevelMessage));
 
   Stream<ScanResult> startDeviceScan(int scanMode, int callbackType) async* {
     var settings = bleData.ScanSettingsMessage.create()
@@ -63,16 +77,19 @@ class FlutterBleLib {
   Future<Null> stopDeviceScan() =>
       _mainMethodChannel.invokeMethod(_stopDeviceScan);
 
-  Future<ConnectedDevice> connectToDevice(String macAddress, {bool isAutoConnect,
-    int requestMtu}) async {
+  Future<ConnectedDevice> connectToDevice(String macAddress,
+      {bool isAutoConnect,
+        int requestMtu}) async {
     bleData.ConnectToDeviceDataMessage connectToDeviceDataMessage
     = new bleData.ConnectToDeviceDataMessage()
       ..macAddress = macAddress
-      ..isAutoConnect = isAutoConnect?? false
-      ..requestMtu = requestMtu ?? -1;
+      ..isAutoConnect = isAutoConnect ?? false
+      ..requestMtu = requestMtu ?? _unknownRssi;
     return await _mainMethodChannel.invokeMethod(
         _connectToDevice, connectToDeviceDataMessage.writeToBuffer())
-        .then((byteData) => new bleData.ConnectedDeviceMessage.fromBuffer(byteData))
-        .then((connectedDeviceMessage) => ConnectedDevice.fromMessage(connectedDeviceMessage));
+        .then((byteData) =>
+    new bleData.ConnectedDeviceMessage.fromBuffer(byteData))
+        .then((connectedDeviceMessage) =>
+        ConnectedDevice.fromMessage(connectedDeviceMessage));
   }
 }
