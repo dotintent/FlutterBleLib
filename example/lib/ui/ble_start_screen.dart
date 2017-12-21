@@ -12,6 +12,7 @@ class BleStartScreen extends StatefulWidget {
 class BleStartScreenState extends State<BleStartScreen> {
 
   LogLevel _currentLogLevel = LogLevel.NONE;
+  BluetoothState _currentState = null;
 
   @override
   Widget build(BuildContext context) {
@@ -44,11 +45,10 @@ class BleStartScreenState extends State<BleStartScreen> {
                   ),
                   textColor: Colors.white,
                   color: Colors.blue,
-                  onPressed: () {
-                    FlutterBleLib.instance.createClient();
-                    Navigator.of(context).pushNamed(
-                        ScreenNames.bleDevicesScreen);
-                  },
+                  onPressed:
+                  _currentState == BluetoothState.POWERED_ON
+                      ? _onCreateButtonClick
+                      : null,
                 ),
               ),
               new Container (
@@ -87,6 +87,24 @@ class BleStartScreenState extends State<BleStartScreen> {
                             print(logLevel))
                 ),
               ),
+              new Container (
+                margin: const EdgeInsets.only(bottom: 18.0),
+                child: new Text(
+                  _currentState?.toString() ?? "Please get current state",
+                ),
+              ),
+              new Container (
+                margin: const EdgeInsets.only(bottom: 18.0),
+                child: new MaterialButton(
+                    child: new Text(
+                      "Get current state",
+                      style: new TextStyle(color: Colors.white),
+                    ),
+                    textColor: Colors.white,
+                    color: Colors.blue,
+                    onPressed: _onGetCurrentStateClick
+                ),
+              ),
             ],
           ),
         ),
@@ -94,10 +112,24 @@ class BleStartScreenState extends State<BleStartScreen> {
     );
   }
 
+  _onCreateButtonClick() {
+    FlutterBleLib.instance.createClient();
+    Navigator.of(context).pushNamed(
+        ScreenNames.bleDevicesScreen);
+  }
+
   _onSelect(LogLevel logLevel) {
     FlutterBleLib.instance.setLogLevel(logLevel);
     setState(() {
       _currentLogLevel = logLevel;
     });
+  }
+
+  _onGetCurrentStateClick() {
+    FlutterBleLib.instance.state().then((state) =>
+        setState(() {
+          print(state);
+          _currentState = state;
+        }));
   }
 }

@@ -1,13 +1,19 @@
 package com.polidea.flutterblelib;
 
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Build;
+import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.polidea.flutterblelib.exception.RxBleDeviceNotFoundException;
 import com.polidea.flutterblelib.listener.OnErrorAction;
 import com.polidea.flutterblelib.listener.OnSuccessAction;
 import com.polidea.flutterblelib.utils.StringUtils;
+import com.polidea.rxandroidble.RxBleAdapterStateObservable;
 import com.polidea.rxandroidble.RxBleClient;
 import com.polidea.rxandroidble.RxBleConnection;
 import com.polidea.rxandroidble.RxBleDevice;
@@ -37,6 +43,9 @@ public class BleHelper {
 
     private Subscription scanDevicesSubscription;
 
+    @Nullable
+    private Subscription adapterStateChangesSubscription;
+
     private int currentLogLevel = RxBleLog.NONE;
 
     BleHelper(Context context) {
@@ -55,11 +64,17 @@ public class BleHelper {
         return true;
     }
 
-    void createClient() {
+    void createClient(OnSuccessAction<BleData.BluetoothStateMessage> bluetoothStateListener) {
         rxBleClient = RxBleClient.create(context);
+        adapterStateChangesSubscription = monitorAdapterStateChanges(bluetoothStateListener, context);
     }
 
     void destroyClient() {
+        // Subscriptions
+        if (adapterStateChangesSubscription != null) {
+            adapterStateChangesSubscription.unsubscribe();
+            adapterStateChangesSubscription = null;
+        }
         if (scanDevicesSubscription != null && !scanDevicesSubscription.isUnsubscribed()) {
             scanDevicesSubscription.unsubscribe();
         }
@@ -103,6 +118,69 @@ public class BleHelper {
         success.onSuccess(converter.convertIntToLogLevel(currentLogLevel));
     }
 
+    public void state(OnSuccessAction<BleData.BluetoothStateMessage> result) {
+        result.onSuccess(getCurrentState());
+    }
+
+    private Subscription monitorAdapterStateChanges(final OnSuccessAction<BleData.BluetoothStateMessage> bluetoothStateListener, Context context) {
+        return new RxBleAdapterStateObservable(context)
+                .map(new Func1<RxBleAdapterStateObservable.BleAdapterState, BleData.BluetoothStateMessage>() {
+                    @Override
+                    public BleData.BluetoothStateMessage call(RxBleAdapterStateObservable.BleAdapterState bleAdapterState) {
+                        return rxAndroidBleAdapterStateToReactNativeBluetoothState(bleAdapterState);
+                    }
+                })
+                .subscribe(new Action1<BleData.BluetoothStateMessage>() {
+                    @Override
+                    public void call(BleData.BluetoothStateMessage state) {
+                        bluetoothStateListener.onSuccess(state);
+                    }
+                });
+    }
+
+    private BleData.BluetoothStateMessage rxAndroidBleAdapterStateToReactNativeBluetoothState(RxBleAdapterStateObservable.BleAdapterState rxBleAdapterState) {
+        if (rxBleAdapterState == RxBleAdapterStateObservable.BleAdapterState.STATE_ON) {
+            return BleData.BluetoothStateMessage.POWERED_ON;
+        }
+        if (rxBleAdapterState == RxBleAdapterStateObservable.BleAdapterState.STATE_OFF) {
+            return BleData.BluetoothStateMessage.POWERED_OFF;
+        }
+        return BleData.BluetoothStateMessage.RESETTING;
+    }
+
+    private BleData.BluetoothStateMessage getCurrentState() {
+        if (!supportsBluetoothLowEnergy()) {
+            return BleData.BluetoothStateMessage.UNSUPPORTED;
+        }
+
+        final BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
+        if (bluetoothManager == null) {
+            return BleData.BluetoothStateMessage.POWERED_OFF;
+        }
+        final BluetoothAdapter bluetoothAdapter = bluetoothManager.getAdapter();
+        return nativeAdapterStateToReactNativeBluetoothState(bluetoothAdapter.getState());
+    }
+
+    private BleData.BluetoothStateMessage nativeAdapterStateToReactNativeBluetoothState(int adapterState) {
+        switch (adapterState) {
+
+            case BluetoothAdapter.STATE_OFF:
+                return BleData.BluetoothStateMessage.POWERED_OFF;
+            case BluetoothAdapter.STATE_ON:
+                return BleData.BluetoothStateMessage.POWERED_ON;
+            case BluetoothAdapter.STATE_TURNING_OFF:
+                // fallthrough
+            case BluetoothAdapter.STATE_TURNING_ON:
+                return BleData.BluetoothStateMessage.RESETTING;
+            default:
+                return BleData.BluetoothStateMessage.UNKNOWN;
+        }
+    }
+
+
+    private boolean supportsBluetoothLowEnergy() {
+        return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE);
+    }
 
     void stopDeviceScan() {
         if (scanDevicesSubscription != null && !scanDevicesSubscription.isUnsubscribed()) {

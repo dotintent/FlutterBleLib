@@ -92,18 +92,24 @@ class BleDevicesScreen extends StatefulWidget {
 class BleDevicesState extends State<BleDevicesScreen> {
 
   StreamSubscription _scanDevicesSub;
+  StreamSubscription _bluetoothStateSub;
 
   bool _isScan = false;
+  BluetoothState bluetoothState = null;
   final List<ScanResult> _scanResults = new List();
 
   @override
   initState() {
     super.initState();
+    _bluetoothStateSub = FlutterBleLib.instance.onStateChange()
+        .listen((bluetoothState) =>
+        setState(() => this.bluetoothState = bluetoothState));
   }
 
   @override
   dispose() {
     _onStopScan();
+    _cancelStateChange();
     FlutterBleLib.instance.destroyClient();
     super.dispose();
   }
@@ -119,6 +125,10 @@ class BleDevicesState extends State<BleDevicesScreen> {
           child: new Icon(_isScan ? Icons.close : Icons.bluetooth),
           onPressed: _isScan ? _onStopScan : _onStartScan,
         ),
+        bottomNavigationBar: new Text(
+          "Current state : ${bluetoothState ?? "null"}",
+          style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold,),
+        ),
         body: new Stack(
           children: <Widget>[
             new BleScanResultList(_scanResults, context),
@@ -128,6 +138,10 @@ class BleDevicesState extends State<BleDevicesScreen> {
     );
   }
 
+  _cancelStateChange() {
+    _bluetoothStateSub?.cancel();
+    _bluetoothStateSub = null;
+  }
 
   _onStopScan() {
     _scanDevicesSub?.cancel();
@@ -141,12 +155,9 @@ class BleDevicesState extends State<BleDevicesScreen> {
   _onStartScan() {
     _scanDevicesSub = FlutterBleLib.instance
         .startDeviceScan(1, 1)
-        .listen((scanResult) {
-      setState
-        (() {
-        _addOrUpdateIfNecessary(scanResult);
-      });
-    }, onDone: _onStopScan);
+        .listen(
+            (scanResult) => setState(() => _addOrUpdateIfNecessary(scanResult)),
+        onDone: _onStopScan);
 
     setState(() {
       _isScan = true;
