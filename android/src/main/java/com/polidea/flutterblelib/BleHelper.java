@@ -7,9 +7,10 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.polidea.flutterblelib.exception.RxBleDeviceNotFoundException;
+import com.polidea.flutterblelib.listener.BluetoothStateChangeListener;
+import com.polidea.flutterblelib.listener.DeviceConnectionChangeListener;
 import com.polidea.flutterblelib.listener.OnErrorAction;
 import com.polidea.flutterblelib.listener.OnSuccessAction;
 import com.polidea.flutterblelib.utils.StringUtils;
@@ -28,7 +29,6 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 
 public class BleHelper {
-
     private final Converter converter;
 
     private final ConnectedDeviceContainer connectedDevices;
@@ -48,6 +48,9 @@ public class BleHelper {
 
     private int currentLogLevel = RxBleLog.NONE;
 
+    private BluetoothStateChangeListener bluetoothStateListener = BluetoothStateChangeListener.NULL;
+    private DeviceConnectionChangeListener deviceConnectionChangeListener = DeviceConnectionChangeListener.NULL;
+
     BleHelper(Context context) {
         this.context = context;
         stringUtils = new StringUtils();
@@ -64,9 +67,25 @@ public class BleHelper {
         return true;
     }
 
-    void createClient(OnSuccessAction<BleData.BluetoothStateMessage> bluetoothStateListener) {
+    void createClient() {
         rxBleClient = RxBleClient.create(context);
-        adapterStateChangesSubscription = monitorAdapterStateChanges(bluetoothStateListener, context);
+        adapterStateChangesSubscription = monitorAdapterStateChanges(context);
+    }
+
+    void registerBluetoothStateChangeListener(BluetoothStateChangeListener bluetoothStateListener) {
+        this.bluetoothStateListener = bluetoothStateListener != null ? bluetoothStateListener : BluetoothStateChangeListener.NULL;
+    }
+
+    void unregisterBluetoothStateChangeListener() {
+        bluetoothStateListener = BluetoothStateChangeListener.NULL;
+    }
+
+    void registerDeviceConnectionChangeListener(DeviceConnectionChangeListener deviceConnectionChangeListener) {
+        this.deviceConnectionChangeListener = deviceConnectionChangeListener != null ? deviceConnectionChangeListener : DeviceConnectionChangeListener.NULL;
+    }
+
+    void unregisterDeviceConnectionChangeListener() {
+        deviceConnectionChangeListener = DeviceConnectionChangeListener.NULL;
     }
 
     void destroyClient() {
@@ -81,6 +100,9 @@ public class BleHelper {
         scanDevicesSubscription = null;
 
         connectedDevices.clear();
+
+        unregisterBluetoothStateChangeListener();
+        unregisterDeviceConnectionChangeListener();
 
         rxBleClient = null;
     }
@@ -122,7 +144,7 @@ public class BleHelper {
         result.onSuccess(getCurrentState());
     }
 
-    private Subscription monitorAdapterStateChanges(final OnSuccessAction<BleData.BluetoothStateMessage> bluetoothStateListener, Context context) {
+    private Subscription monitorAdapterStateChanges(Context context) {
         return new RxBleAdapterStateObservable(context)
                 .map(new Func1<RxBleAdapterStateObservable.BleAdapterState, BleData.BluetoothStateMessage>() {
                     @Override
@@ -221,7 +243,7 @@ public class BleHelper {
                 .doOnUnsubscribe(new Action0() {
                     @Override
                     public void call() {
-                        //TODO close connection, device disconnected
+                        onDeviceDisconnected(device);
                     }
                 });
 
@@ -254,7 +276,7 @@ public class BleHelper {
                     @Override
                     public void onError(Throwable e) {
                         error.onError(e);
-                        //TODO device disconnected
+                        onDeviceDisconnected(device);
                     }
 
                     @Override
@@ -273,5 +295,33 @@ public class BleHelper {
                 });
 
         connectingDevices.replaceConnectingSubscription(device.getMacAddress(), subscription);
+    }
+
+
+    private void onDeviceDisconnected(RxBleDevice device) {
+        final BleData.ConnectedDeviceMessage connectedDevice = connectedDevices.remove(device.getMacAddress());
+        if (connectedDevice == null) {
+            return;
+        }
+
+        // cleanServicesAndCharacteristicsForDevice(jsDevice);
+        deviceConnectionChangeListener.onSuccess(connectedDevice.getDeviceMessage());
+        connectingDevices.removeConnectingDeviceSubscription(device.getMacAddress());
+    }
+
+    void isDeviceConnected(String macAddress, OnSuccessAction<Boolean> onSuccessAction, OnErrorAction onErrorAction) {
+        if (rxBleClient == null) {
+            throw new IllegalStateException("BleManager not created when tried to cancel device connection");
+        }
+
+        final RxBleDevice device = rxBleClient.getBleDevice(macAddress);
+        if (device == null) {
+            onErrorAction.onError(new RxBleDeviceNotFoundException("Can't find device with id : " + macAddress));
+            return;
+        }
+
+        boolean connected = device.getConnectionState()
+                .equals(RxBleConnection.RxBleConnectionState.CONNECTED);
+        onSuccessAction.onSuccess(connected);
     }
 }

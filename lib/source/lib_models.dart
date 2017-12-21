@@ -4,6 +4,7 @@ class BleDevice {
 
   String macAddress;
   String name;
+  bool isConnected = false;
 
   BleDevice(this.macAddress, this.name);
 
@@ -56,7 +57,8 @@ class ConnectedDevice {
   static ConnectedDevice fromMessage(
       bleData.ConnectedDeviceMessage connectedDeviceMessage) =>
       new ConnectedDevice(
-          BleDevice.fromMessage(connectedDeviceMessage.deviceMessage),
+          BleDevice.fromMessage(connectedDeviceMessage.deviceMessage)
+            ..isConnected = true,
           connectedDeviceMessage.rssi,
           connectedDeviceMessage.mtu
       );

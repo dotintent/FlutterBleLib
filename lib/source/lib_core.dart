@@ -16,6 +16,10 @@ class FlutterBleLib {
   static const EventChannel _bluetoothStateChanel =
   const EventChannel(flutter_ble_lib_stateChange);
 
+
+  static const EventChannel _deviceConnectionChanged =
+  const EventChannel(flutter_ble_lib_deviceConnectionChange);
+
   final StreamController<MethodCall> _methodStreamController =
   new StreamController.broadcast();
 
@@ -108,5 +112,17 @@ class FlutterBleLib {
     new bleData.ConnectedDeviceMessage.fromBuffer(byteData))
         .then((connectedDeviceMessage) =>
         ConnectedDevice.fromMessage(connectedDeviceMessage));
+  }
+
+  Future<bool> isDeviceConnected(String macAddress) {
+    return _mainMethodChannel.invokeMethod(_isDeviceConnected, macAddress);
+  }
+
+
+  Stream<BleDevice> onDeviceConnectionChanged() {
+    return _deviceConnectionChanged.receiveBroadcastStream()
+        .map((data) => new bleData.BleDeviceMessage.fromBuffer(data))
+        .map((bleDeviceMessage) =>
+        BleDevice.fromMessage(bleDeviceMessage));
   }
 }
