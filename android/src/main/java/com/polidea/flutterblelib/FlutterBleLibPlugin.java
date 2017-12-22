@@ -2,10 +2,12 @@ package com.polidea.flutterblelib;
 
 
 import android.content.Context;
-import android.util.Log;
 
 import com.polidea.flutterblelib.chanelhandler.BluetoothStateHandler;
+import com.polidea.flutterblelib.chanelhandler.DeviceConnectionChangedHandler;
 import com.polidea.flutterblelib.chanelhandler.ScanDevicesHandler;
+import com.polidea.flutterblelib.listener.BluetoothStateChangeListener;
+import com.polidea.flutterblelib.listener.DeviceConnectionChangeListener;
 import com.polidea.flutterblelib.listener.Namespace;
 import com.polidea.flutterblelib.listener.OnErrorAction;
 import com.polidea.flutterblelib.listener.OnSuccessAction;
@@ -22,6 +24,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
     public static final String TAG = "FlutterBleLibPlugin";
     private ScanDevicesHandler scanDevicesHandler;
     private BluetoothStateHandler bluetoothStateHandler;
+    private DeviceConnectionChangedHandler deviceConnectionChangedHandler;
 
     private BleHelper bleHelper;
 
@@ -30,26 +33,36 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
         bleHelper = new BleHelper(context);
         scanDevicesHandler = new ScanDevicesHandler();
         bluetoothStateHandler = new BluetoothStateHandler();
+        deviceConnectionChangedHandler = new DeviceConnectionChangedHandler();
     }
 
     public static void registerWith(Registrar registrar) {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), Namespace.flutter_ble_lib);
         final EventChannel scanDevicesChannel = new EventChannel(registrar.messenger(), Namespace.flutter_ble_lib_scanDevices);
         final EventChannel bluetoothStateChanel = new EventChannel(registrar.messenger(), Namespace.flutter_ble_lib_stateChange);
+        final EventChannel deviceConnectionChangedChanel = new EventChannel(registrar.messenger(), Namespace.flutter_ble_lib_deviceConnectionChanged);
         final FlutterBleLibPlugin handler = new FlutterBleLibPlugin(registrar.activity().getApplicationContext());
         channel.setMethodCallHandler(handler);
         scanDevicesChannel.setStreamHandler(handler.scanDevicesHandler);
         bluetoothStateChanel.setStreamHandler(handler.bluetoothStateHandler);
+        deviceConnectionChangedChanel.setStreamHandler(handler.deviceConnectionChangedHandler);
     }
 
     @Override
     public void onMethodCall(MethodCall call, final Result result) {
         switch (call.method) {
             case BleMethod.createClient: {
-                bleHelper.createClient(new OnSuccessAction<BleData.BluetoothStateMessage>() {
+                bleHelper.createClient();
+                bleHelper.registerBluetoothStateChangeListener(new BluetoothStateChangeListener() {
                     @Override
-                    public void onSuccess(BleData.BluetoothStateMessage success) {
-                        bluetoothStateHandler.handleBluetoothState(success);
+                    public void onSuccess(BleData.BluetoothStateMessage bluetoothStateMessage) {
+                        bluetoothStateHandler.handleBluetoothState(bluetoothStateMessage);
+                    }
+                });
+                bleHelper.registerDeviceConnectionChangeListener(new DeviceConnectionChangeListener() {
+                    @Override
+                    public void onSuccess(BleData.BleDeviceMessage bleDeviceMessage) {
+                        deviceConnectionChangedHandler.handleBluetoothState(bleDeviceMessage);
                     }
                 });
                 return;
@@ -90,6 +103,10 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
             }
             case BleMethod.connectToDevice: {
                 connectToDevice(call, result);
+                return;
+            }
+            case BleMethod.isDeviceConnected: {
+                isDeviceConnected(call, result);
                 return;
             }
             default:
@@ -134,6 +151,25 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                     }
                 }
 
+        );
+    }
+
+    private void isDeviceConnected(MethodCall call, final Result result) {
+        final String macAddressByte = call.arguments();
+        bleHelper.isDeviceConnected(
+                macAddressByte,
+                new OnSuccessAction<Boolean>() {
+                    @Override
+                    public void onSuccess(Boolean success) {
+                        result.success(success);
+                    }
+                },
+                new OnErrorAction() {
+                    @Override
+                    public void onError(Throwable t) {
+                        result.error("Error occurred", t.getMessage(), t);
+                    }
+                }
         );
     }
 

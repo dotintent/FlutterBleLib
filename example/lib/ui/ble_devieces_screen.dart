@@ -4,13 +4,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 import 'package:flutter_ble_lib_example/ui/ble_connected_device_screen.dart';
 
-class BleScanResultList extends StatelessWidget {
+
+class BleScanResultList extends StatefulWidget {
 
   final List<ScanResult> _scanResults;
 
   final BuildContext _mainBuildContext;
 
   BleScanResultList(this._scanResults, this._mainBuildContext);
+
+  @override
+  State<StatefulWidget> createState() =>
+      new BleScanResultListState(_scanResults, _mainBuildContext);
+}
+
+class BleScanResultListState extends State<StatefulWidget> {
+
+  final List<ScanResult> _scanResults;
+
+  final BuildContext _mainBuildContext;
+
+  BleScanResultListState(this._scanResults, this._mainBuildContext);
 
   @override
   Widget build(BuildContext context) {
@@ -41,30 +55,47 @@ class BleScanResultList extends StatelessWidget {
               style: new TextStyle(fontSize: 12.0),),
             new Text("Scan callback type : + ${scanResults.scanCallbackType}",
               style: new TextStyle(fontSize: 12.0),),
-            new Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            new Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                new Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    new Text("BleDevice : ",
-                      style: new TextStyle(
-                        fontSize: 12.0, fontWeight: FontWeight.bold,),),
-                    new Text("\tname : ${scanResults.bleDevice.name}",
-                      style: new TextStyle(fontSize: 10.0),),
-                    new Text(
-                      "\tmac address : ${scanResults.bleDevice.macAddress}",
-                      style: new TextStyle(fontSize: 10.0),),
-                  ],
-                ),
-                new MaterialButton(
-                  onPressed: () => _onConnectButtonClick(scanResults),
-                  color: Colors.blueAccent,
-                  child: new Text(
-                    "CONNECT", style: new TextStyle(color: Colors.white),
-                  ),
-                ),
+                new Text("BleDevice : ",
+                  style: new TextStyle(
+                    fontSize: 12.0, fontWeight: FontWeight.bold,),),
+                new Text("\tname : ${scanResults.bleDevice.name}",
+                  style: new TextStyle(fontSize: 10.0),),
+                new Text(
+                  "\tmac address : ${scanResults.bleDevice.macAddress}",
+                  style: new TextStyle(fontSize: 10.0),),
+                new Text(
+                  "\tis connected : ${scanResults.bleDevice.isConnected}",
+                  style: new TextStyle(fontSize: 10.0),),
               ],
+            ),
+            new Container(
+              margin: const EdgeInsets.only(top: 12.0),
+              child: new Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  new Container (
+                    margin: const EdgeInsets.only(right: 12.0),
+                    child: new MaterialButton(
+                      onPressed: () => _onIsConnectedButtonClick(scanResults),
+                      color: Colors.blueAccent,
+                      child: new Text(
+                        "IS CONNECTED",
+                        style: new TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  new MaterialButton(
+                    onPressed: () => _onConnectButtonClick(scanResults),
+                    color: Colors.blueAccent,
+                    child: new Text(
+                      "CONNECT", style: new TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -82,6 +113,12 @@ class BleScanResultList extends StatelessWidget {
     }
     );
   }
+
+  _onIsConnectedButtonClick(ScanResult scanResult) =>
+      FlutterBleLib.instance
+          .isDeviceConnected(scanResult.bleDevice.macAddress)
+          .then((isConnected) =>
+          setState(() => scanResult.bleDevice.isConnected = isConnected));
 }
 
 class BleDevicesScreen extends StatefulWidget {

@@ -13,7 +13,7 @@ public class ConnectingDevicesContainer {
         disposableMap.replaceSubscription(key, subscription);
     }
 
-    public boolean removeConnectigDeviceSubscription(String key) {
+    public boolean removeConnectingDeviceSubscription(String key) {
         return disposableMap.removeSubscription(key);
     }
 
