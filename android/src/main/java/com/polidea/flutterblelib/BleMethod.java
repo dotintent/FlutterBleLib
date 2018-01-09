@@ -6,6 +6,7 @@ public interface BleMethod {
     String createClient = "createClient";
     String destroyClient = "destroyClient";
     String setLogLevel = "setLogLevel";
+    String cancelTransaction = "cancelTransaction";
     String logLevel = "logLevel";
     String state = "state";
     String startDeviceScan = "startDeviceScan";

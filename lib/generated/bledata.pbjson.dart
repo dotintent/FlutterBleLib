@@ -57,6 +57,8 @@ const BleDeviceMessage$json = const {
   '2': const [
     const {'1': 'macAddress', '3': 1, '4': 1, '5': 9, '10': 'macAddress'},
     const {'1': 'name', '3': 2, '4': 1, '5': 9, '10': 'name'},
+    const {'1': 'rssi', '3': 3, '4': 1, '5': 5, '10': 'rssi'},
+    const {'1': 'mtu', '3': 4, '4': 1, '5': 5, '10': 'mtu'},
   ],
 };
 
@@ -79,11 +81,18 @@ const ConnectToDeviceDataMessage$json = const {
   ],
 };
 
-const ConnectedDeviceMessage$json = const {
-  '1': 'ConnectedDeviceMessage',
+const SimpleTransactionMessage$json = const {
+  '1': 'SimpleTransactionMessage',
   '2': const [
-    const {'1': 'deviceMessage', '3': 1, '4': 1, '5': 11, '6': '.BleDeviceMessage', '10': 'deviceMessage'},
-    const {'1': 'rssi', '3': 2, '4': 1, '5': 5, '10': 'rssi'},
+    const {'1': 'transtationId', '3': 1, '4': 1, '5': 9, '10': 'transtationId'},
+  ],
+};
+
+const MtuRequestTransactionMessage$json = const {
+  '1': 'MtuRequestTransactionMessage',
+  '2': const [
+    const {'1': 'transtationId', '3': 1, '4': 1, '5': 9, '10': 'transtationId'},
+    const {'1': 'macAddress', '3': 2, '4': 1, '5': 9, '10': 'macAddress'},
     const {'1': 'mtu', '3': 3, '4': 1, '5': 5, '10': 'mtu'},
   ],
 };

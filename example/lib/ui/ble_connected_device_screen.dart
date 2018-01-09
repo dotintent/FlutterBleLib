@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 
 
 class BleConnectedDeviceScreen extends StatefulWidget {
-  final ConnectedDevice _connectedDevice;
+  final BleDevice _connectedDevice;
 
   BleConnectedDeviceScreen(this._connectedDevice);
 
@@ -14,7 +15,7 @@ class BleConnectedDeviceScreen extends StatefulWidget {
 }
 
 class BleConnectedDeviceScreenState extends State<StatefulWidget> {
-  final ConnectedDevice _connectedDevice;
+  final BleDevice _connectedDevice;
 
   BleConnectedDeviceScreenState(this._connectedDevice);
 
@@ -24,7 +25,7 @@ class BleConnectedDeviceScreenState extends State<StatefulWidget> {
     FlutterBleLib.instance.onDeviceConnectionChanged()
         .listen((device) =>
         setState(() =>
-        _connectedDevice.bleDevice.isConnected = device.isConnected
+        _connectedDevice.isConnected = device.isConnected
         ));
   }
 
@@ -33,7 +34,7 @@ class BleConnectedDeviceScreenState extends State<StatefulWidget> {
     return new Scaffold(
       appBar: new AppBar(
         title: new Text(
-            "${_connectedDevice.bleDevice.name ?? "Unkonwn"} device info."),
+            "${_connectedDevice.name ?? "Unkonwn"} device info."),
       ),
       body: new Container(
         child: new Container(
@@ -55,13 +56,13 @@ class BleConnectedDeviceScreenState extends State<StatefulWidget> {
               new Text("BleDevice connected device: ",
                 style: new TextStyle(
                   fontSize: 14.0, fontWeight: FontWeight.bold,),),
-              new Text("\tname : ${_connectedDevice.bleDevice.name}",
+              new Text("\tname : ${_connectedDevice.name}",
                 style: new TextStyle(fontSize: 12.0),),
               new Text(
-                "\tmac address : ${_connectedDevice.bleDevice.macAddress}",
+                "\tmac address : ${_connectedDevice.macAddress}",
                 style: new TextStyle(fontSize: 12.0),),
               new Text(
-                "\tis connected : ${_connectedDevice.bleDevice.isConnected}",
+                "\tis connected : ${_connectedDevice.isConnected}",
                 style: new TextStyle(fontSize: 12.0),),
               new Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -74,6 +75,14 @@ class BleConnectedDeviceScreenState extends State<StatefulWidget> {
                       style: new TextStyle(color: Colors.white),
                     ),
                   ),
+                  new MaterialButton(
+                    onPressed: () => _onRequestMtuButtonClick(),
+                    color: Colors.blueAccent,
+                    child: new Text(
+                      "Request Mtu",
+                      style: new TextStyle(color: Colors.white),
+                    ),
+                  ),
                 ],
               )
             ],
@@ -83,13 +92,19 @@ class BleConnectedDeviceScreenState extends State<StatefulWidget> {
     );
   }
 
+  _onRequestMtuButtonClick() {
+    FlutterBleLib.instance.requestMTUForDevice(
+        _connectedDevice.macAddress, _connectedDevice.mtu, new Uuid().v1()).then((
+        device) => print(device.mtu));
+  }
+
   _onIsConnectedButtonClick() {
     FlutterBleLib.instance
-        .isDeviceConnected(_connectedDevice.bleDevice.macAddress)
+        .isDeviceConnected(_connectedDevice.macAddress)
         .then(
             (isConnected) {
           setState(() {
-            _connectedDevice.bleDevice.isConnected = isConnected;
+            _connectedDevice.isConnected = isConnected;
           });
         }
     );

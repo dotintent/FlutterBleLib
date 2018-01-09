@@ -4,12 +4,15 @@ class BleDevice {
 
   String macAddress;
   String name;
+  int mtu;
+  int rssi;
   bool isConnected = false;
 
-  BleDevice(this.macAddress, this.name);
+  BleDevice(this.macAddress, this.name, this.mtu, this.rssi);
 
   static BleDevice fromMessage(bleData.BleDeviceMessage bleDeviceMessage) =>
-      new BleDevice(bleDeviceMessage.macAddress, bleDeviceMessage.name);
+      new BleDevice(bleDeviceMessage.macAddress, bleDeviceMessage.name,
+          bleDeviceMessage.mtu, bleDeviceMessage.rssi);
 }
 
 class ScanResult {
@@ -17,6 +20,7 @@ class ScanResult {
   int rssi;
   Int64 timestampNanos;
   int scanCallbackType;
+  int mtu;
 
   ScanResult(this.bleDevice,
       this.rssi,
@@ -42,26 +46,6 @@ class ScanResult {
     timestampNanos = scanResultItem.timestampNanos;
     scanCallbackType = scanResultItem.scanCallbackType;
   }
-}
-
-
-class ConnectedDevice {
-  BleDevice bleDevice;
-  int rssi;
-  int mtu;
-
-  ConnectedDevice(this.bleDevice,
-      this.rssi,
-      this.mtu);
-
-  static ConnectedDevice fromMessage(
-      bleData.ConnectedDeviceMessage connectedDeviceMessage) =>
-      new ConnectedDevice(
-          BleDevice.fromMessage(connectedDeviceMessage.deviceMessage)
-            ..isConnected = true,
-          connectedDeviceMessage.rssi,
-          connectedDeviceMessage.mtu
-      );
 }
 
 enum LogLevel {
