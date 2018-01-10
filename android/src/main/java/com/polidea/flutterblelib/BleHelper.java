@@ -140,7 +140,7 @@ public class BleHelper {
 
 
     public void cancelTransaction(String transactionId) {
-        transactions.removeTransactionsSubscription(transactionId);
+        transactions.removeTransactionSubscription(transactionId);
     }
 
     void setLogLevel(BleData.LogLevelMessage logLevel) {
@@ -223,8 +223,8 @@ public class BleHelper {
         scanDevicesSubscription = null;
     }
 
-    void requestMTUForDevice(byte[] mtuRequestTransactionMessageByte, final OnSuccessAction<BleData.BleDeviceMessage> onSuccessAction, final OnErrorAction onErrorAction) {
-        BleData.MtuRequestTransactionMessage mtuRequestTransactionMessage = converter.convertToMtuRequestTransactionMessage(mtuRequestTransactionMessageByte);
+    void requestMTUForDevice(byte[] mtuRequestTransactionMessageBytes, final OnSuccessAction<BleData.BleDeviceMessage> onSuccessAction, final OnErrorAction onErrorAction) {
+        BleData.RequestMtuTransactionMessage mtuRequestTransactionMessage = converter.convertToMtuRequestTransactionMessage(mtuRequestTransactionMessageBytes);
         if (mtuRequestTransactionMessage == null) {
             return;
         }
@@ -237,7 +237,7 @@ public class BleHelper {
         if (connection == null) {
             return;
         }
-        final String transactionId = mtuRequestTransactionMessage.getTranstationId();
+        final String transactionId = mtuRequestTransactionMessage.getTransactionId();
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
 
@@ -246,19 +246,18 @@ public class BleHelper {
                     .doOnUnsubscribe(new Action0() {
                         @Override
                         public void call() {
-                            onErrorAction.onError(new Throwable("Transaction cancelled"));
-                            transactions.removeTransactionsSubscription(transactionId);
+                            transactions.removeTransactionSubscription(transactionId);
                         }
                     }).subscribe(new Observer<Integer>() {
                         @Override
                         public void onCompleted() {
-                            transactions.removeTransactionsSubscription(transactionId);
+                            transactions.removeTransactionSubscription(transactionId);
                         }
 
                         @Override
                         public void onError(Throwable e) {
                             onErrorAction.onError(e);
-                            transactions.removeTransactionsSubscription(transactionId);
+                            transactions.removeTransactionSubscription(transactionId);
                         }
 
                         @Override
@@ -267,10 +266,55 @@ public class BleHelper {
                         }
                     });
 
-            transactions.replaceTransactionsSubscription(transactionId, subscription);
+            transactions.replaceTransactionSubscription(transactionId, subscription);
         } else {
             onSuccessAction.onSuccess(converter.convertToBleDeviceMessage(device.getRxBleDevice(), connection.getMtu(), NO_VALUE));
         }
+    }
+
+    void readRSSIForDevice(byte[] readRSSIForDeviceMessageBytes, final OnSuccessAction<BleData.BleDeviceMessage> onSuccessAction,
+                                  final OnErrorAction onErrorAction) {
+
+        final BleData.ReadRSSIForDeviceMessage readRSSIForDeviceMessage = converter.convertToReadRSSIForDeviceMessage(readRSSIForDeviceMessageBytes);
+        if (readRSSIForDeviceMessage == null) {
+            return;
+        }
+        final Device device = getDeviceOrReject(readRSSIForDeviceMessage.getMacAddress(), onErrorAction);
+        if (device == null) {
+            return;
+        }
+        final RxBleConnection connection = getConnectionOrReject(device, onErrorAction);
+        if (connection == null) {
+            return;
+        }
+
+        final Subscription subscription = connection
+                .readRssi()
+                .doOnUnsubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        transactions.removeTransactionSubscription(readRSSIForDeviceMessage.getTransactionId());
+                    }
+                })
+                .subscribe(new Observer<Integer>() {
+                    @Override
+                    public void onCompleted() {
+                        transactions.removeTransactionSubscription(readRSSIForDeviceMessage.getTransactionId());
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        onErrorAction.onError(e);
+                        transactions.removeTransactionSubscription(readRSSIForDeviceMessage.getTransactionId());
+                    }
+
+                    @Override
+                    public void onNext(Integer rssi) {
+                        onSuccessAction.onSuccess(converter.convertToBleDeviceMessage(device.getRxBleDevice(), NO_VALUE, rssi));
+                    }
+                });
+
+        transactions.replaceTransactionSubscription(readRSSIForDeviceMessage.getTransactionId(), subscription);
     }
 
 
@@ -362,7 +406,7 @@ public class BleHelper {
 
         // cleanServicesAndCharacteristicsForDevice(jsDevice);
         final RxBleConnection connection = connectedDevice.getConnection();
-        int mtu = connection != null ? connection.getMtu() :NO_VALUE;
+        int mtu = connection != null ? connection.getMtu() : NO_VALUE;
         deviceConnectionChangeListener.onSuccess(converter.convertToBleDeviceMessage(device, mtu, NO_VALUE));
         connectingDevices.removeConnectingDeviceSubscription(device.getMacAddress());
     }

@@ -83,6 +83,14 @@ class BleConnectedDeviceScreenState extends State<StatefulWidget> {
                       style: new TextStyle(color: Colors.white),
                     ),
                   ),
+                  new MaterialButton(
+                    onPressed: () => _onReadRSSIForDeviceClick(),
+                    color: Colors.blueAccent,
+                    child: new Text(
+                      "Read RSSI",
+                      style: new TextStyle(color: Colors.white),
+                    ),
+                  ),
                 ],
               )
             ],
@@ -90,6 +98,12 @@ class BleConnectedDeviceScreenState extends State<StatefulWidget> {
         ),
       ),
     );
+  }
+
+  _onReadRSSIForDeviceClick() {
+    FlutterBleLib.instance.readRSSIForDevice(
+        _connectedDevice.macAddress, new Uuid().v1()).then((
+        device) => print(device.mtu));
   }
 
   _onRequestMtuButtonClick() {

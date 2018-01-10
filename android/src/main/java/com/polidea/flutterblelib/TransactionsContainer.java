@@ -9,11 +9,11 @@ public class TransactionsContainer {
 
     final private DisposableMap disposableMap = new DisposableMap();
 
-    public void replaceTransactionsSubscription(String key, Subscription subscription) {
+    public void replaceTransactionSubscription(String key, Subscription subscription) {
         disposableMap.replaceSubscription(key, subscription);
     }
 
-    public boolean removeTransactionsSubscription(String key) {
+    public boolean removeTransactionSubscription(String key) {
         return disposableMap.removeSubscription(key);
     }
 

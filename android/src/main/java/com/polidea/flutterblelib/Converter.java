@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.polidea.flutterblelib.utils.StringUtils;
-import com.polidea.flutterblelib.wrapper.Device;
 import com.polidea.rxandroidble.RxBleDevice;
 import com.polidea.rxandroidble.internal.RxBleLog;
 import com.polidea.rxandroidble.scan.ScanResult;
@@ -108,9 +107,9 @@ public class Converter {
         }
     }
 
-    BleData.MtuRequestTransactionMessage convertToMtuRequestTransactionMessage(byte[] mtuRequestTransactionMessage) {
+    BleData.RequestMtuTransactionMessage convertToMtuRequestTransactionMessage(byte[] mtuRequestTransactionMessage) {
         try {
-            return BleData.MtuRequestTransactionMessage.parseFrom(mtuRequestTransactionMessage);
+            return BleData.RequestMtuTransactionMessage.parseFrom(mtuRequestTransactionMessage);
         } catch (InvalidProtocolBufferException e) {
             return null;
         }
@@ -123,5 +122,13 @@ public class Converter {
                 .setMtu(mtu)
                 .setRssi(rssi)
                 .build();
+    }
+
+    public BleData.ReadRSSIForDeviceMessage convertToReadRSSIForDeviceMessage(byte[] readRSSIForDeviceMessageBytes) {
+        try {
+            return BleData.ReadRSSIForDeviceMessage.parseFrom(readRSSIForDeviceMessageBytes);
+        } catch (InvalidProtocolBufferException e) {
+            return null;
+        }
     }
 }
