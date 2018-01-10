@@ -2,6 +2,7 @@ part of flutter_ble_lib;
 
 const _createClient = "createClient";
 const _destroyClient = "destroyClient";
+const _cancelTransaction = "cancelTransaction";
 const _setLogLevel = "setLogLevel";
 const _logLevel = "logLevel";
 const _state = "state";

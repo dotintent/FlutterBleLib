@@ -33,6 +33,8 @@ message ScanFilterMessage {
 message BleDeviceMessage {
     string macAddress = 1;
     string name = 2;
+    int32 rssi = 3;
+    int32 mtu = 4;
 }
 
 message ScanResultMessage {
@@ -49,9 +51,13 @@ message ConnectToDeviceDataMessage {
     int32 requestMtu = 3;
 }
 
-message ConnectedDeviceMessage {
-    BleDeviceMessage deviceMessage = 1;
-    int32 rssi = 2;
+message SimpleTransactionMessage {
+    string transtationId = 1;
+}
+
+message  MtuRequestTransactionMessage {
+    string transtationId = 1;
+    string macAddress = 2;
     int32 mtu = 3;
 }
 

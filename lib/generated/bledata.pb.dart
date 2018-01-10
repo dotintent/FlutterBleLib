@@ -136,6 +136,8 @@ class BleDeviceMessage extends GeneratedMessage {
   static final BuilderInfo _i = new BuilderInfo('BleDeviceMessage')
     ..a<String>(1, 'macAddress', PbFieldType.OS)
     ..a<String>(2, 'name', PbFieldType.OS)
+    ..a<int>(3, 'rssi', PbFieldType.O3)
+    ..a<int>(4, 'mtu', PbFieldType.O3)
     ..hasRequiredFields = false
   ;
 
@@ -164,6 +166,16 @@ class BleDeviceMessage extends GeneratedMessage {
   set name(String v) { $_setString(1, 2, v); }
   bool hasName() => $_has(1, 2);
   void clearName() => clearField(2);
+
+  int get rssi => $_get(2, 3, 0);
+  set rssi(int v) { $_setUnsignedInt32(2, 3, v); }
+  bool hasRssi() => $_has(2, 3);
+  void clearRssi() => clearField(3);
+
+  int get mtu => $_get(3, 4, 0);
+  set mtu(int v) { $_setUnsignedInt32(3, 4, v); }
+  bool hasMtu() => $_has(3, 4);
+  void clearMtu() => clearField(4);
 }
 
 class _ReadonlyBleDeviceMessage extends BleDeviceMessage with ReadonlyMessageMixin {}
@@ -258,39 +270,69 @@ class ConnectToDeviceDataMessage extends GeneratedMessage {
 
 class _ReadonlyConnectToDeviceDataMessage extends ConnectToDeviceDataMessage with ReadonlyMessageMixin {}
 
-class ConnectedDeviceMessage extends GeneratedMessage {
-  static final BuilderInfo _i = new BuilderInfo('ConnectedDeviceMessage')
-    ..a<BleDeviceMessage>(1, 'deviceMessage', PbFieldType.OM, BleDeviceMessage.getDefault, BleDeviceMessage.create)
-    ..a<int>(2, 'rssi', PbFieldType.O3)
+class SimpleTransactionMessage extends GeneratedMessage {
+  static final BuilderInfo _i = new BuilderInfo('SimpleTransactionMessage')
+    ..a<String>(1, 'transtationId', PbFieldType.OS)
+    ..hasRequiredFields = false
+  ;
+
+  SimpleTransactionMessage() : super();
+  SimpleTransactionMessage.fromBuffer(List<int> i, [ExtensionRegistry r = ExtensionRegistry.EMPTY]) : super.fromBuffer(i, r);
+  SimpleTransactionMessage.fromJson(String i, [ExtensionRegistry r = ExtensionRegistry.EMPTY]) : super.fromJson(i, r);
+  SimpleTransactionMessage clone() => new SimpleTransactionMessage()..mergeFromMessage(this);
+  BuilderInfo get info_ => _i;
+  static SimpleTransactionMessage create() => new SimpleTransactionMessage();
+  static PbList<SimpleTransactionMessage> createRepeated() => new PbList<SimpleTransactionMessage>();
+  static SimpleTransactionMessage getDefault() {
+    if (_defaultInstance == null) _defaultInstance = new _ReadonlySimpleTransactionMessage();
+    return _defaultInstance;
+  }
+  static SimpleTransactionMessage _defaultInstance;
+  static void $checkItem(SimpleTransactionMessage v) {
+    if (v is! SimpleTransactionMessage) checkItemFailed(v, 'SimpleTransactionMessage');
+  }
+
+  String get transtationId => $_get(0, 1, '');
+  set transtationId(String v) { $_setString(0, 1, v); }
+  bool hasTranstationId() => $_has(0, 1);
+  void clearTranstationId() => clearField(1);
+}
+
+class _ReadonlySimpleTransactionMessage extends SimpleTransactionMessage with ReadonlyMessageMixin {}
+
+class MtuRequestTransactionMessage extends GeneratedMessage {
+  static final BuilderInfo _i = new BuilderInfo('MtuRequestTransactionMessage')
+    ..a<String>(1, 'transtationId', PbFieldType.OS)
+    ..a<String>(2, 'macAddress', PbFieldType.OS)
     ..a<int>(3, 'mtu', PbFieldType.O3)
     ..hasRequiredFields = false
   ;
 
-  ConnectedDeviceMessage() : super();
-  ConnectedDeviceMessage.fromBuffer(List<int> i, [ExtensionRegistry r = ExtensionRegistry.EMPTY]) : super.fromBuffer(i, r);
-  ConnectedDeviceMessage.fromJson(String i, [ExtensionRegistry r = ExtensionRegistry.EMPTY]) : super.fromJson(i, r);
-  ConnectedDeviceMessage clone() => new ConnectedDeviceMessage()..mergeFromMessage(this);
+  MtuRequestTransactionMessage() : super();
+  MtuRequestTransactionMessage.fromBuffer(List<int> i, [ExtensionRegistry r = ExtensionRegistry.EMPTY]) : super.fromBuffer(i, r);
+  MtuRequestTransactionMessage.fromJson(String i, [ExtensionRegistry r = ExtensionRegistry.EMPTY]) : super.fromJson(i, r);
+  MtuRequestTransactionMessage clone() => new MtuRequestTransactionMessage()..mergeFromMessage(this);
   BuilderInfo get info_ => _i;
-  static ConnectedDeviceMessage create() => new ConnectedDeviceMessage();
-  static PbList<ConnectedDeviceMessage> createRepeated() => new PbList<ConnectedDeviceMessage>();
-  static ConnectedDeviceMessage getDefault() {
-    if (_defaultInstance == null) _defaultInstance = new _ReadonlyConnectedDeviceMessage();
+  static MtuRequestTransactionMessage create() => new MtuRequestTransactionMessage();
+  static PbList<MtuRequestTransactionMessage> createRepeated() => new PbList<MtuRequestTransactionMessage>();
+  static MtuRequestTransactionMessage getDefault() {
+    if (_defaultInstance == null) _defaultInstance = new _ReadonlyMtuRequestTransactionMessage();
     return _defaultInstance;
   }
-  static ConnectedDeviceMessage _defaultInstance;
-  static void $checkItem(ConnectedDeviceMessage v) {
-    if (v is! ConnectedDeviceMessage) checkItemFailed(v, 'ConnectedDeviceMessage');
+  static MtuRequestTransactionMessage _defaultInstance;
+  static void $checkItem(MtuRequestTransactionMessage v) {
+    if (v is! MtuRequestTransactionMessage) checkItemFailed(v, 'MtuRequestTransactionMessage');
   }
 
-  BleDeviceMessage get deviceMessage => $_get(0, 1, null);
-  set deviceMessage(BleDeviceMessage v) { setField(1, v); }
-  bool hasDeviceMessage() => $_has(0, 1);
-  void clearDeviceMessage() => clearField(1);
+  String get transtationId => $_get(0, 1, '');
+  set transtationId(String v) { $_setString(0, 1, v); }
+  bool hasTranstationId() => $_has(0, 1);
+  void clearTranstationId() => clearField(1);
 
-  int get rssi => $_get(1, 2, 0);
-  set rssi(int v) { $_setUnsignedInt32(1, 2, v); }
-  bool hasRssi() => $_has(1, 2);
-  void clearRssi() => clearField(2);
+  String get macAddress => $_get(1, 2, '');
+  set macAddress(String v) { $_setString(1, 2, v); }
+  bool hasMacAddress() => $_has(1, 2);
+  void clearMacAddress() => clearField(2);
 
   int get mtu => $_get(2, 3, 0);
   set mtu(int v) { $_setUnsignedInt32(2, 3, v); }
@@ -298,5 +340,5 @@ class ConnectedDeviceMessage extends GeneratedMessage {
   void clearMtu() => clearField(3);
 }
 
-class _ReadonlyConnectedDeviceMessage extends ConnectedDeviceMessage with ReadonlyMessageMixin {}
+class _ReadonlyMtuRequestTransactionMessage extends MtuRequestTransactionMessage with ReadonlyMessageMixin {}
 

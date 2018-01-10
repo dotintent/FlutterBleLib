@@ -71,6 +71,10 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                 bleHelper.destroyClient();
                 return;
             }
+            case BleMethod.cancelTransaction: {
+                bleHelper.cancelTransaction(call.arguments.toString());
+                return;
+            }
             case BleMethod.setLogLevel: {
                 bleHelper.setLogLevel(BleData.LogLevelMessage.valueOf(call.arguments.toString()));
                 return;
@@ -101,6 +105,10 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                 bleHelper.stopDeviceScan();
                 return;
             }
+            case BleMethod.requestMTUForDevice: {
+                requestMTUForDevice(call, result);
+                return;
+            }
             case BleMethod.connectToDevice: {
                 connectToDevice(call, result);
                 return;
@@ -113,6 +121,25 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                 result.notImplemented();
 
         }
+    }
+
+    private void requestMTUForDevice(MethodCall call, final Result result) {
+
+        final byte[] scanResultMessageByte = call.arguments();
+        bleHelper.requestMTUForDevice(scanResultMessageByte,
+                new OnSuccessAction<BleData.BleDeviceMessage>() {
+                    @Override
+                    public void onSuccess(BleData.BleDeviceMessage bleDeviceMessage) {
+                        result.success(bleDeviceMessage.toByteArray());
+                    }
+                },
+                new OnErrorAction() {
+                    @Override
+                    public void onError(Throwable t) {
+                        result.error("Request Mtu For Device error", t.getMessage(), t);
+                    }
+                }
+        );
     }
 
     private void startDeviceScan(MethodCall call, final Result result) {
@@ -138,9 +165,9 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
         final byte[] connectToDeviceDataMessageByte = call.arguments();
         bleHelper.connectToDevice(
                 connectToDeviceDataMessageByte,
-                new OnSuccessAction<BleData.ConnectedDeviceMessage>() {
+                new OnSuccessAction<BleData.BleDeviceMessage>() {
                     @Override
-                    public void onSuccess(BleData.ConnectedDeviceMessage connectedDeviceMessage) {
+                    public void onSuccess(BleData.BleDeviceMessage connectedDeviceMessage) {
                         result.success(connectedDeviceMessage.toByteArray());
                     }
                 },

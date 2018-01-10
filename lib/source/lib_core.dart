@@ -2,6 +2,8 @@ part of flutter_ble_lib;
 
 class FlutterBleLib {
 
+  static const int _minMTU = 23;
+  static const int _maxMTU = 517;
   static const int _unknownRssi = -1;
   static FlutterBleLib _newInstance = new FlutterBleLib._();
 
@@ -35,6 +37,12 @@ class FlutterBleLib {
 
   Future<Null> destroyClient() =>
       _mainMethodChannel.invokeMethod(_destroyClient);
+
+  Future<Null> cancelTransaction(String transactionId) =>
+      _mainMethodChannel.invokeMethod(_cancelTransaction,
+          bleData.SimpleTransactionMessage.create()
+            ..transtationId = transactionId
+      );
 
   Future<Null> setLogLevel(LogLevel logLevel) =>
       _mainMethodChannel.invokeMethod(
@@ -98,7 +106,7 @@ class FlutterBleLib {
   Future<Null> stopDeviceScan() =>
       _mainMethodChannel.invokeMethod(_stopDeviceScan);
 
-  Future<ConnectedDevice> connectToDevice(String macAddress,
+  Future<BleDevice> connectToDevice(String macAddress,
       {bool isAutoConnect,
         int requestMtu}) async {
     bleData.ConnectToDeviceDataMessage connectToDeviceDataMessage
@@ -109,9 +117,9 @@ class FlutterBleLib {
     return await _mainMethodChannel.invokeMethod(
         _connectToDevice, connectToDeviceDataMessage.writeToBuffer())
         .then((byteData) =>
-    new bleData.ConnectedDeviceMessage.fromBuffer(byteData))
-        .then((connectedDeviceMessage) =>
-        ConnectedDevice.fromMessage(connectedDeviceMessage));
+    new bleData.BleDeviceMessage.fromBuffer(byteData))
+        .then((bleDeviceMessage) =>
+        BleDevice.fromMessage(bleDeviceMessage));
   }
 
   Future<bool> isDeviceConnected(String macAddress) {
@@ -125,4 +133,20 @@ class FlutterBleLib {
         .map((bleDeviceMessage) =>
         BleDevice.fromMessage(bleDeviceMessage));
   }
+
+  Future<BleDevice> requestMTUForDevice(String macAddress, int mtu,
+      String transactionId) async {
+    bleData.MtuRequestTransactionMessage mtuRequestTransactionMessage
+    = bleData.MtuRequestTransactionMessage.create()
+      ..transtationId = transactionId
+      ..macAddress = macAddress
+      ..mtu = mtu < _minMTU ? _minMTU : mtu > _maxMTU ? _minMTU : mtu;
+    return await _mainMethodChannel.invokeMethod(
+        _requestMTUForDevice, mtuRequestTransactionMessage.writeToBuffer())
+        .then((byteData) =>
+    new bleData.BleDeviceMessage.fromBuffer(byteData))
+        .then((bleDeviceMessage) =>
+        BleDevice.fromMessage(bleDeviceMessage));
+  }
+
 }

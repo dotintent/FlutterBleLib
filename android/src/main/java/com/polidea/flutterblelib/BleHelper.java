@@ -6,14 +6,17 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.polidea.flutterblelib.exception.ConnectionNotFoundException;
 import com.polidea.flutterblelib.exception.RxBleDeviceNotFoundException;
 import com.polidea.flutterblelib.listener.BluetoothStateChangeListener;
 import com.polidea.flutterblelib.listener.DeviceConnectionChangeListener;
 import com.polidea.flutterblelib.listener.OnErrorAction;
 import com.polidea.flutterblelib.listener.OnSuccessAction;
 import com.polidea.flutterblelib.utils.StringUtils;
+import com.polidea.flutterblelib.wrapper.Device;
 import com.polidea.rxandroidble.RxBleAdapterStateObservable;
 import com.polidea.rxandroidble.RxBleClient;
 import com.polidea.rxandroidble.RxBleConnection;
@@ -29,11 +32,15 @@ import rx.functions.Action1;
 import rx.functions.Func1;
 
 public class BleHelper {
+    private static final int NO_VALUE = -1;
+
     private final Converter converter;
 
     private final ConnectedDeviceContainer connectedDevices;
 
     private final ConnectingDevicesContainer connectingDevices;
+
+    private final TransactionsContainer transactions = new TransactionsContainer();
 
     private final Context context;
 
@@ -54,7 +61,7 @@ public class BleHelper {
     BleHelper(Context context) {
         this.context = context;
         stringUtils = new StringUtils();
-        converter = new Converter();
+        converter = new Converter(stringUtils);
         connectedDevices = new ConnectedDeviceContainer();
         connectingDevices = new ConnectingDevicesContainer();
     }
@@ -131,6 +138,11 @@ public class BleHelper {
                 );
     }
 
+
+    public void cancelTransaction(String transactionId) {
+        transactions.removeTransactionsSubscription(transactionId);
+    }
+
     void setLogLevel(BleData.LogLevelMessage logLevel) {
         currentLogLevel = converter.convertLogLevelMessageToInt(logLevel);
         RxBleClient.setLogLevel(currentLogLevel);
@@ -140,7 +152,7 @@ public class BleHelper {
         success.onSuccess(converter.convertIntToLogLevel(currentLogLevel));
     }
 
-    public void state(OnSuccessAction<BleData.BluetoothStateMessage> result) {
+    void state(OnSuccessAction<BleData.BluetoothStateMessage> result) {
         result.onSuccess(getCurrentState());
     }
 
@@ -211,9 +223,59 @@ public class BleHelper {
         scanDevicesSubscription = null;
     }
 
+    void requestMTUForDevice(byte[] mtuRequestTransactionMessageByte, final OnSuccessAction<BleData.BleDeviceMessage> onSuccessAction, final OnErrorAction onErrorAction) {
+        BleData.MtuRequestTransactionMessage mtuRequestTransactionMessage = converter.convertToMtuRequestTransactionMessage(mtuRequestTransactionMessageByte);
+        if (mtuRequestTransactionMessage == null) {
+            return;
+        }
+        final Device device = getDeviceOrReject(mtuRequestTransactionMessage.getMacAddress(), onErrorAction);
+        if (device == null) {
+            return;
+        }
+
+        final RxBleConnection connection = getConnectionOrReject(device, onErrorAction);
+        if (connection == null) {
+            return;
+        }
+        final String transactionId = mtuRequestTransactionMessage.getTranstationId();
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+
+            final Subscription subscription = connection
+                    .requestMtu(mtuRequestTransactionMessage.getMtu())
+                    .doOnUnsubscribe(new Action0() {
+                        @Override
+                        public void call() {
+                            onErrorAction.onError(new Throwable("Transaction cancelled"));
+                            transactions.removeTransactionsSubscription(transactionId);
+                        }
+                    }).subscribe(new Observer<Integer>() {
+                        @Override
+                        public void onCompleted() {
+                            transactions.removeTransactionsSubscription(transactionId);
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            onErrorAction.onError(e);
+                            transactions.removeTransactionsSubscription(transactionId);
+                        }
+
+                        @Override
+                        public void onNext(Integer integer) {
+                            onSuccessAction.onSuccess(converter.convertToBleDeviceMessage(device.getRxBleDevice(), integer, NO_VALUE));
+                        }
+                    });
+
+            transactions.replaceTransactionsSubscription(transactionId, subscription);
+        } else {
+            onSuccessAction.onSuccess(converter.convertToBleDeviceMessage(device.getRxBleDevice(), connection.getMtu(), NO_VALUE));
+        }
+    }
+
 
     void connectToDevice(byte[] connectToDeviceDataMessageByte,
-                         final OnSuccessAction<BleData.ConnectedDeviceMessage> success,
+                         final OnSuccessAction<BleData.BleDeviceMessage> success,
                          final OnErrorAction error) {
 
         if (!isRxBleDeviceReady(error)) {
@@ -237,7 +299,7 @@ public class BleHelper {
     }
 
     private void saveConnectToDevice(final RxBleDevice device, boolean autoConnect, final int requestMtu,
-                                     final OnSuccessAction<BleData.ConnectedDeviceMessage> success, final OnErrorAction error) {
+                                     final OnSuccessAction<BleData.BleDeviceMessage> success, final OnErrorAction error) {
         Observable<RxBleConnection> connect = device
                 .establishConnection(autoConnect)
                 .doOnUnsubscribe(new Action0() {
@@ -281,16 +343,10 @@ public class BleHelper {
 
                     @Override
                     public void onNext(RxBleConnection connection) {
-                        BleData.ConnectedDeviceMessage connectedDeviceMessage = BleData.ConnectedDeviceMessage.newBuilder()
-                                .setDeviceMessage(BleData.BleDeviceMessage.newBuilder()
-                                        .setMacAddress(stringUtils.safeNullInstance(device.getMacAddress()))
-                                        .setName(stringUtils.safeNullInstance(device.getName()))
-                                )
-                                .setMtu(connection.getMtu())
-                                .setRssi(-1)
-                                .build();
-                        connectedDevices.put(device.getMacAddress(), connectedDeviceMessage);
-                        success.onSuccess(connectedDeviceMessage);
+
+                        Device deviceWrapper = new Device(device, connection);
+                        connectedDevices.put(device.getMacAddress(), deviceWrapper);
+                        success.onSuccess(converter.convertToBleDeviceMessage(device, requestMtu, NO_VALUE));
                     }
                 });
 
@@ -299,13 +355,15 @@ public class BleHelper {
 
 
     private void onDeviceDisconnected(RxBleDevice device) {
-        final BleData.ConnectedDeviceMessage connectedDevice = connectedDevices.remove(device.getMacAddress());
+        final Device connectedDevice = connectedDevices.remove(device.getMacAddress());
         if (connectedDevice == null) {
             return;
         }
 
         // cleanServicesAndCharacteristicsForDevice(jsDevice);
-        deviceConnectionChangeListener.onSuccess(connectedDevice.getDeviceMessage());
+        final RxBleConnection connection = connectedDevice.getConnection();
+        int mtu = connection != null ? connection.getMtu() :NO_VALUE;
+        deviceConnectionChangeListener.onSuccess(converter.convertToBleDeviceMessage(device, mtu, NO_VALUE));
         connectingDevices.removeConnectingDeviceSubscription(device.getMacAddress());
     }
 
@@ -323,5 +381,26 @@ public class BleHelper {
         boolean connected = device.getConnectionState()
                 .equals(RxBleConnection.RxBleConnectionState.CONNECTED);
         onSuccessAction.onSuccess(connected);
+    }
+
+    @Nullable
+    private RxBleConnection getConnectionOrReject(@NonNull final Device device,
+                                                  @NonNull OnErrorAction onErrorAction) {
+        final RxBleConnection connection = device.getConnection();
+        if (connection == null) {
+            onErrorAction.onError(new ConnectionNotFoundException("Could not find connection for : " + device.getRxBleDevice().getMacAddress()));
+            return null;
+        }
+        return connection;
+    }
+
+
+    private Device getDeviceOrReject(final String deviceId, OnErrorAction onErrorAction) {
+        final Device device = connectedDevices.get(deviceId);
+        if (device == null) {
+            onErrorAction.onError(new RxBleDeviceNotFoundException(deviceId));
+            return null;
+        }
+        return device;
     }
 }

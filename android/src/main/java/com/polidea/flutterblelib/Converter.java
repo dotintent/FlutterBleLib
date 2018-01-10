@@ -4,12 +4,20 @@ package com.polidea.flutterblelib;
 import android.support.annotation.Nullable;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.polidea.flutterblelib.utils.StringUtils;
+import com.polidea.flutterblelib.wrapper.Device;
 import com.polidea.rxandroidble.RxBleDevice;
 import com.polidea.rxandroidble.internal.RxBleLog;
 import com.polidea.rxandroidble.scan.ScanResult;
 import com.polidea.rxandroidble.scan.ScanSettings;
 
 public class Converter {
+
+    private final StringUtils stringUtils;
+
+    public Converter(StringUtils stringUtils) {
+        this.stringUtils = stringUtils;
+    }
 
     ScanSettings convertToScanSettings(byte[] bytes) {
         try {
@@ -63,13 +71,13 @@ public class Converter {
     }
 
     int convertLogLevelMessageToInt(BleData.LogLevelMessage logLevel) {
-        switch (logLevel){
+        switch (logLevel) {
             case VERBOSE:
                 return RxBleLog.VERBOSE;
             case DEBUG:
                 return RxBleLog.DEBUG;
             case INFO:
-            return RxBleLog.INFO;
+                return RxBleLog.INFO;
             case WARNING:
                 return RxBleLog.WARN;
             case ERROR:
@@ -82,13 +90,13 @@ public class Converter {
     }
 
     BleData.LogLevelMessage convertIntToLogLevel(int logLevel) {
-        switch (logLevel){
+        switch (logLevel) {
             case RxBleLog.VERBOSE:
                 return BleData.LogLevelMessage.VERBOSE;
             case RxBleLog.DEBUG:
                 return BleData.LogLevelMessage.DEBUG;
             case RxBleLog.INFO:
-            return BleData.LogLevelMessage.INFO;
+                return BleData.LogLevelMessage.INFO;
             case RxBleLog.WARN:
                 return BleData.LogLevelMessage.WARNING;
             case RxBleLog.ERROR:
@@ -98,5 +106,22 @@ public class Converter {
             default:
                 return BleData.LogLevelMessage.UNRECOGNIZED;
         }
+    }
+
+    BleData.MtuRequestTransactionMessage convertToMtuRequestTransactionMessage(byte[] mtuRequestTransactionMessage) {
+        try {
+            return BleData.MtuRequestTransactionMessage.parseFrom(mtuRequestTransactionMessage);
+        } catch (InvalidProtocolBufferException e) {
+            return null;
+        }
+    }
+
+    BleData.BleDeviceMessage convertToBleDeviceMessage(RxBleDevice device, int mtu, int rssi) {
+        return BleData.BleDeviceMessage.newBuilder()
+                .setMacAddress(stringUtils.safeNullInstance(device.getMacAddress()))
+                .setName(stringUtils.safeNullInstance(device.getName()))
+                .setMtu(mtu)
+                .setRssi(rssi)
+                .build();
     }
 }
