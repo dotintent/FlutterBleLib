@@ -4,6 +4,8 @@ package com.polidea.flutterblelib.wrapper;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.support.annotation.NonNull;
 
+import com.polidea.flutterblelib.utils.IdGenerator;
+import com.polidea.flutterblelib.utils.IdGeneratorKey;
 import com.polidea.rxandroidble.internal.RxBleLog;
 
 import java.util.UUID;
@@ -14,15 +16,15 @@ public class Characteristic {
 
     private Service service;
     private BluetoothGattCharacteristic characteristic;
-    private String id;
+    private int id;
 
     public Characteristic(@NonNull Service service, @NonNull BluetoothGattCharacteristic characteristic) {
         this.service = service;
         this.characteristic = characteristic;
-        this.id = UUID.randomUUID().toString();
+        this.id = IdGenerator.getIdForKey(new IdGeneratorKey(service.getDevice().getRxBleDevice(), characteristic.getUuid(), characteristic.getInstanceId()));
     }
 
-    public String getId() {
+    public int getId() {
         return this.id;
     }
 

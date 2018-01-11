@@ -5,16 +5,20 @@ import android.support.annotation.Nullable;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.polidea.flutterblelib.utils.StringUtils;
+import com.polidea.flutterblelib.wrapper.Device;
+import com.polidea.rxandroidble.RxBleConnection;
 import com.polidea.rxandroidble.RxBleDevice;
 import com.polidea.rxandroidble.internal.RxBleLog;
 import com.polidea.rxandroidble.scan.ScanResult;
 import com.polidea.rxandroidble.scan.ScanSettings;
 
-public class Converter {
+class Converter {
+
+    private static final int NO_VALUE = -1;
 
     private final StringUtils stringUtils;
 
-    public Converter(StringUtils stringUtils) {
+    Converter(StringUtils stringUtils) {
         this.stringUtils = stringUtils;
     }
 
@@ -53,10 +57,6 @@ public class Converter {
         } catch (InvalidProtocolBufferException e) {
             return null;
         }
-    }
-
-    BleData.BleDeviceMessage convertToBleDeviceMessage(RxBleDevice rxBleDevice) {
-        return BleData.BleDeviceMessage.newBuilder().setMacAddress(rxBleDevice.getMacAddress()).build();
     }
 
     @Nullable
@@ -115,6 +115,23 @@ public class Converter {
         }
     }
 
+    BleData.BleDeviceMessage convertToBleDeviceMessage(Device device) {
+        final RxBleDevice rxBleDevice = device.getRxBleDevice();
+        if (rxBleDevice == null) {
+            return null;
+        }
+        final RxBleConnection rxBleConnection = device.getConnection();
+        if (rxBleConnection == null) {
+            return convertToBleDeviceMessage(rxBleDevice, NO_VALUE, NO_VALUE);
+        }
+        return convertToBleDeviceMessage(rxBleDevice, rxBleConnection.getMtu(), NO_VALUE);
+
+    }
+
+    BleData.BleDeviceMessage convertToBleDeviceMessage(RxBleDevice rxBleDevice) {
+        return convertToBleDeviceMessage(rxBleDevice, NO_VALUE, NO_VALUE);
+    }
+
     BleData.BleDeviceMessage convertToBleDeviceMessage(RxBleDevice device, int mtu, int rssi) {
         return BleData.BleDeviceMessage.newBuilder()
                 .setMacAddress(stringUtils.safeNullInstance(device.getMacAddress()))
@@ -124,7 +141,7 @@ public class Converter {
                 .build();
     }
 
-    public BleData.ReadRSSIForDeviceMessage convertToReadRSSIForDeviceMessage(byte[] readRSSIForDeviceMessageBytes) {
+    BleData.ReadRSSIForDeviceMessage convertToReadRSSIForDeviceMessage(byte[] readRSSIForDeviceMessageBytes) {
         try {
             return BleData.ReadRSSIForDeviceMessage.parseFrom(readRSSIForDeviceMessageBytes);
         } catch (InvalidProtocolBufferException e) {
