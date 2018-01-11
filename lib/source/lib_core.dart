@@ -41,7 +41,7 @@ class FlutterBleLib {
   Future<Null> cancelTransaction(String transactionId) =>
       _mainMethodChannel.invokeMethod(_cancelTransaction,
           bleData.SimpleTransactionMessage.create()
-            ..transtationId = transactionId
+            ..transactionId = transactionId
       );
 
   Future<Null> setLogLevel(LogLevel logLevel) =>
@@ -136,13 +136,27 @@ class FlutterBleLib {
 
   Future<BleDevice> requestMTUForDevice(String macAddress, int mtu,
       String transactionId) async {
-    bleData.MtuRequestTransactionMessage mtuRequestTransactionMessage
-    = bleData.MtuRequestTransactionMessage.create()
-      ..transtationId = transactionId
+    bleData.RequestMtuTransactionMessage requestMtuTransactionMessage
+    = bleData.RequestMtuTransactionMessage.create()
+      ..transactionId = transactionId
       ..macAddress = macAddress
       ..mtu = mtu < _minMTU ? _minMTU : mtu > _maxMTU ? _minMTU : mtu;
     return await _mainMethodChannel.invokeMethod(
-        _requestMTUForDevice, mtuRequestTransactionMessage.writeToBuffer())
+        _requestMTUForDevice, requestMtuTransactionMessage.writeToBuffer())
+        .then((byteData) =>
+    new bleData.BleDeviceMessage.fromBuffer(byteData))
+        .then((bleDeviceMessage) =>
+        BleDevice.fromMessage(bleDeviceMessage));
+  }
+
+  Future<BleDevice> readRSSIForDevice(String macAddress,
+      String transactionId) async {
+    bleData.ReadRSSIForDeviceMessage readRSSIForDeviceMessage
+    = bleData.ReadRSSIForDeviceMessage.create()
+      ..transactionId = transactionId
+      ..macAddress = macAddress;
+    return await _mainMethodChannel.invokeMethod(
+        _readRSSIForDevice, readRSSIForDeviceMessage.writeToBuffer())
         .then((byteData) =>
     new bleData.BleDeviceMessage.fromBuffer(byteData))
         .then((bleDeviceMessage) =>

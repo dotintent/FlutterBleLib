@@ -272,7 +272,7 @@ class _ReadonlyConnectToDeviceDataMessage extends ConnectToDeviceDataMessage wit
 
 class SimpleTransactionMessage extends GeneratedMessage {
   static final BuilderInfo _i = new BuilderInfo('SimpleTransactionMessage')
-    ..a<String>(1, 'transtationId', PbFieldType.OS)
+    ..a<String>(1, 'transactionId', PbFieldType.OS)
     ..hasRequiredFields = false
   ;
 
@@ -292,42 +292,42 @@ class SimpleTransactionMessage extends GeneratedMessage {
     if (v is! SimpleTransactionMessage) checkItemFailed(v, 'SimpleTransactionMessage');
   }
 
-  String get transtationId => $_get(0, 1, '');
-  set transtationId(String v) { $_setString(0, 1, v); }
-  bool hasTranstationId() => $_has(0, 1);
-  void clearTranstationId() => clearField(1);
+  String get transactionId => $_get(0, 1, '');
+  set transactionId(String v) { $_setString(0, 1, v); }
+  bool hasTransactionId() => $_has(0, 1);
+  void clearTransactionId() => clearField(1);
 }
 
 class _ReadonlySimpleTransactionMessage extends SimpleTransactionMessage with ReadonlyMessageMixin {}
 
-class MtuRequestTransactionMessage extends GeneratedMessage {
-  static final BuilderInfo _i = new BuilderInfo('MtuRequestTransactionMessage')
-    ..a<String>(1, 'transtationId', PbFieldType.OS)
+class RequestMtuTransactionMessage extends GeneratedMessage {
+  static final BuilderInfo _i = new BuilderInfo('RequestMtuTransactionMessage')
+    ..a<String>(1, 'transactionId', PbFieldType.OS)
     ..a<String>(2, 'macAddress', PbFieldType.OS)
     ..a<int>(3, 'mtu', PbFieldType.O3)
     ..hasRequiredFields = false
   ;
 
-  MtuRequestTransactionMessage() : super();
-  MtuRequestTransactionMessage.fromBuffer(List<int> i, [ExtensionRegistry r = ExtensionRegistry.EMPTY]) : super.fromBuffer(i, r);
-  MtuRequestTransactionMessage.fromJson(String i, [ExtensionRegistry r = ExtensionRegistry.EMPTY]) : super.fromJson(i, r);
-  MtuRequestTransactionMessage clone() => new MtuRequestTransactionMessage()..mergeFromMessage(this);
+  RequestMtuTransactionMessage() : super();
+  RequestMtuTransactionMessage.fromBuffer(List<int> i, [ExtensionRegistry r = ExtensionRegistry.EMPTY]) : super.fromBuffer(i, r);
+  RequestMtuTransactionMessage.fromJson(String i, [ExtensionRegistry r = ExtensionRegistry.EMPTY]) : super.fromJson(i, r);
+  RequestMtuTransactionMessage clone() => new RequestMtuTransactionMessage()..mergeFromMessage(this);
   BuilderInfo get info_ => _i;
-  static MtuRequestTransactionMessage create() => new MtuRequestTransactionMessage();
-  static PbList<MtuRequestTransactionMessage> createRepeated() => new PbList<MtuRequestTransactionMessage>();
-  static MtuRequestTransactionMessage getDefault() {
-    if (_defaultInstance == null) _defaultInstance = new _ReadonlyMtuRequestTransactionMessage();
+  static RequestMtuTransactionMessage create() => new RequestMtuTransactionMessage();
+  static PbList<RequestMtuTransactionMessage> createRepeated() => new PbList<RequestMtuTransactionMessage>();
+  static RequestMtuTransactionMessage getDefault() {
+    if (_defaultInstance == null) _defaultInstance = new _ReadonlyRequestMtuTransactionMessage();
     return _defaultInstance;
   }
-  static MtuRequestTransactionMessage _defaultInstance;
-  static void $checkItem(MtuRequestTransactionMessage v) {
-    if (v is! MtuRequestTransactionMessage) checkItemFailed(v, 'MtuRequestTransactionMessage');
+  static RequestMtuTransactionMessage _defaultInstance;
+  static void $checkItem(RequestMtuTransactionMessage v) {
+    if (v is! RequestMtuTransactionMessage) checkItemFailed(v, 'RequestMtuTransactionMessage');
   }
 
-  String get transtationId => $_get(0, 1, '');
-  set transtationId(String v) { $_setString(0, 1, v); }
-  bool hasTranstationId() => $_has(0, 1);
-  void clearTranstationId() => clearField(1);
+  String get transactionId => $_get(0, 1, '');
+  set transactionId(String v) { $_setString(0, 1, v); }
+  bool hasTransactionId() => $_has(0, 1);
+  void clearTransactionId() => clearField(1);
 
   String get macAddress => $_get(1, 2, '');
   set macAddress(String v) { $_setString(1, 2, v); }
@@ -340,5 +340,41 @@ class MtuRequestTransactionMessage extends GeneratedMessage {
   void clearMtu() => clearField(3);
 }
 
-class _ReadonlyMtuRequestTransactionMessage extends MtuRequestTransactionMessage with ReadonlyMessageMixin {}
+class _ReadonlyRequestMtuTransactionMessage extends RequestMtuTransactionMessage with ReadonlyMessageMixin {}
+
+class ReadRSSIForDeviceMessage extends GeneratedMessage {
+  static final BuilderInfo _i = new BuilderInfo('ReadRSSIForDeviceMessage')
+    ..a<String>(1, 'transactionId', PbFieldType.OS)
+    ..a<String>(2, 'macAddress', PbFieldType.OS)
+    ..hasRequiredFields = false
+  ;
+
+  ReadRSSIForDeviceMessage() : super();
+  ReadRSSIForDeviceMessage.fromBuffer(List<int> i, [ExtensionRegistry r = ExtensionRegistry.EMPTY]) : super.fromBuffer(i, r);
+  ReadRSSIForDeviceMessage.fromJson(String i, [ExtensionRegistry r = ExtensionRegistry.EMPTY]) : super.fromJson(i, r);
+  ReadRSSIForDeviceMessage clone() => new ReadRSSIForDeviceMessage()..mergeFromMessage(this);
+  BuilderInfo get info_ => _i;
+  static ReadRSSIForDeviceMessage create() => new ReadRSSIForDeviceMessage();
+  static PbList<ReadRSSIForDeviceMessage> createRepeated() => new PbList<ReadRSSIForDeviceMessage>();
+  static ReadRSSIForDeviceMessage getDefault() {
+    if (_defaultInstance == null) _defaultInstance = new _ReadonlyReadRSSIForDeviceMessage();
+    return _defaultInstance;
+  }
+  static ReadRSSIForDeviceMessage _defaultInstance;
+  static void $checkItem(ReadRSSIForDeviceMessage v) {
+    if (v is! ReadRSSIForDeviceMessage) checkItemFailed(v, 'ReadRSSIForDeviceMessage');
+  }
+
+  String get transactionId => $_get(0, 1, '');
+  set transactionId(String v) { $_setString(0, 1, v); }
+  bool hasTransactionId() => $_has(0, 1);
+  void clearTransactionId() => clearField(1);
+
+  String get macAddress => $_get(1, 2, '');
+  set macAddress(String v) { $_setString(1, 2, v); }
+  bool hasMacAddress() => $_has(1, 2);
+  void clearMacAddress() => clearField(2);
+}
+
+class _ReadonlyReadRSSIForDeviceMessage extends ReadRSSIForDeviceMessage with ReadonlyMessageMixin {}
 

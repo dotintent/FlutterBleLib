@@ -109,6 +109,10 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                 requestMTUForDevice(call, result);
                 return;
             }
+            case BleMethod.readRSSIForDevice: {
+                readRSSIForDevice(call, result);
+                return;
+            }
             case BleMethod.connectToDevice: {
                 connectToDevice(call, result);
                 return;
@@ -123,10 +127,29 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
         }
     }
 
+    private void readRSSIForDevice(MethodCall call, final Result result) {
+
+        final byte[] readRSSIForDeviceByte = call.arguments();
+        bleHelper.readRSSIForDevice(readRSSIForDeviceByte,
+                new OnSuccessAction<BleData.BleDeviceMessage>() {
+                    @Override
+                    public void onSuccess(BleData.BleDeviceMessage bleDeviceMessage) {
+                        result.success(bleDeviceMessage.toByteArray());
+                    }
+                },
+                new OnErrorAction() {
+                    @Override
+                    public void onError(Throwable t) {
+                        result.error("Request Mtu For Device error", t.getMessage(), t);
+                    }
+                }
+        );
+    }
+
     private void requestMTUForDevice(MethodCall call, final Result result) {
 
-        final byte[] scanResultMessageByte = call.arguments();
-        bleHelper.requestMTUForDevice(scanResultMessageByte,
+        final byte[] mtuRequestTransactionMessageByte = call.arguments();
+        bleHelper.requestMTUForDevice(mtuRequestTransactionMessageByte,
                 new OnSuccessAction<BleData.BleDeviceMessage>() {
                     @Override
                     public void onSuccess(BleData.BleDeviceMessage bleDeviceMessage) {

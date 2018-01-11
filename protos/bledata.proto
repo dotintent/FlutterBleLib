@@ -52,13 +52,18 @@ message ConnectToDeviceDataMessage {
 }
 
 message SimpleTransactionMessage {
-    string transtationId = 1;
+    string transactionId = 1;
 }
 
-message  MtuRequestTransactionMessage {
-    string transtationId = 1;
+message  RequestMtuTransactionMessage {
+    string transactionId = 1;
     string macAddress = 2;
     int32 mtu = 3;
+}
+
+message  ReadRSSIForDeviceMessage {
+    string transactionId = 1;
+    string macAddress = 2;
 }
 
 enum LogLevelMessage {
