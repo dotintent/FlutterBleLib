@@ -6,6 +6,9 @@ import android.bluetooth.BluetoothGattService;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.polidea.flutterblelib.utils.IdGenerator;
+import com.polidea.flutterblelib.utils.IdGeneratorKey;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -15,15 +18,15 @@ public class Service {
 
     private Device device;
     private BluetoothGattService service;
-    private String id;
+    private int id;
 
     public Service(@NonNull Device device, @NonNull BluetoothGattService service) {
         this.device = device;
         this.service = service;
-        this.id = UUID.randomUUID().toString();
+        this.id = IdGenerator.getIdForKey(new IdGeneratorKey(device.getRxBleDevice(), service.getUuid(), service.getInstanceId()));
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 

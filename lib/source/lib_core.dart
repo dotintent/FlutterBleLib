@@ -163,4 +163,20 @@ class FlutterBleLib {
         BleDevice.fromMessage(bleDeviceMessage));
   }
 
+  Future<BleDevice> cancelDeviceConnection(String macAddress) async {
+    return await _mainMethodChannel.invokeMethod(_cancelDeviceConnection, macAddress)
+        .then((byteData) =>
+    new bleData.BleDeviceMessage.fromBuffer(byteData))
+        .then((bleDeviceMessage) =>
+        BleDevice.fromMessage(bleDeviceMessage));
+  }
+
+  Future<BleDevice>  discoverAllServicesAndCharacteristicsForDevice(String macAddress) async {
+    return await _mainMethodChannel.invokeMethod(_discoverAllServicesAndCharacteristicsForDevice, macAddress)
+        .then((byteData) =>
+    new bleData.BleDeviceMessage.fromBuffer(byteData))
+        .then((bleDeviceMessage) =>
+        BleDevice.fromMessage(bleDeviceMessage));
+  }
+
 }

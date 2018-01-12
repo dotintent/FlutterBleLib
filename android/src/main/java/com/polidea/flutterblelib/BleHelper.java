@@ -2,12 +2,15 @@ package com.polidea.flutterblelib;
 
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.SparseArray;
 
 import com.polidea.flutterblelib.exception.ConnectionNotFoundException;
 import com.polidea.flutterblelib.exception.RxBleDeviceNotFoundException;
@@ -16,13 +19,19 @@ import com.polidea.flutterblelib.listener.DeviceConnectionChangeListener;
 import com.polidea.flutterblelib.listener.OnErrorAction;
 import com.polidea.flutterblelib.listener.OnSuccessAction;
 import com.polidea.flutterblelib.utils.StringUtils;
+import com.polidea.flutterblelib.wrapper.Characteristic;
 import com.polidea.flutterblelib.wrapper.Device;
+import com.polidea.flutterblelib.wrapper.Service;
 import com.polidea.rxandroidble.RxBleAdapterStateObservable;
 import com.polidea.rxandroidble.RxBleClient;
 import com.polidea.rxandroidble.RxBleConnection;
 import com.polidea.rxandroidble.RxBleDevice;
+import com.polidea.rxandroidble.RxBleDeviceServices;
 import com.polidea.rxandroidble.internal.RxBleLog;
 import com.polidea.rxandroidble.scan.ScanResult;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import rx.Observable;
 import rx.Observer;
@@ -39,6 +48,10 @@ public class BleHelper {
     private final ConnectedDeviceContainer connectedDevices;
 
     private final ConnectingDevicesContainer connectingDevices;
+
+    private SparseArray<Service> discoveredServices = new SparseArray<>();
+
+    private SparseArray<Characteristic> discoveredCharacteristics = new SparseArray<>();
 
     private final TransactionsContainer transactions = new TransactionsContainer();
 
@@ -273,7 +286,7 @@ public class BleHelper {
     }
 
     void readRSSIForDevice(byte[] readRSSIForDeviceMessageBytes, final OnSuccessAction<BleData.BleDeviceMessage> onSuccessAction,
-                                  final OnErrorAction onErrorAction) {
+                           final OnErrorAction onErrorAction) {
 
         final BleData.ReadRSSIForDeviceMessage readRSSIForDeviceMessage = converter.convertToReadRSSIForDeviceMessage(readRSSIForDeviceMessageBytes);
         if (readRSSIForDeviceMessage == null) {
@@ -425,6 +438,71 @@ public class BleHelper {
         boolean connected = device.getConnectionState()
                 .equals(RxBleConnection.RxBleConnectionState.CONNECTED);
         onSuccessAction.onSuccess(connected);
+    }
+
+    void discoverAllServicesAndCharacteristicsForDevice(String deviceId, OnSuccessAction<BleData.BleDeviceMessage> successAction, OnErrorAction errorAction) {
+        final Device device = getDeviceOrReject(deviceId, errorAction);
+        if (device == null) {
+            return;
+        }
+
+        safeDiscoverAllServicesAndCharacteristicsForDevice(device, successAction, errorAction);
+    }
+
+    private void safeDiscoverAllServicesAndCharacteristicsForDevice(final Device device,
+                                                                    final OnSuccessAction<BleData.BleDeviceMessage> successAction,
+                                                                    final OnErrorAction errorAction) {
+        final RxBleConnection connection = getConnectionOrReject(device, errorAction);
+        if (connection == null) {
+            return;
+        }
+
+        connection
+                .discoverServices()
+                .subscribe(new Observer<RxBleDeviceServices>() {
+                    @Override
+                    public void onCompleted() {
+                        successAction.onSuccess(converter.convertToBleDeviceMessage(device));
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        errorAction.onError(e);
+                    }
+
+                    @Override
+                    public void onNext(RxBleDeviceServices rxBleDeviceServices) {
+                        ArrayList<Service> services = new ArrayList<>();
+                        for (BluetoothGattService gattService : rxBleDeviceServices.getBluetoothGattServices()) {
+                            Service service = new Service(device, gattService);
+                            discoveredServices.put(service.getId(), service);
+                            services.add(service);
+
+                            for (BluetoothGattCharacteristic gattCharacteristic : gattService.getCharacteristics()) {
+                                Characteristic characteristic = new Characteristic(service, gattCharacteristic);
+                                discoveredCharacteristics.put(characteristic.getId(), characteristic);
+                            }
+                        }
+                        device.setServices(services);
+                    }
+                });
+    }
+
+
+    void cancelDeviceConnection(String deviceId, OnSuccessAction<BleData.BleDeviceMessage> onSuccessAction, OnErrorAction onErrorAction) {
+        if (rxBleClient == null) {
+            throw new IllegalStateException("BleManager not created when tried cancel device connection");
+        }
+        final RxBleDevice device = rxBleClient.getBleDevice(deviceId);
+        if (connectingDevices.removeConnectingDeviceSubscription(deviceId) && device != null) {
+            onSuccessAction.onSuccess(converter.convertToBleDeviceMessage(device));
+        } else {
+            if (device == null) {
+                onErrorAction.onError(new RxBleDeviceNotFoundException("Not found device with id = " + deviceId));
+            } else {
+                onErrorAction.onError(new ConnectionNotFoundException("Device with id = " + deviceId + " is not connected."));
+            }
+        }
     }
 
     @Nullable

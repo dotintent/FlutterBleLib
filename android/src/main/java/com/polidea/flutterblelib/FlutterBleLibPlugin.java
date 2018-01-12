@@ -113,6 +113,10 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                 readRSSIForDevice(call, result);
                 return;
             }
+            case BleMethod.cancelDeviceConnection: {
+                cancelDeviceConnection(call, result);
+                return;
+            }
             case BleMethod.connectToDevice: {
                 connectToDevice(call, result);
                 return;
@@ -121,16 +125,55 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                 isDeviceConnected(call, result);
                 return;
             }
+            case BleMethod.discoverAllServicesAndCharacteristicsForDevice: {
+                discoverAllServicesAndCharacteristicsForDevice(call, result);
+                return;
+            }
             default:
                 result.notImplemented();
 
         }
     }
 
+    private void discoverAllServicesAndCharacteristicsForDevice(MethodCall call, final Result result) {
+        bleHelper.discoverAllServicesAndCharacteristicsForDevice(call.arguments.toString(),
+                new OnSuccessAction<BleData.BleDeviceMessage>() {
+                    @Override
+                    public void onSuccess(BleData.BleDeviceMessage bleDeviceMessage) {
+                        result.success(bleDeviceMessage.toByteArray());
+                    }
+                },
+                new OnErrorAction() {
+                    @Override
+                    public void onError(Throwable t) {
+                        result.error("Discover all services and characteristics for device error", t.getMessage(), t);
+                    }
+                }
+        );
+    }
+
+    private void cancelDeviceConnection(MethodCall call, final Result result) {
+        bleHelper.cancelDeviceConnection(call.arguments.toString(),
+                new OnSuccessAction<BleData.BleDeviceMessage>() {
+                    @Override
+                    public void onSuccess(BleData.BleDeviceMessage bleDeviceMessage) {
+                        result.success(bleDeviceMessage.toByteArray());
+                    }
+                },
+                new OnErrorAction() {
+                    @Override
+                    public void onError(Throwable t) {
+                        result.error("Request Mtu For Device error", t.getMessage(), t);
+                    }
+                }
+        );
+
+    }
+
     private void readRSSIForDevice(MethodCall call, final Result result) {
 
-        final byte[] readRSSIForDeviceByte = call.arguments();
-        bleHelper.readRSSIForDevice(readRSSIForDeviceByte,
+        final byte[] readRSSIForDeviceBytes = call.arguments();
+        bleHelper.readRSSIForDevice(readRSSIForDeviceBytes,
                 new OnSuccessAction<BleData.BleDeviceMessage>() {
                     @Override
                     public void onSuccess(BleData.BleDeviceMessage bleDeviceMessage) {
