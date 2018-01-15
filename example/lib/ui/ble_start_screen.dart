@@ -12,7 +12,7 @@ class BleStartScreen extends StatefulWidget {
 class BleStartScreenState extends State<BleStartScreen> {
 
   LogLevel _currentLogLevel = LogLevel.NONE;
-  BluetoothState _currentState = null;
+  BluetoothState _currentState = BluetoothState.POWERED_ON;
 
   @override
   Widget build(BuildContext context) {

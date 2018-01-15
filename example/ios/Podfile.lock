@@ -2,27 +2,30 @@ PODS:
   - Flutter (1.0.0)
   - flutter_ble_lib (0.0.1):
     - Flutter
+    - Protobuf (= 3.5.0)
     - RxBluetoothKit (= 4.0.1)
+  - Protobuf (3.5.0)
   - RxBluetoothKit (4.0.1):
     - RxSwift (~> 4.0.0)
   - RxSwift (4.0.0)
 
 DEPENDENCIES:
-  - Flutter (from `/Users/michalmizera/flutter/bin/cache/artifacts/engine/ios`)
-  - flutter_ble_lib (from `/Users/michalmizera/Repos/flutter-ble-lib/ios`)
+  - Flutter (from `/Users/Konrad/Library/flutterSDK/flutter/bin/cache/artifacts/engine/ios`)
+  - flutter_ble_lib (from `/Users/Konrad/flutterProject/flutter_ble_lib/ios`)
 
 EXTERNAL SOURCES:
   Flutter:
-    :path: /Users/michalmizera/flutter/bin/cache/artifacts/engine/ios
+    :path: /Users/Konrad/Library/flutterSDK/flutter/bin/cache/artifacts/engine/ios
   flutter_ble_lib:
-    :path: /Users/michalmizera/Repos/flutter-ble-lib/ios
+    :path: /Users/Konrad/flutterProject/flutter_ble_lib/ios
 
 SPEC CHECKSUMS:
-  Flutter: d674e78c937094a75ac71dd77e921e840bea3dbf
-  flutter_ble_lib: dc4aebe6410dc3d26b11f065d5a6d0d3e55eb6c5
+  Flutter: 7eb41cd1fd524b90d7f22bceb20da2c39338b089
+  flutter_ble_lib: 52d7d60587e77c813988d88468c4fd501a7c0157
+  Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
   RxBluetoothKit: 245007fd3ee50fbcbc99ed2637fa74ddb68b6cbb
   RxSwift: fd680d75283beb5e2559486f3c0ff852f0d35334
 
-PODFILE CHECKSUM: 2104703be0d806166949aa86168349846a6c9a86
+PODFILE CHECKSUM: 60265d80b65b5048dc19881b2124df71eaaf3d71
 
-COCOAPODS: 1.3.1
+COCOAPODS: 1.4.0.rc.1
