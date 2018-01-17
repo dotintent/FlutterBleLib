@@ -16,7 +16,9 @@ A new flutter plugin project.
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
   s.dependency 'RxBluetoothKit', '4.0.1'
-  
+  s.dependency 'Protobuf', '3.5.0'
+
   s.ios.deployment_target = '8.0'
+  s.pod_target_xcconfig = { 'GCC_PREPROCESSOR_DEFINITIONS' => '$(inherited) GPB_USE_PROTOBUF_FRAMEWORK_IMPORTS=1' }
 end
 

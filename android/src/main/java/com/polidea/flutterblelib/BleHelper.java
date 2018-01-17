@@ -31,7 +31,6 @@ import com.polidea.rxandroidble.internal.RxBleLog;
 import com.polidea.rxandroidble.scan.ScanResult;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import rx.Observable;
 import rx.Observer;
