@@ -59,5 +59,18 @@
     bleDataScanResultMessage.bleDeviceMessage.mtu = value[1][@"mtu"];
     return bleDataScanResultMessage;
 }
+
+
++ (BleDataBleDeviceMessage* _Nonnull) convertToBleDeviceMessage:(id _Nonnull) value {
+    BleDataBleDeviceMessage* bleDataBleDeviceMessage = [[BleDataBleDeviceMessage alloc] init];
+    bleDataBleDeviceMessage.macAddress = value[@"id"];
+    NSString* name = value[@"name"];
+    if(name != (id)[NSNull null]){
+        bleDataBleDeviceMessage.name = name;
+    }
+    bleDataBleDeviceMessage.rssi = value[@"rssi"];
+    bleDataBleDeviceMessage.mtu = value[@"mtu"];
+    return bleDataBleDeviceMessage;
+}
 @end
 

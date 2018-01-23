@@ -11,4 +11,6 @@
 
 + (BleDataScanResultMessage* _Nonnull) convertToScanResultMessage:(id _Nonnull) value;
 
++ (BleDataBleDeviceMessage* _Nonnull) convertToBleDeviceMessage:(id _Nonnull) value;
+
 @end
