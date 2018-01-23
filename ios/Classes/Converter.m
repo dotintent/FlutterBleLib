@@ -47,7 +47,16 @@
 
 + (BleDataScanResultMessage*) convertToScanResultMessage:(id _Nonnull) value {
     BleDataScanResultMessage* bleDataScanResultMessage = [[BleDataScanResultMessage alloc] init];
+    //TODO add check for value length
     bleDataScanResultMessage.rssi = value[1][@"rssi"];
+    bleDataScanResultMessage.bleDeviceMessage = [[BleDataBleDeviceMessage alloc] init];
+    bleDataScanResultMessage.bleDeviceMessage.macAddress = value[1][@"id"];
+    NSString* name = value[1][@"name"];
+    if(name != (id)[NSNull null]){
+        bleDataScanResultMessage.bleDeviceMessage.name = name;
+    }
+    bleDataScanResultMessage.bleDeviceMessage.rssi = value[1][@"rssi"];
+    bleDataScanResultMessage.bleDeviceMessage.mtu = value[1][@"mtu"];
     return bleDataScanResultMessage;
 }
 @end

@@ -74,10 +74,9 @@
   } else if([FBLState isEqualToString:call.method]) {
       [self state:result];
   } else if([FBLStartDeviceScan isEqualToString:call.method]) {
-      //[self TBD];
-      [self startDeviceScan];
+      [self startDeviceScan:result];
   } else if([FBLStopDeviceScan isEqualToString:call.method]) {
-      [self stopDeviceScan];
+      [self stopDeviceScan:result];
   } else if([FBLRequestMTUForDevice isEqualToString:call.method]) {
       //[self TBD];
   } else if([FBLReadRSSIForDevice isEqualToString:call.method]) {
@@ -154,18 +153,20 @@
     }];
 }
 
-- (void)state : (FlutterResult) result {
+- (void)state: (FlutterResult) result {
     [_manager state:^(id _Nullable state) {
         result(@([Converter convertToBleDataBluetoothStateMessage: (NSNumber*) state]));
     } ];
 }
 
-- (void) startDeviceScan {
+- (void)startDeviceScan: (FlutterResult) result {
     [_manager startDeviceScan:nil options: nil];
+    result(nil);
 }
 
-- (void)stopDeviceScan {
+- (void)stopDeviceScan: (FlutterResult) result {
     [_manager stopDeviceScan];
+    result(nil);
 }
 @end
 
@@ -182,13 +183,10 @@
 
 - (void) handleScanDevice : (BleDataScanResultMessage*) scanResultMessage {
     if (self.scanDevicesSink != nil) {
-        //TODO it is not working yet.
-//        NSMutableData* data =  [[NSMutableData alloc] initWithData: [NSKeyedArchiver archivedDataWithRootObject:scanResultMessage]];
-//        self.scanDevicesSink(data);
+        self.scanDevicesSink([FlutterStandardTypedData typedDataWithBytes:[scanResultMessage data]]);
     }
 }
 @end
-
 
 @implementation BluetoothStateHandler
 - (FlutterError*)onListenWithArguments:(id)arguments eventSink:(FlutterEventSink)eventSink {
