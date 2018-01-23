@@ -1,14 +1,14 @@
-//
-//  Converter.h
-//  flutter_ble_lib
-//
-//  Created by Konrad Krakowiak on 17/01/2018.
-//
-
 #import <Foundation/Foundation.h>
-#import "BleData/Bledata.pbobjc.h"
+#import "Bledata.pbobjc.h"
 
 @interface Converter : NSObject
 
-+ (BleDataLogLevelMessage)convertToBleDataLogLevelMessage:(NSNumber*)loglevel;
++ (BleDataLogLevelMessage)convertToBleDataLogLevelMessage:(NSNumber* _Nonnull)loglevel;
+
++ (BleDataBluetoothStateMessage)convertToBleDataBluetoothStateMessage:(NSNumber* _Nonnull)state;
+
++ (BleDataBluetoothStateMessage)convertToBleDataBluetoothStateMessageFromString:(NSString*)stateAsString;
+
++ (BleDataScanResultMessage* _Nonnull) convertToScanResultMessage:(id _Nonnull) value;
+
 @end

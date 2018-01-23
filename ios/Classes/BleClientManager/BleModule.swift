@@ -137,8 +137,8 @@ public class BleClientManager : NSObject {
 
     // Retrieve current BleManager's state.
     @objc
-    public func state(_ resolve: Resolve, reject: Reject) {
-        resolve(manager.state.asJSObject)
+    public func state(_ resolve: Resolve) {
+        resolve(manager.state.rawValue)
     }
 
     // Dispatch events when state changes.

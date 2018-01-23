@@ -88,15 +88,14 @@ class FlutterBleLib {
         subscription.cancel();
       },
     );
-
-    await _mainMethodChannel.invokeMethod(
-        _startDeviceScan, settings.writeToBuffer());
-
     subscription = _scanDevicesChanel.receiveBroadcastStream().listen(
       controller.add,
       onError: controller.addError,
       onDone: controller.close,
     );
+
+    await _mainMethodChannel.invokeMethod(
+        _startDeviceScan, settings.writeToBuffer());
 
     yield* controller.stream
         .map((List<int> data) => new bleData.ScanResultMessage.fromBuffer(data))
