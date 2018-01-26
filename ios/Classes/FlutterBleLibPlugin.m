@@ -78,15 +78,15 @@
   } else if([FBLStopDeviceScan isEqualToString:call.method]) {
       [self stopDeviceScan:result];
   } else if([FBLRequestMTUForDevice isEqualToString:call.method]) {
-      //[self TBD];
+//      [self requestMTUForDevice:result]
   } else if([FBLReadRSSIForDevice isEqualToString:call.method]) {
       //[self TBD];
   } else if([FBLConnectToDevice isEqualToString:call.method]) {
-      //[self TBD];
+      [self connectToDevice:call.arguments result:result];
   } else if([FBLCancelDeviceConnection isEqualToString:call.method]) {
       //[self TBD];
   } else if([FBLIsDeviceConnected isEqualToString:call.method]) {
-      //[self TBD];
+      [self isDeviceConnected: call.arguments result:result];
   } else if([FBLDiscoverAllServicesAndCharacteristicsForDevice isEqualToString:call.method]) {
       //[self TBD];
   } else if([FBLServicesForDevice isEqualToString:call.method]) {
@@ -167,6 +167,35 @@
 - (void)stopDeviceScan: (FlutterResult) result {
     [_manager stopDeviceScan];
     result(nil);
+}
+
+- (void) connectToDevice:(FlutterStandardTypedData*) device result: (FlutterResult) result {
+    
+    NSError *error = nil;
+    [_manager
+     connectToDevice:[[[BleDataBleDeviceMessage alloc] initWithData:[device data] error: &error] macAddress]
+     options:nil
+     resolve:^(id _Nullable device) {
+         BleDataBleDeviceMessage* bleDeviceMessage = [Converter convertToBleDeviceMessage: device];
+         result([FlutterStandardTypedData typedDataWithBytes:[bleDeviceMessage data]]);
+     }
+     reject:^(NSString * _Nullable code, NSString * _Nullable message, NSError * _Nullable error) {
+         result([FlutterError errorWithCode:code message:message details:@"connectToDevice method"]);
+     }
+    ];
+    if(error != nil) {
+        NSString *errorCodeAsString = [NSString stringWithFormat: @"%ld", (long)error.code ];
+        result([FlutterError errorWithCode : errorCodeAsString message :@"Could not parse data" details:error.localizedDescription]);
+    }
+   
+}
+
+-(void) isDeviceConnected: (NSString *) deviceId result:(FlutterResult) result {
+    [_manager isDeviceConnected:deviceId resolve:^(id _Nullable isConnected) {
+        result(isConnected);
+    } reject:^(NSString * _Nullable code, NSString * _Nullable message, NSError * _Nullable error) {
+        result([FlutterError errorWithCode:code message:message details:@"connectToDevice method"]);
+    }];
 }
 @end
 
