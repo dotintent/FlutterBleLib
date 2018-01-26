@@ -2,6 +2,7 @@ package com.polidea.flutterblelib;
 
 
 import android.content.Context;
+import android.util.Log;
 
 import com.polidea.flutterblelib.chanelhandler.BluetoothStateHandler;
 import com.polidea.flutterblelib.chanelhandler.DeviceConnectionChangedHandler;
@@ -129,6 +130,50 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                 discoverAllServicesAndCharacteristicsForDevice(call, result);
                 return;
             }
+            case BleMethod.servicesForDevice: {
+                servicesForDevice(call, result);
+                return;
+            }
+            case BleMethod.characteristicsForDevice: {
+                characteristicsForDevice(call, result);
+                return;
+            }
+            case BleMethod.characteristicsForService: {
+                characteristicsForService(call, result);
+                return;
+            }
+            case BleMethod.writeCharacteristicForDevice: {
+                writeCharacteristicForDevice(call, result);
+                return;
+            }
+            case BleMethod.writeCharacteristic: {
+                writeCharacteristic(call, result);
+                return;
+            }
+            case BleMethod.readCharacteristicForService: {
+                readCharacteristicForService(call, result);
+                return;
+            }
+            case BleMethod.readCharacteristicForDevice: {
+                readCharacteristicForDevice(call, result);
+                return;
+            }
+            case BleMethod.readCharacteristic: {
+                readCharacteristic(call, result);
+                return;
+            }
+            case BleMethod.monitorCharacteristicForDevice: {
+                monitorCharacteristicForDevice(call, result);
+                return;
+            }
+            case BleMethod.monitorCharacteristicForService: {
+                monitorCharacteristicForService(call, result);
+                return;
+            }
+            case BleMethod.monitorCharacteristic: {
+                monitorCharacteristic(call, result);
+                return;
+            }
             default:
                 result.notImplemented();
 
@@ -248,9 +293,9 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
     }
 
     private void isDeviceConnected(MethodCall call, final Result result) {
-        final String macAddressByte = call.arguments();
+        final String macAddress = call.arguments();
         bleHelper.isDeviceConnected(
-                macAddressByte,
+                macAddress,
                 new OnSuccessAction<Boolean>() {
                     @Override
                     public void onSuccess(Boolean success) {
@@ -264,6 +309,97 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                     }
                 }
         );
+    }
+
+    private void servicesForDevice(MethodCall call, final Result result) {
+        final String macAddress = call.arguments();
+        bleHelper.servicesForDevice(
+                macAddress,
+                new OnSuccessAction<BleData.ServiceMessages>() {
+                    @Override
+                    public void onSuccess(BleData.ServiceMessages serviceMessages) {
+                        result.success(serviceMessages.toByteArray());
+                    }
+                },
+                new OnErrorAction() {
+                    @Override
+                    public void onError(Throwable t) {
+                        result.error("Error occurred", t.getMessage(), t);
+                    }
+                }
+        );
+    }
+
+    private void characteristicsForDevice(MethodCall call, final Result result) {
+
+        final String macAddressByte = call.argument("deviceId");
+        final String serviceUUID = call.argument("serviceUUID");
+        bleHelper.characteristicsForDevice(macAddressByte,
+                serviceUUID,
+                new OnSuccessAction<BleData.CharacteristicMessages>() {
+                    @Override
+                    public void onSuccess(BleData.CharacteristicMessages characteristicMessages) {
+                        result.success(characteristicMessages.toByteArray());
+                    }
+                },
+                new OnErrorAction(){
+
+                    @Override
+                    public void onError(Throwable t) {
+                        result.error("Error occurred", t.getMessage(), t);
+                    }
+                }
+        );
+    }
+
+    private void characteristicsForService(MethodCall call, final Result result) {
+        bleHelper.characteristicsForService((Integer)call.arguments(),
+                new OnSuccessAction<BleData.CharacteristicMessages>() {
+                    @Override
+                    public void onSuccess(BleData.CharacteristicMessages characteristicMessages) {
+                        result.success(characteristicMessages.toByteArray());
+                    }
+                },
+                new OnErrorAction(){
+
+                    @Override
+                    public void onError(Throwable t) {
+                        result.error("Error occurred", t.getMessage(), t);
+                    }
+                }
+        );
+    }
+
+    private void writeCharacteristicForDevice(MethodCall call, final Result result) {
+        //TODO
+    }
+
+    private void writeCharacteristic(MethodCall call, final Result result) {
+        //TODO
+    }
+
+    private void readCharacteristicForDevice(MethodCall call, final Result result) {
+        //TODO
+    }
+
+    private void readCharacteristicForService(MethodCall call, final Result result) {
+        //TODO
+    }
+
+    private void readCharacteristic(MethodCall call, final Result result) {
+        //TODO
+    }
+
+    private void monitorCharacteristicForDevice(MethodCall call, final Result result) {
+        //TODO
+    }
+
+    private void monitorCharacteristicForService(MethodCall call, final Result result) {
+        //TODO
+    }
+
+    private void monitorCharacteristic(MethodCall call, final Result result) {
+        //TODO
     }
 
 }

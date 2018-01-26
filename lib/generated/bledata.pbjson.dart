@@ -105,3 +105,45 @@ const ReadRSSIForDeviceMessage$json = const {
   ],
 };
 
+const ServiceMessages$json = const {
+  '1': 'ServiceMessages',
+  '2': const [
+    const {'1': 'serviceMessages', '3': 1, '4': 3, '5': 11, '6': '.ServiceMessage', '10': 'serviceMessages'},
+  ],
+};
+
+const ServiceMessage$json = const {
+  '1': 'ServiceMessage',
+  '2': const [
+    const {'1': 'id', '3': 1, '4': 1, '5': 5, '10': 'id'},
+    const {'1': 'uuid', '3': 2, '4': 1, '5': 9, '10': 'uuid'},
+    const {'1': 'device', '3': 3, '4': 1, '5': 11, '6': '.BleDeviceMessage', '10': 'device'},
+    const {'1': 'isPrimary', '3': 4, '4': 1, '5': 8, '10': 'isPrimary'},
+  ],
+};
+
+const CharacteristicMessages$json = const {
+  '1': 'CharacteristicMessages',
+  '2': const [
+    const {'1': 'characteristicMessage', '3': 1, '4': 3, '5': 11, '6': '.CharacteristicMessage', '10': 'characteristicMessage'},
+  ],
+};
+
+const CharacteristicMessage$json = const {
+  '1': 'CharacteristicMessage',
+  '2': const [
+    const {'1': 'id', '3': 1, '4': 1, '5': 5, '10': 'id'},
+    const {'1': 'uuid', '3': 2, '4': 1, '5': 9, '10': 'uuid'},
+    const {'1': 'serviceId', '3': 3, '4': 1, '5': 5, '10': 'serviceId'},
+    const {'1': 'serviceUuid', '3': 4, '4': 1, '5': 9, '10': 'serviceUuid'},
+    const {'1': 'deviceId', '3': 5, '4': 1, '5': 9, '10': 'deviceId'},
+    const {'1': 'isReadable', '3': 6, '4': 1, '5': 8, '10': 'isReadable'},
+    const {'1': 'isWritableWithResponse', '3': 7, '4': 1, '5': 8, '10': 'isWritableWithResponse'},
+    const {'1': 'isWritableWithoutResponse', '3': 8, '4': 1, '5': 8, '10': 'isWritableWithoutResponse'},
+    const {'1': 'isNotificable', '3': 9, '4': 1, '5': 8, '10': 'isNotificable'},
+    const {'1': 'isIndicatable', '3': 10, '4': 1, '5': 8, '10': 'isIndicatable'},
+    const {'1': 'isNotifing', '3': 11, '4': 1, '5': 8, '10': 'isNotifing'},
+    const {'1': 'value', '3': 12, '4': 1, '5': 9, '10': 'value'},
+  ],
+};
+

@@ -13,6 +13,13 @@ class BleDevice {
   static BleDevice fromMessage(bleData.BleDeviceMessage bleDeviceMessage) =>
       new BleDevice(bleDeviceMessage.macAddress, bleDeviceMessage.name,
           bleDeviceMessage.mtu, bleDeviceMessage.rssi);
+
+  @override
+  String toString() {
+    return "BleDevice : [macAddress = $macAddress, name = $name, mtu = $mtu, rssi = $rssi, isConnected = $isConnected]";
+  }
+
+
 }
 
 class ScanResult {
@@ -148,5 +155,64 @@ class BluetoothStateConverter {
         throw new Exception("Invalid argument $bluetoothState");
     }
   }
+}
+
+class BleService {
+  int id;
+  String uuid;
+  BleDevice device;
+  bool isPrimary;
+
+  BleService(this.id, this.uuid, this.device, this.isPrimary);
+
+  static BleService fromMessage(bleData.ServiceMessage serviceMessage) =>
+      new BleService(
+          serviceMessage.id,
+          serviceMessage.uuid,
+          BleDevice.fromMessage(serviceMessage.device),
+          serviceMessage.isPrimary);
+
+  @override
+  String toString() {
+    return " BleD : [id = $id, uuid = $uuid, device = $device, isPrimary = $isPrimary]";
+  }
+}
+
+
+class Characteristic {
+  int id ;
+  String uuid;
+  int serviceId;
+  String serviceUuid;
+  String deviceId;
+  bool isReadable;
+  bool isWritableWithResponse;
+  bool isWritableWithoutResponse;
+  bool isNotificable;
+  bool isIndicatable0;
+  bool isNotifing;
+  String value;
+
+  Characteristic(this.id, this.uuid, this.serviceId, this.serviceUuid,
+      this.deviceId, this.isReadable, this.isWritableWithResponse,
+      this.isWritableWithoutResponse, this.isNotificable, this.isIndicatable0,
+      this.isNotifing, this.value);
+
+
+  static Characteristic fromMessage(bleData.CharacteristicMessage characteristicMessage) =>
+      new Characteristic(
+          characteristicMessage.id,
+          characteristicMessage.uuid,
+          characteristicMessage.serviceId,
+          characteristicMessage.serviceUuid,
+          characteristicMessage.deviceId,
+          characteristicMessage.isReadable,
+          characteristicMessage.isWritableWithResponse,
+          characteristicMessage.isWritableWithoutResponse,
+          characteristicMessage.isNotificable,
+          characteristicMessage.isIndicatable,
+          characteristicMessage.isNotifing,
+          characteristicMessage.value);
+
 }
 

@@ -38,6 +38,10 @@ public class Service {
         return service;
     }
 
+    public UUID getUuid() {
+        return service.getUuid();
+    }
+
     @Nullable
     public Characteristic getCharacteristicByUUID(@NonNull UUID uuid) {
         BluetoothGattCharacteristic characteristic = service.getCharacteristic(uuid);
@@ -51,5 +55,9 @@ public class Service {
             characteristics.add(new Characteristic(this, gattCharacteristic));
         }
         return characteristics;
+    }
+
+    public boolean isPrimary() {
+        return service.getType() == BluetoothGattService.SERVICE_TYPE_PRIMARY;
     }
 }
