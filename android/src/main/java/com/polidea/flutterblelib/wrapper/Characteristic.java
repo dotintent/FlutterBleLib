@@ -28,6 +28,10 @@ public class Characteristic {
         return this.id;
     }
 
+    public UUID getUUID() {
+        return characteristic.getUuid();
+    }
+
     public Service getService() {
         return service;
     }
@@ -40,7 +44,7 @@ public class Characteristic {
 
     private static String bytesToHex(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
-        for ( int j = 0; j < bytes.length; j++ ) {
+        for (int j = 0; j < bytes.length; j++) {
             int v = bytes[j] & 0xFF;
             hexChars[j * 2] = hexArray[v >>> 4];
             hexChars[j * 2 + 1] = hexArray[v & 0x0F];
@@ -57,5 +61,29 @@ public class Characteristic {
                 " Characteristic(uuid: " + characteristic.getUuid().toString() +
                 ", id: " + id +
                 ", value: " + hexValue + ")");
+    }
+
+    public boolean isReadable() {
+        return (characteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_READ) != 0;
+    }
+
+    public boolean isWritableWithResponse() {
+        return (characteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_WRITE) != 0;
+    }
+
+    public boolean isWritableWithoutResponse() {
+        return (characteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE) != 0;
+    }
+
+    public boolean isNotifiable() {
+        return (characteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_NOTIFY) != 0;
+    }
+
+    public boolean isIndicatable() {
+        return (characteristic.getProperties() & BluetoothGattCharacteristic.PROPERTY_INDICATE) != 0;
+    }
+
+    public byte[] getValue() {
+        return characteristic.getValue();
     }
 }

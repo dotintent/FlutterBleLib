@@ -178,4 +178,35 @@ class FlutterBleLib {
         BleDevice.fromMessage(bleDeviceMessage));
   }
 
+  Future<List<BleService>> servicesForDevice(String id) async {
+    return await _mainMethodChannel.invokeMethod(_servicesForDevice, id)
+        .then((byteData) =>
+    new bleData.ServiceMessages.fromBuffer(byteData))
+        .then((serviceMessages) =>
+    new List.generate(
+        serviceMessages.serviceMessages.length,
+            (int index) => BleService.fromMessage(serviceMessages.serviceMessages[index]))
+    );
+  }
+
+  Future<List<Characteristic>> characteristicsForDevice(String deviceId, String serviceUUID) async =>
+    await _invokeMethodCharacteristicFor(_characteristicsForDevice,<String, String> {
+      'deviceId': deviceId,
+      'serviceUUID': serviceUUID
+    });
+
+  Future<List<Characteristic>> characteristicsForService(int serviceIdentifier) async =>
+     await _invokeMethodCharacteristicFor(_characteristicsForService, serviceIdentifier);
+
+  Future<List<Characteristic>> _invokeMethodCharacteristicFor(String methodName, [dynamic arguments] ) {
+    return _mainMethodChannel.invokeMethod(methodName, arguments)
+        .then((byteData) =>
+    new bleData.CharacteristicMessages.fromBuffer(byteData)
+    ).then((characteristicMessages) =>
+      new List.generate(
+          characteristicMessages.characteristicMessage.length,
+              (int index) => Characteristic.fromMessage(characteristicMessages.characteristicMessage[index]))
+     );
+  }
+
 }

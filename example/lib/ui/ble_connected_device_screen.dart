@@ -110,7 +110,7 @@ class BleConnectedDeviceScreenState extends State<StatefulWidget> {
                       margin: const EdgeInsets.only(bottom: 10.0, top: 18.0,),
                       child: new MaterialButton(
                         minWidth: 400.0,
-                        onPressed: () => _onRequestMtuButtonClick(),
+                        onPressed: _onRequestMtuButtonClick,
                         color: Colors.blueAccent,
                         child: new Text(
                           "Request Mtu",
@@ -122,7 +122,7 @@ class BleConnectedDeviceScreenState extends State<StatefulWidget> {
                       margin: const EdgeInsets.only(bottom: 10.0),
                       child: new MaterialButton(
                         minWidth: 400.0,
-                        onPressed: () => _onReadRSSIForDeviceClick(),
+                        onPressed: _onReadRSSIForDeviceClick,
                         color: Colors.blueAccent,
                         child: new Text(
                           "Read RSSI",
@@ -134,10 +134,46 @@ class BleConnectedDeviceScreenState extends State<StatefulWidget> {
                       margin: const EdgeInsets.only(bottom: 10.0),
                       child: new MaterialButton(
                         minWidth: 400.0,
-                        onPressed: () => _onDiscoverAllServicesClick(),
+                        onPressed:  _onDiscoverAllServicesClick,
                         color: Colors.blueAccent,
                         child: new Text(
                           "Discover all services",
+                          style: new TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                    new Container (
+                      margin: const EdgeInsets.only(bottom: 10.0),
+                      child: new MaterialButton(
+                        minWidth: 400.0,
+                        onPressed: _onServicesForDeviceClick,
+                        color: Colors.blueAccent,
+                        child: new Text(
+                          "Services for device",
+                          style: new TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                    new Container (
+                      margin: const EdgeInsets.only(bottom: 10.0),
+                      child: new MaterialButton(
+                        minWidth: 400.0,
+                        onPressed: _onCharacteristicForDeviceClick,
+                        color: Colors.blueAccent,
+                        child: new Text(
+                          "Characteristic for device",
+                          style: new TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                    new Container (
+                      margin: const EdgeInsets.only(bottom: 10.0),
+                      child: new MaterialButton(
+                        minWidth: 400.0,
+                        onPressed: _onCharacteristicForServiceClick,
+                        color: Colors.blueAccent,
+                        child: new Text(
+                          "Characteristic for service",
                           style: new TextStyle(color: Colors.white),
                         ),
                       ),
@@ -152,7 +188,7 @@ class BleConnectedDeviceScreenState extends State<StatefulWidget> {
     );
   }
 
-  _onDiscoverAllServicesClick(){
+  _onDiscoverAllServicesClick() {
     FlutterBleLib.instance.discoverAllServicesAndCharacteristicsForDevice(
         _connectedDevice.macAddress)
         .then((device) {
@@ -161,6 +197,7 @@ class BleConnectedDeviceScreenState extends State<StatefulWidget> {
       });
     });
   }
+
   _onCancelDeviceConnection(BuildContext context) {
     FlutterBleLib.instance.cancelDeviceConnection(_connectedDevice.macAddress)
         .then((device) {
@@ -200,5 +237,31 @@ class BleConnectedDeviceScreenState extends State<StatefulWidget> {
           });
         }
     );
+  }
+
+  _onServicesForDeviceClick() {
+    FlutterBleLib.instance
+        .servicesForDevice(_connectedDevice.macAddress)
+        .then((services) {
+      print(services);
+    });
+  }
+
+
+  _onCharacteristicForDeviceClick() {
+    FlutterBleLib.instance
+        .characteristicsForDevice(_connectedDevice.macAddress, "00001800-0000-1000-8000-00805f9b34fb")
+        .then((characteristics) {
+      print(characteristics);
+    });
+  }
+
+
+  _onCharacteristicForServiceClick() {
+    FlutterBleLib.instance
+        .characteristicsForService(1)
+        .then((characteristics) {
+      print(characteristics);
+    });
   }
 }

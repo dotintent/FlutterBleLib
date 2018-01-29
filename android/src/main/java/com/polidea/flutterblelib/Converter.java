@@ -2,10 +2,14 @@ package com.polidea.flutterblelib;
 
 
 import android.support.annotation.Nullable;
+import android.util.Base64;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.polidea.flutterblelib.utils.StringUtils;
+import com.polidea.flutterblelib.utils.UUIDConverter;
+import com.polidea.flutterblelib.wrapper.Characteristic;
 import com.polidea.flutterblelib.wrapper.Device;
+import com.polidea.flutterblelib.wrapper.Service;
 import com.polidea.rxandroidble.RxBleConnection;
 import com.polidea.rxandroidble.RxBleDevice;
 import com.polidea.rxandroidble.internal.RxBleLog;
@@ -15,6 +19,7 @@ import com.polidea.rxandroidble.scan.ScanSettings;
 class Converter {
 
     private static final int NO_VALUE = -1;
+    private static final String NO_STRING_VALUE = "";
 
     private final StringUtils stringUtils;
 
@@ -147,5 +152,36 @@ class Converter {
         } catch (InvalidProtocolBufferException e) {
             return null;
         }
+    }
+
+    BleData.ServiceMessage convertToBleServiceMessage(Service service) {
+        final Device device = service.getDevice();
+        return BleData.ServiceMessage.newBuilder()
+                .setId(service.getId())
+                .setDevice(convertToBleDeviceMessage(device))
+                .setUuid(UUIDConverter.fromUUID(service.getUuid()))
+                .setIsPrimary(service.isPrimary())
+                .build();
+    }
+
+    BleData.CharacteristicMessage convertToBleCharacteristicMessage(Characteristic characteristic, byte[] value){
+        final Service service = characteristic.getService();
+        if (value == null) {
+            value = characteristic.getValue();
+        }
+        return BleData.CharacteristicMessage.newBuilder()
+                .setId(characteristic.getId())
+                .setUuid(UUIDConverter.fromUUID(characteristic.getUUID()))
+                .setServiceId(service.getId())
+                .setServiceUuid(UUIDConverter.fromUUID(service.getUuid()))
+                .setDeviceId(service.getDevice().getRxBleDevice().getMacAddress())
+                .setIsReadable(characteristic.isReadable())
+                .setIsWritableWithResponse(characteristic.isWritableWithResponse())
+                .setIsWritableWithoutResponse(characteristic.isWritableWithoutResponse())
+                .setIsNotificable(characteristic.isNotifiable())
+                .setIsIndicatable(characteristic.isIndicatable())
+                .setValue(value != null ?  Base64.encodeToString(value, Base64.NO_WRAP) : NO_STRING_VALUE)
+                .build();
+
     }
 }

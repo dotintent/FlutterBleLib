@@ -66,6 +66,36 @@ message  ReadRSSIForDeviceMessage {
     string macAddress = 2;
 }
 
+message ServiceMessages {
+    repeated ServiceMessage serviceMessages = 1;
+}
+
+message ServiceMessage {
+    int32 id = 1;
+    string uuid = 2;
+    BleDeviceMessage device = 3;
+    bool isPrimary = 4;
+}
+
+message CharacteristicMessages {
+    repeated CharacteristicMessage characteristicMessage = 1;
+}
+
+message CharacteristicMessage {
+    int32 id = 1;
+    string uuid = 2;
+    int32 serviceId = 3;
+    string serviceUuid = 4;
+    string deviceId = 5;
+    bool isReadable = 6;
+    bool isWritableWithResponse = 7;
+    bool isWritableWithoutResponse = 8;
+    bool isNotificable = 9;
+    bool isIndicatable = 10;
+    bool isNotifing =11;
+    string value = 12;
+}
+
 enum LogLevelMessage {
     VERBOSE = 0;
     DEBUG = 1;

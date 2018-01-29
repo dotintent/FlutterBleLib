@@ -14,11 +14,14 @@ import android.util.SparseArray;
 
 import com.polidea.flutterblelib.exception.ConnectionNotFoundException;
 import com.polidea.flutterblelib.exception.RxBleDeviceNotFoundException;
+import com.polidea.flutterblelib.exception.ServiceNotFoundException;
 import com.polidea.flutterblelib.listener.BluetoothStateChangeListener;
 import com.polidea.flutterblelib.listener.DeviceConnectionChangeListener;
 import com.polidea.flutterblelib.listener.OnErrorAction;
 import com.polidea.flutterblelib.listener.OnSuccessAction;
+import com.polidea.flutterblelib.utils.SafeAction;
 import com.polidea.flutterblelib.utils.StringUtils;
+import com.polidea.flutterblelib.utils.UUIDConverter;
 import com.polidea.flutterblelib.wrapper.Characteristic;
 import com.polidea.flutterblelib.wrapper.Device;
 import com.polidea.flutterblelib.wrapper.Service;
@@ -27,10 +30,13 @@ import com.polidea.rxandroidble.RxBleClient;
 import com.polidea.rxandroidble.RxBleConnection;
 import com.polidea.rxandroidble.RxBleDevice;
 import com.polidea.rxandroidble.RxBleDeviceServices;
+import com.polidea.rxandroidble.exceptions.BleServiceNotFoundException;
 import com.polidea.rxandroidble.internal.RxBleLog;
 import com.polidea.rxandroidble.scan.ScanResult;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import rx.Observable;
 import rx.Observer;
@@ -252,12 +258,13 @@ public class BleHelper {
         final String transactionId = mtuRequestTransactionMessage.getTransactionId();
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-
+            final SafeAction<BleData.BleDeviceMessage> safeAction = new SafeAction<>(onSuccessAction, onErrorAction);
             final Subscription subscription = connection
                     .requestMtu(mtuRequestTransactionMessage.getMtu())
                     .doOnUnsubscribe(new Action0() {
                         @Override
                         public void call() {
+                            safeAction.onError(new Throwable("Reject"));
                             transactions.removeTransactionSubscription(transactionId);
                         }
                     }).subscribe(new Observer<Integer>() {
@@ -300,11 +307,13 @@ public class BleHelper {
             return;
         }
 
+        final SafeAction<BleData.BleDeviceMessage> safeAction = new SafeAction<>(onSuccessAction, onErrorAction);
         final Subscription subscription = connection
                 .readRssi()
                 .doOnUnsubscribe(new Action0() {
                     @Override
                     public void call() {
+                        safeAction.onError(new Throwable("Reject"));
                         transactions.removeTransactionSubscription(readRSSIForDeviceMessage.getTransactionId());
                     }
                 })
@@ -351,16 +360,17 @@ public class BleHelper {
         }
         final boolean isAutoConnect = connectToDeviceDataMessage.getIsAutoConnect();
         final int requestMtu = connectToDeviceDataMessage.getRequestMtu();
-        saveConnectToDevice(rxBleDevice, isAutoConnect, requestMtu, success, error);
+        saveConnectToDevice(rxBleDevice, isAutoConnect, requestMtu, new SafeAction<>(success, error));
     }
 
     private void saveConnectToDevice(final RxBleDevice device, boolean autoConnect, final int requestMtu,
-                                     final OnSuccessAction<BleData.BleDeviceMessage> success, final OnErrorAction error) {
+                                     final SafeAction<BleData.BleDeviceMessage> safeAction) {
         Observable<RxBleConnection> connect = device
                 .establishConnection(autoConnect)
                 .doOnUnsubscribe(new Action0() {
                     @Override
                     public void call() {
+                        safeAction.onError(new Throwable("Reject"));
                         onDeviceDisconnected(device);
                     }
                 });
@@ -393,7 +403,7 @@ public class BleHelper {
 
                     @Override
                     public void onError(Throwable e) {
-                        error.onError(e);
+                        safeAction.onError(e);
                         onDeviceDisconnected(device);
                     }
 
@@ -402,7 +412,7 @@ public class BleHelper {
 
                         Device deviceWrapper = new Device(device, connection);
                         connectedDevices.put(device.getMacAddress(), deviceWrapper);
-                        success.onSuccess(converter.convertToBleDeviceMessage(device, requestMtu, NO_VALUE));
+                        safeAction.onSuccess(converter.convertToBleDeviceMessage(device, requestMtu, NO_VALUE));
                     }
                 });
 
@@ -445,14 +455,14 @@ public class BleHelper {
             return;
         }
 
-        safeDiscoverAllServicesAndCharacteristicsForDevice(device, successAction, errorAction);
+        safeDiscoverAllServicesAndCharacteristicsForDevice(device, new SafeAction<>(successAction, errorAction));
     }
 
     private void safeDiscoverAllServicesAndCharacteristicsForDevice(final Device device,
-                                                                    final OnSuccessAction<BleData.BleDeviceMessage> successAction,
-                                                                    final OnErrorAction errorAction) {
-        final RxBleConnection connection = getConnectionOrReject(device, errorAction);
+                                                                    final SafeAction<BleData.BleDeviceMessage> safeAction) {
+        final RxBleConnection connection = getConnectionOrReject(device, safeAction);
         if (connection == null) {
+            safeAction.onError(new ConnectionNotFoundException("Cannot find connection for : " + device.getRxBleDevice().getMacAddress()));
             return;
         }
 
@@ -461,12 +471,12 @@ public class BleHelper {
                 .subscribe(new Observer<RxBleDeviceServices>() {
                     @Override
                     public void onCompleted() {
-                        successAction.onSuccess(converter.convertToBleDeviceMessage(device));
+                        safeAction.onSuccess(converter.convertToBleDeviceMessage(device));
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        errorAction.onError(e);
+                        safeAction.onError(e);
                     }
 
                     @Override
@@ -504,6 +514,73 @@ public class BleHelper {
         }
     }
 
+    void servicesForDevice(final String deviceId, final OnSuccessAction<BleData.ServiceMessages> onSuccessAction, OnErrorAction onErrorAction) {
+        final Device device = getDeviceOrReject(deviceId, onErrorAction);
+        if (device == null) {
+            return;
+        }
+        final List<Service> services = getServicesOrReject(device, onErrorAction);
+        if (services == null) {
+            return;
+        }
+
+        final BleData.ServiceMessages.Builder builder = BleData.ServiceMessages.newBuilder();
+        for (Service service : services) {
+            builder.addServiceMessages(converter.convertToBleServiceMessage(service));
+        }
+
+        onSuccessAction.onSuccess(builder.build());
+    }
+
+    void characteristicsForDevice(final String deviceId,
+                                         final String serviceUUID,
+                                         final OnSuccessAction<BleData.CharacteristicMessages> successAction,
+                                         final OnErrorAction errorAction) {
+
+        final UUID convertedServiceUUID = UUIDConverter.convert(serviceUUID);
+        if (convertedServiceUUID == null) {
+            errorAction.onError(new Throwable("UUID conversion error"));
+            return;
+        }
+
+        final Device device = getDeviceOrReject(deviceId, errorAction);
+        if (device == null) {
+            return;
+        }
+
+        final Service service = device.getServiceByUUID(convertedServiceUUID);
+        if (service == null) {
+            errorAction.onError(new ServiceNotFoundException("Cannot find service for  UUID : " + serviceUUID));
+            return;
+        }
+
+        characteristicsForService(service, successAction);
+    }
+
+    void characteristicsForService(final int serviceIdentifier,
+                                          final OnSuccessAction<BleData.CharacteristicMessages> successAction,
+                                          final OnErrorAction errorAction) {
+        Service service = discoveredServices.get(serviceIdentifier);
+        if (service == null) {
+            errorAction.onError(new ServiceNotFoundException("Cannot find service for  service identifier : " + serviceIdentifier));
+            return;
+        }
+
+        characteristicsForService(service, successAction);
+    }
+
+    private void characteristicsForService(final Service service, final OnSuccessAction<BleData.CharacteristicMessages> successAction) {
+
+        final BleData.CharacteristicMessages.Builder builder = BleData.CharacteristicMessages.newBuilder();
+        for (Characteristic characteristic : service.getCharacteristics()) {
+            builder.addCharacteristicMessage(converter.convertToBleCharacteristicMessage(characteristic, null));
+        }
+
+        successAction.onSuccess(builder.build());
+    }
+
+
+
     @Nullable
     private RxBleConnection getConnectionOrReject(@NonNull final Device device,
                                                   @NonNull OnErrorAction onErrorAction) {
@@ -515,7 +592,18 @@ public class BleHelper {
         return connection;
     }
 
+    @Nullable
+    private List<Service> getServicesOrReject(@NonNull final Device device,
+                                              @NonNull OnErrorAction onErrorAction) {
+        final List<Service> services = device.getServices();
+        if (services == null) {
+            onErrorAction.onError(new ServiceNotFoundException(device.getRxBleDevice().getMacAddress()));
+            return null;
+        }
+        return services;
+    }
 
+    @Nullable
     private Device getDeviceOrReject(final String deviceId, OnErrorAction onErrorAction) {
         final Device device = connectedDevices.get(deviceId);
         if (device == null) {
