@@ -21,6 +21,7 @@ public interface BleMethod {
     String characteristicsForDevice = "characteristicsForDevice";
     String characteristicsForService = "characteristicsForService";
     String writeCharacteristicForDevice = "writeCharacteristicForDevice";
+    String writeCharacteristicForService = "writeCharacteristicForService";
     String writeCharacteristic = "writeCharacteristic";
     String readCharacteristicForDevice = "readCharacteristicForDevice";
     String readCharacteristicForService = "readCharacteristicForService";

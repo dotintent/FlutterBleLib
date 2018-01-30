@@ -174,7 +174,7 @@ class BleService {
 
   @override
   String toString() {
-    return " BleD : [id = $id, uuid = $uuid, device = $device, isPrimary = $isPrimary]";
+    return " BleService : [id = $id, uuid = $uuid, device = $device, isPrimary = $isPrimary]";
   }
 }
 
@@ -214,5 +214,21 @@ class Characteristic {
           characteristicMessage.isNotifing,
           characteristicMessage.value);
 
+  @override
+  String toString() {
+    return """Characteristic : [id = $id, uuid = $uuid, serviceId = $serviceId, serviceUuid = $serviceUuid, deviceId = $deviceId, flags =${_flags()}, value = $value]""";
+  }
+
+  // Method - debug only
+  String _flags() {
+    int result = 0x0;
+    if (isReadable) result = result | 0x1;
+    if (isWritableWithResponse) result = result | 0x10;
+    if (isWritableWithoutResponse) result = result | 0x100;
+    if (isNotificable) result = result | 0x1000;
+    if (isIndicatable0) result = result | 0x10000;
+    if (isNotifing) result = result | 0x100000;
+    return result.toRadixString(2);
+  }
 }
 
