@@ -191,8 +191,8 @@ class FlutterBleLib {
 
   Future<List<Characteristic>> characteristicsForDevice(String deviceId, String serviceUUID) async =>
     await _invokeMethodCharacteristicFor(_characteristicsForDevice,<String, String> {
-      'deviceId': deviceId,
-      'serviceUUID': serviceUUID
+      _deviceId: deviceId,
+      _serviceUUID : serviceUUID
     });
 
   Future<List<Characteristic>> characteristicsForService(int serviceIdentifier) async =>
@@ -209,4 +209,95 @@ class FlutterBleLib {
      );
   }
 
+  Future<Characteristic> writeCharacteristicForDevice(
+      String deviceId,
+      String serviceUUID,
+      String characteristicUUID,
+      String valueBase64,
+      bool response,
+      String transactionId,) async =>
+      await _invokeMethodWriteCharacteristic(
+          _writeCharacteristicForDevice, <String, Object>{
+        _deviceId: deviceId,
+        _serviceUUID: serviceUUID,
+        _characteristicUUID: characteristicUUID,
+        _valueBase64: valueBase64,
+        _response: response,
+        _transactionId: transactionId,
+      });
+
+
+  Future<Characteristic> writeCharacteristicForService(
+      int serviceIdentifier,
+      String characteristicUUID,
+      String valueBase64,
+      bool response,
+      String transactionId,) async =>
+      await _invokeMethodWriteCharacteristic(
+          _writeCharacteristicForDevice, <String, Object>{
+        _serviceIdentifier: serviceIdentifier,
+        _characteristicUUID: characteristicUUID,
+        _valueBase64: valueBase64,
+        _response: response,
+        _transactionId: transactionId,
+      });
+
+  Future<Characteristic> writeCharacteristic(
+      int characteristicIdentifier,
+      String valueBase64,
+      bool response,
+      String transactionId,) async =>
+      await _invokeMethodWriteCharacteristic(
+          _writeCharacteristic, <String, Object>{
+        _characteristicIdentifier: characteristicIdentifier,
+        _valueBase64: valueBase64,
+        _response: response,
+        _transactionId: transactionId,
+  });
+
+  Future<Characteristic> _invokeMethodWriteCharacteristic(String methodName, [dynamic arguments]) {
+    return _mainMethodChannel.invokeMethod(methodName, arguments)
+        .then((byteData) => new bleData.CharacteristicMessage.fromBuffer(byteData))
+        .then((characteristicMessage) => Characteristic.fromMessage(characteristicMessage));
+  }
+
+  Future<Characteristic> readCharacteristicForDevice(
+      String deviceId,
+      String serviceUUID,
+      String characteristicUUID,
+      String transactionId,) async =>
+      await _invokeMethodReadCharacteristic(
+          _readCharacteristicForDevice, <String, Object>{
+        _deviceId: deviceId,
+        _serviceUUID: serviceUUID,
+        _characteristicUUID: characteristicUUID,
+        _transactionId: transactionId,
+      });
+
+
+  Future<Characteristic> readCharacteristicForService(
+      int serviceIdentifier,
+      String characteristicUUID,
+      String transactionId,) async =>
+      await _invokeMethodWriteCharacteristic(
+          _writeCharacteristicForDevice, <String, Object>{
+        _serviceIdentifier: serviceIdentifier,
+        _characteristicUUID: characteristicUUID,
+        _transactionId: transactionId,
+      });
+
+  Future<Characteristic> readCharacteristic(
+      int characteristicIdentifier,
+      String transactionId,) async =>
+      await _invokeMethodWriteCharacteristic(
+          _writeCharacteristicForDevice, <String, Object>{
+        _characteristicIdentifier: characteristicIdentifier,
+        _transactionId: transactionId,
+      });
+
+  Future<Characteristic> _invokeMethodReadCharacteristic(String methodName, [dynamic arguments]) {
+    return _mainMethodChannel.invokeMethod(methodName, arguments)
+        .then((byteData) => new bleData.CharacteristicMessage.fromBuffer(byteData))
+        .then((characteristicMessage) => Characteristic.fromMessage(characteristicMessage));
+  }
 }

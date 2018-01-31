@@ -2,7 +2,6 @@ package com.polidea.flutterblelib;
 
 
 import android.content.Context;
-import android.util.Log;
 
 import com.polidea.flutterblelib.chanelhandler.BluetoothStateHandler;
 import com.polidea.flutterblelib.chanelhandler.DeviceConnectionChangedHandler;
@@ -144,6 +143,10 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
             }
             case BleMethod.writeCharacteristicForDevice: {
                 writeCharacteristicForDevice(call, result);
+                return;
+            }
+            case BleMethod.writeCharacteristicForService: {
+                writeCharacteristicForService(call, result);
                 return;
             }
             case BleMethod.writeCharacteristic: {
@@ -332,8 +335,8 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
 
     private void characteristicsForDevice(MethodCall call, final Result result) {
 
-        final String macAddressByte = call.argument("deviceId");
-        final String serviceUUID = call.argument("serviceUUID");
+        final String macAddressByte = call.argument(ArgKey.deviceId);
+        final String serviceUUID = call.argument(ArgKey.serviceUUID);
         bleHelper.characteristicsForDevice(macAddressByte,
                 serviceUUID,
                 new OnSuccessAction<BleData.CharacteristicMessages>() {
@@ -342,7 +345,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                         result.success(characteristicMessages.toByteArray());
                     }
                 },
-                new OnErrorAction(){
+                new OnErrorAction() {
 
                     @Override
                     public void onError(Throwable t) {
@@ -353,14 +356,14 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
     }
 
     private void characteristicsForService(MethodCall call, final Result result) {
-        bleHelper.characteristicsForService((Integer)call.arguments(),
+        bleHelper.characteristicsForService((Integer) call.arguments(),
                 new OnSuccessAction<BleData.CharacteristicMessages>() {
                     @Override
                     public void onSuccess(BleData.CharacteristicMessages characteristicMessages) {
                         result.success(characteristicMessages.toByteArray());
                     }
                 },
-                new OnErrorAction(){
+                new OnErrorAction() {
 
                     @Override
                     public void onError(Throwable t) {
@@ -371,23 +374,153 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
     }
 
     private void writeCharacteristicForDevice(MethodCall call, final Result result) {
-        //TODO
+        final String deviceId = call.argument(ArgKey.deviceId);
+        final String serviceUUID = call.argument(ArgKey.serviceUUID);
+        final String characteristicUUID = call.argument(ArgKey.characteristicUUID);
+        final String valueBase64 = call.argument(ArgKey.valueBase64);
+        final Boolean response = call.argument(ArgKey.response);
+        final String transactionId = call.argument(ArgKey.transactionId);
+        bleHelper.writeCharacteristicForDevice(
+                deviceId,
+                serviceUUID,
+                characteristicUUID,
+                valueBase64,
+                response,
+                transactionId,
+                new OnSuccessAction<BleData.CharacteristicMessage>() {
+                    @Override
+                    public void onSuccess(BleData.CharacteristicMessage characteristicMessage) {
+                        result.success(characteristicMessage.toByteArray());
+                    }
+                },
+                new OnErrorAction() {
+                    @Override
+                    public void onError(Throwable t) {
+                        result.error("Error occurred", t.getMessage(), t);
+                    }
+                }
+        );
+    }
+
+    private void writeCharacteristicForService(MethodCall call, final Result result) {
+        final int serviceIdentifier = call.argument(ArgKey.serviceIdentifier);
+        final String characteristicUUID = call.argument(ArgKey.characteristicUUID);
+        final String valueBase64 = call.argument(ArgKey.valueBase64);
+        final Boolean response = call.argument(ArgKey.response);
+        final String transactionId = call.argument(ArgKey.transactionId);
+        bleHelper.writeCharacteristicForService(
+                serviceIdentifier,
+                characteristicUUID,
+                valueBase64,
+                response,
+                transactionId,
+                new OnSuccessAction<BleData.CharacteristicMessage>() {
+                    @Override
+                    public void onSuccess(BleData.CharacteristicMessage characteristicMessage) {
+                        result.success(characteristicMessage.toByteArray());
+                    }
+                },
+                new OnErrorAction() {
+                    @Override
+                    public void onError(Throwable t) {
+                        result.error("Error occurred", t.getMessage(), t);
+                    }
+                }
+        );
     }
 
     private void writeCharacteristic(MethodCall call, final Result result) {
-        //TODO
+        final int characteristicIdentifier = call.argument(ArgKey.characteristicIdentifier);
+        final String valueBase64 = call.argument(ArgKey.valueBase64);
+        final Boolean response = call.argument(ArgKey.response);
+        final String transactionId = call.argument(ArgKey.transactionId);
+        bleHelper.writeCharacteristic(
+                characteristicIdentifier,
+                valueBase64,
+                response,
+                transactionId,
+                new OnSuccessAction<BleData.CharacteristicMessage>() {
+                    @Override
+                    public void onSuccess(BleData.CharacteristicMessage characteristicMessage) {
+                        result.success(characteristicMessage.toByteArray());
+                    }
+                },
+                new OnErrorAction() {
+                    @Override
+                    public void onError(Throwable t) {
+                        result.error("Error occurred", t.getMessage(), t);
+                    }
+                }
+        );
     }
 
     private void readCharacteristicForDevice(MethodCall call, final Result result) {
-        //TODO
+        final String deviceId = call.argument(ArgKey.deviceId);
+        final String serviceUUID = call.argument(ArgKey.serviceUUID);
+        final String characteristicUUID = call.argument(ArgKey.characteristicUUID);
+        final String transactionId = call.argument(ArgKey.transactionId);
+        bleHelper.readCharacteristicForDevice(
+                deviceId,
+                serviceUUID,
+                characteristicUUID,
+                transactionId,
+                new OnSuccessAction<BleData.CharacteristicMessage>() {
+                    @Override
+                    public void onSuccess(BleData.CharacteristicMessage characteristicMessage) {
+                        result.success(characteristicMessage.toByteArray());
+                    }
+                },
+                new OnErrorAction() {
+                    @Override
+                    public void onError(Throwable t) {
+                        result.error("Error occurred", t.getMessage(), t);
+                    }
+                }
+        );
     }
 
     private void readCharacteristicForService(MethodCall call, final Result result) {
-        //TODO
+        final int serviceIdentifier = call.argument(ArgKey.serviceIdentifier);
+        final String characteristicUUID = call.argument(ArgKey.characteristicUUID);
+        final String transactionId = call.argument(ArgKey.transactionId);
+        bleHelper.readCharacteristicForService(
+                serviceIdentifier,
+                characteristicUUID,
+                transactionId,
+                new OnSuccessAction<BleData.CharacteristicMessage>() {
+                    @Override
+                    public void onSuccess(BleData.CharacteristicMessage characteristicMessage) {
+                        result.success(characteristicMessage.toByteArray());
+                    }
+                },
+                new OnErrorAction() {
+                    @Override
+                    public void onError(Throwable t) {
+                        result.error("Error occurred", t.getMessage(), t);
+                    }
+                }
+        );
     }
 
     private void readCharacteristic(MethodCall call, final Result result) {
-        //TODO
+        final int characteristicIdentifier = call.argument(ArgKey.characteristicIdentifier);
+        final String transactionId = call.argument(ArgKey.transactionId);
+        bleHelper.readCharacteristic(
+                characteristicIdentifier,
+                transactionId,
+                new OnSuccessAction<BleData.CharacteristicMessage>() {
+                    @Override
+                    public void onSuccess(BleData.CharacteristicMessage characteristicMessage) {
+                        result.success(characteristicMessage.toByteArray());
+                    }
+                },
+                new OnErrorAction() {
+                    @Override
+                    public void onError(Throwable t) {
+                        result.error("Error occurred", t.getMessage(), t);
+                    }
+                }
+        );
     }
 
     private void monitorCharacteristicForDevice(MethodCall call, final Result result) {

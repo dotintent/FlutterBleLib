@@ -10,8 +10,10 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Base64;
 import android.util.SparseArray;
 
+import com.polidea.flutterblelib.exception.CharacteristicNotFoundException;
 import com.polidea.flutterblelib.exception.ConnectionNotFoundException;
 import com.polidea.flutterblelib.exception.RxBleDeviceNotFoundException;
 import com.polidea.flutterblelib.exception.ServiceNotFoundException;
@@ -30,7 +32,7 @@ import com.polidea.rxandroidble.RxBleClient;
 import com.polidea.rxandroidble.RxBleConnection;
 import com.polidea.rxandroidble.RxBleDevice;
 import com.polidea.rxandroidble.RxBleDeviceServices;
-import com.polidea.rxandroidble.exceptions.BleServiceNotFoundException;
+import com.polidea.rxandroidble.exceptions.BleCharacteristicNotFoundException;
 import com.polidea.rxandroidble.internal.RxBleLog;
 import com.polidea.rxandroidble.scan.ScanResult;
 
@@ -533,9 +535,9 @@ public class BleHelper {
     }
 
     void characteristicsForDevice(final String deviceId,
-                                         final String serviceUUID,
-                                         final OnSuccessAction<BleData.CharacteristicMessages> successAction,
-                                         final OnErrorAction errorAction) {
+                                  final String serviceUUID,
+                                  final OnSuccessAction<BleData.CharacteristicMessages> successAction,
+                                  final OnErrorAction errorAction) {
 
         final UUID convertedServiceUUID = UUIDConverter.convert(serviceUUID);
         if (convertedServiceUUID == null) {
@@ -558,8 +560,8 @@ public class BleHelper {
     }
 
     void characteristicsForService(final int serviceIdentifier,
-                                          final OnSuccessAction<BleData.CharacteristicMessages> successAction,
-                                          final OnErrorAction errorAction) {
+                                   final OnSuccessAction<BleData.CharacteristicMessages> successAction,
+                                   final OnErrorAction errorAction) {
         Service service = discoveredServices.get(serviceIdentifier);
         if (service == null) {
             errorAction.onError(new ServiceNotFoundException("Cannot find service for  service identifier : " + serviceIdentifier));
@@ -579,11 +581,312 @@ public class BleHelper {
         successAction.onSuccess(builder.build());
     }
 
+    void writeCharacteristicForDevice(final String deviceId,
+                                      final String serviceUUID,
+                                      final String characteristicUUID,
+                                      final String valueBase64,
+                                      final Boolean response,
+                                      final String transactionId,
+                                      final OnSuccessAction<BleData.CharacteristicMessage> successAction,
+                                      final OnErrorAction errorAction) {
 
+        final Characteristic characteristic = getCharacteristicOrReject(
+                deviceId, serviceUUID, characteristicUUID, errorAction);
+        if (characteristic == null) {
+            return;
+        }
+
+        writeCharacteristicWithValue(
+                characteristic,
+                valueBase64,
+                response,
+                transactionId,
+                successAction,
+                errorAction);
+    }
+
+    void writeCharacteristicForService(final int serviceIdentifier,
+                                       final String characteristicUUID,
+                                       final String valueBase64,
+                                       final Boolean response,
+                                       final String transactionId,
+                                       final OnSuccessAction<BleData.CharacteristicMessage> successAction,
+                                       final OnErrorAction errorAction) {
+        final Characteristic characteristic = getCharacteristicOrReject(
+                serviceIdentifier, characteristicUUID, errorAction);
+        if (characteristic == null) {
+            return;
+        }
+
+        writeCharacteristicWithValue(
+                characteristic,
+                valueBase64,
+                response,
+                transactionId,
+                successAction,
+                errorAction);
+    }
+
+    void writeCharacteristic(
+            final int characteristicIdentifier,
+            final String valueBase64,
+            final Boolean response,
+            final String transactionId,
+            final OnSuccessAction<BleData.CharacteristicMessage> successAction,
+            final OnErrorAction errorAction) {
+        final Characteristic characteristic = getCharacteristicOrReject(characteristicIdentifier, errorAction);
+        if (characteristic == null) {
+            return;
+        }
+
+        writeCharacteristicWithValue(
+                characteristic,
+                valueBase64,
+                response,
+                transactionId,
+                successAction,
+                errorAction);
+    }
+
+    private void writeCharacteristicWithValue(final Characteristic characteristic,
+                                              final String valueBase64,
+                                              final Boolean response,
+                                              final String transactionId,
+                                              final OnSuccessAction<BleData.CharacteristicMessage> successAction,
+                                              final OnErrorAction errorAction) {
+        final byte[] value;
+        try {
+            value = Base64.decode(valueBase64, Base64.NO_WRAP);
+        } catch (Throwable e) {
+            errorAction.onError(new Throwable("Invalid write data for characteristic"
+                    + UUIDConverter.fromUUID(characteristic.getNativeCharacteristic().getUuid()),
+                    e));
+            return;
+        }
+
+        characteristic.getNativeCharacteristic()
+                .setWriteType(response ?
+                        BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT :
+                        BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
+
+        safeWriteCharacteristicForDevice(
+                characteristic,
+                value,
+                transactionId,
+                new SafeAction<>(successAction, errorAction));
+    }
+
+    private void safeWriteCharacteristicForDevice(final Characteristic characteristic,
+                                                  final byte[] value,
+                                                  final String transactionId,
+                                                  final SafeAction<BleData.CharacteristicMessage> safeAction) {
+        final RxBleConnection connection = getConnectionOrReject(characteristic.getService().getDevice(), safeAction);
+        if (connection == null) {
+            return;
+        }
+        final Subscription subscription = connection
+                .writeCharacteristic(characteristic.getNativeCharacteristic(), value)
+                .doOnUnsubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        safeAction.onError(new Throwable("Canceled"));
+                        transactions.removeTransactionSubscription(transactionId);
+                    }
+                })
+                .subscribe(new Observer<byte[]>() {
+                    @Override
+                    public void onCompleted() {
+                        transactions.removeTransactionSubscription(transactionId);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        if (e instanceof BleCharacteristicNotFoundException) {
+                            safeAction.onError(new CharacteristicNotFoundException(
+                                    "Characteristic not found for :"
+                                            + UUIDConverter.fromUUID(
+                                            characteristic.getNativeCharacteristic().getUuid())
+                            ));
+                            return;
+                        }
+                        safeAction.onError(e);
+                        transactions.removeTransactionSubscription(transactionId);
+                    }
+
+                    @Override
+                    public void onNext(byte[] bytes) {
+                        characteristic.logValue("Write to", bytes);
+                        safeAction.onSuccess(converter.convertToBleCharacteristicMessage(characteristic, bytes));
+                    }
+                });
+
+        transactions.replaceTransactionSubscription(transactionId, subscription);
+    }
+
+    void readCharacteristicForDevice(final String deviceId,
+                                     final String serviceUUID,
+                                     final String characteristicUUID,
+                                     final String transactionId,
+                                     final OnSuccessAction<BleData.CharacteristicMessage> successAction,
+                                     final OnErrorAction errorAction) {
+
+        final Characteristic characteristic = getCharacteristicOrReject(
+                deviceId, serviceUUID, characteristicUUID, errorAction);
+        if (characteristic == null) {
+            return;
+        }
+
+        safeReadCharacteristicForDevice(characteristic, transactionId, new SafeAction<>(successAction, errorAction));
+    }
+
+    void readCharacteristicForService(final int serviceIdentifier,
+                                      final String characteristicUUID,
+                                      final String transactionId,
+                                      final OnSuccessAction<BleData.CharacteristicMessage> successAction,
+                                      final OnErrorAction errorAction) {
+
+        final Characteristic characteristic = getCharacteristicOrReject(
+                serviceIdentifier, characteristicUUID, errorAction);
+        if (characteristic == null) {
+            return;
+        }
+
+        safeReadCharacteristicForDevice(characteristic, transactionId, new SafeAction<>(successAction, errorAction));
+    }
+
+    void readCharacteristic(final int characteristicIdentifier,
+                            final String transactionId,
+                            final OnSuccessAction<BleData.CharacteristicMessage> successAction,
+                            final OnErrorAction errorAction) {
+
+        final Characteristic characteristic = getCharacteristicOrReject(characteristicIdentifier, errorAction);
+        if (characteristic == null) {
+            return;
+        }
+
+        safeReadCharacteristicForDevice(characteristic, transactionId, new SafeAction<>(successAction, errorAction));
+    }
+
+
+    private void safeReadCharacteristicForDevice(final Characteristic characteristic,
+                                                 final String transactionId,
+                                                 final SafeAction<BleData.CharacteristicMessage> safeAction) {
+        final RxBleConnection connection = getConnectionOrReject(characteristic.getService().getDevice(), safeAction);
+        if (connection == null) {
+            return;
+        }
+
+        final Subscription subscription = connection
+                .readCharacteristic(characteristic.getNativeCharacteristic())
+                .doOnUnsubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        safeAction.onError(new Throwable("Canceled"));
+                        transactions.removeTransactionSubscription(transactionId);
+                    }
+                })
+                .subscribe(new Observer<byte[]>() {
+                    @Override
+                    public void onCompleted() {
+                        transactions.removeTransactionSubscription(transactionId);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        if (e instanceof BleCharacteristicNotFoundException) {
+                            safeAction.onError(new CharacteristicNotFoundException(
+                                    "Characteristic not found for :"
+                                            + UUIDConverter.fromUUID(
+                                            characteristic.getNativeCharacteristic().getUuid())));
+                            return;
+                        }
+                        safeAction.onError(e);
+                        transactions.removeTransactionSubscription(transactionId);
+                    }
+
+                    @Override
+                    public void onNext(byte[] bytes) {
+                        characteristic.logValue("Read from", bytes);
+                        safeAction.onSuccess(converter.convertToBleCharacteristicMessage(characteristic, bytes));
+                    }
+                });
+
+        transactions.replaceTransactionSubscription(transactionId, subscription);
+    }
 
     @Nullable
-    private RxBleConnection getConnectionOrReject(@NonNull final Device device,
-                                                  @NonNull OnErrorAction onErrorAction) {
+    private Characteristic getCharacteristicOrReject(@NonNull final String deviceId,
+                                                     @NonNull final String serviceUUID,
+                                                     @NonNull final String characteristicUUID,
+                                                     @NonNull OnErrorAction errorAction) {
+
+        final UUID[] UUIDs = UUIDConverter.convert(serviceUUID, characteristicUUID);
+        if (UUIDs == null) {
+            errorAction.onError(new Throwable("Invalid UUIDs for service : " + serviceUUID + " and characteristic " + characteristicUUID));
+            return null;
+        }
+
+        final Device device = connectedDevices.get(deviceId);
+        if (device == null) {
+            errorAction.onError(new RxBleDeviceNotFoundException("Device not found for id : " + deviceId));
+            return null;
+        }
+
+        final Service service = device.getServiceByUUID(UUIDs[0]);
+        if (service == null) {
+            errorAction.onError(new ServiceNotFoundException("Service not found for uuid : " + serviceUUID));
+            return null;
+        }
+
+        final Characteristic characteristic = service.getCharacteristicByUUID(UUIDs[1]);
+        if (characteristic == null) {
+            errorAction.onError(new ServiceNotFoundException("Characteristic not found for uuid : " + characteristicUUID));
+            return null;
+        }
+
+        return characteristic;
+    }
+
+    @Nullable
+    private Characteristic getCharacteristicOrReject(final int serviceIdentifier,
+                                                     @NonNull final String characteristicUUID,
+                                                     @NonNull OnErrorAction errorAction) {
+
+        final UUID uuid = UUIDConverter.convert(characteristicUUID);
+        if (uuid == null) {
+            errorAction.onError(new Throwable("UUID parse exception for " + characteristicUUID));
+            return null;
+        }
+
+        final Service service = discoveredServices.get(serviceIdentifier);
+        if (service == null) {
+            errorAction.onError(new ServiceNotFoundException("Service not found for identifier " + serviceIdentifier));
+            return null;
+        }
+
+        final Characteristic characteristic = service.getCharacteristicByUUID(uuid);
+        if (characteristic == null) {
+            errorAction.onError(new CharacteristicNotFoundException("Characteristic not found for uuid " + uuid));
+            return null;
+        }
+
+        return characteristic;
+    }
+
+    private Characteristic getCharacteristicOrReject(final int characteristicIdentifier,
+                                                     OnErrorAction errorAction) {
+
+        final Characteristic characteristic = discoveredCharacteristics.get(characteristicIdentifier);
+        if (characteristic == null) {
+            errorAction.onError(new CharacteristicNotFoundException("Characteristic not found for identifier " + characteristicIdentifier));
+            return null;
+        }
+
+        return characteristic;
+    }
+
+    private RxBleConnection getConnectionOrReject(final Device device,
+                                                  OnErrorAction onErrorAction) {
         final RxBleConnection connection = device.getConnection();
         if (connection == null) {
             onErrorAction.onError(new ConnectionNotFoundException("Could not find connection for : " + device.getRxBleDevice().getMacAddress()));
