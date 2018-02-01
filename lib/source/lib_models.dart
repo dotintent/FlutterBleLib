@@ -189,13 +189,13 @@ class Characteristic {
   bool isWritableWithResponse;
   bool isWritableWithoutResponse;
   bool isNotificable;
-  bool isIndicatable0;
+  bool isIndicatable;
   bool isNotifing;
   String value;
 
   Characteristic(this.id, this.uuid, this.serviceId, this.serviceUuid,
       this.deviceId, this.isReadable, this.isWritableWithResponse,
-      this.isWritableWithoutResponse, this.isNotificable, this.isIndicatable0,
+      this.isWritableWithoutResponse, this.isNotificable, this.isIndicatable,
       this.isNotifing, this.value);
 
 
@@ -216,7 +216,7 @@ class Characteristic {
 
   @override
   String toString() {
-    return """Characteristic : [id = $id, uuid = $uuid, serviceId = $serviceId, serviceUuid = $serviceUuid, deviceId = $deviceId, flags =${_flags()}, value = $value]""";
+    return "Characteristic : [id = $id, uuid = $uuid, serviceId = $serviceId, serviceUuid = $serviceUuid, deviceId = $deviceId, flags =${_flags()}, value = $value]";
   }
 
   // Method - debug only
@@ -226,9 +226,28 @@ class Characteristic {
     if (isWritableWithResponse) result = result | 0x10;
     if (isWritableWithoutResponse) result = result | 0x100;
     if (isNotificable) result = result | 0x1000;
-    if (isIndicatable0) result = result | 0x10000;
+    if (isIndicatable) result = result | 0x10000;
     if (isNotifing) result = result | 0x100000;
     return result.toRadixString(2);
   }
 }
+class MonitorCharacteristic {
 
+  String transactionId;
+  Characteristic characteristic;
+
+  MonitorCharacteristic(String this.transactionId, this.characteristic);
+
+  static MonitorCharacteristic fromMessage(
+      bleData.MonitorCharacteristicMessage monitorCharacteristicMessage) =>
+      new MonitorCharacteristic(
+          monitorCharacteristicMessage.transactionId,
+          Characteristic.fromMessage(
+              monitorCharacteristicMessage.characteristicMessage)
+      );
+
+  @override
+  String toString() {
+    return "MonitorCharacteristic : [transactionId = $transactionId, characteristic = ${characteristic.toString()}";
+  }
+}

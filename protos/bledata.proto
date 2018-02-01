@@ -96,6 +96,11 @@ message CharacteristicMessage {
     string value = 12;
 }
 
+message MonitorCharacteristicMessage {
+    string transactionId = 1;
+    CharacteristicMessage characteristicMessage = 2;
+}
+
 enum LogLevelMessage {
     VERBOSE = 0;
     DEBUG = 1;

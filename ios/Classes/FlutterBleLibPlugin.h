@@ -16,7 +16,7 @@
 
 @end
 
-@interface DeviceConnectionChangedHandler : NSObject<FlutterStreamHandler>
+@interface DeviceConnectionChangeHandler : NSObject<FlutterStreamHandler>
 
 - (void) handleDeviceConnectionState : (BleDataBleDeviceMessage*) bleDataBleDeviceMessage;
 

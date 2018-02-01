@@ -3,16 +3,20 @@ package com.polidea.flutterblelib;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.net.wifi.aware.Characteristics;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Base64;
+import android.util.Log;
 import android.util.SparseArray;
 
+import com.polidea.flutterblelib.exception.CannotMonitorCharacteristicException;
 import com.polidea.flutterblelib.exception.CharacteristicNotFoundException;
 import com.polidea.flutterblelib.exception.ConnectionNotFoundException;
 import com.polidea.flutterblelib.exception.RxBleDeviceNotFoundException;
@@ -27,6 +31,7 @@ import com.polidea.flutterblelib.utils.UUIDConverter;
 import com.polidea.flutterblelib.wrapper.Characteristic;
 import com.polidea.flutterblelib.wrapper.Device;
 import com.polidea.flutterblelib.wrapper.Service;
+import com.polidea.rxandroidble.NotificationSetupMode;
 import com.polidea.rxandroidble.RxBleAdapterStateObservable;
 import com.polidea.rxandroidble.RxBleClient;
 import com.polidea.rxandroidble.RxBleConnection;
@@ -258,7 +263,6 @@ public class BleHelper {
             return;
         }
         final String transactionId = mtuRequestTransactionMessage.getTransactionId();
-
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             final SafeAction<BleData.BleDeviceMessage> safeAction = new SafeAction<>(onSuccessAction, onErrorAction);
             final Subscription subscription = connection
@@ -277,13 +281,13 @@ public class BleHelper {
 
                         @Override
                         public void onError(Throwable e) {
-                            onErrorAction.onError(e);
+                            safeAction.onError(e);
                             transactions.removeTransactionSubscription(transactionId);
                         }
 
                         @Override
                         public void onNext(Integer integer) {
-                            onSuccessAction.onSuccess(converter.convertToBleDeviceMessage(device.getRxBleDevice(), integer, NO_VALUE));
+                            safeAction.onSuccess(converter.convertToBleDeviceMessage(device.getRxBleDevice(), integer, NO_VALUE));
                         }
                     });
 
@@ -293,7 +297,8 @@ public class BleHelper {
         }
     }
 
-    void readRSSIForDevice(byte[] readRSSIForDeviceMessageBytes, final OnSuccessAction<BleData.BleDeviceMessage> onSuccessAction,
+    void readRSSIForDevice(byte[] readRSSIForDeviceMessageBytes,
+                           final OnSuccessAction<BleData.BleDeviceMessage> onSuccessAction,
                            final OnErrorAction onErrorAction) {
 
         final BleData.ReadRSSIForDeviceMessage readRSSIForDeviceMessage = converter.convertToReadRSSIForDeviceMessage(readRSSIForDeviceMessageBytes);
@@ -327,13 +332,13 @@ public class BleHelper {
 
                     @Override
                     public void onError(Throwable e) {
-                        onErrorAction.onError(e);
+                        safeAction.onError(e);
                         transactions.removeTransactionSubscription(readRSSIForDeviceMessage.getTransactionId());
                     }
 
                     @Override
                     public void onNext(Integer rssi) {
-                        onSuccessAction.onSuccess(converter.convertToBleDeviceMessage(device.getRxBleDevice(), NO_VALUE, rssi));
+                        safeAction.onSuccess(converter.convertToBleDeviceMessage(device.getRxBleDevice(), NO_VALUE, rssi));
                     }
                 });
 
@@ -808,6 +813,127 @@ public class BleHelper {
                     public void onNext(byte[] bytes) {
                         characteristic.logValue("Read from", bytes);
                         safeAction.onSuccess(converter.convertToBleCharacteristicMessage(characteristic, bytes));
+                    }
+                });
+
+        transactions.replaceTransactionSubscription(transactionId, subscription);
+    }
+
+    public void monitorCharacteristicForDevice(final String deviceId,
+                                               final String serviceUUID,
+                                               final String characteristicUUID,
+                                               final String transactionId,
+                                               final OnSuccessAction<BleData.MonitorCharacteristicMessage> successAction,
+                                               final OnErrorAction errorAction) {
+
+        final Characteristic characteristic = getCharacteristicOrReject(
+                deviceId, serviceUUID, characteristicUUID, errorAction);
+        if (characteristic == null) {
+            return;
+        }
+
+        safeMonitorCharacteristicForDevice(characteristic, transactionId, new SafeAction<>(successAction, errorAction));
+    }
+
+    public void monitorCharacteristicForService(final int serviceIdentifier,
+                                                final String characteristicUUID,
+                                                final String transactionId,
+                                                final OnSuccessAction<BleData.MonitorCharacteristicMessage> successAction,
+                                                final OnErrorAction errorAction) {
+
+        final Characteristic characteristic = getCharacteristicOrReject(
+                serviceIdentifier, characteristicUUID, errorAction);
+        if (characteristic == null) {
+            return;
+        }
+
+        safeMonitorCharacteristicForDevice(characteristic, transactionId, new SafeAction<>(successAction, errorAction));
+    }
+
+    public void monitorCharacteristic(final int characteristicIdentifier,
+                                      final String transactionId,
+                                      final OnSuccessAction<BleData.MonitorCharacteristicMessage> successAction,
+                                      final OnErrorAction errorAction) {
+
+        final Characteristic characteristic = getCharacteristicOrReject(characteristicIdentifier, errorAction);
+        if (characteristic == null) {
+            return;
+        }
+
+        safeMonitorCharacteristicForDevice(characteristic, transactionId, new SafeAction<>(successAction, errorAction));
+    }
+
+    private void safeMonitorCharacteristicForDevice(final Characteristic characteristic,
+                                                    final String transactionId,
+                                                    final SafeAction<BleData.MonitorCharacteristicMessage> safeAction) {
+        final RxBleConnection connection = getConnectionOrReject(characteristic.getService().getDevice(), safeAction);
+        if (connection == null) {
+            return;
+        }
+
+        final BluetoothGattCharacteristic gattCharacteristic = characteristic.getNativeCharacteristic();
+
+        final int properties = gattCharacteristic.getProperties();
+        final boolean notifications = (properties & BluetoothGattCharacteristic.PROPERTY_NOTIFY) != 0;
+        final boolean indications = (properties & BluetoothGattCharacteristic.PROPERTY_INDICATE) != 0;
+
+        final Subscription subscription = Observable.just(connection)
+                .flatMap(new Func1<RxBleConnection, Observable<Observable<byte[]>>>() {
+                    @Override
+                    public Observable<Observable<byte[]>> call(RxBleConnection connection) {
+                        if (notifications || indications) {
+                            // NotificationSetupMode.COMPAT does not write CCC Descriptor on it's own
+                            return connection.setupNotification(gattCharacteristic, NotificationSetupMode.COMPAT);
+                        }
+
+                        return Observable.error(new CannotMonitorCharacteristicException(gattCharacteristic));
+                    }
+                })
+                .flatMap(new Func1<Observable<byte[]>, Observable<byte[]>>() {
+                    @Override
+                    public Observable<byte[]> call(Observable<byte[]> observable) {
+                        BluetoothGattDescriptor cccDescriptor =
+                                gattCharacteristic.getDescriptor(Characteristic.CLIENT_CHARACTERISTIC_CONFIG_UUID);
+                        if (cccDescriptor == null) {
+                            return observable;
+                        } else {
+                            byte[] enableValue = notifications
+                                    ? BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
+                                    : BluetoothGattDescriptor.ENABLE_INDICATION_VALUE;
+                            // Keep in mind that every subscription to this observable will initiate another descriptor write
+                            return observable.mergeWith(connection.writeDescriptor(cccDescriptor, enableValue).ignoreElements());
+                        }
+                    }
+                })
+                .doOnUnsubscribe(new Action0() {
+                    @Override
+                    public void call() {
+                        safeAction.onSuccess(null);
+                        transactions.removeTransactionSubscription(transactionId);
+                    }
+                })
+                .subscribe(new Observer<byte[]>() {
+                    @Override
+                    public void onCompleted() {
+                        safeAction.onSuccess(null);
+                        transactions.removeTransactionSubscription(transactionId);
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        safeAction.onError(e);
+                        transactions.removeTransactionSubscription(transactionId);
+                    }
+
+                    @Override
+                    public void onNext(byte[] bytes) {
+                        characteristic.logValue("Notification from", bytes);
+                        BleData.MonitorCharacteristicMessage monitorCharacteristicMessage = BleData.MonitorCharacteristicMessage.newBuilder()
+                                .setTransactionId(transactionId)
+                                .setCharacteristicMessage(converter.convertToBleCharacteristicMessage(characteristic, bytes))
+                                .build();
+                        safeAction.onSuccess(monitorCharacteristicMessage);
+//                        sendEvent(Event.ReadEvent, jsResult);
                     }
                 });
 

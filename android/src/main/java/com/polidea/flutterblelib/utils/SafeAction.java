@@ -1,6 +1,5 @@
 package com.polidea.flutterblelib.utils;
 
-
 import com.polidea.flutterblelib.listener.OnErrorAction;
 import com.polidea.flutterblelib.listener.OnSuccessAction;
 
