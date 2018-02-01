@@ -112,13 +112,6 @@ class Converter {
         }
     }
 
-    BleData.RequestMtuTransactionMessage convertToMtuRequestTransactionMessage(byte[] mtuRequestTransactionMessage) {
-        try {
-            return BleData.RequestMtuTransactionMessage.parseFrom(mtuRequestTransactionMessage);
-        } catch (InvalidProtocolBufferException e) {
-            return null;
-        }
-    }
 
     BleData.BleDeviceMessage convertToBleDeviceMessage(Device device) {
         final RxBleDevice rxBleDevice = device.getRxBleDevice();
@@ -144,14 +137,6 @@ class Converter {
                 .setMtu(mtu)
                 .setRssi(rssi)
                 .build();
-    }
-
-    BleData.ReadRSSIForDeviceMessage convertToReadRSSIForDeviceMessage(byte[] readRSSIForDeviceMessageBytes) {
-        try {
-            return BleData.ReadRSSIForDeviceMessage.parseFrom(readRSSIForDeviceMessageBytes);
-        } catch (InvalidProtocolBufferException e) {
-            return null;
-        }
     }
 
     BleData.ServiceMessage convertToBleServiceMessage(Service service) {

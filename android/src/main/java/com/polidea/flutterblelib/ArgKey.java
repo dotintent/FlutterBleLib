@@ -10,4 +10,5 @@ public interface ArgKey {
     String valueBase64 = "valueBase64";
     String response = "response";
     String transactionId = "transactionId";
+    String mtu = "mtu";
 }

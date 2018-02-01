@@ -81,30 +81,6 @@ const ConnectToDeviceDataMessage$json = const {
   ],
 };
 
-const SimpleTransactionMessage$json = const {
-  '1': 'SimpleTransactionMessage',
-  '2': const [
-    const {'1': 'transactionId', '3': 1, '4': 1, '5': 9, '10': 'transactionId'},
-  ],
-};
-
-const RequestMtuTransactionMessage$json = const {
-  '1': 'RequestMtuTransactionMessage',
-  '2': const [
-    const {'1': 'transactionId', '3': 1, '4': 1, '5': 9, '10': 'transactionId'},
-    const {'1': 'macAddress', '3': 2, '4': 1, '5': 9, '10': 'macAddress'},
-    const {'1': 'mtu', '3': 3, '4': 1, '5': 5, '10': 'mtu'},
-  ],
-};
-
-const ReadRSSIForDeviceMessage$json = const {
-  '1': 'ReadRSSIForDeviceMessage',
-  '2': const [
-    const {'1': 'transactionId', '3': 1, '4': 1, '5': 9, '10': 'transactionId'},
-    const {'1': 'macAddress', '3': 2, '4': 1, '5': 9, '10': 'macAddress'},
-  ],
-};
-
 const ServiceMessages$json = const {
   '1': 'ServiceMessages',
   '2': const [

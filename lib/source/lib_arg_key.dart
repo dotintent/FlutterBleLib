@@ -8,3 +8,4 @@ const _characteristicUUID = "characteristicUUID";
 const _valueBase64 = "valueBase64";
 const _response = "response";
 const _transactionId = "transactionId";
+const _mtu = "mtu";

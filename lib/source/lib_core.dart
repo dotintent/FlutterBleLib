@@ -42,8 +42,7 @@ class FlutterBleLib {
 
   Future<Null> cancelTransaction(String transactionId) =>
       _mainMethodChannel.invokeMethod(_cancelTransaction,
-          bleData.SimpleTransactionMessage.create()
-            ..transactionId = transactionId
+          transactionId
       );
 
   Future<Null> setLogLevel(LogLevel logLevel) =>
@@ -135,29 +134,29 @@ class FlutterBleLib {
         BleDevice.fromMessage(bleDeviceMessage));
   }
 
-  Future<BleDevice> requestMTUForDevice(String macAddress, int mtu,
+  Future<BleDevice> requestMTUForDevice(String deviceId, int mtu,
       String transactionId) async {
-    bleData.RequestMtuTransactionMessage requestMtuTransactionMessage
-    = bleData.RequestMtuTransactionMessage.create()
-      ..transactionId = transactionId
-      ..macAddress = macAddress
-      ..mtu = mtu < _minMTU ? _minMTU : mtu > _maxMTU ? _minMTU : mtu;
-    return await _mainMethodChannel.invokeMethod(
-        _requestMTUForDevice, requestMtuTransactionMessage.writeToBuffer())
+    return await _mainMethodChannel.invokeMethod(_requestMTUForDevice,
+        <String, Object>{
+          _deviceId: deviceId,
+          _transactionId: transactionId,
+          _mtu: mtu < _minMTU ? _minMTU : mtu > _maxMTU ? _minMTU : mtu
+        }
+    )
         .then((byteData) =>
     new bleData.BleDeviceMessage.fromBuffer(byteData))
         .then((bleDeviceMessage) =>
         BleDevice.fromMessage(bleDeviceMessage));
   }
 
-  Future<BleDevice> readRSSIForDevice(String macAddress,
+  Future<BleDevice> readRSSIForDevice(String deviceId,
       String transactionId) async {
-    bleData.ReadRSSIForDeviceMessage readRSSIForDeviceMessage
-    = bleData.ReadRSSIForDeviceMessage.create()
-      ..transactionId = transactionId
-      ..macAddress = macAddress;
-    return await _mainMethodChannel.invokeMethod(
-        _readRSSIForDevice, readRSSIForDeviceMessage.writeToBuffer())
+    return await _mainMethodChannel.invokeMethod(_readRSSIForDevice,
+        <String, String>{
+          _deviceId: deviceId,
+          _transactionId: transactionId,
+        }
+    )
         .then((byteData) =>
     new bleData.BleDeviceMessage.fromBuffer(byteData))
         .then((bleDeviceMessage) =>
