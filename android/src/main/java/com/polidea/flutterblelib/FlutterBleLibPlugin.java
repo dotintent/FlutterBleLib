@@ -2,9 +2,11 @@ package com.polidea.flutterblelib;
 
 
 import android.content.Context;
+import android.util.Log;
 
 import com.polidea.flutterblelib.chanelhandler.BluetoothStateHandler;
 import com.polidea.flutterblelib.chanelhandler.DeviceConnectionChangedHandler;
+import com.polidea.flutterblelib.chanelhandler.MonitorCharacteristicHandler;
 import com.polidea.flutterblelib.chanelhandler.ScanDevicesHandler;
 import com.polidea.flutterblelib.listener.BluetoothStateChangeListener;
 import com.polidea.flutterblelib.listener.DeviceConnectionChangeListener;
@@ -25,6 +27,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
     private ScanDevicesHandler scanDevicesHandler;
     private BluetoothStateHandler bluetoothStateHandler;
     private DeviceConnectionChangedHandler deviceConnectionChangedHandler;
+    private MonitorCharacteristicHandler monitorCharacteristicHandler;
 
     private BleHelper bleHelper;
 
@@ -34,18 +37,21 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
         scanDevicesHandler = new ScanDevicesHandler();
         bluetoothStateHandler = new BluetoothStateHandler();
         deviceConnectionChangedHandler = new DeviceConnectionChangedHandler();
+        monitorCharacteristicHandler = new MonitorCharacteristicHandler();
     }
 
     public static void registerWith(Registrar registrar) {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), Namespace.flutter_ble_lib);
         final EventChannel scanDevicesChannel = new EventChannel(registrar.messenger(), Namespace.flutter_ble_lib_scanDevices);
         final EventChannel bluetoothStateChanel = new EventChannel(registrar.messenger(), Namespace.flutter_ble_lib_stateChange);
-        final EventChannel deviceConnectionChangedChanel = new EventChannel(registrar.messenger(), Namespace.flutter_ble_lib_deviceConnectionChanged);
+        final EventChannel deviceConnectionChangedChanel = new EventChannel(registrar.messenger(), Namespace.flutter_ble_lib_deviceConnectionChange);
+        final EventChannel monitorCharacteristicChanel = new EventChannel(registrar.messenger(), Namespace.flutter_ble_lib_monitorCharacteristicChange);
         final FlutterBleLibPlugin handler = new FlutterBleLibPlugin(registrar.activity().getApplicationContext());
         channel.setMethodCallHandler(handler);
         scanDevicesChannel.setStreamHandler(handler.scanDevicesHandler);
         bluetoothStateChanel.setStreamHandler(handler.bluetoothStateHandler);
         deviceConnectionChangedChanel.setStreamHandler(handler.deviceConnectionChangedHandler);
+        monitorCharacteristicChanel.setStreamHandler(handler.monitorCharacteristicHandler);
     }
 
     @Override
@@ -524,15 +530,74 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
     }
 
     private void monitorCharacteristicForDevice(MethodCall call, final Result result) {
-        //TODO
+        final String deviceId = call.argument(ArgKey.deviceId);
+        final String serviceUUID = call.argument(ArgKey.serviceUUID);
+        final String characteristicUUID = call.argument(ArgKey.characteristicUUID);
+        final String transactionId = call.argument(ArgKey.transactionId);
+        bleHelper.monitorCharacteristicForDevice(
+                deviceId,
+                serviceUUID,
+                characteristicUUID,
+                transactionId,
+                new OnSuccessAction<BleData.MonitorCharacteristicMessage>() {
+                    @Override
+                    public void onSuccess(BleData.MonitorCharacteristicMessage monitorCharacteristicMessage) {
+                        monitorCharacteristicHandler.handleMonitorCharacteristic(monitorCharacteristicMessage);
+                    }
+                },
+                new OnErrorAction() {
+                    @Override
+                    public void onError(Throwable t) {
+                        result.error("Error occurred", t.getMessage(), t);
+                    }
+                }
+        );
     }
 
     private void monitorCharacteristicForService(MethodCall call, final Result result) {
-        //TODO
+        final int serviceIdentifier = call.argument(ArgKey.serviceIdentifier);
+        final String characteristicUUID = call.argument(ArgKey.characteristicUUID);
+        final String transactionId = call.argument(ArgKey.transactionId);
+        bleHelper.monitorCharacteristicForService(
+                serviceIdentifier,
+                characteristicUUID,
+                transactionId,
+                new OnSuccessAction<BleData.MonitorCharacteristicMessage>() {
+                    @Override
+                    public void onSuccess(BleData.MonitorCharacteristicMessage monitorCharacteristicMessage) {
+                        monitorCharacteristicHandler.handleMonitorCharacteristic(monitorCharacteristicMessage);
+                    }
+                },
+                new OnErrorAction() {
+                    @Override
+                    public void onError(Throwable t) {
+                        result.error("Error occurred", t.getMessage(), t);
+                    }
+                }
+        );
     }
 
     private void monitorCharacteristic(MethodCall call, final Result result) {
-        //TODO
+        final int characteristicIdentifier = call.argument(ArgKey.characteristicIdentifier);
+        final String transactionId = call.argument(ArgKey.transactionId);
+        bleHelper.monitorCharacteristic(
+                characteristicIdentifier,
+                transactionId,
+                new OnSuccessAction<BleData.MonitorCharacteristicMessage>() {
+                    @Override
+                    public void onSuccess(BleData.MonitorCharacteristicMessage monitorCharacteristicMessage) {
+                        if (monitorCharacteristicMessage != null) {
+                            monitorCharacteristicHandler.handleMonitorCharacteristic(monitorCharacteristicMessage);
+                        }
+                    }
+                },
+                new OnErrorAction() {
+                    @Override
+                    public void onError(Throwable t) {
+                        result.error("Error occurred", t.getMessage(), t);
+                    }
+                }
+        );
     }
 
 }

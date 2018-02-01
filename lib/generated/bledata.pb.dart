@@ -576,3 +576,39 @@ class CharacteristicMessage extends GeneratedMessage {
 
 class _ReadonlyCharacteristicMessage extends CharacteristicMessage with ReadonlyMessageMixin {}
 
+class MonitorCharacteristicMessage extends GeneratedMessage {
+  static final BuilderInfo _i = new BuilderInfo('MonitorCharacteristicMessage')
+    ..a<String>(1, 'transactionId', PbFieldType.OS)
+    ..a<CharacteristicMessage>(2, 'characteristicMessage', PbFieldType.OM, CharacteristicMessage.getDefault, CharacteristicMessage.create)
+    ..hasRequiredFields = false
+  ;
+
+  MonitorCharacteristicMessage() : super();
+  MonitorCharacteristicMessage.fromBuffer(List<int> i, [ExtensionRegistry r = ExtensionRegistry.EMPTY]) : super.fromBuffer(i, r);
+  MonitorCharacteristicMessage.fromJson(String i, [ExtensionRegistry r = ExtensionRegistry.EMPTY]) : super.fromJson(i, r);
+  MonitorCharacteristicMessage clone() => new MonitorCharacteristicMessage()..mergeFromMessage(this);
+  BuilderInfo get info_ => _i;
+  static MonitorCharacteristicMessage create() => new MonitorCharacteristicMessage();
+  static PbList<MonitorCharacteristicMessage> createRepeated() => new PbList<MonitorCharacteristicMessage>();
+  static MonitorCharacteristicMessage getDefault() {
+    if (_defaultInstance == null) _defaultInstance = new _ReadonlyMonitorCharacteristicMessage();
+    return _defaultInstance;
+  }
+  static MonitorCharacteristicMessage _defaultInstance;
+  static void $checkItem(MonitorCharacteristicMessage v) {
+    if (v is! MonitorCharacteristicMessage) checkItemFailed(v, 'MonitorCharacteristicMessage');
+  }
+
+  String get transactionId => $_get(0, 1, '');
+  set transactionId(String v) { $_setString(0, 1, v); }
+  bool hasTransactionId() => $_has(0, 1);
+  void clearTransactionId() => clearField(1);
+
+  CharacteristicMessage get characteristicMessage => $_get(1, 2, null);
+  set characteristicMessage(CharacteristicMessage v) { setField(2, v); }
+  bool hasCharacteristicMessage() => $_has(1, 2);
+  void clearCharacteristicMessage() => clearField(2);
+}
+
+class _ReadonlyMonitorCharacteristicMessage extends MonitorCharacteristicMessage with ReadonlyMessageMixin {}
+

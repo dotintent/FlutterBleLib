@@ -9,7 +9,7 @@
 @property(nonatomic) BleClientManager* manager;
 @property(nonatomic) ScanDevicesHandler* scanDevicesHandler;
 @property(nonatomic) BluetoothStateHandler* bluetoothStateHandler;
-@property(nonatomic) DeviceConnectionChangedHandler* deviceConnectionChangedHandler;
+@property(nonatomic) DeviceConnectionChangeHandler* deviceConnectionChangeHandler;
 @end
 
 @interface ScanDevicesHandler ()
@@ -20,8 +20,8 @@
 @property(nonatomic) FlutterEventSink bluetoothStateSink;
 @end
 
-@interface DeviceConnectionChangedHandler ()
-@property(nonatomic) FlutterEventSink deviceConnectionChangedStateSink;
+@interface DeviceConnectionChangeHandler ()
+@property(nonatomic) FlutterEventSink deviceConnectionChangeStateSink;
 @end
 
 @implementation FlutterBleLibPlugin
@@ -39,21 +39,21 @@
     FlutterEventChannel* bluetoothStateChanel = [FlutterEventChannel
                                                  eventChannelWithName: FBLFlutterBleLibStateChange
                                                  binaryMessenger: [registrar messenger]];
-    FlutterEventChannel* deviceConnectionChangedChannel = [FlutterEventChannel
-                                                 eventChannelWithName: FBLFlutterBleLibDeviceConnectionChanged
+    FlutterEventChannel* deviceConnectionChangeChannel = [FlutterEventChannel
+                                                 eventChannelWithName: FBLFlutterBleLibDeviceConnectionChange
                                                  binaryMessenger: [registrar messenger]];
     
     FlutterBleLibPlugin* instance = [[FlutterBleLibPlugin alloc] init];
     
     instance.scanDevicesHandler = [[ScanDevicesHandler alloc] init];
     instance.bluetoothStateHandler = [[BluetoothStateHandler alloc] init];
-    instance.deviceConnectionChangedHandler = [[DeviceConnectionChangedHandler alloc] init];
+    instance.deviceConnectionChangeHandler = [[DeviceConnectionChangeHandler alloc] init];
     
     [registrar addMethodCallDelegate:instance channel:channel];
     
     [scanDevicesChannel setStreamHandler:instance.scanDevicesHandler];
     [bluetoothStateChanel setStreamHandler:instance.bluetoothStateHandler];
-    [deviceConnectionChangedChannel setStreamHandler:instance.deviceConnectionChangedHandler];
+    [deviceConnectionChangeChannel setStreamHandler:instance.deviceConnectionChangeHandler];
 }
 
 
@@ -235,20 +235,20 @@
 }
 @end
 
-@implementation DeviceConnectionChangedHandler
+@implementation DeviceConnectionChangeHandler
 - (FlutterError*)onListenWithArguments:(id)arguments eventSink:(FlutterEventSink)eventSink {
-    self.deviceConnectionChangedStateSink = eventSink;
+    self.deviceConnectionChangeStateSink = eventSink;
     return nil;
 }
 
 - (FlutterError*)onCancelWithArguments:(id)arguments {
-    self.deviceConnectionChangedStateSink = nil;
+    self.deviceConnectionChangeStateSink = nil;
     return nil;
 }
 
 - (void) handleDeviceConnectionState : (BleDataBleDeviceMessage*) bleDataBleDeviceMessage {
-    if (self.deviceConnectionChangedStateSink != nil) {
-        self.deviceConnectionChangedStateSink(bleDataBleDeviceMessage);
+    if (self.deviceConnectionChangeStateSink != nil) {
+        self.deviceConnectionChangeStateSink(bleDataBleDeviceMessage);
     }
 }
 @end

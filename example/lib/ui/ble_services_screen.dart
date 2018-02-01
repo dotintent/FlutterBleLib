@@ -117,8 +117,7 @@ class BleServiceListState extends State<StatefulWidget> {
               margin: const EdgeInsets.only(top:10.0, bottom: 10.0),
               child: new MaterialButton(
                   minWidth: 400.0,
-                  onPressed: () => _onCharacteristicForDeviceClick(
-                      bleService.device.macAddress, bleService.uuid),
+                  onPressed: () => _onCharacteristicForDeviceClick(bleService),
                   color: Colors.blueAccent,
                   child: new Text(
                     "Characterisitic for Device",
@@ -130,7 +129,7 @@ class BleServiceListState extends State<StatefulWidget> {
               margin: const EdgeInsets.only(bottom: 10.0),
               child: new MaterialButton(
                   minWidth: 400.0,
-                  onPressed: () => _onCharacteristicForServiceClick(bleService.id),
+                  onPressed: () => _onCharacteristicForServiceClick(bleService),
                   color: Colors.blueAccent,
                   child: new Text(
                     "Characterisitic for Service",
@@ -144,22 +143,22 @@ class BleServiceListState extends State<StatefulWidget> {
     );
   }
 
-  _onCharacteristicForDeviceClick(String macAddress, String serviceUUID) {
+  _onCharacteristicForDeviceClick(final BleService service) {
     FlutterBleLib.instance
-        .characteristicsForDevice(macAddress, serviceUUID)
+        .characteristicsForDevice(service.device.macAddress, service.uuid)
         .then((characteristics) { Navigator.of(context).push(new MaterialPageRoute(
         builder: (BuildContext buildContext) =>
-        new CharacteristicsScreen(_connectedDevice, characteristics)));
+        new CharacteristicsScreen(service, characteristics)));
     });
   }
 
-  _onCharacteristicForServiceClick(int serviceIdentifier) {
+  _onCharacteristicForServiceClick(BleService service) {
     FlutterBleLib.instance
-        .characteristicsForService(serviceIdentifier)
+        .characteristicsForService(service.id)
         .then((characteristics) {
       Navigator.of(context).push(new MaterialPageRoute(
           builder: (BuildContext buildContext) =>
-          new CharacteristicsScreen(_connectedDevice, characteristics)));
+          new CharacteristicsScreen(service, characteristics)));
     });
   }
 }

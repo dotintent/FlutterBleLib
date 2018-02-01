@@ -18,6 +18,8 @@ class FlutterBleLib {
   static const EventChannel _bluetoothStateChanel =
   const EventChannel(flutter_ble_lib_stateChange);
 
+  static const EventChannel _monitorCharacteristicChanel =
+  const EventChannel(flutter_ble_lib_monitorCharacteristicChange);
 
   static const EventChannel _deviceConnectionChanged =
   const EventChannel(flutter_ble_lib_deviceConnectionChange);
@@ -267,7 +269,7 @@ class FlutterBleLib {
       String characteristicUUID,
       String transactionId,) async =>
       await _invokeMethodReadCharacteristic(
-          _readCharacteristicForDevice, <String, Object>{
+          _readCharacteristicForDevice, <String, String>{
         _deviceId: deviceId,
         _serviceUUID: serviceUUID,
         _characteristicUUID: characteristicUUID,
@@ -279,8 +281,8 @@ class FlutterBleLib {
       int serviceIdentifier,
       String characteristicUUID,
       String transactionId,) async =>
-      await _invokeMethodWriteCharacteristic(
-          _writeCharacteristicForDevice, <String, Object>{
+      await _invokeMethodReadCharacteristic(
+          _readCharacteristicForService, <String, Object>{
         _serviceIdentifier: serviceIdentifier,
         _characteristicUUID: characteristicUUID,
         _transactionId: transactionId,
@@ -289,8 +291,8 @@ class FlutterBleLib {
   Future<Characteristic> readCharacteristic(
       int characteristicIdentifier,
       String transactionId,) async =>
-      await _invokeMethodWriteCharacteristic(
-          _writeCharacteristicForDevice, <String, Object>{
+      await _invokeMethodReadCharacteristic(
+          _readCharacteristic, <String, Object>{
         _characteristicIdentifier: characteristicIdentifier,
         _transactionId: transactionId,
       });
@@ -299,5 +301,49 @@ class FlutterBleLib {
     return _mainMethodChannel.invokeMethod(methodName, arguments)
         .then((byteData) => new bleData.CharacteristicMessage.fromBuffer(byteData))
         .then((characteristicMessage) => Characteristic.fromMessage(characteristicMessage));
+  }
+
+  Stream<MonitorCharacteristic> monitorCharacteristicForDevice(String deviceId,
+      String serviceUUID, String characteristicUUID, String transactionId) =>
+    _invokeMonitorCharacteristic(_monitorCharacteristicForDevice, <String, String> {
+      _deviceId : deviceId,
+      _serviceUUID : serviceUUID,
+      _characteristicUUID : characteristicUUID,
+      _transactionId : transactionId
+    });
+
+  Stream<MonitorCharacteristic> monitorCharacteristicForService(
+      int serviceIdentifier, String characteristicUUID, String transactionId) =>
+      _invokeMonitorCharacteristic(_monitorCharacteristicForService, <String, Object> {
+        _serviceIdentifier : serviceIdentifier,
+        _characteristicUUID : characteristicUUID,
+        _transactionId : transactionId
+      });
+
+  Stream<MonitorCharacteristic> monitorCharacteristic(int characteristicIdentifier, String transactionId) =>
+      _invokeMonitorCharacteristic(_monitorCharacteristic, <String, Object> {
+        _characteristicIdentifier : characteristicIdentifier,
+        _transactionId : transactionId
+      });
+
+  Stream<MonitorCharacteristic> _invokeMonitorCharacteristic(String methodName, [dynamic arguments]) async* {
+    StreamSubscription subscription;
+    StreamController controller;
+
+    controller = new StreamController(
+      onCancel: () {
+        subscription.cancel();
+      },
+    );
+    subscription = _monitorCharacteristicChanel.receiveBroadcastStream().listen(
+      controller.add,
+      onError: controller.addError,
+      onDone: controller.close,
+    );
+    await _mainMethodChannel.invokeMethod(methodName, arguments);
+
+    yield* controller.stream
+        .map((data) => new bleData.MonitorCharacteristicMessage.fromBuffer(data))
+        .map((monitorCharacteristicMessage) =>  MonitorCharacteristic.fromMessage(monitorCharacteristicMessage));
   }
 }
