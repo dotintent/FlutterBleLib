@@ -8,8 +8,7 @@ import com.polidea.flutterblelib.chanelhandler.BluetoothStateHandler;
 import com.polidea.flutterblelib.chanelhandler.DeviceConnectionChangedHandler;
 import com.polidea.flutterblelib.chanelhandler.MonitorCharacteristicHandler;
 import com.polidea.flutterblelib.chanelhandler.ScanDevicesHandler;
-import com.polidea.flutterblelib.listener.BluetoothStateChangeListener;
-import com.polidea.flutterblelib.listener.DeviceConnectionChangeListener;
+import com.polidea.flutterblelib.listener.EventDelegate;
 import com.polidea.flutterblelib.listener.Namespace;
 import com.polidea.flutterblelib.listener.OnErrorAction;
 import com.polidea.flutterblelib.listener.OnSuccessAction;
@@ -21,7 +20,7 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
-public class FlutterBleLibPlugin implements MethodCallHandler {
+public class FlutterBleLibPlugin implements MethodCallHandler, EventDelegate {
 
     public static final String TAG = "FlutterBleLibPlugin";
     private ScanDevicesHandler scanDevicesHandler;
@@ -58,19 +57,9 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
     public void onMethodCall(MethodCall call, final Result result) {
         switch (call.method) {
             case BleMethod.createClient: {
-                bleHelper.createClient();
-                bleHelper.registerBluetoothStateChangeListener(new BluetoothStateChangeListener() {
-                    @Override
-                    public void onSuccess(BleData.BluetoothStateMessage bluetoothStateMessage) {
-                        bluetoothStateHandler.handleBluetoothState(bluetoothStateMessage);
-                    }
-                });
-                bleHelper.registerDeviceConnectionChangeListener(new DeviceConnectionChangeListener() {
-                    @Override
-                    public void onSuccess(BleData.BleDeviceMessage bleDeviceMessage) {
-                        deviceConnectionChangedHandler.handleBluetoothState(bleDeviceMessage);
-                    }
-                });
+                //TODO
+                bleHelper.createClient(null);
+                bleHelper.registerEventDelegate(this);
                 return;
             }
             case BleMethod.destroyClient: {
@@ -189,6 +178,27 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
         }
     }
 
+    @Override
+    public <T> void dispatchEvent(Event event, T value) {
+        switch (event){
+            case ScanEvent:
+                scanDevicesHandler.handleScanDevice((BleData.ScanResultMessage) value);
+                break;
+            case ReadEvent:
+                //TODO
+                break;
+            case StateChangeEvent:
+                bluetoothStateHandler.handleBluetoothState((BleData.BluetoothStateMessage) value);
+                break;
+            case RestoreStateEvent:
+                //TODO
+                break;
+            case DisconnectionEvent:
+                deviceConnectionChangedHandler.handleBluetoothState((BleData.BleDeviceMessage) value);
+                break;
+        }
+    }
+
     private void discoverAllServicesAndCharacteristicsForDevice(MethodCall call, final Result result) {
         bleHelper.discoverAllServicesAndCharacteristicsForDevice(call.arguments.toString(),
                 new OnSuccessAction<BleData.BleDeviceMessage>() {
@@ -197,12 +207,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                         result.success(bleDeviceMessage.toByteArray());
                     }
                 },
-                new OnErrorAction() {
-                    @Override
-                    public void onError(Throwable t) {
-                        result.error("Discover all services and characteristics for device error", t.getMessage(), t);
-                    }
-                }
+                new DefaultOnErrorAction(result)
         );
     }
 
@@ -214,71 +219,55 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                         result.success(bleDeviceMessage.toByteArray());
                     }
                 },
-                new OnErrorAction() {
-                    @Override
-                    public void onError(Throwable t) {
-                        result.error("Request Mtu For Device error", t.getMessage(), t);
-                    }
-                }
+                new DefaultOnErrorAction(result)
         );
 
     }
 
     private void readRSSIForDevice(MethodCall call, final Result result) {
 
-        final byte[] readRSSIForDeviceBytes = call.arguments();
-        bleHelper.readRSSIForDevice(readRSSIForDeviceBytes,
+        final String deviceId = call.argument(ArgKey.deviceId);
+        final String transactionId = call.argument(ArgKey.transactionId);
+        bleHelper.readRSSIForDevice(deviceId, transactionId,
                 new OnSuccessAction<BleData.BleDeviceMessage>() {
                     @Override
                     public void onSuccess(BleData.BleDeviceMessage bleDeviceMessage) {
                         result.success(bleDeviceMessage.toByteArray());
                     }
                 },
-                new OnErrorAction() {
-                    @Override
-                    public void onError(Throwable t) {
-                        result.error("Request Mtu For Device error", t.getMessage(), t);
-                    }
-                }
+
+                new DefaultOnErrorAction(result)
         );
     }
 
     private void requestMTUForDevice(MethodCall call, final Result result) {
 
-        final byte[] mtuRequestTransactionMessageByte = call.arguments();
-        bleHelper.requestMTUForDevice(mtuRequestTransactionMessageByte,
+        final String deviceId = call.argument(ArgKey.deviceId);
+        final int mtu = call.argument(ArgKey.mtu);
+        final String transactionId = call.argument(ArgKey.transactionId);
+        bleHelper.requestMTUForDevice(deviceId, mtu, transactionId,
                 new OnSuccessAction<BleData.BleDeviceMessage>() {
                     @Override
                     public void onSuccess(BleData.BleDeviceMessage bleDeviceMessage) {
                         result.success(bleDeviceMessage.toByteArray());
                     }
                 },
-                new OnErrorAction() {
-                    @Override
-                    public void onError(Throwable t) {
-                        result.error("Request Mtu For Device error", t.getMessage(), t);
-                    }
-                }
+                new DefaultOnErrorAction(result)
         );
     }
 
     private void startDeviceScan(MethodCall call, final Result result) {
         final byte[] scanResultMessageByte = call.arguments();
         bleHelper.startDeviceScan(scanResultMessageByte,
-                new OnSuccessAction<BleData.ScanResultMessage>() {
+                new OnSuccessAction<Void>() {
                     @Override
-                    public void onSuccess(BleData.ScanResultMessage scanResultMessage) {
-                        scanDevicesHandler.handleScanDevice(scanResultMessage);
+                    public void onSuccess(Void ignoredValue) {
+                        result.success(null);
                     }
                 },
-                new OnErrorAction() {
-                    @Override
-                    public void onError(Throwable t) {
-                        result.error("Scan device error", t.getMessage(), t);
-                    }
-                }
+
+                new DefaultOnErrorAction(result)
         );
-        result.success(null);
     }
 
     private void connectToDevice(final MethodCall call, final Result result) {
@@ -291,13 +280,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                         result.success(connectedDeviceMessage.toByteArray());
                     }
                 },
-                new OnErrorAction() {
-                    @Override
-                    public void onError(Throwable t) {
-                        result.error("Error occours", t.getMessage(), t);
-                    }
-                }
-
+                new DefaultOnErrorAction(result)
         );
     }
 
@@ -311,12 +294,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                         result.success(success);
                     }
                 },
-                new OnErrorAction() {
-                    @Override
-                    public void onError(Throwable t) {
-                        result.error("Error occurred", t.getMessage(), t);
-                    }
-                }
+                new DefaultOnErrorAction(result)
         );
     }
 
@@ -330,12 +308,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                         result.success(serviceMessages.toByteArray());
                     }
                 },
-                new OnErrorAction() {
-                    @Override
-                    public void onError(Throwable t) {
-                        result.error("Error occurred", t.getMessage(), t);
-                    }
-                }
+                new DefaultOnErrorAction(result)
         );
     }
 
@@ -351,13 +324,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                         result.success(characteristicMessages.toByteArray());
                     }
                 },
-                new OnErrorAction() {
-
-                    @Override
-                    public void onError(Throwable t) {
-                        result.error("Error occurred", t.getMessage(), t);
-                    }
-                }
+                new DefaultOnErrorAction(result)
         );
     }
 
@@ -369,13 +336,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                         result.success(characteristicMessages.toByteArray());
                     }
                 },
-                new OnErrorAction() {
-
-                    @Override
-                    public void onError(Throwable t) {
-                        result.error("Error occurred", t.getMessage(), t);
-                    }
-                }
+                new DefaultOnErrorAction(result)
         );
     }
 
@@ -399,12 +360,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                         result.success(characteristicMessage.toByteArray());
                     }
                 },
-                new OnErrorAction() {
-                    @Override
-                    public void onError(Throwable t) {
-                        result.error("Error occurred", t.getMessage(), t);
-                    }
-                }
+                new DefaultOnErrorAction(result)
         );
     }
 
@@ -426,12 +382,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                         result.success(characteristicMessage.toByteArray());
                     }
                 },
-                new OnErrorAction() {
-                    @Override
-                    public void onError(Throwable t) {
-                        result.error("Error occurred", t.getMessage(), t);
-                    }
-                }
+                new DefaultOnErrorAction(result)
         );
     }
 
@@ -451,12 +402,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                         result.success(characteristicMessage.toByteArray());
                     }
                 },
-                new OnErrorAction() {
-                    @Override
-                    public void onError(Throwable t) {
-                        result.error("Error occurred", t.getMessage(), t);
-                    }
-                }
+                new DefaultOnErrorAction(result)
         );
     }
 
@@ -476,12 +422,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                         result.success(characteristicMessage.toByteArray());
                     }
                 },
-                new OnErrorAction() {
-                    @Override
-                    public void onError(Throwable t) {
-                        result.error("Error occurred", t.getMessage(), t);
-                    }
-                }
+                new DefaultOnErrorAction(result)
         );
     }
 
@@ -499,12 +440,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                         result.success(characteristicMessage.toByteArray());
                     }
                 },
-                new OnErrorAction() {
-                    @Override
-                    public void onError(Throwable t) {
-                        result.error("Error occurred", t.getMessage(), t);
-                    }
-                }
+                new DefaultOnErrorAction(result)
         );
     }
 
@@ -520,12 +456,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                         result.success(characteristicMessage.toByteArray());
                     }
                 },
-                new OnErrorAction() {
-                    @Override
-                    public void onError(Throwable t) {
-                        result.error("Error occurred", t.getMessage(), t);
-                    }
-                }
+                new DefaultOnErrorAction(result)
         );
     }
 
@@ -539,18 +470,8 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                 serviceUUID,
                 characteristicUUID,
                 transactionId,
-                new OnSuccessAction<BleData.MonitorCharacteristicMessage>() {
-                    @Override
-                    public void onSuccess(BleData.MonitorCharacteristicMessage monitorCharacteristicMessage) {
-                        monitorCharacteristicHandler.handleMonitorCharacteristic(monitorCharacteristicMessage);
-                    }
-                },
-                new OnErrorAction() {
-                    @Override
-                    public void onError(Throwable t) {
-                        result.error("Error occurred", t.getMessage(), t);
-                    }
-                }
+                new VoidOnSuccessAction(result),
+                new DefaultOnErrorAction(result)
         );
     }
 
@@ -562,18 +483,8 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                 serviceIdentifier,
                 characteristicUUID,
                 transactionId,
-                new OnSuccessAction<BleData.MonitorCharacteristicMessage>() {
-                    @Override
-                    public void onSuccess(BleData.MonitorCharacteristicMessage monitorCharacteristicMessage) {
-                        monitorCharacteristicHandler.handleMonitorCharacteristic(monitorCharacteristicMessage);
-                    }
-                },
-                new OnErrorAction() {
-                    @Override
-                    public void onError(Throwable t) {
-                        result.error("Error occurred", t.getMessage(), t);
-                    }
-                }
+                new VoidOnSuccessAction(result),
+                new DefaultOnErrorAction(result)
         );
     }
 
@@ -583,21 +494,34 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
         bleHelper.monitorCharacteristic(
                 characteristicIdentifier,
                 transactionId,
-                new OnSuccessAction<BleData.MonitorCharacteristicMessage>() {
-                    @Override
-                    public void onSuccess(BleData.MonitorCharacteristicMessage monitorCharacteristicMessage) {
-                        if (monitorCharacteristicMessage != null) {
-                            monitorCharacteristicHandler.handleMonitorCharacteristic(monitorCharacteristicMessage);
-                        }
-                    }
-                },
-                new OnErrorAction() {
-                    @Override
-                    public void onError(Throwable t) {
-                        result.error("Error occurred", t.getMessage(), t);
-                    }
-                }
+                new VoidOnSuccessAction(result),
+                new DefaultOnErrorAction(result)
         );
     }
 
+    private static class DefaultOnErrorAction implements OnErrorAction {
+        Result result;
+
+        DefaultOnErrorAction(Result result) {
+            this.result = result;
+        }
+
+        @Override
+        public void onError(Throwable t) {
+            result.error("Error occurred", t.getMessage(), t);
+        }
+    }
+
+    private static class VoidOnSuccessAction implements OnSuccessAction<Void> {
+        Result result;
+
+        VoidOnSuccessAction(Result result) {
+            this.result = result;
+        }
+        @Override
+        public void onSuccess(Void ignoredMessage) {
+            result.success(null);
+        }
+    }
 }
+
