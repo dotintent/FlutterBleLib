@@ -18,6 +18,7 @@ const _servicesForDevice = "servicesForDevice";
 const _characteristicsForDevice = "characteristicsForDevice";
 const _characteristicsForService = "characteristicsForService";
 const _writeCharacteristicForDevice = "writeCharacteristicForDevice";
+const _writeCharacteristicForService = "writeCharacteristicForService";
 const _writeCharacteristic = "writeCharacteristic";
 const _readCharacteristicForDevice = "readCharacteristicForDevice";
 const _readCharacteristicForService = "readCharacteristicForService";

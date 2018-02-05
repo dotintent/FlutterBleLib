@@ -19,8 +19,6 @@ import com.polidea.flutterblelib.exception.CharacteristicNotFoundException;
 import com.polidea.flutterblelib.exception.ConnectionNotFoundException;
 import com.polidea.flutterblelib.exception.RxBleDeviceNotFoundException;
 import com.polidea.flutterblelib.exception.ServiceNotFoundException;
-import com.polidea.flutterblelib.listener.BluetoothStateChangeListener;
-import com.polidea.flutterblelib.listener.DeviceConnectionChangeListener;
 import com.polidea.flutterblelib.listener.EventDelegate;
 import com.polidea.flutterblelib.listener.OnErrorAction;
 import com.polidea.flutterblelib.listener.OnSuccessAction;
@@ -36,7 +34,6 @@ import com.polidea.rxandroidble.RxBleClient;
 import com.polidea.rxandroidble.RxBleConnection;
 import com.polidea.rxandroidble.RxBleDevice;
 import com.polidea.rxandroidble.RxBleDeviceServices;
-import com.polidea.rxandroidble.RxBleScanResult;
 import com.polidea.rxandroidble.exceptions.BleCharacteristicNotFoundException;
 import com.polidea.rxandroidble.internal.RxBleLog;
 import com.polidea.rxandroidble.scan.ScanResult;
@@ -925,6 +922,7 @@ public class BleHelper {
                     }
                 });
 
+        safeAction.onSuccess(null);
         transactions.replaceTransactionSubscription(transactionId, subscription);
     }
 
@@ -983,7 +981,6 @@ public class BleHelper {
             errorAction.onError(new CharacteristicNotFoundException("Characteristic not found for uuid " + uuid));
             return null;
         }
-
         return characteristic;
     }
 

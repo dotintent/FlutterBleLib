@@ -241,7 +241,7 @@ class CharacteristicListState extends State<StatefulWidget> {
     //TODO fix value ???
     FlutterBleLib.instance.writeCharacteristic(
         characteristic.id,
-        "???",
+        [1],
         characteristic.isWritableWithResponse,
         new Uuid().v1())
         .then((value) => print(value));
@@ -252,7 +252,7 @@ class CharacteristicListState extends State<StatefulWidget> {
     FlutterBleLib.instance.writeCharacteristicForService(
         _bleService.id,
         characteristic.uuid,
-        "???",
+        [1],
         characteristic.isWritableWithResponse,
         new Uuid().v1())
         .then((value) => print(value));
@@ -264,7 +264,7 @@ class CharacteristicListState extends State<StatefulWidget> {
         _bleService.device.macAddress,
         _bleService.uuid,
         characteristic.uuid,
-        "???",
+        [1],
         characteristic.isWritableWithResponse,
         new Uuid().v1())
         .then((value) => print(value));
