@@ -21,7 +21,7 @@ class FlutterBleLib {
   static const EventChannel _monitorCharacteristicChanel =
   const EventChannel(flutter_ble_lib_monitorCharacteristicChange);
 
-  static const EventChannel _deviceConnectionChanged =
+  static const EventChannel _deviceConnectionChange =
   const EventChannel(flutter_ble_lib_deviceConnectionChange);
 
   final StreamController<MethodCall> _methodStreamController =
@@ -34,8 +34,8 @@ class FlutterBleLib {
     });
   }
 
-  Future<Null> createClient() =>
-      _mainMethodChannel.invokeMethod(_createClient);
+  Future<Null> createClient(String restoreStateIdentifier) =>
+      _mainMethodChannel.invokeMethod(_createClient, <String, String> {_restoreStateIdentifier : restoreStateIdentifier});
 
   Future<Null> destroyClient() =>
       _mainMethodChannel.invokeMethod(_destroyClient);
@@ -99,7 +99,7 @@ class FlutterBleLib {
         _startDeviceScan, settings.writeToBuffer());
 
     yield* controller.stream
-        .map((List<int> data) => new bleData.ScanResultMessage.fromBuffer(data))
+        .map((data) => new bleData.ScanResultMessage.fromBuffer(data))
         .map((scanResultMessage) => ScanResult.fromMessage(scanResultMessage));
   }
 
@@ -128,7 +128,7 @@ class FlutterBleLib {
 
 
   Stream<BleDevice> onDeviceConnectionChanged() {
-    return _deviceConnectionChanged.receiveBroadcastStream()
+    return _deviceConnectionChange.receiveBroadcastStream()
         .map((data) => new bleData.BleDeviceMessage.fromBuffer(data))
         .map((bleDeviceMessage) =>
         BleDevice.fromMessage(bleDeviceMessage));
@@ -214,7 +214,7 @@ class FlutterBleLib {
       String deviceId,
       String serviceUUID,
       String characteristicUUID,
-      String valueBase64,
+      List<int> bytes,
       bool response,
       String transactionId,) async =>
       await _invokeMethodWriteCharacteristic(
@@ -222,36 +222,35 @@ class FlutterBleLib {
         _deviceId: deviceId,
         _serviceUUID: serviceUUID,
         _characteristicUUID: characteristicUUID,
-        _valueBase64: valueBase64,
+        _valueBase64: BASE64.encode(bytes),
         _response: response,
         _transactionId: transactionId,
       });
 
-
   Future<Characteristic> writeCharacteristicForService(
       int serviceIdentifier,
       String characteristicUUID,
-      String valueBase64,
+      List<int> bytes,
       bool response,
       String transactionId,) async =>
       await _invokeMethodWriteCharacteristic(
-          _writeCharacteristicForDevice, <String, Object>{
+          _writeCharacteristicForService, <String, Object>{
         _serviceIdentifier: serviceIdentifier,
         _characteristicUUID: characteristicUUID,
-        _valueBase64: valueBase64,
+        _valueBase64: BASE64.encode(bytes),
         _response: response,
         _transactionId: transactionId,
       });
 
   Future<Characteristic> writeCharacteristic(
       int characteristicIdentifier,
-      String valueBase64,
+      List<int> bytes,
       bool response,
       String transactionId,) async =>
       await _invokeMethodWriteCharacteristic(
           _writeCharacteristic, <String, Object>{
         _characteristicIdentifier: characteristicIdentifier,
-        _valueBase64: valueBase64,
+        _valueBase64: BASE64.encode(bytes),
         _response: response,
         _transactionId: transactionId,
   });

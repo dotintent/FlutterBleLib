@@ -2,6 +2,7 @@ package com.polidea.flutterblelib;
 
 
 public interface ArgKey {
+    String restoreStateIdentifier = "restoreStateIdentifier";
     String deviceId = "deviceId";
     String serviceUUID = "serviceUUID";
     String serviceIdentifier = "serviceIdentifier";

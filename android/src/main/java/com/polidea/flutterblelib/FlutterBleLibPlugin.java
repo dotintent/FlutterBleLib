@@ -4,6 +4,7 @@ package com.polidea.flutterblelib;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.protobuf.MessageLite;
 import com.polidea.flutterblelib.chanelhandler.BluetoothStateHandler;
 import com.polidea.flutterblelib.chanelhandler.DeviceConnectionChangedHandler;
 import com.polidea.flutterblelib.chanelhandler.MonitorCharacteristicHandler;
@@ -57,8 +58,8 @@ public class FlutterBleLibPlugin implements MethodCallHandler, EventDelegate {
     public void onMethodCall(MethodCall call, final Result result) {
         switch (call.method) {
             case BleMethod.createClient: {
-                //TODO
-                bleHelper.createClient(null);
+                final String restoreStateIdentifier = call.argument(ArgKey.restoreStateIdentifier);
+                bleHelper.createClient(restoreStateIdentifier);
                 bleHelper.registerEventDelegate(this);
                 return;
             }
@@ -185,7 +186,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler, EventDelegate {
                 scanDevicesHandler.handleScanDevice((BleData.ScanResultMessage) value);
                 break;
             case ReadEvent:
-                //TODO
+                monitorCharacteristicHandler.handleMonitorCharacteristic((BleData.MonitorCharacteristicMessage) value);
                 break;
             case StateChangeEvent:
                 bluetoothStateHandler.handleBluetoothState((BleData.BluetoothStateMessage) value);
@@ -201,24 +202,14 @@ public class FlutterBleLibPlugin implements MethodCallHandler, EventDelegate {
 
     private void discoverAllServicesAndCharacteristicsForDevice(MethodCall call, final Result result) {
         bleHelper.discoverAllServicesAndCharacteristicsForDevice(call.arguments.toString(),
-                new OnSuccessAction<BleData.BleDeviceMessage>() {
-                    @Override
-                    public void onSuccess(BleData.BleDeviceMessage bleDeviceMessage) {
-                        result.success(bleDeviceMessage.toByteArray());
-                    }
-                },
+                new MessageLiteOnSuccessAction<BleData.BleDeviceMessage>(result),
                 new DefaultOnErrorAction(result)
         );
     }
 
     private void cancelDeviceConnection(MethodCall call, final Result result) {
         bleHelper.cancelDeviceConnection(call.arguments.toString(),
-                new OnSuccessAction<BleData.BleDeviceMessage>() {
-                    @Override
-                    public void onSuccess(BleData.BleDeviceMessage bleDeviceMessage) {
-                        result.success(bleDeviceMessage.toByteArray());
-                    }
-                },
+                new MessageLiteOnSuccessAction<BleData.BleDeviceMessage>(result),
                 new DefaultOnErrorAction(result)
         );
 
@@ -229,13 +220,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler, EventDelegate {
         final String deviceId = call.argument(ArgKey.deviceId);
         final String transactionId = call.argument(ArgKey.transactionId);
         bleHelper.readRSSIForDevice(deviceId, transactionId,
-                new OnSuccessAction<BleData.BleDeviceMessage>() {
-                    @Override
-                    public void onSuccess(BleData.BleDeviceMessage bleDeviceMessage) {
-                        result.success(bleDeviceMessage.toByteArray());
-                    }
-                },
-
+                new MessageLiteOnSuccessAction<BleData.BleDeviceMessage>(result),
                 new DefaultOnErrorAction(result)
         );
     }
@@ -246,12 +231,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler, EventDelegate {
         final int mtu = call.argument(ArgKey.mtu);
         final String transactionId = call.argument(ArgKey.transactionId);
         bleHelper.requestMTUForDevice(deviceId, mtu, transactionId,
-                new OnSuccessAction<BleData.BleDeviceMessage>() {
-                    @Override
-                    public void onSuccess(BleData.BleDeviceMessage bleDeviceMessage) {
-                        result.success(bleDeviceMessage.toByteArray());
-                    }
-                },
+                new MessageLiteOnSuccessAction<BleData.BleDeviceMessage>(result),
                 new DefaultOnErrorAction(result)
         );
     }
@@ -259,13 +239,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler, EventDelegate {
     private void startDeviceScan(MethodCall call, final Result result) {
         final byte[] scanResultMessageByte = call.arguments();
         bleHelper.startDeviceScan(scanResultMessageByte,
-                new OnSuccessAction<Void>() {
-                    @Override
-                    public void onSuccess(Void ignoredValue) {
-                        result.success(null);
-                    }
-                },
-
+                new VoidOnSuccessAction(result),
                 new DefaultOnErrorAction(result)
         );
     }
@@ -274,12 +248,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler, EventDelegate {
         final byte[] connectToDeviceDataMessageByte = call.arguments();
         bleHelper.connectToDevice(
                 connectToDeviceDataMessageByte,
-                new OnSuccessAction<BleData.BleDeviceMessage>() {
-                    @Override
-                    public void onSuccess(BleData.BleDeviceMessage connectedDeviceMessage) {
-                        result.success(connectedDeviceMessage.toByteArray());
-                    }
-                },
+                new MessageLiteOnSuccessAction<BleData.BleDeviceMessage>(result),
                 new DefaultOnErrorAction(result)
         );
     }
@@ -302,12 +271,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler, EventDelegate {
         final String macAddress = call.arguments();
         bleHelper.servicesForDevice(
                 macAddress,
-                new OnSuccessAction<BleData.ServiceMessages>() {
-                    @Override
-                    public void onSuccess(BleData.ServiceMessages serviceMessages) {
-                        result.success(serviceMessages.toByteArray());
-                    }
-                },
+                new MessageLiteOnSuccessAction<BleData.ServiceMessages>(result),
                 new DefaultOnErrorAction(result)
         );
     }
@@ -318,24 +282,14 @@ public class FlutterBleLibPlugin implements MethodCallHandler, EventDelegate {
         final String serviceUUID = call.argument(ArgKey.serviceUUID);
         bleHelper.characteristicsForDevice(macAddressByte,
                 serviceUUID,
-                new OnSuccessAction<BleData.CharacteristicMessages>() {
-                    @Override
-                    public void onSuccess(BleData.CharacteristicMessages characteristicMessages) {
-                        result.success(characteristicMessages.toByteArray());
-                    }
-                },
+                new MessageLiteOnSuccessAction<BleData.CharacteristicMessages>(result),
                 new DefaultOnErrorAction(result)
         );
     }
 
     private void characteristicsForService(MethodCall call, final Result result) {
         bleHelper.characteristicsForService((Integer) call.arguments(),
-                new OnSuccessAction<BleData.CharacteristicMessages>() {
-                    @Override
-                    public void onSuccess(BleData.CharacteristicMessages characteristicMessages) {
-                        result.success(characteristicMessages.toByteArray());
-                    }
-                },
+                new MessageLiteOnSuccessAction<BleData.CharacteristicMessages>(result),
                 new DefaultOnErrorAction(result)
         );
     }
@@ -354,12 +308,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler, EventDelegate {
                 valueBase64,
                 response,
                 transactionId,
-                new OnSuccessAction<BleData.CharacteristicMessage>() {
-                    @Override
-                    public void onSuccess(BleData.CharacteristicMessage characteristicMessage) {
-                        result.success(characteristicMessage.toByteArray());
-                    }
-                },
+                new MessageLiteOnSuccessAction<BleData.CharacteristicMessage>(result),
                 new DefaultOnErrorAction(result)
         );
     }
@@ -376,12 +325,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler, EventDelegate {
                 valueBase64,
                 response,
                 transactionId,
-                new OnSuccessAction<BleData.CharacteristicMessage>() {
-                    @Override
-                    public void onSuccess(BleData.CharacteristicMessage characteristicMessage) {
-                        result.success(characteristicMessage.toByteArray());
-                    }
-                },
+                new MessageLiteOnSuccessAction<BleData.CharacteristicMessage>(result),
                 new DefaultOnErrorAction(result)
         );
     }
@@ -396,12 +340,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler, EventDelegate {
                 valueBase64,
                 response,
                 transactionId,
-                new OnSuccessAction<BleData.CharacteristicMessage>() {
-                    @Override
-                    public void onSuccess(BleData.CharacteristicMessage characteristicMessage) {
-                        result.success(characteristicMessage.toByteArray());
-                    }
-                },
+                new MessageLiteOnSuccessAction<BleData.CharacteristicMessage>(result),
                 new DefaultOnErrorAction(result)
         );
     }
@@ -416,12 +355,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler, EventDelegate {
                 serviceUUID,
                 characteristicUUID,
                 transactionId,
-                new OnSuccessAction<BleData.CharacteristicMessage>() {
-                    @Override
-                    public void onSuccess(BleData.CharacteristicMessage characteristicMessage) {
-                        result.success(characteristicMessage.toByteArray());
-                    }
-                },
+                new MessageLiteOnSuccessAction<BleData.CharacteristicMessage>(result),
                 new DefaultOnErrorAction(result)
         );
     }
@@ -434,12 +368,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler, EventDelegate {
                 serviceIdentifier,
                 characteristicUUID,
                 transactionId,
-                new OnSuccessAction<BleData.CharacteristicMessage>() {
-                    @Override
-                    public void onSuccess(BleData.CharacteristicMessage characteristicMessage) {
-                        result.success(characteristicMessage.toByteArray());
-                    }
-                },
+                new MessageLiteOnSuccessAction<BleData.CharacteristicMessage>(result),
                 new DefaultOnErrorAction(result)
         );
     }
@@ -450,12 +379,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler, EventDelegate {
         bleHelper.readCharacteristic(
                 characteristicIdentifier,
                 transactionId,
-                new OnSuccessAction<BleData.CharacteristicMessage>() {
-                    @Override
-                    public void onSuccess(BleData.CharacteristicMessage characteristicMessage) {
-                        result.success(characteristicMessage.toByteArray());
-                    }
-                },
+                new MessageLiteOnSuccessAction<BleData.CharacteristicMessage>(result),
                 new DefaultOnErrorAction(result)
         );
     }
@@ -499,10 +423,23 @@ public class FlutterBleLibPlugin implements MethodCallHandler, EventDelegate {
         );
     }
 
-    private static class DefaultOnErrorAction implements OnErrorAction {
-        Result result;
+    private static class MessageLiteOnSuccessAction<T extends MessageLite> implements  OnSuccessAction<T> {
+        private Result result;
 
-        DefaultOnErrorAction(Result result) {
+        private MessageLiteOnSuccessAction(Result result) {
+            this.result = result;
+        }
+
+        @Override
+        public void onSuccess(T message) {
+            result.success(message.toByteArray());
+        }
+    }
+
+    private static class DefaultOnErrorAction implements OnErrorAction {
+        private Result result;
+
+        private DefaultOnErrorAction(Result result) {
             this.result = result;
         }
 
@@ -513,9 +450,9 @@ public class FlutterBleLibPlugin implements MethodCallHandler, EventDelegate {
     }
 
     private static class VoidOnSuccessAction implements OnSuccessAction<Void> {
-        Result result;
+        private Result result;
 
-        VoidOnSuccessAction(Result result) {
+        private VoidOnSuccessAction(Result result) {
             this.result = result;
         }
         @Override

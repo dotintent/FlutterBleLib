@@ -1,5 +1,6 @@
 part of flutter_ble_lib;
 
+const _restoreStateIdentifier = "restoreStateIdentifier";
 const _deviceId = "deviceId";
 const _serviceUUID = "serviceUUID";
 const _serviceIdentifier = "serviceIdentifier";

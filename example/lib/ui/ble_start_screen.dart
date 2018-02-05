@@ -12,7 +12,7 @@ class BleStartScreen extends StatefulWidget {
 class BleStartScreenState extends State<BleStartScreen> {
 
   LogLevel _currentLogLevel = LogLevel.NONE;
-  BluetoothState _currentState = BluetoothState.POWERED_ON;
+  BluetoothState _currentState = BluetoothState.UNKNOWN;
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +113,7 @@ class BleStartScreenState extends State<BleStartScreen> {
   }
 
   _onCreateButtonClick() {
-    FlutterBleLib.instance.createClient();
+    FlutterBleLib.instance.createClient(null);
     Navigator.of(context).pushNamed(
         ScreenNames.bleDevicesScreen);
   }
