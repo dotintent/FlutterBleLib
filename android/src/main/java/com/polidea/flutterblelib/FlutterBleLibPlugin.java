@@ -288,7 +288,8 @@ public class FlutterBleLibPlugin implements MethodCallHandler, EventDelegate {
     }
 
     private void characteristicsForService(MethodCall call, final Result result) {
-        bleHelper.characteristicsForService((Integer) call.arguments(),
+        final int serviceIdentifier = call.argument(ArgKey.serviceIdentifier);
+        bleHelper.characteristicsForService(serviceIdentifier,
                 new MessageLiteOnSuccessAction<BleData.CharacteristicMessages>(result),
                 new DefaultOnErrorAction(result)
         );
