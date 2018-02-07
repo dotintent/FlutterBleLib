@@ -161,7 +161,7 @@ typedef GPB_ENUM(BleDataScanFilterMessage_FieldNumber) {
 #pragma mark - BleDataBleDeviceMessage
 
 typedef GPB_ENUM(BleDataBleDeviceMessage_FieldNumber) {
-  BleDataBleDeviceMessage_FieldNumber_MacAddress = 1,
+  BleDataBleDeviceMessage_FieldNumber_Id_p = 1,
   BleDataBleDeviceMessage_FieldNumber_Name = 2,
   BleDataBleDeviceMessage_FieldNumber_Rssi = 3,
   BleDataBleDeviceMessage_FieldNumber_Mtu = 4,
@@ -169,7 +169,7 @@ typedef GPB_ENUM(BleDataBleDeviceMessage_FieldNumber) {
 
 @interface BleDataBleDeviceMessage : GPBMessage
 
-@property(nonatomic, readwrite, copy, null_resettable) NSString *macAddress;
+@property(nonatomic, readwrite, copy, null_resettable) NSString *id_p;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *name;
 
@@ -245,7 +245,7 @@ typedef GPB_ENUM(BleDataServiceMessage_FieldNumber) {
 
 @interface BleDataServiceMessage : GPBMessage
 
-@property(nonatomic, readwrite) int32_t id_p;
+@property(nonatomic, readwrite) double id_p;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *uuid;
 
@@ -290,7 +290,7 @@ typedef GPB_ENUM(BleDataCharacteristicMessage_FieldNumber) {
 
 @interface BleDataCharacteristicMessage : GPBMessage
 
-@property(nonatomic, readwrite) int32_t id_p;
+@property(nonatomic, readwrite) double id_p;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *uuid;
 

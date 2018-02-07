@@ -64,7 +64,7 @@ class BleScanResultListState extends State<StatefulWidget> {
                 new Text("\tname : ${scanResults.bleDevice.name}",
                   style: new TextStyle(fontSize: 10.0),),
                 new Text(
-                  "\tmac address : ${scanResults.bleDevice.macAddress}",
+                  "\tmac address : ${scanResults.bleDevice.id}",
                   style: new TextStyle(fontSize: 10.0),),
                 new Text(
                   "\tis connected : ${scanResults.bleDevice.isConnected}",
@@ -105,7 +105,7 @@ class BleScanResultListState extends State<StatefulWidget> {
 
   _onConnectButtonClick(ScanResult scanResults) {
     FlutterBleLib.instance.connectToDevice(
-        scanResults.bleDevice.macAddress, isAutoConnect: true).then((
+        scanResults.bleDevice.id, isAutoConnect: true).then((
         connectedDevice) {
       Navigator.of(_mainBuildContext).push(new MaterialPageRoute(
           builder: (BuildContext buildContext) =>
@@ -116,7 +116,7 @@ class BleScanResultListState extends State<StatefulWidget> {
 
   _onIsConnectedButtonClick(ScanResult scanResult) =>
       FlutterBleLib.instance
-          .isDeviceConnected(scanResult.bleDevice.macAddress)
+          .isDeviceConnected(scanResult.bleDevice.id)
           .then((isConnected) =>
           setState(() => scanResult.bleDevice.isConnected = isConnected));
 }

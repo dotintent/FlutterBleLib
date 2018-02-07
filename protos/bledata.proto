@@ -31,7 +31,7 @@ message ScanFilterMessage {
 }
 
 message BleDeviceMessage {
-    string macAddress = 1;
+    string id = 1;
     string name = 2;
     int32 rssi = 3;
     int32 mtu = 4;
@@ -56,7 +56,7 @@ message ServiceMessages {
 }
 
 message ServiceMessage {
-    int32 id = 1;
+    double id = 1;
     string uuid = 2;
     BleDeviceMessage device = 3;
     bool isPrimary = 4;
@@ -67,7 +67,7 @@ message CharacteristicMessages {
 }
 
 message CharacteristicMessage {
-    int32 id = 1;
+    double id = 1;
     string uuid = 2;
     int32 serviceId = 3;
     string serviceUuid = 4;

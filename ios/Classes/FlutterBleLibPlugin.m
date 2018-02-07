@@ -188,7 +188,7 @@
     
     NSError *error = nil;
     [_manager
-     connectToDevice:[[[BleDataBleDeviceMessage alloc] initWithData:[device data] error: &error] macAddress]
+     connectToDevice:[[[BleDataBleDeviceMessage alloc] initWithData:[device data] error: &error] id_p]
      options:nil
      resolve:^(id _Nullable device) {
          BleDataBleDeviceMessage* bleDeviceMessage = [Converter convertToBleDeviceMessage: device];

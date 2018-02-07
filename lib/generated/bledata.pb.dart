@@ -134,7 +134,7 @@ class _ReadonlyScanFilterMessage extends ScanFilterMessage with ReadonlyMessageM
 
 class BleDeviceMessage extends GeneratedMessage {
   static final BuilderInfo _i = new BuilderInfo('BleDeviceMessage')
-    ..a<String>(1, 'macAddress', PbFieldType.OS)
+    ..a<String>(1, 'id', PbFieldType.OS)
     ..a<String>(2, 'name', PbFieldType.OS)
     ..a<int>(3, 'rssi', PbFieldType.O3)
     ..a<int>(4, 'mtu', PbFieldType.O3)
@@ -157,10 +157,10 @@ class BleDeviceMessage extends GeneratedMessage {
     if (v is! BleDeviceMessage) checkItemFailed(v, 'BleDeviceMessage');
   }
 
-  String get macAddress => $_get(0, 1, '');
-  set macAddress(String v) { $_setString(0, 1, v); }
-  bool hasMacAddress() => $_has(0, 1);
-  void clearMacAddress() => clearField(1);
+  String get id => $_get(0, 1, '');
+  set id(String v) { $_setString(0, 1, v); }
+  bool hasId() => $_has(0, 1);
+  void clearId() => clearField(1);
 
   String get name => $_get(1, 2, '');
   set name(String v) { $_setString(1, 2, v); }
@@ -299,7 +299,7 @@ class _ReadonlyServiceMessages extends ServiceMessages with ReadonlyMessageMixin
 
 class ServiceMessage extends GeneratedMessage {
   static final BuilderInfo _i = new BuilderInfo('ServiceMessage')
-    ..a<int>(1, 'id', PbFieldType.O3)
+    ..a<double>(1, 'id', PbFieldType.OD)
     ..a<String>(2, 'uuid', PbFieldType.OS)
     ..a<BleDeviceMessage>(3, 'device', PbFieldType.OM, BleDeviceMessage.getDefault, BleDeviceMessage.create)
     ..a<bool>(4, 'isPrimary', PbFieldType.OB)
@@ -322,8 +322,8 @@ class ServiceMessage extends GeneratedMessage {
     if (v is! ServiceMessage) checkItemFailed(v, 'ServiceMessage');
   }
 
-  int get id => $_get(0, 1, 0);
-  set id(int v) { $_setUnsignedInt32(0, 1, v); }
+  double get id => $_get(0, 1, null);
+  set id(double v) { $_setDouble(0, 1, v); }
   bool hasId() => $_has(0, 1);
   void clearId() => clearField(1);
 
@@ -374,7 +374,7 @@ class _ReadonlyCharacteristicMessages extends CharacteristicMessages with Readon
 
 class CharacteristicMessage extends GeneratedMessage {
   static final BuilderInfo _i = new BuilderInfo('CharacteristicMessage')
-    ..a<int>(1, 'id', PbFieldType.O3)
+    ..a<double>(1, 'id', PbFieldType.OD)
     ..a<String>(2, 'uuid', PbFieldType.OS)
     ..a<int>(3, 'serviceId', PbFieldType.O3)
     ..a<String>(4, 'serviceUuid', PbFieldType.OS)
@@ -405,8 +405,8 @@ class CharacteristicMessage extends GeneratedMessage {
     if (v is! CharacteristicMessage) checkItemFailed(v, 'CharacteristicMessage');
   }
 
-  int get id => $_get(0, 1, 0);
-  set id(int v) { $_setUnsignedInt32(0, 1, v); }
+  double get id => $_get(0, 1, null);
+  set id(double v) { $_setDouble(0, 1, v); }
   bool hasId() => $_has(0, 1);
   void clearId() => clearField(1);
 

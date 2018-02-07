@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ble_lib_example/ui/button_widget.dart';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 import 'package:flutter_ble_lib_example/ui/ble_services_screen.dart';
 import 'package:uuid/uuid.dart';
-
 
 class BleConnectedDeviceScreen extends StatefulWidget {
   final BleDevice _connectedDevice;
@@ -50,24 +50,15 @@ class BleConnectedDeviceScreenState extends State<StatefulWidget> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              new Text("RSSI : ${_connectedDevice.rssi}",
-                style: new TextStyle(fontSize: 14.0),),
-              new Text("MTU : ${_connectedDevice.mtu}",
-                style: new TextStyle(fontSize: 14.0),),
+              _label("RSSI : ${_connectedDevice.rssi}"),
+              _label("MTU : ${_connectedDevice.mtu}"),
               new Text("BleDevice connected device: ",
                 style: new TextStyle(
                   fontSize: 14.0, fontWeight: FontWeight.bold,),),
-              new Text("\tname : ${_connectedDevice.name}",
-                style: new TextStyle(fontSize: 12.0),),
-              new Text(
-                "\tmac address : ${_connectedDevice.macAddress}",
-                style: new TextStyle(fontSize: 12.0),),
-              new Text(
-                "\tis connected : ${_connectedDevice.isConnected}",
-                style: new TextStyle(fontSize: 12.0),),
-              new Text(
-                "\tstate of service discovering : $_serviceDiscoveringState",
-                style: new TextStyle(fontSize: 12.0),),
+              _smallLabel("\tname : ${_connectedDevice.name}"),
+              _smallLabel("\tmac address : ${_connectedDevice.id}"),
+              _smallLabel("\tis connected : ${_connectedDevice.isConnected}"),
+              _smallLabel("\tstate of service discovering : $_serviceDiscoveringState"),
               new Container (
                 margin: const EdgeInsets.only(top: 18.0, bottom: 18.0),
                 child: new Row(
@@ -82,7 +73,7 @@ class BleConnectedDeviceScreenState extends State<StatefulWidget> {
                       ),
                     ),
                     new Container (
-                      margin: const EdgeInsets.only(left: 18.0,),
+                      margin: const EdgeInsets.only(left: 18.0),
                       child: new MaterialButton(
                         onPressed: () => _onCancelDeviceConnection(context),
                         color: Colors.blueAccent,
@@ -99,62 +90,20 @@ class BleConnectedDeviceScreenState extends State<StatefulWidget> {
                 child: new Column(
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
-                    new Text(
-                      "Device action buttons",
-                      style: new TextStyle(
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    new Container (
-                      margin: const EdgeInsets.only(bottom: 10.0, top: 18.0,),
-                      child: new MaterialButton(
-                        minWidth: 400.0,
-                        onPressed: _onRequestMtuButtonClick,
-                        color: Colors.blueAccent,
-                        child: new Text(
-                          "Request Mtu",
-                          style: new TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ),
                     new Container (
                       margin: const EdgeInsets.only(bottom: 10.0),
-                      child: new MaterialButton(
-                        minWidth: 400.0,
-                        onPressed: _onReadRSSIForDeviceClick,
-                        color: Colors.blueAccent,
-                        child: new Text(
-                          "Read RSSI",
-                          style: new TextStyle(color: Colors.white),
+                      child: new Text(
+                        "Device action buttons",
+                        style: new TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                    new Container (
-                      margin: const EdgeInsets.only(bottom: 10.0),
-                      child: new MaterialButton(
-                        minWidth: 400.0,
-                        onPressed: _onDiscoverAllServicesClick,
-                        color: Colors.blueAccent,
-                        child: new Text(
-                          "Discover all services",
-                          style: new TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ),
-                    new Container (
-                      margin: const EdgeInsets.only(bottom: 10.0),
-                      child: new MaterialButton(
-                        minWidth: 400.0,
-                        colorBrightness: Brightness.dark,
-                        onPressed: _serviceDiscoveringState !="DONE" ? null :() => _onServicesForDeviceClick(context),
-                        color: Colors.blueAccent,
-                        child: new Text(
-                          "Services for device",
-                          style: new TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ),
+                    _button("Request Mtu", _onRequestMtuButtonClick),
+                    _button("Read RSSI", _onReadRSSIForDeviceClick),
+                    _button("Discover all services", _onDiscoverAllServicesClick),
+                    _button("Services for device", _serviceDiscoveringState !="DONE" ? null :() => _onServicesForDeviceClick(context))
                   ],
                 ),
               ),
@@ -164,10 +113,30 @@ class BleConnectedDeviceScreenState extends State<StatefulWidget> {
       ),
     );
   }
+  _label(String text) =>
+      new Text(text, style: new TextStyle(fontSize: 14.0),);
+
+  _smallLabel(String text) =>
+    new Text(text, style: new TextStyle(fontSize: 12.0),);
+
+  _button(String text, VoidCallback onPressed) =>
+      new Container (
+        margin: const EdgeInsets.only(bottom: 10.0),
+        child: new CustomMaterialButton(
+          minWidth: 400.0,
+          onPressed: onPressed,
+          color: Colors.blueAccent,
+          disabledColor: Colors.grey,
+          child: new Text(
+            text,
+            style: new TextStyle(color: Colors.white),
+          ),
+        ),
+      );
 
   _onDiscoverAllServicesClick() {
     FlutterBleLib.instance.discoverAllServicesAndCharacteristicsForDevice(
-        _connectedDevice.macAddress)
+        _connectedDevice.id)
         .then((device) {
       setState(() {
         _serviceDiscoveringState = "DONE";
@@ -176,9 +145,9 @@ class BleConnectedDeviceScreenState extends State<StatefulWidget> {
   }
 
   _onCancelDeviceConnection(BuildContext context) {
-    FlutterBleLib.instance.cancelDeviceConnection(_connectedDevice.macAddress)
+    FlutterBleLib.instance.cancelDeviceConnection(_connectedDevice.id)
         .then((device) {
-      print("Connection ${device.macAddress} canceld");
+      print("Connection ${device.id} canceld");
       Navigator.of(context).pop();
     }
     );
@@ -186,7 +155,7 @@ class BleConnectedDeviceScreenState extends State<StatefulWidget> {
 
   _onReadRSSIForDeviceClick() {
     FlutterBleLib.instance.readRSSIForDevice(
-        _connectedDevice.macAddress, new Uuid().v1())
+        _connectedDevice.id, new Uuid().v1())
         .then((device) {
       setState(() {
         _connectedDevice.rssi = device.rssi;
@@ -196,7 +165,7 @@ class BleConnectedDeviceScreenState extends State<StatefulWidget> {
 
   _onRequestMtuButtonClick() {
     FlutterBleLib.instance.requestMTUForDevice(
-        _connectedDevice.macAddress, _connectedDevice.mtu, new Uuid().v1())
+        _connectedDevice.id, _connectedDevice.mtu, new Uuid().v1())
         .then((device) {
       setState(() {
         _connectedDevice.mtu = device.mtu;
@@ -206,7 +175,7 @@ class BleConnectedDeviceScreenState extends State<StatefulWidget> {
 
   _onIsConnectedButtonClick() {
     FlutterBleLib.instance
-        .isDeviceConnected(_connectedDevice.macAddress)
+        .isDeviceConnected(_connectedDevice.id)
         .then(
             (isConnected) {
           setState(() {
@@ -218,7 +187,7 @@ class BleConnectedDeviceScreenState extends State<StatefulWidget> {
 
   _onServicesForDeviceClick(BuildContext context) {
     FlutterBleLib.instance
-        .servicesForDevice(_connectedDevice.macAddress)
+        .servicesForDevice(_connectedDevice.id)
         .then((services) {
       Navigator.of(context).push(new MaterialPageRoute(
           builder: (BuildContext buildContext) =>

@@ -95,13 +95,13 @@ class BleStartScreenState extends State<BleStartScreen> {
               ),
               new Container (
                 margin: const EdgeInsets.only(bottom: 18.0),
-                child: new MaterialButton(
+                child: new RaisedButton(
                     child: new Text(
                       "Get current state",
                       style: new TextStyle(color: Colors.white),
                     ),
-                    textColor: Colors.white,
                     color: Colors.blue,
+                    disabledColor: Colors.grey,
                     onPressed: _onGetCurrentStateClick
                 ),
               ),

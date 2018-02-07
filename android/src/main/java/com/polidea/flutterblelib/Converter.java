@@ -132,7 +132,7 @@ class Converter {
 
     BleData.BleDeviceMessage convertToBleDeviceMessage(RxBleDevice device, int mtu, int rssi) {
         return BleData.BleDeviceMessage.newBuilder()
-                .setMacAddress(stringUtils.safeNullInstance(device.getMacAddress()))
+                .setId(stringUtils.safeNullInstance(device.getMacAddress()))
                 .setName(stringUtils.safeNullInstance(device.getName()))
                 .setMtu(mtu)
                 .setRssi(rssi)
