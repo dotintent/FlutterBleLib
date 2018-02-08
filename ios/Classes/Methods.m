@@ -18,6 +18,7 @@ NSString *const FBLServicesForDevice = @"servicesForDevice";
 NSString *const FBLCharacteristicsForDevice = @"characteristicsForDevice";
 NSString *const FBLCharacteristicsForService = @"characteristicsForService";
 NSString *const FBLWriteCharacteristicForDevice = @"writeCharacteristicForDevice";
+NSString *const FBLWriteCharacteristicForService = @"writeCharacteristicForService";
 NSString *const FBLWriteCharacteristic = @"writeCharacteristic";
 NSString *const FBLReadCharacteristicForDevice = @"readCharacteristicForDevice";
 NSString *const FBLReadCharacteristicForService = @"readCharacteristicForService";

@@ -197,7 +197,9 @@ class FlutterBleLib {
     });
 
   Future<List<Characteristic>> characteristicsForService(int serviceIdentifier) async =>
-     await _invokeMethodCharacteristicFor(_characteristicsForService, serviceIdentifier);
+     await _invokeMethodCharacteristicFor(_characteristicsForService, <String, Object> {
+      _serviceIdentifier: serviceIdentifier
+     });
 
   Future<List<Characteristic>> _invokeMethodCharacteristicFor(String methodName, [dynamic arguments] ) {
     return _mainMethodChannel.invokeMethod(methodName, arguments)

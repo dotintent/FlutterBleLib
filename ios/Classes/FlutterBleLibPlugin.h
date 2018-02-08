@@ -21,3 +21,9 @@
 - (void) handleDeviceConnectionState : (BleDataBleDeviceMessage*) bleDataBleDeviceMessage;
 
 @end
+
+@interface MonitorCharacteristicHandler : NSObject<FlutterStreamHandler>
+
+- (void) handleMonitorCharacteristic : (BleDataMonitorCharacteristicMessage*) bleDataMonitorCharacteristicMessage;
+    
+@end

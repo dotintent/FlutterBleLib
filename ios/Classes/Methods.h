@@ -18,6 +18,7 @@ extern NSString *const FBLServicesForDevice;
 extern NSString *const FBLCharacteristicsForDevice;
 extern NSString *const FBLCharacteristicsForService;
 extern NSString *const FBLWriteCharacteristicForDevice;
+extern NSString *const FBLWriteCharacteristicForService;
 extern NSString *const FBLWriteCharacteristic;
 extern NSString *const FBLReadCharacteristicForDevice;
 extern NSString *const FBLReadCharacteristicForService;

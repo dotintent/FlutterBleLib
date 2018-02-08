@@ -428,7 +428,7 @@ public class BleHelper {
 
     void isDeviceConnected(String macAddress, OnSuccessAction<Boolean> successAction, OnErrorAction errorAction) {
         if (rxBleClient == null) {
-            throw new IllegalStateException("BleManager not created when tried to cancel device connection");
+            throw new IllegalStateException("BleManager not created when tried to check device connection");
         }
 
         final RxBleDevice device = rxBleClient.getBleDevice(macAddress);
@@ -805,7 +805,7 @@ public class BleHelper {
         transactions.replaceTransactionSubscription(transactionId, subscription);
     }
 
-    public void monitorCharacteristicForDevice(final String deviceId,
+    void monitorCharacteristicForDevice(final String deviceId,
                                                final String serviceUUID,
                                                final String characteristicUUID,
                                                final String transactionId,
@@ -821,7 +821,7 @@ public class BleHelper {
         safeMonitorCharacteristicForDevice(characteristic, transactionId, new SafeAction<>(successAction, errorAction));
     }
 
-    public void monitorCharacteristicForService(final int serviceIdentifier,
+    void monitorCharacteristicForService(final int serviceIdentifier,
                                                 final String characteristicUUID,
                                                 final String transactionId,
                                                 final OnSuccessAction<Void> successAction,
@@ -836,7 +836,7 @@ public class BleHelper {
         safeMonitorCharacteristicForDevice(characteristic, transactionId, new SafeAction<>(successAction, errorAction));
     }
 
-    public void monitorCharacteristic(final int characteristicIdentifier,
+    void monitorCharacteristic(final int characteristicIdentifier,
                                       final String transactionId,
                                       final OnSuccessAction<Void> successAction,
                                       final OnErrorAction errorAction) {

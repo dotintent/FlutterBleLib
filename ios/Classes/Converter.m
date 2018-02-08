@@ -72,5 +72,63 @@
     bleDataBleDeviceMessage.mtu = value[@"mtu"];
     return bleDataBleDeviceMessage;
 }
+
++ (BleDataServiceMessages* _Nonnull) convertToBleDataServiceMessages:(id _Nonnull) value {
+    BleDataServiceMessages* bleDataServiceMessages = [[BleDataServiceMessages alloc] init];
+    for(int index =0; index < [value count]; index++) {
+        BleDataBleDeviceMessage* bleDataServiceMessage = [Converter convertBleDataServiceMessage: value[index]];
+        [bleDataServiceMessages.serviceMessagesArray addObject: bleDataServiceMessage];
+    }
+    return bleDataServiceMessages;
+}
+
++ (BleDataServiceMessage* _Nonnull) convertBleDataServiceMessage: (id _Nonnull) value {
+    BleDataServiceMessage* bleDataServiceMessage = [[BleDataServiceMessage alloc] init];
+    bleDataServiceMessage.id_p = ((NSNumber *) value[@"id"]).intValue;
+    bleDataServiceMessage.device =  [[BleDataBleDeviceMessage alloc] init];
+    bleDataServiceMessage.device.macAddress = value[@"deviceID"];
+    bleDataServiceMessage.uuid = value[@"uuid"];
+    bleDataServiceMessage.isPrimary = value[@"isPrimary"];
+    
+    return bleDataServiceMessage;
+}
+
++ (BleDataCharacteristicMessages* _Nonnull) convertToBleDataCharacteristicMessages: (id _Nonnull) value {
+    BleDataCharacteristicMessages* bleDataCharacteristicMessages = [[BleDataCharacteristicMessages alloc] init];
+    for(int index =0; index < [value count]; index++) {
+        BleDataCharacteristicMessage* bleDataCharacteristicMessage = [Converter convertToBleDataCharacteristicMessage: value[index]];
+        [bleDataCharacteristicMessages.characteristicMessageArray addObject: bleDataCharacteristicMessage];
+    }
+    return bleDataCharacteristicMessages;
+}
+
++ (BleDataCharacteristicMessage* _Nonnull) convertToBleDataCharacteristicMessage: (id _Nonnull) value {
+    BleDataCharacteristicMessage* bleDataCharacteristicMessage = [[BleDataCharacteristicMessage alloc] init];
+    bleDataCharacteristicMessage.id_p = value[@"id"];
+    bleDataCharacteristicMessage.uuid = value[@"uuid"];
+    bleDataCharacteristicMessage.deviceId = value[@"deviceID"];
+    bleDataCharacteristicMessage.serviceUuid = value[@"serviceUUID"];
+    bleDataCharacteristicMessage.serviceId = value[@"serviceID"];
+    bleDataCharacteristicMessage.isIndicatable = [self convertToBOOL:value[@"isIndicatable"]];
+    bleDataCharacteristicMessage.isNotificable = [self convertToBOOL:value[@"isNotifiable"]];
+    bleDataCharacteristicMessage.isNotifing = [self convertToBOOL:value[@"isNotifying"]];
+    bleDataCharacteristicMessage.isReadable =  [self convertToBOOL:value[@"isReadable"]];
+    bleDataCharacteristicMessage.isWritableWithResponse = [self convertToBOOL:value[@"isWritableWithResponse"]];
+    bleDataCharacteristicMessage.isWritableWithoutResponse = [self convertToBOOL:value[@"isWritableWithoutResponse"]];
+    NSString* valueData = value[@"value"];
+    if(valueData != (id)[NSNull null]){
+        bleDataCharacteristicMessage.value = valueData;
+    }
+    return bleDataCharacteristicMessage;
+}
+
++ (BleDataMonitorCharacteristicMessage * _Nonnull)  conevrtToMonitorCharacteristicMessage: (id _Nonnull) value {
+    BleDataMonitorCharacteristicMessage* bleDataMonitorCharacteristicMessage = [[BleDataMonitorCharacteristicMessage alloc] init];
+    return bleDataMonitorCharacteristicMessage;
+}
+
++ (BOOL) convertToBOOL: (id _Nonnull) value {
+    return [((NSNumber *) value).stringValue isEqualToString: @"1"];
+}
 @end
 

@@ -741,7 +741,7 @@ public class BleClientManager : NSObject {
                 self?.transactions.removeDisposable(transactionId)
                 promise.resolve(nil)
             })
-
+        promise.resolve(nil)
         transactions.replaceDisposable(transactionId, disposable: disposable)
     }
 
