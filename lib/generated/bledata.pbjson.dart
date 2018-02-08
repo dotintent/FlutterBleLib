@@ -55,7 +55,7 @@ const ScanFilterMessage$json = const {
 const BleDeviceMessage$json = const {
   '1': 'BleDeviceMessage',
   '2': const [
-    const {'1': 'macAddress', '3': 1, '4': 1, '5': 9, '10': 'macAddress'},
+    const {'1': 'id', '3': 1, '4': 1, '5': 9, '10': 'id'},
     const {'1': 'name', '3': 2, '4': 1, '5': 9, '10': 'name'},
     const {'1': 'rssi', '3': 3, '4': 1, '5': 5, '10': 'rssi'},
     const {'1': 'mtu', '3': 4, '4': 1, '5': 5, '10': 'mtu'},
@@ -91,7 +91,7 @@ const ServiceMessages$json = const {
 const ServiceMessage$json = const {
   '1': 'ServiceMessage',
   '2': const [
-    const {'1': 'id', '3': 1, '4': 1, '5': 5, '10': 'id'},
+    const {'1': 'id', '3': 1, '4': 1, '5': 1, '10': 'id'},
     const {'1': 'uuid', '3': 2, '4': 1, '5': 9, '10': 'uuid'},
     const {'1': 'device', '3': 3, '4': 1, '5': 11, '6': '.BleDeviceMessage', '10': 'device'},
     const {'1': 'isPrimary', '3': 4, '4': 1, '5': 8, '10': 'isPrimary'},
@@ -108,7 +108,7 @@ const CharacteristicMessages$json = const {
 const CharacteristicMessage$json = const {
   '1': 'CharacteristicMessage',
   '2': const [
-    const {'1': 'id', '3': 1, '4': 1, '5': 5, '10': 'id'},
+    const {'1': 'id', '3': 1, '4': 1, '5': 1, '10': 'id'},
     const {'1': 'uuid', '3': 2, '4': 1, '5': 9, '10': 'uuid'},
     const {'1': 'serviceId', '3': 3, '4': 1, '5': 5, '10': 'serviceId'},
     const {'1': 'serviceUuid', '3': 4, '4': 1, '5': 9, '10': 'serviceUuid'},

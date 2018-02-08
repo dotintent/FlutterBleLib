@@ -2,21 +2,21 @@ part of flutter_ble_lib;
 
 class BleDevice {
 
-  String macAddress;
+  String id;
   String name;
   int mtu;
   int rssi;
   bool isConnected = false;
 
-  BleDevice(this.macAddress, this.name, this.mtu, this.rssi);
+  BleDevice(this.id, this.name, this.mtu, this.rssi);
 
   static BleDevice fromMessage(bleData.BleDeviceMessage bleDeviceMessage) =>
-      new BleDevice(bleDeviceMessage.macAddress, bleDeviceMessage.name,
+      new BleDevice(bleDeviceMessage.id, bleDeviceMessage.name,
           bleDeviceMessage.mtu, bleDeviceMessage.rssi);
 
   @override
   String toString() {
-    return "BleDevice : [macAddress = $macAddress, name = $name, mtu = $mtu, rssi = $rssi, isConnected = $isConnected]";
+    return "BleDevice : [macAddress = $id, name = $name, mtu = $mtu, rssi = $rssi, isConnected = $isConnected]";
   }
 
 
@@ -43,11 +43,11 @@ class ScanResult {
 
 
   bool hasTheSameDeviceAs(ScanResult scanResult) =>
-      this.bleDevice.macAddress == scanResult.bleDevice.macAddress;
+      this.bleDevice.id == scanResult.bleDevice.id;
 
   update(ScanResult scanResultItem) {
     bleDevice
-      ..macAddress = scanResultItem.bleDevice.macAddress
+      ..id = scanResultItem.bleDevice.id
       ..name = scanResultItem.bleDevice.name;
     rssi = scanResultItem.rssi;
     timestampNanos = scanResultItem.timestampNanos;
@@ -158,7 +158,7 @@ class BluetoothStateConverter {
 }
 
 class BleService {
-  int id;
+  double id;
   String uuid;
   BleDevice device;
   bool isPrimary;
@@ -180,7 +180,7 @@ class BleService {
 
 
 class Characteristic {
-  int id ;
+  double id ;
   String uuid;
   int serviceId;
   String serviceUuid;

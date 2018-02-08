@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
+import 'package:flutter_ble_lib_example/ui/button_widget.dart';
 import 'package:uuid/uuid.dart';
 
 
@@ -95,147 +96,59 @@ class CharacteristicListState extends State<StatefulWidget> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            new Text("ID :  ${characteristic.id}",
-              style: new TextStyle(fontSize: 12.0),),
-            new Text("UUID :  ${characteristic.uuid}",
-              style: new TextStyle(fontSize: 12.0),),
-            new Text("Service id :  ${characteristic.serviceId}",
-              style: new TextStyle(fontSize: 12.0),),
-            new Text("Service Uuid :  ${characteristic.serviceUuid}",
-              style: new TextStyle(fontSize: 12.0),),
-            new Text("Device id :  ${characteristic.deviceId}",
-              style: new TextStyle(fontSize: 12.0),),
-            new Text("Is readable :  ${characteristic.isReadable}",
-              style: new TextStyle(fontSize: 12.0),),
-            new Text("Is writable with response :  ${characteristic.isWritableWithResponse}",
-              style: new TextStyle(fontSize: 12.0),),
-            new Text("Is writable without response : ${characteristic.isWritableWithoutResponse}",
-              style: new TextStyle(fontSize: 12.0),),
-            new Text("Is notificable : ${characteristic.isNotificable}",
-              style: new TextStyle(fontSize: 12.0),),
-            new Text("Is indicatable :  ${characteristic.isIndicatable}",
-              style: new TextStyle(fontSize: 12.0),),
-            new Text("Is notifing : ${characteristic.isNotifing}",
-              style: new TextStyle(fontSize: 12.0),),
-            new Text("Value : ${characteristic.value}",
-              style: new TextStyle(fontSize: 12.0),),
-            new Container (
-              margin: const EdgeInsets.only(top:10.0, bottom: 10.0),
-              child: new MaterialButton(
-                minWidth: 400.0,
-                onPressed: characteristic.isWritableWithResponse || characteristic.isWritableWithoutResponse
-                    ? () =>_onWriteCharacteristic(characteristic) : null,
-                color: Colors.blueAccent,
-                child: new Text(
-                  "Write characteristic",
-                  style: new TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
-            new Container (
-              margin: const EdgeInsets.only(top:10.0, bottom: 10.0),
-              child: new MaterialButton(
-                minWidth: 400.0,
-                onPressed: characteristic.isWritableWithResponse || characteristic.isWritableWithoutResponse
-                    ? () =>_onWriteCharacteristicForService(characteristic) : null,
-                color: Colors.blueAccent,
-                child: new Text(
-                  "Write characteristic for service",
-                  style: new TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
-            new Container (
-              margin: const EdgeInsets.only(top:10.0, bottom: 10.0),
-              child: new MaterialButton(
-                minWidth: 400.0,
-                onPressed: characteristic.isWritableWithResponse || characteristic.isWritableWithoutResponse
-                    ? () =>_onWriteCharacteristicForDevice(characteristic) : null,
-                color: Colors.blueAccent,
-                child: new Text(
-                  "Write characteristic for device",
-                  style: new TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
-            new Container (
-              margin: const EdgeInsets.only(top:10.0, bottom: 10.0),
-              child: new MaterialButton(
-                  minWidth: 400.0,
-                  onPressed: characteristic.isReadable ? () =>_onReadCharacteristic(characteristic) : null,
-                  color: Colors.blueAccent,
-                  child: new Text(
-                    "Read characteristic",
-                    style: new TextStyle(color: Colors.white),
-                  ),
-                ),
-            ),
-            new Container (
-              margin: const EdgeInsets.only(top:10.0, bottom: 10.0),
-              child: new MaterialButton(
-                  minWidth: 400.0,
-                  onPressed: characteristic.isReadable ? () =>_onReadCharacteristicForDevice(characteristic) : null,
-                  color: Colors.blueAccent,
-                  child: new Text(
-                    "Read characteristic for device",
-                    style: new TextStyle(color: Colors.white),
-                  ),
-                ),
-            ),
-            new Container (
-              margin: const EdgeInsets.only(top:10.0, bottom: 10.0),
-              child: new MaterialButton(
-                  minWidth: 400.0,
-                  onPressed: characteristic.isReadable ? () =>_onReadCharacteristicForService(characteristic) : null,
-                  color: Colors.blueAccent,
-                  child: new Text(
-                    "Read characteristic for service",
-                    style: new TextStyle(color: Colors.white),
-                  ),
-                ),
-            ),
-            new Container (
-              margin: const EdgeInsets.only(top:10.0, bottom: 10.0),
-              child: new MaterialButton(
-                minWidth: 400.0,
-                onPressed: characteristic.isNotificable ? () =>_onMonitorCharacteristicForDevice(characteristic) : null,
-                color: Colors.blueAccent,
-                child: new Text(
-                  "Monitor characterisitic for device",
-                  style: new TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
-            new Container (
-              margin: const EdgeInsets.only(top:10.0, bottom: 10.0),
-              child: new MaterialButton(
-                minWidth: 400.0,
-                onPressed: characteristic.isNotificable ? () =>_onMonitorCharacteristicForService(characteristic) : null,
-                color: Colors.blueAccent,
-                child: new Text(
-                  "Monitor characterisitic for service",
-                  style: new TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
-
-            new Container (
-              margin: const EdgeInsets.only(top:10.0, bottom: 10.0),
-              child: new MaterialButton(
-                minWidth: 400.0,
-                onPressed: characteristic.isNotificable ? () =>_onMonitorCharacteristic(characteristic) : null,
-                color: Colors.blueAccent,
-                child: new Text(
-                  "Monitor characterisitic",
-                  style: new TextStyle(color: Colors.white),
-                ),
-              ),
-            ),
+            _label("ID :  ${characteristic.id}"),
+            _label("UUID :  ${characteristic.uuid}"),
+            _label("Service id :  ${characteristic.serviceId}"),
+            _label("Service Uuid :  ${characteristic.serviceUuid}"),
+            _label("Device id :  ${characteristic.deviceId}"),
+            _label("Is readable :  ${characteristic.isReadable}"),
+            _label("Is writable with response :  ${characteristic.isWritableWithResponse}"),
+            _label("Is writable without response : ${characteristic.isWritableWithoutResponse}"),
+            _label("Is notificable : ${characteristic.isNotificable}"),
+            _label("Is indicatable :  ${characteristic.isIndicatable}"),
+            _label("Is notifing : ${characteristic.isNotifing}"),
+            _label("Value : ${characteristic.value}"),
+            _button("Write characteristic",
+                characteristic.isWritableWithResponse || characteristic.isWritableWithoutResponse
+                    ? () =>_onWriteCharacteristic(characteristic) : null),
+            _button( "Write characteristic for service",
+              characteristic.isWritableWithResponse || characteristic.isWritableWithoutResponse
+                ? () =>_onWriteCharacteristicForService(characteristic) : null,),
+            _button("Write characteristic for device",
+                characteristic.isWritableWithResponse || characteristic.isWritableWithoutResponse
+                ? () =>_onWriteCharacteristicForDevice(characteristic) : null),
+            _button("Read characteristic",
+                characteristic.isReadable ? () =>_onReadCharacteristic(characteristic) : null),
+            _button("Read characteristic for device",
+                characteristic.isReadable ? () =>_onReadCharacteristicForDevice(characteristic) : null),
+            _button("Read characteristic for service",
+                characteristic.isReadable ? () =>_onReadCharacteristicForService(characteristic) : null),
+            _button("Monitor characterisitic for device",
+                characteristic.isNotificable ? () =>_onMonitorCharacteristicForDevice(characteristic) : null),
+            _button("Monitor characterisitic for service",
+                characteristic.isNotificable ? () =>_onMonitorCharacteristicForService(characteristic) : null),
+            _button("Monitor characterisitic",
+              characteristic.isNotificable ? () =>_onMonitorCharacteristic(characteristic) : null),
           ],
         ),
       ),
     );
   }
+
+  _label(String text) =>
+      new Text(text, style: new TextStyle(fontSize: 12.0),);
+
+  _button(String text, VoidCallback onPressed) =>
+      new Container (
+        margin: const EdgeInsets.only(top:10.0, bottom: 10.0),
+        child: new CustomMaterialButton(
+          minWidth: 400.0,
+          onPressed: onPressed,
+          color: Colors.blueAccent,
+          disabledColor: Colors.grey,
+          child: new Text(text, style: new TextStyle(color: Colors.white),),
+        ),
+      );
 
   _onWriteCharacteristic(Characteristic characteristic) {
     //TODO fix value ???
@@ -261,7 +174,7 @@ class CharacteristicListState extends State<StatefulWidget> {
   _onWriteCharacteristicForDevice(Characteristic characteristic) {
     //TODO fix value ???
     FlutterBleLib.instance.writeCharacteristicForDevice(
-        _bleService.device.macAddress,
+        _bleService.device.id,
         _bleService.uuid,
         characteristic.uuid,
         [1],
@@ -278,7 +191,7 @@ class CharacteristicListState extends State<StatefulWidget> {
 
   _onReadCharacteristicForDevice(Characteristic characteristic) {
     FlutterBleLib.instance.readCharacteristicForDevice(
-        _bleService.device.macAddress, _bleService.uuid, characteristic.uuid,
+        _bleService.device.id, _bleService.uuid, characteristic.uuid,
         new Uuid().v1())
         .then((value) => print(value));
   }
@@ -292,7 +205,7 @@ class CharacteristicListState extends State<StatefulWidget> {
 
   _onMonitorCharacteristicForDevice(Characteristic characteristic) {
     FlutterBleLib.instance.monitorCharacteristicForDevice(
-        _bleService.device.macAddress,
+        _bleService.device.id,
         _bleService.uuid,
         characteristic.uuid,
         new Uuid().v1())
@@ -310,7 +223,7 @@ class CharacteristicListState extends State<StatefulWidget> {
   }
   _onMonitorCharacteristic(Characteristic characteristic) {
     FlutterBleLib.instance.monitorCharacteristicForDevice(
-        _bleService.device.macAddress,
+        _bleService.device.id,
         _bleService.uuid,
         characteristic.uuid,
         new Uuid().v1())

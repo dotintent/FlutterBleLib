@@ -50,7 +50,7 @@
     //TODO add check for value length
     bleDataScanResultMessage.rssi = value[1][@"rssi"];
     bleDataScanResultMessage.bleDeviceMessage = [[BleDataBleDeviceMessage alloc] init];
-    bleDataScanResultMessage.bleDeviceMessage.macAddress = value[1][@"id"];
+    bleDataScanResultMessage.bleDeviceMessage.id_p = value[1][@"id"];
     NSString* name = value[1][@"name"];
     if(name != (id)[NSNull null]){
         bleDataScanResultMessage.bleDeviceMessage.name = name;
@@ -63,7 +63,7 @@
 
 + (BleDataBleDeviceMessage* _Nonnull) convertToBleDeviceMessage:(id _Nonnull) value {
     BleDataBleDeviceMessage* bleDataBleDeviceMessage = [[BleDataBleDeviceMessage alloc] init];
-    bleDataBleDeviceMessage.macAddress = value[@"id"];
+    bleDataBleDeviceMessage.id_p = value[@"id"];
     NSString* name = value[@"name"];
     if(name != (id)[NSNull null]){
         bleDataBleDeviceMessage.name = name;
@@ -84,9 +84,9 @@
 
 + (BleDataServiceMessage* _Nonnull) convertBleDataServiceMessage: (id _Nonnull) value {
     BleDataServiceMessage* bleDataServiceMessage = [[BleDataServiceMessage alloc] init];
-    bleDataServiceMessage.id_p = ((NSNumber *) value[@"id"]).intValue;
+    bleDataServiceMessage.id_p = ((NSNumber *) value[@"id"]).doubleValue;
     bleDataServiceMessage.device =  [[BleDataBleDeviceMessage alloc] init];
-    bleDataServiceMessage.device.macAddress = value[@"deviceID"];
+    bleDataServiceMessage.device.id_p = value[@"deviceID"];
     bleDataServiceMessage.uuid = value[@"uuid"];
     bleDataServiceMessage.isPrimary = value[@"isPrimary"];
     
@@ -104,7 +104,7 @@
 
 + (BleDataCharacteristicMessage* _Nonnull) convertToBleDataCharacteristicMessage: (id _Nonnull) value {
     BleDataCharacteristicMessage* bleDataCharacteristicMessage = [[BleDataCharacteristicMessage alloc] init];
-    bleDataCharacteristicMessage.id_p = value[@"id"];
+    bleDataCharacteristicMessage.id_p = ((NSNumber *) value[@"id"]).doubleValue;;
     bleDataCharacteristicMessage.uuid = value[@"uuid"];
     bleDataCharacteristicMessage.deviceId = value[@"deviceID"];
     bleDataCharacteristicMessage.serviceUuid = value[@"serviceUUID"];

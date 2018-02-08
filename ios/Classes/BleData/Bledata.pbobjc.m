@@ -338,7 +338,7 @@ typedef struct BleDataScanFilterMessage__storage_ {
 
 @implementation BleDataBleDeviceMessage
 
-@dynamic macAddress;
+@dynamic id_p;
 @dynamic name;
 @dynamic rssi;
 @dynamic mtu;
@@ -347,7 +347,7 @@ typedef struct BleDataBleDeviceMessage__storage_ {
   uint32_t _has_storage_[1];
   int32_t rssi;
   int32_t mtu;
-  NSString *macAddress;
+  NSString *id_p;
   NSString *name;
 } BleDataBleDeviceMessage__storage_;
 
@@ -358,12 +358,12 @@ typedef struct BleDataBleDeviceMessage__storage_ {
   if (!descriptor) {
     static GPBMessageFieldDescription fields[] = {
       {
-        .name = "macAddress",
+        .name = "id_p",
         .dataTypeSpecific.className = NULL,
-        .number = BleDataBleDeviceMessage_FieldNumber_MacAddress,
+        .number = BleDataBleDeviceMessage_FieldNumber_Id_p,
         .hasIndex = 0,
-        .offset = (uint32_t)offsetof(BleDataBleDeviceMessage__storage_, macAddress),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
+        .offset = (uint32_t)offsetof(BleDataBleDeviceMessage__storage_, id_p),
+        .flags = GPBFieldOptional,
         .dataType = GPBDataTypeString,
       },
       {
@@ -402,11 +402,6 @@ typedef struct BleDataBleDeviceMessage__storage_ {
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
                                    storageSize:sizeof(BleDataBleDeviceMessage__storage_)
                                          flags:GPBDescriptorInitializationFlag_None];
-#if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
-    static const char *extraTextFormatInfo =
-        "\001\001\n\000";
-    [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
-#endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     NSAssert(descriptor == nil, @"Startup recursed!");
     descriptor = localDescriptor;
   }
@@ -624,9 +619,9 @@ typedef struct BleDataServiceMessages__storage_ {
 
 typedef struct BleDataServiceMessage__storage_ {
   uint32_t _has_storage_[1];
-  int32_t id_p;
   NSString *uuid;
   BleDataBleDeviceMessage *device;
+  double id_p;
 } BleDataServiceMessage__storage_;
 
 // This method is threadsafe because it is initially called
@@ -642,7 +637,7 @@ typedef struct BleDataServiceMessage__storage_ {
         .hasIndex = 0,
         .offset = (uint32_t)offsetof(BleDataServiceMessage__storage_, id_p),
         .flags = GPBFieldOptional,
-        .dataType = GPBDataTypeInt32,
+        .dataType = GPBDataTypeDouble,
       },
       {
         .name = "uuid",
@@ -760,12 +755,12 @@ typedef struct BleDataCharacteristicMessages__storage_ {
 
 typedef struct BleDataCharacteristicMessage__storage_ {
   uint32_t _has_storage_[1];
-  int32_t id_p;
   int32_t serviceId;
   NSString *uuid;
   NSString *serviceUuid;
   NSString *deviceId;
   NSString *value;
+  double id_p;
 } BleDataCharacteristicMessage__storage_;
 
 // This method is threadsafe because it is initially called
@@ -781,7 +776,7 @@ typedef struct BleDataCharacteristicMessage__storage_ {
         .hasIndex = 0,
         .offset = (uint32_t)offsetof(BleDataCharacteristicMessage__storage_, id_p),
         .flags = GPBFieldOptional,
-        .dataType = GPBDataTypeInt32,
+        .dataType = GPBDataTypeDouble,
       },
       {
         .name = "uuid",

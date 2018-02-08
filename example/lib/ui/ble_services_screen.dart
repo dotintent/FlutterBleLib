@@ -109,7 +109,7 @@ class BleServiceListState extends State<StatefulWidget> {
                 new Text("\tname : ${bleService.device.name}",
                   style: new TextStyle(fontSize: 10.0),),
                 new Text(
-                  "\tmac address : ${bleService.device.macAddress}",
+                  "\tmac address : ${bleService.device.id}",
                   style: new TextStyle(fontSize: 10.0),),
               ],
             ),
@@ -145,7 +145,7 @@ class BleServiceListState extends State<StatefulWidget> {
 
   _onCharacteristicForDeviceClick(final BleService service) {
     FlutterBleLib.instance
-        .characteristicsForDevice(service.device.macAddress, service.uuid)
+        .characteristicsForDevice(service.device.id, service.uuid)
         .then((characteristics) { Navigator.of(context).push(new MaterialPageRoute(
         builder: (BuildContext buildContext) =>
         new CharacteristicsScreen(service, characteristics)));

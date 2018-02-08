@@ -196,7 +196,7 @@ class FlutterBleLib {
       _serviceUUID : serviceUUID
     });
 
-  Future<List<Characteristic>> characteristicsForService(int serviceIdentifier) async =>
+  Future<List<Characteristic>> characteristicsForService(double serviceIdentifier) async =>
      await _invokeMethodCharacteristicFor(_characteristicsForService, <String, Object> {
       _serviceIdentifier: serviceIdentifier
      });
@@ -230,7 +230,7 @@ class FlutterBleLib {
       });
 
   Future<Characteristic> writeCharacteristicForService(
-      int serviceIdentifier,
+      double serviceIdentifier,
       String characteristicUUID,
       List<int> bytes,
       bool response,
@@ -245,7 +245,7 @@ class FlutterBleLib {
       });
 
   Future<Characteristic> writeCharacteristic(
-      int characteristicIdentifier,
+      double characteristicIdentifier,
       List<int> bytes,
       bool response,
       String transactionId,) async =>
@@ -278,7 +278,7 @@ class FlutterBleLib {
 
 
   Future<Characteristic> readCharacteristicForService(
-      int serviceIdentifier,
+      double serviceIdentifier,
       String characteristicUUID,
       String transactionId,) async =>
       await _invokeMethodReadCharacteristic(
@@ -289,7 +289,7 @@ class FlutterBleLib {
       });
 
   Future<Characteristic> readCharacteristic(
-      int characteristicIdentifier,
+      double characteristicIdentifier,
       String transactionId,) async =>
       await _invokeMethodReadCharacteristic(
           _readCharacteristic, <String, Object>{
@@ -313,7 +313,7 @@ class FlutterBleLib {
     });
 
   Stream<MonitorCharacteristic> monitorCharacteristicForService(
-      int serviceIdentifier, String characteristicUUID, String transactionId) =>
+      double serviceIdentifier, String characteristicUUID, String transactionId) =>
       _invokeMonitorCharacteristic(_monitorCharacteristicForService, <String, Object> {
         _serviceIdentifier : serviceIdentifier,
         _characteristicUUID : characteristicUUID,
