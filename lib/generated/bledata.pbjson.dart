@@ -28,27 +28,12 @@ const BluetoothStateMessage$json = const {
   ],
 };
 
-const ScanSettingsMessage$json = const {
-  '1': 'ScanSettingsMessage',
+const ScanDataMessage$json = const {
+  '1': 'ScanDataMessage',
   '2': const [
     const {'1': 'scanMode', '3': 1, '4': 1, '5': 5, '10': 'scanMode'},
     const {'1': 'callbackType', '3': 2, '4': 1, '5': 5, '10': 'callbackType'},
-  ],
-};
-
-const ScanFilterMessage$json = const {
-  '1': 'ScanFilterMessage',
-  '2': const [
-    const {'1': 'deviceName', '3': 1, '4': 1, '5': 9, '10': 'deviceName'},
-    const {'1': 'deviceAddress', '3': 2, '4': 1, '5': 9, '10': 'deviceAddress'},
-    const {'1': 'serviceUuid', '3': 3, '4': 1, '5': 9, '10': 'serviceUuid'},
-    const {'1': 'serviceUuidMask', '3': 4, '4': 1, '5': 9, '10': 'serviceUuidMask'},
-    const {'1': 'serviceDataUuid', '3': 5, '4': 1, '5': 9, '10': 'serviceDataUuid'},
-    const {'1': 'serviceData', '3': 6, '4': 1, '5': 12, '10': 'serviceData'},
-    const {'1': 'serviceDataMask', '3': 7, '4': 1, '5': 12, '10': 'serviceDataMask'},
-    const {'1': 'manufacturerId', '3': 8, '4': 1, '5': 5, '10': 'manufacturerId'},
-    const {'1': 'manufacturerData', '3': 9, '4': 1, '5': 12, '10': 'manufacturerData'},
-    const {'1': 'manufacturerDataMask', '3': 10, '4': 1, '5': 12, '10': 'manufacturerDataMask'},
+    const {'1': 'uuids', '3': 3, '4': 3, '5': 9, '10': 'uuids'},
   ],
 };
 

@@ -9,12 +9,16 @@ import com.polidea.flutterblelib.utils.StringUtils;
 import com.polidea.flutterblelib.utils.UUIDConverter;
 import com.polidea.flutterblelib.wrapper.Characteristic;
 import com.polidea.flutterblelib.wrapper.Device;
+import com.polidea.flutterblelib.wrapper.ScanSettingsWrapper;
 import com.polidea.flutterblelib.wrapper.Service;
 import com.polidea.rxandroidble.RxBleConnection;
 import com.polidea.rxandroidble.RxBleDevice;
 import com.polidea.rxandroidble.internal.RxBleLog;
 import com.polidea.rxandroidble.scan.ScanResult;
 import com.polidea.rxandroidble.scan.ScanSettings;
+
+import java.util.List;
+
 
 class Converter {
 
@@ -27,23 +31,30 @@ class Converter {
         this.stringUtils = stringUtils;
     }
 
-    ScanSettings convertToScanSettings(byte[] bytes) {
+    ScanSettingsWrapper convertToScanSettings(byte[] bytes) {
         try {
-            BleData.ScanSettingsMessage scanSettingsMessage = BleData.ScanSettingsMessage
+            BleData.ScanDataMessage scanDataMessage = BleData.ScanDataMessage
                     .newBuilder()
                     .mergeFrom(bytes)
                     .build();
-            return convertToScanSettings(scanSettingsMessage);
+            return convertToScanSettings(scanDataMessage);
         } catch (InvalidProtocolBufferException e) {
-            return new ScanSettings.Builder().build();
+            return new ScanSettingsWrapper(new ScanSettings.Builder().build(), null);
         }
     }
 
-    ScanSettings convertToScanSettings(BleData.ScanSettingsMessage scanResultMessage) {
-        return new ScanSettings.Builder()
-                .setScanMode(scanResultMessage.getScanMode())
-                .setCallbackType(scanResultMessage.getCallbackType())
-                .build();
+    ScanSettingsWrapper convertToScanSettings(BleData.ScanDataMessage scanDataMessage) {
+        final List<String> uuidList = scanDataMessage.getUuidsList();
+        final String[] uuids = uuidList != null
+                ? uuidList.toArray(new String[uuidList.size()])
+                : null;
+        return new ScanSettingsWrapper(
+                new ScanSettings.Builder()
+                .setScanMode(scanDataMessage.getScanMode())
+                .setCallbackType(scanDataMessage.getCallbackType())
+                .build(),
+                uuids
+        );
     }
 
     BleData.ScanResultMessage convertToScanResultMessage(ScanResult scanResult) {

@@ -7,7 +7,7 @@
 
 + (BleDataBluetoothStateMessage)convertToBleDataBluetoothStateMessage:(NSNumber* _Nonnull)state;
 
-+ (BleDataBluetoothStateMessage)convertToBleDataBluetoothStateMessageFromString:(NSString*)stateAsString;
++ (BleDataBluetoothStateMessage)convertToBleDataBluetoothStateMessageFromString:(NSString* _Nonnull)stateAsString;
 
 + (BleDataScanResultMessage* _Nonnull) convertToScanResultMessage:(id _Nonnull) value;
 
@@ -21,6 +21,6 @@
 
 + (BleDataCharacteristicMessage* _Nonnull) convertToBleDataCharacteristicMessage: (id _Nonnull) value;
 
-+ (BleDataMonitorCharacteristicMessage* _Nonnull)  conevrtToMonitorCharacteristicMessage: (id _Nonnull) value;
++ (BleDataMonitorCharacteristicMessage* _Nonnull) conevrtToMonitorCharacteristicMessage: (id _Nonnull) value;
 
 @end

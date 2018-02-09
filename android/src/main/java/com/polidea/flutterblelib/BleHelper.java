@@ -27,6 +27,7 @@ import com.polidea.flutterblelib.utils.StringUtils;
 import com.polidea.flutterblelib.utils.UUIDConverter;
 import com.polidea.flutterblelib.wrapper.Characteristic;
 import com.polidea.flutterblelib.wrapper.Device;
+import com.polidea.flutterblelib.wrapper.ScanSettingsWrapper;
 import com.polidea.flutterblelib.wrapper.Service;
 import com.polidea.rxandroidble.NotificationSetupMode;
 import com.polidea.rxandroidble.RxBleAdapterStateObservable;
@@ -123,22 +124,22 @@ public class BleHelper {
         rxBleClient = null;
     }
 
-    void startDeviceScan(byte[] scanSettingsBytes,
+    void startDeviceScan(byte[] scanSettingsWrapperBytes,
                          final OnSuccessAction<Void> successAction,
                          final OnErrorAction errorAction) {
         if (!isRxBleDeviceReady(errorAction)) {
             return;
         }
-        safeStartDeviceScan(scanSettingsBytes, errorAction);
+        safeStartDeviceScan(converter.convertToScanSettings(scanSettingsWrapperBytes), errorAction);
         successAction.onSuccess(null);
     }
 
-    private void safeStartDeviceScan(byte[] scanSettingsBytes, final OnErrorAction errorAction) {
+    private void safeStartDeviceScan(ScanSettingsWrapper scanSettingsWrapper ,  final OnErrorAction errorAction) {
         if (rxBleClient == null) {
             throw new IllegalStateException("BleManager not created when tried to start device scan");
         }
         scanDevicesSubscription = rxBleClient
-                .scanBleDevices(converter.convertToScanSettings(scanSettingsBytes))
+                .scanBleDevices(scanSettingsWrapper.getScanSetting(), scanSettingsWrapper.getScanFilters())
                 .subscribe(new Action1<ScanResult>() {
                     @Override
                     public void call(ScanResult rxBleScanResult) {

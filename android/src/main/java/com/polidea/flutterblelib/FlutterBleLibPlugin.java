@@ -237,8 +237,8 @@ public class FlutterBleLibPlugin implements MethodCallHandler, EventDelegate {
     }
 
     private void startDeviceScan(MethodCall call, final Result result) {
-        final byte[] scanResultMessageByte = call.arguments();
-        bleHelper.startDeviceScan(scanResultMessageByte,
+        final byte[] scanSettingsWrapperBytes = call.arguments();
+        bleHelper.startDeviceScan(scanSettingsWrapperBytes,
                 new VoidOnSuccessAction(result),
                 new DefaultOnErrorAction(result)
         );

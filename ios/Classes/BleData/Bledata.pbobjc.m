@@ -128,18 +128,20 @@ BOOL BleDataBluetoothStateMessage_IsValidValue(int32_t value__) {
   }
 }
 
-#pragma mark - BleDataScanSettingsMessage
+#pragma mark - BleDataScanDataMessage
 
-@implementation BleDataScanSettingsMessage
+@implementation BleDataScanDataMessage
 
 @dynamic scanMode;
 @dynamic callbackType;
+@dynamic uuidsArray, uuidsArray_Count;
 
-typedef struct BleDataScanSettingsMessage__storage_ {
+typedef struct BleDataScanDataMessage__storage_ {
   uint32_t _has_storage_[1];
   int32_t scanMode;
   int32_t callbackType;
-} BleDataScanSettingsMessage__storage_;
+  NSMutableArray *uuidsArray;
+} BleDataScanDataMessage__storage_;
 
 // This method is threadsafe because it is initially called
 // in +initialize for each subclass.
@@ -150,180 +152,42 @@ typedef struct BleDataScanSettingsMessage__storage_ {
       {
         .name = "scanMode",
         .dataTypeSpecific.className = NULL,
-        .number = BleDataScanSettingsMessage_FieldNumber_ScanMode,
+        .number = BleDataScanDataMessage_FieldNumber_ScanMode,
         .hasIndex = 0,
-        .offset = (uint32_t)offsetof(BleDataScanSettingsMessage__storage_, scanMode),
+        .offset = (uint32_t)offsetof(BleDataScanDataMessage__storage_, scanMode),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
         .dataType = GPBDataTypeInt32,
       },
       {
         .name = "callbackType",
         .dataTypeSpecific.className = NULL,
-        .number = BleDataScanSettingsMessage_FieldNumber_CallbackType,
+        .number = BleDataScanDataMessage_FieldNumber_CallbackType,
         .hasIndex = 1,
-        .offset = (uint32_t)offsetof(BleDataScanSettingsMessage__storage_, callbackType),
+        .offset = (uint32_t)offsetof(BleDataScanDataMessage__storage_, callbackType),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
         .dataType = GPBDataTypeInt32,
       },
+      {
+        .name = "uuidsArray",
+        .dataTypeSpecific.className = NULL,
+        .number = BleDataScanDataMessage_FieldNumber_UuidsArray,
+        .hasIndex = GPBNoHasBit,
+        .offset = (uint32_t)offsetof(BleDataScanDataMessage__storage_, uuidsArray),
+        .flags = GPBFieldRepeated,
+        .dataType = GPBDataTypeString,
+      },
     };
     GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:[BleDataScanSettingsMessage class]
+        [GPBDescriptor allocDescriptorForClass:[BleDataScanDataMessage class]
                                      rootClass:[BleDataBledataRoot class]
                                           file:BleDataBledataRoot_FileDescriptor()
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(BleDataScanSettingsMessage__storage_)
+                                   storageSize:sizeof(BleDataScanDataMessage__storage_)
                                          flags:GPBDescriptorInitializationFlag_None];
 #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     static const char *extraTextFormatInfo =
         "\002\001\010\000\002\014\000";
-    [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
-#endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
-    NSAssert(descriptor == nil, @"Startup recursed!");
-    descriptor = localDescriptor;
-  }
-  return descriptor;
-}
-
-@end
-
-#pragma mark - BleDataScanFilterMessage
-
-@implementation BleDataScanFilterMessage
-
-@dynamic deviceName;
-@dynamic deviceAddress;
-@dynamic serviceUuid;
-@dynamic serviceUuidMask;
-@dynamic serviceDataUuid;
-@dynamic serviceData;
-@dynamic serviceDataMask;
-@dynamic manufacturerId;
-@dynamic manufacturerData;
-@dynamic manufacturerDataMask;
-
-typedef struct BleDataScanFilterMessage__storage_ {
-  uint32_t _has_storage_[1];
-  int32_t manufacturerId;
-  NSString *deviceName;
-  NSString *deviceAddress;
-  NSString *serviceUuid;
-  NSString *serviceUuidMask;
-  NSString *serviceDataUuid;
-  NSData *serviceData;
-  NSData *serviceDataMask;
-  NSData *manufacturerData;
-  NSData *manufacturerDataMask;
-} BleDataScanFilterMessage__storage_;
-
-// This method is threadsafe because it is initially called
-// in +initialize for each subclass.
-+ (GPBDescriptor *)descriptor {
-  static GPBDescriptor *descriptor = nil;
-  if (!descriptor) {
-    static GPBMessageFieldDescription fields[] = {
-      {
-        .name = "deviceName",
-        .dataTypeSpecific.className = NULL,
-        .number = BleDataScanFilterMessage_FieldNumber_DeviceName,
-        .hasIndex = 0,
-        .offset = (uint32_t)offsetof(BleDataScanFilterMessage__storage_, deviceName),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
-        .dataType = GPBDataTypeString,
-      },
-      {
-        .name = "deviceAddress",
-        .dataTypeSpecific.className = NULL,
-        .number = BleDataScanFilterMessage_FieldNumber_DeviceAddress,
-        .hasIndex = 1,
-        .offset = (uint32_t)offsetof(BleDataScanFilterMessage__storage_, deviceAddress),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
-        .dataType = GPBDataTypeString,
-      },
-      {
-        .name = "serviceUuid",
-        .dataTypeSpecific.className = NULL,
-        .number = BleDataScanFilterMessage_FieldNumber_ServiceUuid,
-        .hasIndex = 2,
-        .offset = (uint32_t)offsetof(BleDataScanFilterMessage__storage_, serviceUuid),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
-        .dataType = GPBDataTypeString,
-      },
-      {
-        .name = "serviceUuidMask",
-        .dataTypeSpecific.className = NULL,
-        .number = BleDataScanFilterMessage_FieldNumber_ServiceUuidMask,
-        .hasIndex = 3,
-        .offset = (uint32_t)offsetof(BleDataScanFilterMessage__storage_, serviceUuidMask),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
-        .dataType = GPBDataTypeString,
-      },
-      {
-        .name = "serviceDataUuid",
-        .dataTypeSpecific.className = NULL,
-        .number = BleDataScanFilterMessage_FieldNumber_ServiceDataUuid,
-        .hasIndex = 4,
-        .offset = (uint32_t)offsetof(BleDataScanFilterMessage__storage_, serviceDataUuid),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
-        .dataType = GPBDataTypeString,
-      },
-      {
-        .name = "serviceData",
-        .dataTypeSpecific.className = NULL,
-        .number = BleDataScanFilterMessage_FieldNumber_ServiceData,
-        .hasIndex = 5,
-        .offset = (uint32_t)offsetof(BleDataScanFilterMessage__storage_, serviceData),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
-        .dataType = GPBDataTypeBytes,
-      },
-      {
-        .name = "serviceDataMask",
-        .dataTypeSpecific.className = NULL,
-        .number = BleDataScanFilterMessage_FieldNumber_ServiceDataMask,
-        .hasIndex = 6,
-        .offset = (uint32_t)offsetof(BleDataScanFilterMessage__storage_, serviceDataMask),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
-        .dataType = GPBDataTypeBytes,
-      },
-      {
-        .name = "manufacturerId",
-        .dataTypeSpecific.className = NULL,
-        .number = BleDataScanFilterMessage_FieldNumber_ManufacturerId,
-        .hasIndex = 7,
-        .offset = (uint32_t)offsetof(BleDataScanFilterMessage__storage_, manufacturerId),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
-        .dataType = GPBDataTypeInt32,
-      },
-      {
-        .name = "manufacturerData",
-        .dataTypeSpecific.className = NULL,
-        .number = BleDataScanFilterMessage_FieldNumber_ManufacturerData,
-        .hasIndex = 8,
-        .offset = (uint32_t)offsetof(BleDataScanFilterMessage__storage_, manufacturerData),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
-        .dataType = GPBDataTypeBytes,
-      },
-      {
-        .name = "manufacturerDataMask",
-        .dataTypeSpecific.className = NULL,
-        .number = BleDataScanFilterMessage_FieldNumber_ManufacturerDataMask,
-        .hasIndex = 9,
-        .offset = (uint32_t)offsetof(BleDataScanFilterMessage__storage_, manufacturerDataMask),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
-        .dataType = GPBDataTypeBytes,
-      },
-    };
-    GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:[BleDataScanFilterMessage class]
-                                     rootClass:[BleDataBledataRoot class]
-                                          file:BleDataBledataRoot_FileDescriptor()
-                                        fields:fields
-                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(BleDataScanFilterMessage__storage_)
-                                         flags:GPBDescriptorInitializationFlag_None];
-#if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
-    static const char *extraTextFormatInfo =
-        "\n\001\n\000\002\r\000\003\013\000\004\017\000\005\017\000\006\013\000\007\017\000\010\016\000\t\020\000\n\024\000";
     [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
 #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     NSAssert(descriptor == nil, @"Startup recursed!");

@@ -8,26 +8,10 @@ option java_package = "com.polidea.flutterblelib";
 option java_outer_classname = "BleData";
 option objc_class_prefix = "BleData";
 
-message ScanSettingsMessage {
+message ScanDataMessage {
     int32 scanMode = 1;
     int32 callbackType = 2;
-    //TODO for this moment they are hidden in
-    //    uint64 reportDelayMillis = 3;
-    //    int32 matchMode = 4;
-    //    int32 numOfMatchesPerFilter = 5;
-}
-
-message ScanFilterMessage {
-    string deviceName = 1;
-    string deviceAddress = 2;
-    string serviceUuid = 3;
-    string serviceUuidMask = 4;
-    string serviceDataUuid = 5;
-    bytes serviceData = 6;
-    bytes serviceDataMask = 7;
-    int32 manufacturerId = 8;
-    bytes manufacturerData = 9;
-    bytes manufacturerDataMask = 10;
+    repeated string uuids = 3;
 }
 
 message BleDeviceMessage {
