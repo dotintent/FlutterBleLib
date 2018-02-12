@@ -98,63 +98,23 @@ BOOL BleDataBluetoothStateMessage_IsValidValue(int32_t value);
 @interface BleDataBledataRoot : GPBRootObject
 @end
 
-#pragma mark - BleDataScanSettingsMessage
+#pragma mark - BleDataScanDataMessage
 
-typedef GPB_ENUM(BleDataScanSettingsMessage_FieldNumber) {
-  BleDataScanSettingsMessage_FieldNumber_ScanMode = 1,
-  BleDataScanSettingsMessage_FieldNumber_CallbackType = 2,
+typedef GPB_ENUM(BleDataScanDataMessage_FieldNumber) {
+  BleDataScanDataMessage_FieldNumber_ScanMode = 1,
+  BleDataScanDataMessage_FieldNumber_CallbackType = 2,
+  BleDataScanDataMessage_FieldNumber_UuidsArray = 3,
 };
 
-@interface BleDataScanSettingsMessage : GPBMessage
+@interface BleDataScanDataMessage : GPBMessage
 
 @property(nonatomic, readwrite) int32_t scanMode;
 
-/**
- * TODO for this moment they are hidden in
- *    uint64 reportDelayMillis = 3;
- *    int32 matchMode = 4;
- *    int32 numOfMatchesPerFilter = 5;
- **/
 @property(nonatomic, readwrite) int32_t callbackType;
 
-@end
-
-#pragma mark - BleDataScanFilterMessage
-
-typedef GPB_ENUM(BleDataScanFilterMessage_FieldNumber) {
-  BleDataScanFilterMessage_FieldNumber_DeviceName = 1,
-  BleDataScanFilterMessage_FieldNumber_DeviceAddress = 2,
-  BleDataScanFilterMessage_FieldNumber_ServiceUuid = 3,
-  BleDataScanFilterMessage_FieldNumber_ServiceUuidMask = 4,
-  BleDataScanFilterMessage_FieldNumber_ServiceDataUuid = 5,
-  BleDataScanFilterMessage_FieldNumber_ServiceData = 6,
-  BleDataScanFilterMessage_FieldNumber_ServiceDataMask = 7,
-  BleDataScanFilterMessage_FieldNumber_ManufacturerId = 8,
-  BleDataScanFilterMessage_FieldNumber_ManufacturerData = 9,
-  BleDataScanFilterMessage_FieldNumber_ManufacturerDataMask = 10,
-};
-
-@interface BleDataScanFilterMessage : GPBMessage
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *deviceName;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *deviceAddress;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *serviceUuid;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *serviceUuidMask;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *serviceDataUuid;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSData *serviceData;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSData *serviceDataMask;
-
-@property(nonatomic, readwrite) int32_t manufacturerId;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSData *manufacturerData;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSData *manufacturerDataMask;
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<NSString*> *uuidsArray;
+/** The number of items in @c uuidsArray without causing the array to be created. */
+@property(nonatomic, readonly) NSUInteger uuidsArray_Count;
 
 @end
 

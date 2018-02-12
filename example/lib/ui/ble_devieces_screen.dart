@@ -190,8 +190,11 @@ class BleDevicesState extends State<BleDevicesScreen> {
   }
 
   _onStartScan() {
+    //TODO pass this list as arg to scan only filtered devices
+//    List<String> uuids = new List();
+//    uuids.add("0000181d-0000-1000-8000-00805f9b34fb");
     _scanDevicesSub = FlutterBleLib.instance
-        .startDeviceScan(1, 1)
+        .startDeviceScan(1, 1, null/*uuids*/)
         .listen(
             (scanResult) => setState(() => _addOrUpdateIfNecessary(scanResult)),
         onDone: _onStopScan);

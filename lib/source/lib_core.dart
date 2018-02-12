@@ -73,11 +73,13 @@ class FlutterBleLib {
         BluetoothStateConverter.fromMessage(bluetoothStateMessage));
   }
 
-  Stream<ScanResult> startDeviceScan(int scanMode, int callbackType) async* {
-    var settings = bleData.ScanSettingsMessage.create()
+  Stream<ScanResult> startDeviceScan(int scanMode, int callbackType, List<String> uuids) async* {
+    var settings = bleData.ScanDataMessage.create()
       ..scanMode = scanMode
       ..callbackType = callbackType;
-
+    if(uuids != null){
+      uuids.forEach(settings.uuids.add);
+    }
     StreamSubscription subscription;
     StreamController controller;
 

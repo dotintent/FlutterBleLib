@@ -83,7 +83,7 @@
   } else if([FBLState isEqualToString:call.method]) {
       [self state:result];
   } else if([FBLStartDeviceScan isEqualToString:call.method]) {
-      [self startDeviceScan:result];
+      [self startDeviceScan:call result:result];
   } else if([FBLStopDeviceScan isEqualToString:call.method]) {
       [self stopDeviceScan:result];
   } else if([FBLRequestMTUForDevice isEqualToString:call.method]) {
@@ -174,8 +174,10 @@
     } ];
 }
 
-- (void)startDeviceScan: (FlutterResult) result {
-    [_manager startDeviceScan:nil options: nil];
+- (void)startDeviceScan: (FlutterMethodCall *) methodData result:(FlutterResult) result {
+    NSData *data = [((FlutterStandardTypedData *) methodData.arguments) data];
+    BleDataScanDataMessage* scanData = [BleDataScanDataMessage parseFromData:data error: nil];
+    [_manager startDeviceScan:[scanData.uuidsArray copy] options: nil];
     result(nil);
 }
 
