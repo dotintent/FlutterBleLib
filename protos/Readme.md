@@ -9,6 +9,9 @@
 5. Add plugin path to PATH
 5. Make sure protoc + protoc-gen-dart + dart bins are all in the same path
 6. Run the following command from the protos folder
-```protoc --dart_out=../lib/generated ./bledata.proto```
-```--objc_out=../ios/Classes/BleData ./bledata.proto```
-   * if folder ../lib/generated does not exist please create it.
+```
+protoc --dart_out=../lib/generated ./bledata.proto
+protoc --objc_out=../ios/Classes/BleData ./bledata.proto
+```
+
+   * if folder `../lib/generated` or `./ios/Classes/BleData` does not exist please create it.
