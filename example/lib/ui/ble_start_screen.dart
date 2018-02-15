@@ -12,7 +12,7 @@ class BleStartScreen extends StatefulWidget {
 class BleStartScreenState extends State<BleStartScreen> {
 
   LogLevel _currentLogLevel = LogLevel.NONE;
-  BluetoothState _currentState = BluetoothState.UNKNOWN;
+  BluetoothState _currentState = BluetoothState.POWERED_ON;
 
   @override
   Widget build(BuildContext context) {
@@ -95,13 +95,13 @@ class BleStartScreenState extends State<BleStartScreen> {
               ),
               new Container (
                 margin: const EdgeInsets.only(bottom: 18.0),
-                child: new MaterialButton(
+                child: new RaisedButton(
                     child: new Text(
                       "Get current state",
                       style: new TextStyle(color: Colors.white),
                     ),
-                    textColor: Colors.white,
                     color: Colors.blue,
+                    disabledColor: Colors.grey,
                     onPressed: _onGetCurrentStateClick
                 ),
               ),

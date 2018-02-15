@@ -237,8 +237,8 @@ public class FlutterBleLibPlugin implements MethodCallHandler, EventDelegate {
     }
 
     private void startDeviceScan(MethodCall call, final Result result) {
-        final byte[] scanResultMessageByte = call.arguments();
-        bleHelper.startDeviceScan(scanResultMessageByte,
+        final byte[] scanSettingsWrapperBytes = call.arguments();
+        bleHelper.startDeviceScan(scanSettingsWrapperBytes,
                 new VoidOnSuccessAction(result),
                 new DefaultOnErrorAction(result)
         );
@@ -288,7 +288,8 @@ public class FlutterBleLibPlugin implements MethodCallHandler, EventDelegate {
     }
 
     private void characteristicsForService(MethodCall call, final Result result) {
-        bleHelper.characteristicsForService((Integer) call.arguments(),
+        final int serviceIdentifier = ((Double)call.argument(ArgKey.serviceIdentifier)).intValue();
+        bleHelper.characteristicsForService(serviceIdentifier,
                 new MessageLiteOnSuccessAction<BleData.CharacteristicMessages>(result),
                 new DefaultOnErrorAction(result)
         );
@@ -314,7 +315,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler, EventDelegate {
     }
 
     private void writeCharacteristicForService(MethodCall call, final Result result) {
-        final int serviceIdentifier = call.argument(ArgKey.serviceIdentifier);
+        final int serviceIdentifier =  ((Double)call.argument(ArgKey.serviceIdentifier)).intValue();
         final String characteristicUUID = call.argument(ArgKey.characteristicUUID);
         final String valueBase64 = call.argument(ArgKey.valueBase64);
         final Boolean response = call.argument(ArgKey.response);
@@ -331,7 +332,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler, EventDelegate {
     }
 
     private void writeCharacteristic(MethodCall call, final Result result) {
-        final int characteristicIdentifier = call.argument(ArgKey.characteristicIdentifier);
+        final int characteristicIdentifier =  ((Double)call.argument(ArgKey.characteristicIdentifier)).intValue();
         final String valueBase64 = call.argument(ArgKey.valueBase64);
         final Boolean response = call.argument(ArgKey.response);
         final String transactionId = call.argument(ArgKey.transactionId);
@@ -361,7 +362,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler, EventDelegate {
     }
 
     private void readCharacteristicForService(MethodCall call, final Result result) {
-        final int serviceIdentifier = call.argument(ArgKey.serviceIdentifier);
+        final int serviceIdentifier = ((Double)call.argument(ArgKey.serviceIdentifier)).intValue();
         final String characteristicUUID = call.argument(ArgKey.characteristicUUID);
         final String transactionId = call.argument(ArgKey.transactionId);
         bleHelper.readCharacteristicForService(
@@ -374,7 +375,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler, EventDelegate {
     }
 
     private void readCharacteristic(MethodCall call, final Result result) {
-        final int characteristicIdentifier = call.argument(ArgKey.characteristicIdentifier);
+        final int characteristicIdentifier = ((Double)call.argument(ArgKey.characteristicIdentifier)).intValue();
         final String transactionId = call.argument(ArgKey.transactionId);
         bleHelper.readCharacteristic(
                 characteristicIdentifier,
@@ -400,7 +401,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler, EventDelegate {
     }
 
     private void monitorCharacteristicForService(MethodCall call, final Result result) {
-        final int serviceIdentifier = call.argument(ArgKey.serviceIdentifier);
+        final int serviceIdentifier = ((Double)call.argument(ArgKey.serviceIdentifier)).intValue();
         final String characteristicUUID = call.argument(ArgKey.characteristicUUID);
         final String transactionId = call.argument(ArgKey.transactionId);
         bleHelper.monitorCharacteristicForService(
@@ -413,7 +414,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler, EventDelegate {
     }
 
     private void monitorCharacteristic(MethodCall call, final Result result) {
-        final int characteristicIdentifier = call.argument(ArgKey.characteristicIdentifier);
+        final int characteristicIdentifier = ((Double)call.argument(ArgKey.characteristicIdentifier)).intValue();
         final String transactionId = call.argument(ArgKey.transactionId);
         bleHelper.monitorCharacteristic(
                 characteristicIdentifier,

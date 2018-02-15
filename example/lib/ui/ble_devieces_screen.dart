@@ -64,7 +64,7 @@ class BleScanResultListState extends State<StatefulWidget> {
                 new Text("\tname : ${scanResults.bleDevice.name}",
                   style: new TextStyle(fontSize: 10.0),),
                 new Text(
-                  "\tmac address : ${scanResults.bleDevice.macAddress}",
+                  "\tmac address : ${scanResults.bleDevice.id}",
                   style: new TextStyle(fontSize: 10.0),),
                 new Text(
                   "\tis connected : ${scanResults.bleDevice.isConnected}",
@@ -105,7 +105,7 @@ class BleScanResultListState extends State<StatefulWidget> {
 
   _onConnectButtonClick(ScanResult scanResults) {
     FlutterBleLib.instance.connectToDevice(
-        scanResults.bleDevice.macAddress, isAutoConnect: true).then((
+        scanResults.bleDevice.id, isAutoConnect: true).then((
         connectedDevice) {
       Navigator.of(_mainBuildContext).push(new MaterialPageRoute(
           builder: (BuildContext buildContext) =>
@@ -116,7 +116,7 @@ class BleScanResultListState extends State<StatefulWidget> {
 
   _onIsConnectedButtonClick(ScanResult scanResult) =>
       FlutterBleLib.instance
-          .isDeviceConnected(scanResult.bleDevice.macAddress)
+          .isDeviceConnected(scanResult.bleDevice.id)
           .then((isConnected) =>
           setState(() => scanResult.bleDevice.isConnected = isConnected));
 }
@@ -190,8 +190,11 @@ class BleDevicesState extends State<BleDevicesScreen> {
   }
 
   _onStartScan() {
+    //TODO pass this list as arg to scan only filtered devices
+//    List<String> uuids = new List();
+//    uuids.add("0000181d-0000-1000-8000-00805f9b34fb");
     _scanDevicesSub = FlutterBleLib.instance
-        .startDeviceScan(1, 1)
+        .startDeviceScan(1, 1, null/*uuids*/)
         .listen(
             (scanResult) => setState(() => _addOrUpdateIfNecessary(scanResult)),
         onDone: _onStopScan);

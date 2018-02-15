@@ -28,6 +28,8 @@
 CF_EXTERN_C_BEGIN
 
 @class BleDataBleDeviceMessage;
+@class BleDataCharacteristicMessage;
+@class BleDataServiceMessage;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -96,70 +98,30 @@ BOOL BleDataBluetoothStateMessage_IsValidValue(int32_t value);
 @interface BleDataBledataRoot : GPBRootObject
 @end
 
-#pragma mark - BleDataScanSettingsMessage
+#pragma mark - BleDataScanDataMessage
 
-typedef GPB_ENUM(BleDataScanSettingsMessage_FieldNumber) {
-  BleDataScanSettingsMessage_FieldNumber_ScanMode = 1,
-  BleDataScanSettingsMessage_FieldNumber_CallbackType = 2,
+typedef GPB_ENUM(BleDataScanDataMessage_FieldNumber) {
+  BleDataScanDataMessage_FieldNumber_ScanMode = 1,
+  BleDataScanDataMessage_FieldNumber_CallbackType = 2,
+  BleDataScanDataMessage_FieldNumber_UuidsArray = 3,
 };
 
-@interface BleDataScanSettingsMessage : GPBMessage
+@interface BleDataScanDataMessage : GPBMessage
 
 @property(nonatomic, readwrite) int32_t scanMode;
 
-/**
- * TODO for this moment they are hidden in
- *    uint64 reportDelayMillis = 3;
- *    int32 matchMode = 4;
- *    int32 numOfMatchesPerFilter = 5;
- **/
 @property(nonatomic, readwrite) int32_t callbackType;
 
-@end
-
-#pragma mark - BleDataScanFilterMessage
-
-typedef GPB_ENUM(BleDataScanFilterMessage_FieldNumber) {
-  BleDataScanFilterMessage_FieldNumber_DeviceName = 1,
-  BleDataScanFilterMessage_FieldNumber_DeviceAddress = 2,
-  BleDataScanFilterMessage_FieldNumber_ServiceUuid = 3,
-  BleDataScanFilterMessage_FieldNumber_ServiceUuidMask = 4,
-  BleDataScanFilterMessage_FieldNumber_ServiceDataUuid = 5,
-  BleDataScanFilterMessage_FieldNumber_ServiceData = 6,
-  BleDataScanFilterMessage_FieldNumber_ServiceDataMask = 7,
-  BleDataScanFilterMessage_FieldNumber_ManufacturerId = 8,
-  BleDataScanFilterMessage_FieldNumber_ManufacturerData = 9,
-  BleDataScanFilterMessage_FieldNumber_ManufacturerDataMask = 10,
-};
-
-@interface BleDataScanFilterMessage : GPBMessage
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *deviceName;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *deviceAddress;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *serviceUuid;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *serviceUuidMask;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSString *serviceDataUuid;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSData *serviceData;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSData *serviceDataMask;
-
-@property(nonatomic, readwrite) int32_t manufacturerId;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSData *manufacturerData;
-
-@property(nonatomic, readwrite, copy, null_resettable) NSData *manufacturerDataMask;
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<NSString*> *uuidsArray;
+/** The number of items in @c uuidsArray without causing the array to be created. */
+@property(nonatomic, readonly) NSUInteger uuidsArray_Count;
 
 @end
 
 #pragma mark - BleDataBleDeviceMessage
 
 typedef GPB_ENUM(BleDataBleDeviceMessage_FieldNumber) {
-  BleDataBleDeviceMessage_FieldNumber_MacAddress = 1,
+  BleDataBleDeviceMessage_FieldNumber_Id_p = 1,
   BleDataBleDeviceMessage_FieldNumber_Name = 2,
   BleDataBleDeviceMessage_FieldNumber_Rssi = 3,
   BleDataBleDeviceMessage_FieldNumber_Mtu = 4,
@@ -167,7 +129,7 @@ typedef GPB_ENUM(BleDataBleDeviceMessage_FieldNumber) {
 
 @interface BleDataBleDeviceMessage : GPBMessage
 
-@property(nonatomic, readwrite, copy, null_resettable) NSString *macAddress;
+@property(nonatomic, readwrite, copy, null_resettable) NSString *id_p;
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *name;
 
@@ -218,48 +180,116 @@ typedef GPB_ENUM(BleDataConnectToDeviceDataMessage_FieldNumber) {
 
 @end
 
-#pragma mark - BleDataSimpleTransactionMessage
+#pragma mark - BleDataServiceMessages
 
-typedef GPB_ENUM(BleDataSimpleTransactionMessage_FieldNumber) {
-  BleDataSimpleTransactionMessage_FieldNumber_TransactionId = 1,
+typedef GPB_ENUM(BleDataServiceMessages_FieldNumber) {
+  BleDataServiceMessages_FieldNumber_ServiceMessagesArray = 1,
 };
 
-@interface BleDataSimpleTransactionMessage : GPBMessage
+@interface BleDataServiceMessages : GPBMessage
 
-@property(nonatomic, readwrite, copy, null_resettable) NSString *transactionId;
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<BleDataServiceMessage*> *serviceMessagesArray;
+/** The number of items in @c serviceMessagesArray without causing the array to be created. */
+@property(nonatomic, readonly) NSUInteger serviceMessagesArray_Count;
 
 @end
 
-#pragma mark - BleDataRequestMtuTransactionMessage
+#pragma mark - BleDataServiceMessage
 
-typedef GPB_ENUM(BleDataRequestMtuTransactionMessage_FieldNumber) {
-  BleDataRequestMtuTransactionMessage_FieldNumber_TransactionId = 1,
-  BleDataRequestMtuTransactionMessage_FieldNumber_MacAddress = 2,
-  BleDataRequestMtuTransactionMessage_FieldNumber_Mtu = 3,
+typedef GPB_ENUM(BleDataServiceMessage_FieldNumber) {
+  BleDataServiceMessage_FieldNumber_Id_p = 1,
+  BleDataServiceMessage_FieldNumber_Uuid = 2,
+  BleDataServiceMessage_FieldNumber_Device = 3,
+  BleDataServiceMessage_FieldNumber_IsPrimary = 4,
 };
 
-@interface BleDataRequestMtuTransactionMessage : GPBMessage
+@interface BleDataServiceMessage : GPBMessage
 
-@property(nonatomic, readwrite, copy, null_resettable) NSString *transactionId;
+@property(nonatomic, readwrite) double id_p;
 
-@property(nonatomic, readwrite, copy, null_resettable) NSString *macAddress;
+@property(nonatomic, readwrite, copy, null_resettable) NSString *uuid;
 
-@property(nonatomic, readwrite) int32_t mtu;
+@property(nonatomic, readwrite, strong, null_resettable) BleDataBleDeviceMessage *device;
+/** Test to see if @c device has been set. */
+@property(nonatomic, readwrite) BOOL hasDevice;
+
+@property(nonatomic, readwrite) BOOL isPrimary;
 
 @end
 
-#pragma mark - BleDataReadRSSIForDeviceMessage
+#pragma mark - BleDataCharacteristicMessages
 
-typedef GPB_ENUM(BleDataReadRSSIForDeviceMessage_FieldNumber) {
-  BleDataReadRSSIForDeviceMessage_FieldNumber_TransactionId = 1,
-  BleDataReadRSSIForDeviceMessage_FieldNumber_MacAddress = 2,
+typedef GPB_ENUM(BleDataCharacteristicMessages_FieldNumber) {
+  BleDataCharacteristicMessages_FieldNumber_CharacteristicMessageArray = 1,
 };
 
-@interface BleDataReadRSSIForDeviceMessage : GPBMessage
+@interface BleDataCharacteristicMessages : GPBMessage
+
+@property(nonatomic, readwrite, strong, null_resettable) NSMutableArray<BleDataCharacteristicMessage*> *characteristicMessageArray;
+/** The number of items in @c characteristicMessageArray without causing the array to be created. */
+@property(nonatomic, readonly) NSUInteger characteristicMessageArray_Count;
+
+@end
+
+#pragma mark - BleDataCharacteristicMessage
+
+typedef GPB_ENUM(BleDataCharacteristicMessage_FieldNumber) {
+  BleDataCharacteristicMessage_FieldNumber_Id_p = 1,
+  BleDataCharacteristicMessage_FieldNumber_Uuid = 2,
+  BleDataCharacteristicMessage_FieldNumber_ServiceId = 3,
+  BleDataCharacteristicMessage_FieldNumber_ServiceUuid = 4,
+  BleDataCharacteristicMessage_FieldNumber_DeviceId = 5,
+  BleDataCharacteristicMessage_FieldNumber_IsReadable = 6,
+  BleDataCharacteristicMessage_FieldNumber_IsWritableWithResponse = 7,
+  BleDataCharacteristicMessage_FieldNumber_IsWritableWithoutResponse = 8,
+  BleDataCharacteristicMessage_FieldNumber_IsNotificable = 9,
+  BleDataCharacteristicMessage_FieldNumber_IsIndicatable = 10,
+  BleDataCharacteristicMessage_FieldNumber_IsNotifing = 11,
+  BleDataCharacteristicMessage_FieldNumber_Value = 12,
+};
+
+@interface BleDataCharacteristicMessage : GPBMessage
+
+@property(nonatomic, readwrite) double id_p;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *uuid;
+
+@property(nonatomic, readwrite) int32_t serviceId;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *serviceUuid;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *deviceId;
+
+@property(nonatomic, readwrite) BOOL isReadable;
+
+@property(nonatomic, readwrite) BOOL isWritableWithResponse;
+
+@property(nonatomic, readwrite) BOOL isWritableWithoutResponse;
+
+@property(nonatomic, readwrite) BOOL isNotificable;
+
+@property(nonatomic, readwrite) BOOL isIndicatable;
+
+@property(nonatomic, readwrite) BOOL isNotifing;
+
+@property(nonatomic, readwrite, copy, null_resettable) NSString *value;
+
+@end
+
+#pragma mark - BleDataMonitorCharacteristicMessage
+
+typedef GPB_ENUM(BleDataMonitorCharacteristicMessage_FieldNumber) {
+  BleDataMonitorCharacteristicMessage_FieldNumber_TransactionId = 1,
+  BleDataMonitorCharacteristicMessage_FieldNumber_CharacteristicMessage = 2,
+};
+
+@interface BleDataMonitorCharacteristicMessage : GPBMessage
 
 @property(nonatomic, readwrite, copy, null_resettable) NSString *transactionId;
 
-@property(nonatomic, readwrite, copy, null_resettable) NSString *macAddress;
+@property(nonatomic, readwrite, strong, null_resettable) BleDataCharacteristicMessage *characteristicMessage;
+/** Test to see if @c characteristicMessage has been set. */
+@property(nonatomic, readwrite) BOOL hasCharacteristicMessage;
 
 @end
 

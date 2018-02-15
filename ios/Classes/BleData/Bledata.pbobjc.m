@@ -128,18 +128,20 @@ BOOL BleDataBluetoothStateMessage_IsValidValue(int32_t value__) {
   }
 }
 
-#pragma mark - BleDataScanSettingsMessage
+#pragma mark - BleDataScanDataMessage
 
-@implementation BleDataScanSettingsMessage
+@implementation BleDataScanDataMessage
 
 @dynamic scanMode;
 @dynamic callbackType;
+@dynamic uuidsArray, uuidsArray_Count;
 
-typedef struct BleDataScanSettingsMessage__storage_ {
+typedef struct BleDataScanDataMessage__storage_ {
   uint32_t _has_storage_[1];
   int32_t scanMode;
   int32_t callbackType;
-} BleDataScanSettingsMessage__storage_;
+  NSMutableArray *uuidsArray;
+} BleDataScanDataMessage__storage_;
 
 // This method is threadsafe because it is initially called
 // in +initialize for each subclass.
@@ -150,29 +152,38 @@ typedef struct BleDataScanSettingsMessage__storage_ {
       {
         .name = "scanMode",
         .dataTypeSpecific.className = NULL,
-        .number = BleDataScanSettingsMessage_FieldNumber_ScanMode,
+        .number = BleDataScanDataMessage_FieldNumber_ScanMode,
         .hasIndex = 0,
-        .offset = (uint32_t)offsetof(BleDataScanSettingsMessage__storage_, scanMode),
+        .offset = (uint32_t)offsetof(BleDataScanDataMessage__storage_, scanMode),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
         .dataType = GPBDataTypeInt32,
       },
       {
         .name = "callbackType",
         .dataTypeSpecific.className = NULL,
-        .number = BleDataScanSettingsMessage_FieldNumber_CallbackType,
+        .number = BleDataScanDataMessage_FieldNumber_CallbackType,
         .hasIndex = 1,
-        .offset = (uint32_t)offsetof(BleDataScanSettingsMessage__storage_, callbackType),
+        .offset = (uint32_t)offsetof(BleDataScanDataMessage__storage_, callbackType),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
         .dataType = GPBDataTypeInt32,
       },
+      {
+        .name = "uuidsArray",
+        .dataTypeSpecific.className = NULL,
+        .number = BleDataScanDataMessage_FieldNumber_UuidsArray,
+        .hasIndex = GPBNoHasBit,
+        .offset = (uint32_t)offsetof(BleDataScanDataMessage__storage_, uuidsArray),
+        .flags = GPBFieldRepeated,
+        .dataType = GPBDataTypeString,
+      },
     };
     GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:[BleDataScanSettingsMessage class]
+        [GPBDescriptor allocDescriptorForClass:[BleDataScanDataMessage class]
                                      rootClass:[BleDataBledataRoot class]
                                           file:BleDataBledataRoot_FileDescriptor()
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(BleDataScanSettingsMessage__storage_)
+                                   storageSize:sizeof(BleDataScanDataMessage__storage_)
                                          flags:GPBDescriptorInitializationFlag_None];
 #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     static const char *extraTextFormatInfo =
@@ -187,158 +198,11 @@ typedef struct BleDataScanSettingsMessage__storage_ {
 
 @end
 
-#pragma mark - BleDataScanFilterMessage
-
-@implementation BleDataScanFilterMessage
-
-@dynamic deviceName;
-@dynamic deviceAddress;
-@dynamic serviceUuid;
-@dynamic serviceUuidMask;
-@dynamic serviceDataUuid;
-@dynamic serviceData;
-@dynamic serviceDataMask;
-@dynamic manufacturerId;
-@dynamic manufacturerData;
-@dynamic manufacturerDataMask;
-
-typedef struct BleDataScanFilterMessage__storage_ {
-  uint32_t _has_storage_[1];
-  int32_t manufacturerId;
-  NSString *deviceName;
-  NSString *deviceAddress;
-  NSString *serviceUuid;
-  NSString *serviceUuidMask;
-  NSString *serviceDataUuid;
-  NSData *serviceData;
-  NSData *serviceDataMask;
-  NSData *manufacturerData;
-  NSData *manufacturerDataMask;
-} BleDataScanFilterMessage__storage_;
-
-// This method is threadsafe because it is initially called
-// in +initialize for each subclass.
-+ (GPBDescriptor *)descriptor {
-  static GPBDescriptor *descriptor = nil;
-  if (!descriptor) {
-    static GPBMessageFieldDescription fields[] = {
-      {
-        .name = "deviceName",
-        .dataTypeSpecific.className = NULL,
-        .number = BleDataScanFilterMessage_FieldNumber_DeviceName,
-        .hasIndex = 0,
-        .offset = (uint32_t)offsetof(BleDataScanFilterMessage__storage_, deviceName),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
-        .dataType = GPBDataTypeString,
-      },
-      {
-        .name = "deviceAddress",
-        .dataTypeSpecific.className = NULL,
-        .number = BleDataScanFilterMessage_FieldNumber_DeviceAddress,
-        .hasIndex = 1,
-        .offset = (uint32_t)offsetof(BleDataScanFilterMessage__storage_, deviceAddress),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
-        .dataType = GPBDataTypeString,
-      },
-      {
-        .name = "serviceUuid",
-        .dataTypeSpecific.className = NULL,
-        .number = BleDataScanFilterMessage_FieldNumber_ServiceUuid,
-        .hasIndex = 2,
-        .offset = (uint32_t)offsetof(BleDataScanFilterMessage__storage_, serviceUuid),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
-        .dataType = GPBDataTypeString,
-      },
-      {
-        .name = "serviceUuidMask",
-        .dataTypeSpecific.className = NULL,
-        .number = BleDataScanFilterMessage_FieldNumber_ServiceUuidMask,
-        .hasIndex = 3,
-        .offset = (uint32_t)offsetof(BleDataScanFilterMessage__storage_, serviceUuidMask),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
-        .dataType = GPBDataTypeString,
-      },
-      {
-        .name = "serviceDataUuid",
-        .dataTypeSpecific.className = NULL,
-        .number = BleDataScanFilterMessage_FieldNumber_ServiceDataUuid,
-        .hasIndex = 4,
-        .offset = (uint32_t)offsetof(BleDataScanFilterMessage__storage_, serviceDataUuid),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
-        .dataType = GPBDataTypeString,
-      },
-      {
-        .name = "serviceData",
-        .dataTypeSpecific.className = NULL,
-        .number = BleDataScanFilterMessage_FieldNumber_ServiceData,
-        .hasIndex = 5,
-        .offset = (uint32_t)offsetof(BleDataScanFilterMessage__storage_, serviceData),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
-        .dataType = GPBDataTypeBytes,
-      },
-      {
-        .name = "serviceDataMask",
-        .dataTypeSpecific.className = NULL,
-        .number = BleDataScanFilterMessage_FieldNumber_ServiceDataMask,
-        .hasIndex = 6,
-        .offset = (uint32_t)offsetof(BleDataScanFilterMessage__storage_, serviceDataMask),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
-        .dataType = GPBDataTypeBytes,
-      },
-      {
-        .name = "manufacturerId",
-        .dataTypeSpecific.className = NULL,
-        .number = BleDataScanFilterMessage_FieldNumber_ManufacturerId,
-        .hasIndex = 7,
-        .offset = (uint32_t)offsetof(BleDataScanFilterMessage__storage_, manufacturerId),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
-        .dataType = GPBDataTypeInt32,
-      },
-      {
-        .name = "manufacturerData",
-        .dataTypeSpecific.className = NULL,
-        .number = BleDataScanFilterMessage_FieldNumber_ManufacturerData,
-        .hasIndex = 8,
-        .offset = (uint32_t)offsetof(BleDataScanFilterMessage__storage_, manufacturerData),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
-        .dataType = GPBDataTypeBytes,
-      },
-      {
-        .name = "manufacturerDataMask",
-        .dataTypeSpecific.className = NULL,
-        .number = BleDataScanFilterMessage_FieldNumber_ManufacturerDataMask,
-        .hasIndex = 9,
-        .offset = (uint32_t)offsetof(BleDataScanFilterMessage__storage_, manufacturerDataMask),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
-        .dataType = GPBDataTypeBytes,
-      },
-    };
-    GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:[BleDataScanFilterMessage class]
-                                     rootClass:[BleDataBledataRoot class]
-                                          file:BleDataBledataRoot_FileDescriptor()
-                                        fields:fields
-                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(BleDataScanFilterMessage__storage_)
-                                         flags:GPBDescriptorInitializationFlag_None];
-#if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
-    static const char *extraTextFormatInfo =
-        "\n\001\n\000\002\r\000\003\013\000\004\017\000\005\017\000\006\013\000\007\017\000\010\016\000\t\020\000\n\024\000";
-    [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
-#endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
-    NSAssert(descriptor == nil, @"Startup recursed!");
-    descriptor = localDescriptor;
-  }
-  return descriptor;
-}
-
-@end
-
 #pragma mark - BleDataBleDeviceMessage
 
 @implementation BleDataBleDeviceMessage
 
-@dynamic macAddress;
+@dynamic id_p;
 @dynamic name;
 @dynamic rssi;
 @dynamic mtu;
@@ -347,7 +211,7 @@ typedef struct BleDataBleDeviceMessage__storage_ {
   uint32_t _has_storage_[1];
   int32_t rssi;
   int32_t mtu;
-  NSString *macAddress;
+  NSString *id_p;
   NSString *name;
 } BleDataBleDeviceMessage__storage_;
 
@@ -358,12 +222,12 @@ typedef struct BleDataBleDeviceMessage__storage_ {
   if (!descriptor) {
     static GPBMessageFieldDescription fields[] = {
       {
-        .name = "macAddress",
+        .name = "id_p",
         .dataTypeSpecific.className = NULL,
-        .number = BleDataBleDeviceMessage_FieldNumber_MacAddress,
+        .number = BleDataBleDeviceMessage_FieldNumber_Id_p,
         .hasIndex = 0,
-        .offset = (uint32_t)offsetof(BleDataBleDeviceMessage__storage_, macAddress),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
+        .offset = (uint32_t)offsetof(BleDataBleDeviceMessage__storage_, id_p),
+        .flags = GPBFieldOptional,
         .dataType = GPBDataTypeString,
       },
       {
@@ -402,11 +266,6 @@ typedef struct BleDataBleDeviceMessage__storage_ {
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
                                    storageSize:sizeof(BleDataBleDeviceMessage__storage_)
                                          flags:GPBDescriptorInitializationFlag_None];
-#if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
-    static const char *extraTextFormatInfo =
-        "\001\001\n\000";
-    [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
-#endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     NSAssert(descriptor == nil, @"Startup recursed!");
     descriptor = localDescriptor;
   }
@@ -565,16 +424,16 @@ typedef struct BleDataConnectToDeviceDataMessage__storage_ {
 
 @end
 
-#pragma mark - BleDataSimpleTransactionMessage
+#pragma mark - BleDataServiceMessages
 
-@implementation BleDataSimpleTransactionMessage
+@implementation BleDataServiceMessages
 
-@dynamic transactionId;
+@dynamic serviceMessagesArray, serviceMessagesArray_Count;
 
-typedef struct BleDataSimpleTransactionMessage__storage_ {
+typedef struct BleDataServiceMessages__storage_ {
   uint32_t _has_storage_[1];
-  NSString *transactionId;
-} BleDataSimpleTransactionMessage__storage_;
+  NSMutableArray *serviceMessagesArray;
+} BleDataServiceMessages__storage_;
 
 // This method is threadsafe because it is initially called
 // in +initialize for each subclass.
@@ -583,26 +442,26 @@ typedef struct BleDataSimpleTransactionMessage__storage_ {
   if (!descriptor) {
     static GPBMessageFieldDescription fields[] = {
       {
-        .name = "transactionId",
-        .dataTypeSpecific.className = NULL,
-        .number = BleDataSimpleTransactionMessage_FieldNumber_TransactionId,
-        .hasIndex = 0,
-        .offset = (uint32_t)offsetof(BleDataSimpleTransactionMessage__storage_, transactionId),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
-        .dataType = GPBDataTypeString,
+        .name = "serviceMessagesArray",
+        .dataTypeSpecific.className = GPBStringifySymbol(BleDataServiceMessage),
+        .number = BleDataServiceMessages_FieldNumber_ServiceMessagesArray,
+        .hasIndex = GPBNoHasBit,
+        .offset = (uint32_t)offsetof(BleDataServiceMessages__storage_, serviceMessagesArray),
+        .flags = (GPBFieldFlags)(GPBFieldRepeated | GPBFieldTextFormatNameCustom),
+        .dataType = GPBDataTypeMessage,
       },
     };
     GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:[BleDataSimpleTransactionMessage class]
+        [GPBDescriptor allocDescriptorForClass:[BleDataServiceMessages class]
                                      rootClass:[BleDataBledataRoot class]
                                           file:BleDataBledataRoot_FileDescriptor()
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(BleDataSimpleTransactionMessage__storage_)
+                                   storageSize:sizeof(BleDataServiceMessages__storage_)
                                          flags:GPBDescriptorInitializationFlag_None];
 #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     static const char *extraTextFormatInfo =
-        "\001\001\r\000";
+        "\001\001\000serviceMessages\000";
     [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
 #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     NSAssert(descriptor == nil, @"Startup recursed!");
@@ -613,20 +472,21 @@ typedef struct BleDataSimpleTransactionMessage__storage_ {
 
 @end
 
-#pragma mark - BleDataRequestMtuTransactionMessage
+#pragma mark - BleDataServiceMessage
 
-@implementation BleDataRequestMtuTransactionMessage
+@implementation BleDataServiceMessage
 
-@dynamic transactionId;
-@dynamic macAddress;
-@dynamic mtu;
+@dynamic id_p;
+@dynamic uuid;
+@dynamic hasDevice, device;
+@dynamic isPrimary;
 
-typedef struct BleDataRequestMtuTransactionMessage__storage_ {
+typedef struct BleDataServiceMessage__storage_ {
   uint32_t _has_storage_[1];
-  int32_t mtu;
-  NSString *transactionId;
-  NSString *macAddress;
-} BleDataRequestMtuTransactionMessage__storage_;
+  NSString *uuid;
+  BleDataBleDeviceMessage *device;
+  double id_p;
+} BleDataServiceMessage__storage_;
 
 // This method is threadsafe because it is initially called
 // in +initialize for each subclass.
@@ -635,44 +495,264 @@ typedef struct BleDataRequestMtuTransactionMessage__storage_ {
   if (!descriptor) {
     static GPBMessageFieldDescription fields[] = {
       {
-        .name = "transactionId",
+        .name = "id_p",
         .dataTypeSpecific.className = NULL,
-        .number = BleDataRequestMtuTransactionMessage_FieldNumber_TransactionId,
+        .number = BleDataServiceMessage_FieldNumber_Id_p,
         .hasIndex = 0,
-        .offset = (uint32_t)offsetof(BleDataRequestMtuTransactionMessage__storage_, transactionId),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
-        .dataType = GPBDataTypeString,
-      },
-      {
-        .name = "macAddress",
-        .dataTypeSpecific.className = NULL,
-        .number = BleDataRequestMtuTransactionMessage_FieldNumber_MacAddress,
-        .hasIndex = 1,
-        .offset = (uint32_t)offsetof(BleDataRequestMtuTransactionMessage__storage_, macAddress),
-        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
-        .dataType = GPBDataTypeString,
-      },
-      {
-        .name = "mtu",
-        .dataTypeSpecific.className = NULL,
-        .number = BleDataRequestMtuTransactionMessage_FieldNumber_Mtu,
-        .hasIndex = 2,
-        .offset = (uint32_t)offsetof(BleDataRequestMtuTransactionMessage__storage_, mtu),
+        .offset = (uint32_t)offsetof(BleDataServiceMessage__storage_, id_p),
         .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeDouble,
+      },
+      {
+        .name = "uuid",
+        .dataTypeSpecific.className = NULL,
+        .number = BleDataServiceMessage_FieldNumber_Uuid,
+        .hasIndex = 1,
+        .offset = (uint32_t)offsetof(BleDataServiceMessage__storage_, uuid),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "device",
+        .dataTypeSpecific.className = GPBStringifySymbol(BleDataBleDeviceMessage),
+        .number = BleDataServiceMessage_FieldNumber_Device,
+        .hasIndex = 2,
+        .offset = (uint32_t)offsetof(BleDataServiceMessage__storage_, device),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeMessage,
+      },
+      {
+        .name = "isPrimary",
+        .dataTypeSpecific.className = NULL,
+        .number = BleDataServiceMessage_FieldNumber_IsPrimary,
+        .hasIndex = 3,
+        .offset = 4,  // Stored in _has_storage_ to save space.
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
+        .dataType = GPBDataTypeBool,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:[BleDataServiceMessage class]
+                                     rootClass:[BleDataBledataRoot class]
+                                          file:BleDataBledataRoot_FileDescriptor()
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(BleDataServiceMessage__storage_)
+                                         flags:GPBDescriptorInitializationFlag_None];
+#if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+    static const char *extraTextFormatInfo =
+        "\001\004\t\000";
+    [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
+#endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+    NSAssert(descriptor == nil, @"Startup recursed!");
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+#pragma mark - BleDataCharacteristicMessages
+
+@implementation BleDataCharacteristicMessages
+
+@dynamic characteristicMessageArray, characteristicMessageArray_Count;
+
+typedef struct BleDataCharacteristicMessages__storage_ {
+  uint32_t _has_storage_[1];
+  NSMutableArray *characteristicMessageArray;
+} BleDataCharacteristicMessages__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "characteristicMessageArray",
+        .dataTypeSpecific.className = GPBStringifySymbol(BleDataCharacteristicMessage),
+        .number = BleDataCharacteristicMessages_FieldNumber_CharacteristicMessageArray,
+        .hasIndex = GPBNoHasBit,
+        .offset = (uint32_t)offsetof(BleDataCharacteristicMessages__storage_, characteristicMessageArray),
+        .flags = (GPBFieldFlags)(GPBFieldRepeated | GPBFieldTextFormatNameCustom),
+        .dataType = GPBDataTypeMessage,
+      },
+    };
+    GPBDescriptor *localDescriptor =
+        [GPBDescriptor allocDescriptorForClass:[BleDataCharacteristicMessages class]
+                                     rootClass:[BleDataBledataRoot class]
+                                          file:BleDataBledataRoot_FileDescriptor()
+                                        fields:fields
+                                    fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
+                                   storageSize:sizeof(BleDataCharacteristicMessages__storage_)
+                                         flags:GPBDescriptorInitializationFlag_None];
+#if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+    static const char *extraTextFormatInfo =
+        "\001\001\000characteristicMessage\000";
+    [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
+#endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+    NSAssert(descriptor == nil, @"Startup recursed!");
+    descriptor = localDescriptor;
+  }
+  return descriptor;
+}
+
+@end
+
+#pragma mark - BleDataCharacteristicMessage
+
+@implementation BleDataCharacteristicMessage
+
+@dynamic id_p;
+@dynamic uuid;
+@dynamic serviceId;
+@dynamic serviceUuid;
+@dynamic deviceId;
+@dynamic isReadable;
+@dynamic isWritableWithResponse;
+@dynamic isWritableWithoutResponse;
+@dynamic isNotificable;
+@dynamic isIndicatable;
+@dynamic isNotifing;
+@dynamic value;
+
+typedef struct BleDataCharacteristicMessage__storage_ {
+  uint32_t _has_storage_[1];
+  int32_t serviceId;
+  NSString *uuid;
+  NSString *serviceUuid;
+  NSString *deviceId;
+  NSString *value;
+  double id_p;
+} BleDataCharacteristicMessage__storage_;
+
+// This method is threadsafe because it is initially called
+// in +initialize for each subclass.
++ (GPBDescriptor *)descriptor {
+  static GPBDescriptor *descriptor = nil;
+  if (!descriptor) {
+    static GPBMessageFieldDescription fields[] = {
+      {
+        .name = "id_p",
+        .dataTypeSpecific.className = NULL,
+        .number = BleDataCharacteristicMessage_FieldNumber_Id_p,
+        .hasIndex = 0,
+        .offset = (uint32_t)offsetof(BleDataCharacteristicMessage__storage_, id_p),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeDouble,
+      },
+      {
+        .name = "uuid",
+        .dataTypeSpecific.className = NULL,
+        .number = BleDataCharacteristicMessage_FieldNumber_Uuid,
+        .hasIndex = 1,
+        .offset = (uint32_t)offsetof(BleDataCharacteristicMessage__storage_, uuid),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "serviceId",
+        .dataTypeSpecific.className = NULL,
+        .number = BleDataCharacteristicMessage_FieldNumber_ServiceId,
+        .hasIndex = 2,
+        .offset = (uint32_t)offsetof(BleDataCharacteristicMessage__storage_, serviceId),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
         .dataType = GPBDataTypeInt32,
       },
+      {
+        .name = "serviceUuid",
+        .dataTypeSpecific.className = NULL,
+        .number = BleDataCharacteristicMessage_FieldNumber_ServiceUuid,
+        .hasIndex = 3,
+        .offset = (uint32_t)offsetof(BleDataCharacteristicMessage__storage_, serviceUuid),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "deviceId",
+        .dataTypeSpecific.className = NULL,
+        .number = BleDataCharacteristicMessage_FieldNumber_DeviceId,
+        .hasIndex = 4,
+        .offset = (uint32_t)offsetof(BleDataCharacteristicMessage__storage_, deviceId),
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
+        .dataType = GPBDataTypeString,
+      },
+      {
+        .name = "isReadable",
+        .dataTypeSpecific.className = NULL,
+        .number = BleDataCharacteristicMessage_FieldNumber_IsReadable,
+        .hasIndex = 5,
+        .offset = 6,  // Stored in _has_storage_ to save space.
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
+        .dataType = GPBDataTypeBool,
+      },
+      {
+        .name = "isWritableWithResponse",
+        .dataTypeSpecific.className = NULL,
+        .number = BleDataCharacteristicMessage_FieldNumber_IsWritableWithResponse,
+        .hasIndex = 7,
+        .offset = 8,  // Stored in _has_storage_ to save space.
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
+        .dataType = GPBDataTypeBool,
+      },
+      {
+        .name = "isWritableWithoutResponse",
+        .dataTypeSpecific.className = NULL,
+        .number = BleDataCharacteristicMessage_FieldNumber_IsWritableWithoutResponse,
+        .hasIndex = 9,
+        .offset = 10,  // Stored in _has_storage_ to save space.
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
+        .dataType = GPBDataTypeBool,
+      },
+      {
+        .name = "isNotificable",
+        .dataTypeSpecific.className = NULL,
+        .number = BleDataCharacteristicMessage_FieldNumber_IsNotificable,
+        .hasIndex = 11,
+        .offset = 12,  // Stored in _has_storage_ to save space.
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
+        .dataType = GPBDataTypeBool,
+      },
+      {
+        .name = "isIndicatable",
+        .dataTypeSpecific.className = NULL,
+        .number = BleDataCharacteristicMessage_FieldNumber_IsIndicatable,
+        .hasIndex = 13,
+        .offset = 14,  // Stored in _has_storage_ to save space.
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
+        .dataType = GPBDataTypeBool,
+      },
+      {
+        .name = "isNotifing",
+        .dataTypeSpecific.className = NULL,
+        .number = BleDataCharacteristicMessage_FieldNumber_IsNotifing,
+        .hasIndex = 15,
+        .offset = 16,  // Stored in _has_storage_ to save space.
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
+        .dataType = GPBDataTypeBool,
+      },
+      {
+        .name = "value",
+        .dataTypeSpecific.className = NULL,
+        .number = BleDataCharacteristicMessage_FieldNumber_Value,
+        .hasIndex = 17,
+        .offset = (uint32_t)offsetof(BleDataCharacteristicMessage__storage_, value),
+        .flags = GPBFieldOptional,
+        .dataType = GPBDataTypeString,
+      },
     };
     GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:[BleDataRequestMtuTransactionMessage class]
+        [GPBDescriptor allocDescriptorForClass:[BleDataCharacteristicMessage class]
                                      rootClass:[BleDataBledataRoot class]
                                           file:BleDataBledataRoot_FileDescriptor()
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(BleDataRequestMtuTransactionMessage__storage_)
+                                   storageSize:sizeof(BleDataCharacteristicMessage__storage_)
                                          flags:GPBDescriptorInitializationFlag_None];
 #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     static const char *extraTextFormatInfo =
-        "\002\001\r\000\002\n\000";
+        "\t\003\t\000\004\013\000\005\010\000\006\n\000\007\026\000\010\031\000\t\r\000\n\r\000\013\n\000";
     [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
 #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     NSAssert(descriptor == nil, @"Startup recursed!");
@@ -683,18 +763,18 @@ typedef struct BleDataRequestMtuTransactionMessage__storage_ {
 
 @end
 
-#pragma mark - BleDataReadRSSIForDeviceMessage
+#pragma mark - BleDataMonitorCharacteristicMessage
 
-@implementation BleDataReadRSSIForDeviceMessage
+@implementation BleDataMonitorCharacteristicMessage
 
 @dynamic transactionId;
-@dynamic macAddress;
+@dynamic hasCharacteristicMessage, characteristicMessage;
 
-typedef struct BleDataReadRSSIForDeviceMessage__storage_ {
+typedef struct BleDataMonitorCharacteristicMessage__storage_ {
   uint32_t _has_storage_[1];
   NSString *transactionId;
-  NSString *macAddress;
-} BleDataReadRSSIForDeviceMessage__storage_;
+  BleDataCharacteristicMessage *characteristicMessage;
+} BleDataMonitorCharacteristicMessage__storage_;
 
 // This method is threadsafe because it is initially called
 // in +initialize for each subclass.
@@ -705,33 +785,33 @@ typedef struct BleDataReadRSSIForDeviceMessage__storage_ {
       {
         .name = "transactionId",
         .dataTypeSpecific.className = NULL,
-        .number = BleDataReadRSSIForDeviceMessage_FieldNumber_TransactionId,
+        .number = BleDataMonitorCharacteristicMessage_FieldNumber_TransactionId,
         .hasIndex = 0,
-        .offset = (uint32_t)offsetof(BleDataReadRSSIForDeviceMessage__storage_, transactionId),
+        .offset = (uint32_t)offsetof(BleDataMonitorCharacteristicMessage__storage_, transactionId),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
         .dataType = GPBDataTypeString,
       },
       {
-        .name = "macAddress",
-        .dataTypeSpecific.className = NULL,
-        .number = BleDataReadRSSIForDeviceMessage_FieldNumber_MacAddress,
+        .name = "characteristicMessage",
+        .dataTypeSpecific.className = GPBStringifySymbol(BleDataCharacteristicMessage),
+        .number = BleDataMonitorCharacteristicMessage_FieldNumber_CharacteristicMessage,
         .hasIndex = 1,
-        .offset = (uint32_t)offsetof(BleDataReadRSSIForDeviceMessage__storage_, macAddress),
+        .offset = (uint32_t)offsetof(BleDataMonitorCharacteristicMessage__storage_, characteristicMessage),
         .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
-        .dataType = GPBDataTypeString,
+        .dataType = GPBDataTypeMessage,
       },
     };
     GPBDescriptor *localDescriptor =
-        [GPBDescriptor allocDescriptorForClass:[BleDataReadRSSIForDeviceMessage class]
+        [GPBDescriptor allocDescriptorForClass:[BleDataMonitorCharacteristicMessage class]
                                      rootClass:[BleDataBledataRoot class]
                                           file:BleDataBledataRoot_FileDescriptor()
                                         fields:fields
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
-                                   storageSize:sizeof(BleDataReadRSSIForDeviceMessage__storage_)
+                                   storageSize:sizeof(BleDataMonitorCharacteristicMessage__storage_)
                                          flags:GPBDescriptorInitializationFlag_None];
 #if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     static const char *extraTextFormatInfo =
-        "\002\001\r\000\002\n\000";
+        "\002\001\r\000\002\025\000";
     [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
 #endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     NSAssert(descriptor == nil, @"Startup recursed!");
