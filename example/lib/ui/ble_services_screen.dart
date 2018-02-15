@@ -43,6 +43,82 @@ class BleServicesScreenState extends State<StatefulWidget> {
   }
 }
 
+class ServiceItem extends StatelessWidget {
+
+  final BleService _bleService;
+  final VoidCallback _onCharacterisiticForDeviceClick;
+  final VoidCallback _onCharacterisiticForServiceClick;
+
+  ServiceItem(this._bleService,
+      this._onCharacterisiticForDeviceClick,
+      this._onCharacterisiticForServiceClick);
+
+  @override
+  Widget build(BuildContext context) {
+    final TextStyle titleStyle = Theme
+        .of(context)
+        .textTheme
+        .title;
+    final TextStyle body1Style = Theme
+        .of(context)
+        .textTheme
+        .body1;
+    final TextStyle body2Style = Theme
+        .of(context)
+        .textTheme
+        .body2;
+    final TextStyle buttonStyle = Theme
+        .of(context)
+        .textTheme
+        .button;
+    return new Card(
+      color: const Color.fromRGBO(69, 90, 100, 1.0),
+      child: new Container(
+        padding: const EdgeInsets.all(8.0),
+        child: new Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            new Text("Service : ", style: titleStyle),
+            new Text(_bleServiceInfo(), style: body1Style,),
+            new Text(_bleDeviceInfo(), style: body2Style,),
+            _button(
+                "Characterisitic for Device",
+                buttonStyle,
+                const EdgeInsets.only(top: 10.0, bottom: 10.0),
+                    () => _onCharacterisiticForDeviceClick()
+            ),
+            _button(
+                "Characterisitic for Service",
+                buttonStyle,
+                const EdgeInsets.only(bottom: 10.0),
+                    () => _onCharacterisiticForServiceClick()
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  _button(String text, TextStyle buttonStyle, EdgeInsets margin,
+      VoidCallback onPressed) =>
+      new Container (
+        margin: margin,
+        child: new MaterialButton(
+          minWidth: 400.0,
+          onPressed: onPressed,
+          color: Colors.blueAccent,
+          child: new Text(text, style: buttonStyle,),
+        ),
+      );
+
+  _bleServiceInfo() => "ID :  ${_bleService.id}\nUUID : ${_bleService
+      .uuid}\nIs primary : ${_bleService.isPrimary}\nBleDevice :";
+
+  _bleDeviceInfo() =>
+      "\tname : ${_bleService.device.name}\n\tid : ${_bleService.device
+          .id}";
+}
+
 class BleServiceList extends StatefulWidget {
 
 
@@ -76,79 +152,22 @@ class BleServiceListState extends State<StatefulWidget> {
     return new ListView.builder(
         itemCount: _services == null ? 0 : _services.length,
         itemBuilder: (BuildContext context, int index) =>
-            buildItem(_services[ index], _mainBuildContext)
+        new ServiceItem(
+          _services[index],
+              () => _onCharacteristicForDeviceClick(_services[index]),
+              () => _onCharacteristicForServiceClick(_services[index]),
+        )
     );
   }
 
-  Card buildItem(BleService bleService, BuildContext context) {
-    return new Card(
-      child: new Container(
-        padding: const EdgeInsets.all(8.0),
-        child: new Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            new Text(
-              "Service : ",
-              style: new TextStyle(
-                fontSize: 15.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            new Text("ID : + ${bleService.id}",
-              style: new TextStyle(fontSize: 12.0),),
-            new Text("UUID : ${bleService.uuid}",
-              style: new TextStyle(fontSize: 12.0),),
-            new Text("Is primary : ${bleService.isPrimary}",
-              style: new TextStyle(fontSize: 12.0),),
-            new Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                new Text("BleDevice : ",
-                  style: new TextStyle(
-                    fontSize: 12.0, fontWeight: FontWeight.bold,),),
-                new Text("\tname : ${bleService.device.name}",
-                  style: new TextStyle(fontSize: 10.0),),
-                new Text(
-                  "\tmac address : ${bleService.device.id}",
-                  style: new TextStyle(fontSize: 10.0),),
-              ],
-            ),
-            new Container (
-              margin: const EdgeInsets.only(top:10.0, bottom: 10.0),
-              child: new MaterialButton(
-                  minWidth: 400.0,
-                  onPressed: () => _onCharacteristicForDeviceClick(bleService),
-                  color: Colors.blueAccent,
-                  child: new Text(
-                    "Characterisitic for Device",
-                    style: new TextStyle(color: Colors.white),
-                  ),
-                ),
-            ),
-            new Container (
-              margin: const EdgeInsets.only(bottom: 10.0),
-              child: new MaterialButton(
-                  minWidth: 400.0,
-                  onPressed: () => _onCharacteristicForServiceClick(bleService),
-                  color: Colors.blueAccent,
-                  child: new Text(
-                    "Characterisitic for Service",
-                    style: new TextStyle(color: Colors.white),
-                  ),
-                ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   _onCharacteristicForDeviceClick(final BleService service) {
     FlutterBleLib.instance
         .characteristicsForDevice(service.device.id, service.uuid)
-        .then((characteristics) { Navigator.of(context).push(new MaterialPageRoute(
-        builder: (BuildContext buildContext) =>
-        new CharacteristicsScreen(service, characteristics)));
+        .then((characteristics) {
+      Navigator.of(context).push(new MaterialPageRoute(
+          builder: (BuildContext buildContext) =>
+          new CharacteristicsScreen(service, characteristics)));
     });
   }
 

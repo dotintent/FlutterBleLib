@@ -18,6 +18,84 @@ class BleScanResultList extends StatefulWidget {
       new BleScanResultListState(_scanResults, _mainBuildContext);
 }
 
+class ScanResultItem extends StatelessWidget {
+
+  final ScanResult _scanResult;
+  final VoidCallback _onIsConnectedClick;
+  final VoidCallback _onConnectClick;
+
+  ScanResultItem(this._scanResult,
+      this._onIsConnectedClick,
+      this._onConnectClick,);
+
+  @override
+  Widget build(BuildContext context) {
+    final TextStyle titleStyle = Theme
+        .of(context)
+        .textTheme
+        .title;
+    final TextStyle body1Style = Theme
+        .of(context)
+        .textTheme
+        .body1;
+    final TextStyle body2Style = Theme
+        .of(context)
+        .textTheme
+        .body2;
+    final TextStyle buttonStyle = Theme
+        .of(context)
+        .textTheme
+        .body2;
+    return new Card(
+      color: const Color.fromRGBO(69,90,100,1.0),
+      child: new Container(
+        padding: const EdgeInsets.all(8.0),
+        child: new Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            new Text("Scan Result : ", style: titleStyle,),
+            new Text(_scanResultLabelInfo(), style: body1Style,),
+            new Text(_deviceDataLabel(), style: body2Style),
+            new Container(
+              margin: const EdgeInsets.only(top: 12.0),
+              child: new Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  new Container (
+                    margin: const EdgeInsets.only(right: 12.0),
+                    child: new MaterialButton(
+                      onPressed: _onIsConnectedClick,
+                      color: Colors.blueAccent,
+                      child: new Text("IS CONNECTED", style: buttonStyle),
+                    ),
+                  ),
+                  new MaterialButton(
+                    onPressed: _onConnectClick,
+                    color: Colors.blueAccent,
+                    child: new Text("CONNECT", style: buttonStyle,),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  _scanResultLabelInfo() =>
+      "RSSI : ${_scanResult.rssi}\nTimestamp nanos : ${_scanResult
+          .timestampNanos}\nScan callback type : ${_scanResult
+          .scanCallbackType}\nBleDevice";
+
+  _deviceDataLabel() =>
+      "\tname : ${_scanResult.bleDevice.name}\n\tmac address : ${_scanResult
+          .bleDevice.id}\n\tis connected : ${_scanResult.bleDevice
+          .isConnected}";
+
+}
+
+
 class BleScanResultListState extends State<StatefulWidget> {
 
   final List<ScanResult> _scanResults;
@@ -35,83 +113,20 @@ class BleScanResultListState extends State<StatefulWidget> {
     );
   }
 
-  Card buildItem(ScanResult scanResults, BuildContext context) {
-    return new Card(
-      child: new Container(
-        padding: const EdgeInsets.all(8.0),
-        child: new Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            new Text(
-              "Scan Result : ",
-              style: new TextStyle(
-                fontSize: 15.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            new Text("RSSI : + ${scanResults.rssi}",
-              style: new TextStyle(fontSize: 12.0),),
-            new Text("Timestamp nanos : + ${scanResults.timestampNanos}",
-              style: new TextStyle(fontSize: 12.0),),
-            new Text("Scan callback type : + ${scanResults.scanCallbackType}",
-              style: new TextStyle(fontSize: 12.0),),
-            new Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                new Text("BleDevice : ",
-                  style: new TextStyle(
-                    fontSize: 12.0, fontWeight: FontWeight.bold,),),
-                new Text("\tname : ${scanResults.bleDevice.name}",
-                  style: new TextStyle(fontSize: 10.0),),
-                new Text(
-                  "\tmac address : ${scanResults.bleDevice.id}",
-                  style: new TextStyle(fontSize: 10.0),),
-                new Text(
-                  "\tis connected : ${scanResults.bleDevice.isConnected}",
-                  style: new TextStyle(fontSize: 10.0),),
-              ],
-            ),
-            new Container(
-              margin: const EdgeInsets.only(top: 12.0),
-              child: new Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  new Container (
-                    margin: const EdgeInsets.only(right: 12.0),
-                    child: new MaterialButton(
-                      onPressed: () => _onIsConnectedButtonClick(scanResults),
-                      color: Colors.blueAccent,
-                      child: new Text(
-                        "IS CONNECTED",
-                        style: new TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
-                  new MaterialButton(
-                    onPressed: () => _onConnectButtonClick(scanResults),
-                    color: Colors.blueAccent,
-                    child: new Text(
-                      "CONNECT", style: new TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+
+  Widget buildItem(ScanResult scanResults, BuildContext context) {
+    return new ScanResultItem(scanResults,
+            () => _onIsConnectedButtonClick(scanResults),
+            () => _onConnectButtonClick(scanResults)
     );
   }
 
   _onConnectButtonClick(ScanResult scanResults) {
     FlutterBleLib.instance.connectToDevice(
-        scanResults.bleDevice.id, isAutoConnect: true).then((
-        connectedDevice) {
-      Navigator.of(_mainBuildContext).push(new MaterialPageRoute(
-          builder: (BuildContext buildContext) =>
-          new BleConnectedDeviceScreen(connectedDevice)));
-    }
-    );
+        scanResults.bleDevice.id, isAutoConnect: true).then((connectedDevice) =>
+        Navigator.of(_mainBuildContext).push(new MaterialPageRoute(
+            builder: (BuildContext buildContext) =>
+            new BleConnectedDeviceScreen(connectedDevice))));
   }
 
   _onIsConnectedButtonClick(ScanResult scanResult) =>
@@ -132,7 +147,7 @@ class BleDevicesState extends State<BleDevicesScreen> {
   StreamSubscription _bluetoothStateSub;
 
   bool _isScan = false;
-  BluetoothState bluetoothState = null;
+  BluetoothState _bluetoothState = BluetoothState.UNKNOWN;
   final List<ScanResult> _scanResults = new List();
 
   @override
@@ -140,7 +155,9 @@ class BleDevicesState extends State<BleDevicesScreen> {
     super.initState();
     _bluetoothStateSub = FlutterBleLib.instance.onStateChange()
         .listen((bluetoothState) =>
-        setState(() => this.bluetoothState = bluetoothState));
+        setState(() => this._bluetoothState = bluetoothState));
+    FlutterBleLib.instance.state().then((bluetoothState) =>
+        setState(() => this._bluetoothState = bluetoothState));
   }
 
   @override
@@ -153,26 +170,57 @@ class BleDevicesState extends State<BleDevicesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
-      home: new Scaffold(
-        appBar: new AppBar(
-          title: new Text('Flutter Ble Library Example - Scan List'),
-        ),
-        floatingActionButton: new FloatingActionButton(
-          child: new Icon(_isScan ? Icons.close : Icons.bluetooth),
-          onPressed: _isScan ? _onStopScan : _onStartScan,
-        ),
-        bottomNavigationBar: new Text(
-          "Current state : ${bluetoothState ?? "null"}",
-          style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold,),
-        ),
-        body: new Stack(
-          children: <Widget>[
-            new BleScanResultList(_scanResults, context),
-          ],
+    final TextStyle style = Theme
+        .of(context)
+        .textTheme
+        .button;
+    return new Scaffold(
+      appBar: new AppBar(
+        backgroundColor: Colors.blueGrey,
+        title: new Text('Scan List'),
+      ),
+      floatingActionButton: new FloatingActionButton(
+        child: new Icon(_isScan ? Icons.close : Icons.search),
+        onPressed: _isScan ? _onStopScan : _onStartScan,
+      ),
+      body: new BleScanResultList(_scanResults, context),
+      bottomNavigationBar: new PreferredSize(
+        preferredSize: const Size.fromHeight(24.0),
+        child: new Theme(
+          data: Theme.of(context).copyWith(
+              accentColor: Colors.white, backgroundColor: Colors.blueGrey),
+          child:
+          new Container(
+            color: Colors.blueGrey,
+            padding: const EdgeInsets.all(10.0),
+            child: new Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                new Text("Bluetooth state", style: style),
+                new Icon(_bleStateIcon(), size: 20.0,)
+              ],
+            ),
+          ),
         ),
       ),
     );
+  }
+
+  _bleStateIcon() {
+    switch (_bluetoothState) {
+      case BluetoothState.UNKNOWN :
+        return Icons.device_unknown;
+      case BluetoothState.RESETTING :
+        return Icons.bluetooth_searching;
+      case BluetoothState.UNSUPPORTED :
+        return Icons.close;
+      case BluetoothState.UNAUTHORIZED :
+        return Icons.lock;
+      case BluetoothState.POWERED_OFF :
+        return Icons.bluetooth_disabled;
+      case BluetoothState.POWERED_ON :
+        return Icons.bluetooth;
+    }
   }
 
   _cancelStateChange() {
@@ -194,7 +242,7 @@ class BleDevicesState extends State<BleDevicesScreen> {
 //    List<String> uuids = new List();
 //    uuids.add("0000181d-0000-1000-8000-00805f9b34fb");
     _scanDevicesSub = FlutterBleLib.instance
-        .startDeviceScan(1, 1, null/*uuids*/)
+        .startDeviceScan(1, 1, null /*uuids*/)
         .listen(
             (scanResult) => setState(() => _addOrUpdateIfNecessary(scanResult)),
         onDone: _onStopScan);

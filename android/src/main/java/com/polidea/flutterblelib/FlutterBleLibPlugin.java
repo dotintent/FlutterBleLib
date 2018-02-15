@@ -59,7 +59,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler, EventDelegate {
         switch (call.method) {
             case BleMethod.createClient: {
                 final String restoreStateIdentifier = call.argument(ArgKey.restoreStateIdentifier);
-                bleHelper.createClient(restoreStateIdentifier);
+                bleHelper.createClient(restoreStateIdentifier, new VoidOnSuccessAction(result));
                 bleHelper.registerEventDelegate(this);
                 return;
             }
