@@ -96,12 +96,13 @@ public class BleHelper {
         return true;
     }
 
-    void createClient(String restoreStateIdentifier) {
+    void createClient(String restoreStateIdentifier, OnSuccessAction<Void> successAction) {
         rxBleClient = RxBleClient.create(context);
         adapterStateChangesSubscription = monitorAdapterStateChanges(context);
         if (restoreStateIdentifier != null) {
             sendEvent(Event.RestoreStateEvent, null);
         }
+        successAction.onSuccess(null);
     }
 
     void registerEventDelegate(EventDelegate eventDelegate) {

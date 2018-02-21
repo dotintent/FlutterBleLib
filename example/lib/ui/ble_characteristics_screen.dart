@@ -20,6 +20,8 @@ class CharacteristicsScreenState extends State<StatefulWidget> {
   final BleService _bleService;
   final List<Characteristic> _characteristics;
 
+  String logValue = "";
+
   CharacteristicsScreenState(this._bleService, this._characteristics);
 
   @override
@@ -34,13 +36,35 @@ class CharacteristicsScreenState extends State<StatefulWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final TextStyle body1Style = Theme
+        .of(context)
+        .textTheme
+        .body1;
     return new Scaffold(
       appBar: new AppBar(
         title: new Text(
             "${_bleService.device.name ?? "Unkonwn"} device services."),
       ),
-      body: new CharacteristicList(_bleService, _characteristics, context),
+      body: new CharacteristicList(
+          _bleService, _characteristics, context, onValuerPrint),
+      bottomNavigationBar: new PreferredSize(
+        preferredSize: const Size.fromHeight(24.0),
+        child: new Theme(
+          data: Theme.of(context).copyWith(
+              accentColor: Colors.white, backgroundColor: Colors.blueGrey),
+          child:
+          new Container(
+            color: Colors.blueGrey,
+            padding: const EdgeInsets.all(10.0),
+            child: new Text(logValue, style: body1Style,),
+          ),
+        ),
+      ),
     );
+  }
+
+  onValuerPrint(String value) {
+  setState(() => logValue = "Value is ${value != null ?  value : ""}");
   }
 }
 
@@ -53,102 +77,156 @@ class CharacteristicList extends StatefulWidget {
 
   final BuildContext _mainBuildContext;
 
-  CharacteristicList(this._bleService, this._characteristic, this._mainBuildContext);
+  final dynamic _action;
+
+  CharacteristicList(this._bleService, this._characteristic,
+      this._mainBuildContext, this._action);
 
   @override
   State<StatefulWidget> createState() =>
       new CharacteristicListState(
-          _bleService, _characteristic, _mainBuildContext);
+          _bleService, _characteristic, _mainBuildContext, _action);
 }
 
-class CharacteristicListState extends State<StatefulWidget> {
+class CharacteristicItem extends StatelessWidget {
 
-  final BleService _bleService;
 
-  final List<Characteristic> _characteristic;
+  final Characteristic _characteristic;
 
-  final BuildContext _mainBuildContext;
+  final Map<String, VoidCallback> buttonData;
 
-  CharacteristicListState(this._bleService, this._characteristic,
-      this._mainBuildContext);
+  CharacteristicItem(this._characteristic,
+      final VoidCallback onWriteCharacteristicClick,
+      final VoidCallback onWriteCharacteristicForDeviceClick,
+      final VoidCallback onWriteCharacteristicForServiceClick,
+      final VoidCallback onReadCharacteristicClick,
+      final VoidCallback onReadCharacteristicForDeviceClick,
+      final VoidCallback onReadCharacteristicForServiceClick,
+      final VoidCallback onMonitorCharacteristicClick,
+      final VoidCallback onMonitorCharacteristicForDeviceClick,
+      final VoidCallback onMonitorCharacteristicForServiceClick,)
+      : buttonData = {
+    "Write characteristic": onWriteCharacteristicClick,
+    "Write characteristic for device": onWriteCharacteristicForDeviceClick,
+    "Write characteristic for service": onWriteCharacteristicForServiceClick,
+    "Read characteristic": onReadCharacteristicClick,
+    "Read characteristic for device": onReadCharacteristicForDeviceClick,
+    "Read characteristic for service": onReadCharacteristicForServiceClick,
+    "Monitor characterisitic": onMonitorCharacteristicClick,
+    "Monitor characterisitic for device": onMonitorCharacteristicForDeviceClick,
+    "Monitor characterisitic for service": onMonitorCharacteristicForServiceClick
+  };
+
 
   @override
   Widget build(BuildContext context) {
-    return new ListView.builder(
-        itemCount: _characteristic == null ? 0 : _characteristic.length,
-        itemBuilder: (BuildContext context, int index) =>
-            buildItem(_characteristic[ index], _mainBuildContext)
-    );
-  }
+    final TextStyle titleStyle = Theme
+        .of(context)
+        .textTheme
+        .title;
+    final TextStyle body1Style = Theme
+        .of(context)
+        .textTheme
+        .body1;
+    final TextStyle buttonStyle = Theme
+        .of(context)
+        .textTheme
+        .button;
 
-
-  Card buildItem(Characteristic characteristic, BuildContext context) {
+    List<Widget> buttons = new List<Widget>();
+    buttonData.forEach((k, v) => buttons.add(_button(k, v, buttonStyle)));
     return new Card(
+      color: const Color.fromRGBO(69, 90, 100, 1.0),
       child: new Container(
         padding: const EdgeInsets.all(8.0),
         child: new Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            new Text(
-              "Service : ",
-              style: new TextStyle(
-                fontSize: 15.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            _label("ID :  ${characteristic.id}"),
-            _label("UUID :  ${characteristic.uuid}"),
-            _label("Service id :  ${characteristic.serviceId}"),
-            _label("Service Uuid :  ${characteristic.serviceUuid}"),
-            _label("Device id :  ${characteristic.deviceId}"),
-            _label("Is readable :  ${characteristic.isReadable}"),
-            _label("Is writable with response :  ${characteristic.isWritableWithResponse}"),
-            _label("Is writable without response : ${characteristic.isWritableWithoutResponse}"),
-            _label("Is notificable : ${characteristic.isNotificable}"),
-            _label("Is indicatable :  ${characteristic.isIndicatable}"),
-            _label("Is notifing : ${characteristic.isNotifing}"),
-            _label("Value : ${characteristic.value}"),
-            _button("Write characteristic",
-                characteristic.isWritableWithResponse || characteristic.isWritableWithoutResponse
-                    ? () =>_onWriteCharacteristic(characteristic) : null),
-            _button( "Write characteristic for service",
-              characteristic.isWritableWithResponse || characteristic.isWritableWithoutResponse
-                ? () =>_onWriteCharacteristicForService(characteristic) : null,),
-            _button("Write characteristic for device",
-                characteristic.isWritableWithResponse || characteristic.isWritableWithoutResponse
-                ? () =>_onWriteCharacteristicForDevice(characteristic) : null),
-            _button("Read characteristic",
-                characteristic.isReadable ? () =>_onReadCharacteristic(characteristic) : null),
-            _button("Read characteristic for device",
-                characteristic.isReadable ? () =>_onReadCharacteristicForDevice(characteristic) : null),
-            _button("Read characteristic for service",
-                characteristic.isReadable ? () =>_onReadCharacteristicForService(characteristic) : null),
-            _button("Monitor characterisitic for device",
-                characteristic.isNotificable ? () =>_onMonitorCharacteristicForDevice(characteristic) : null),
-            _button("Monitor characterisitic for service",
-                characteristic.isNotificable ? () =>_onMonitorCharacteristicForService(characteristic) : null),
-            _button("Monitor characterisitic",
-              characteristic.isNotificable ? () =>_onMonitorCharacteristic(characteristic) : null),
-          ],
+            new Text("Characteristic : ", style: titleStyle,),
+            new Text(_characteristicInfo(), style: body1Style,),
+          ]
+            ..addAll(buttons),
         ),
       ),
     );
   }
 
-  _label(String text) =>
-      new Text(text, style: new TextStyle(fontSize: 12.0),);
+  _characteristicInfo() =>
+      "ID :  ${_characteristic.id}\nUUID :  ${_characteristic
+          .uuid}\nService id :  ${_characteristic
+          .serviceId}\nService Uuid :  ${_characteristic
+          .serviceUuid}\nDevice id :  ${_characteristic
+          .deviceId}\nIs readable :  ${_characteristic
+          .isReadable}\nIs writable with response :  ${_characteristic
+          .isWritableWithResponse}\nIs writable without response : ${_characteristic
+          .isWritableWithoutResponse}\nIs notificable : ${_characteristic
+          .isNotificable}\nIs indicatable :  ${_characteristic
+          .isIndicatable}\nIs notifing : ${_characteristic
+          .isNotifing}\nValue : ${_characteristic.value}";
 
-  _button(String text, VoidCallback onPressed) =>
+  _button(String text, VoidCallback onPressed, TextStyle buttonStyle) =>
       new Container (
-        margin: const EdgeInsets.only(top:10.0, bottom: 10.0),
+        margin: const EdgeInsets.only(top: 10.0, bottom: 10.0),
         child: new CustomMaterialButton(
           minWidth: 400.0,
           onPressed: onPressed,
           color: Colors.blueAccent,
           disabledColor: Colors.grey,
-          child: new Text(text, style: new TextStyle(color: Colors.white),),
+          child: new Text(text, style: buttonStyle,),
         ),
       );
+}
+
+
+class CharacteristicListState extends State<StatefulWidget> {
+
+  final BleService _bleService;
+
+  final List<Characteristic> _characteristics;
+
+  final BuildContext _mainBuildContext;
+
+  final dynamic _action;
+
+  CharacteristicListState(this._bleService, this._characteristics,
+      this._mainBuildContext, this._action);
+
+  @override
+  Widget build(BuildContext context) {
+    return new ListView.builder(
+        itemCount: _characteristics == null ? 0 : _characteristics.length,
+        itemBuilder: (BuildContext context, int index) {
+          final Characteristic characteristic = _characteristics[index];
+          return new CharacteristicItem(
+            characteristic,
+            characteristic.isWritableWithResponse ||
+                characteristic.isWritableWithoutResponse
+                ? () => _onWriteCharacteristic(characteristic) : null,
+            characteristic.isWritableWithResponse ||
+                characteristic.isWritableWithoutResponse
+                ? () => _onWriteCharacteristicForDevice(characteristic)
+                : null,
+            characteristic.isWritableWithResponse ||
+                characteristic.isWritableWithoutResponse
+                ? () => _onWriteCharacteristicForService(characteristic)
+                : null,
+            characteristic.isReadable ? () =>
+                _onReadCharacteristic(characteristic) : null,
+            characteristic.isReadable ? () =>
+                _onReadCharacteristicForDevice(characteristic) : null,
+            characteristic.isReadable ? () =>
+                _onReadCharacteristicForService(characteristic) : null,
+            characteristic.isNotificable ? () =>
+                _onMonitorCharacteristic(characteristic) : null,
+            characteristic.isNotificable ? () =>
+                _onMonitorCharacteristicForDevice(characteristic) : null,
+            characteristic.isNotificable ? () =>
+                _onMonitorCharacteristicForService(characteristic) : null,
+          );
+        }
+    );
+  }
+
 
   _onWriteCharacteristic(Characteristic characteristic) {
     //TODO fix value ???
@@ -157,7 +235,7 @@ class CharacteristicListState extends State<StatefulWidget> {
         [1],
         characteristic.isWritableWithResponse,
         new Uuid().v1())
-        .then((value) => print(value));
+        .then((value) => _action(value.value));
   }
 
   _onWriteCharacteristicForService(Characteristic characteristic) {
@@ -168,7 +246,7 @@ class CharacteristicListState extends State<StatefulWidget> {
         [1],
         characteristic.isWritableWithResponse,
         new Uuid().v1())
-        .then((value) => print(value));
+        .then((value) => _action(value.value));
   }
 
   _onWriteCharacteristicForDevice(Characteristic characteristic) {
@@ -180,27 +258,27 @@ class CharacteristicListState extends State<StatefulWidget> {
         [1],
         characteristic.isWritableWithResponse,
         new Uuid().v1())
-        .then((value) => print(value));
+        .then((value) => _action(value.value));
   }
 
   _onReadCharacteristic(Characteristic characteristic) {
     FlutterBleLib.instance.readCharacteristic(
         characteristic.id, new Uuid().v1())
-        .then((value) => print(value));
+        .then((value) => _action(value.value));
   }
 
   _onReadCharacteristicForDevice(Characteristic characteristic) {
     FlutterBleLib.instance.readCharacteristicForDevice(
         _bleService.device.id, _bleService.uuid, characteristic.uuid,
         new Uuid().v1())
-        .then((value) => print(value));
+        .then((value) => _action(value.value));
   }
 
   _onReadCharacteristicForService(Characteristic characteristic) {
     FlutterBleLib.instance.readCharacteristicForService(
         _bleService.id, characteristic.uuid,
         new Uuid().v1())
-        .then((value) => print(value));
+        .then((value) => _action(value.value));
   }
 
   _onMonitorCharacteristicForDevice(Characteristic characteristic) {
@@ -209,7 +287,7 @@ class CharacteristicListState extends State<StatefulWidget> {
         _bleService.uuid,
         characteristic.uuid,
         new Uuid().v1())
-        .listen((value) => print(value))
+        .listen((value) => _action(value.characteristic.value))
     ;
   }
 
@@ -218,16 +296,17 @@ class CharacteristicListState extends State<StatefulWidget> {
         _bleService.id,
         characteristic.uuid,
         new Uuid().v1())
-        .listen((value) => print(value))
+        .listen((value) => _action(value.characteristic.value))
     ;
   }
+
   _onMonitorCharacteristic(Characteristic characteristic) {
     FlutterBleLib.instance.monitorCharacteristicForDevice(
         _bleService.device.id,
         _bleService.uuid,
         characteristic.uuid,
         new Uuid().v1())
-        .listen((value) => print(value))
+        .listen((value) => _action(value.characteristic.value))
     ;
   }
 }

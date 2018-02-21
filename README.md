@@ -91,12 +91,13 @@ Full library functionality is shown in example app.
 
 ## Maintainers
 Konrad Krakowiak (konrad.krakowiak@polidea.com)<br/>
+Michał Mizera (michal.mizera@polidea.com)<br/>
 Michał Zieliński (michal.zielinski@polidea.com)<br/>
 Paweł Janeczek (pawel.janeczek@polidea.com)
 
 ## License
 
-    Copyright 2016 Polidea Sp. z o.o
+    Copyright 2018 Polidea Sp. z o.o
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.

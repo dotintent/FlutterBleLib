@@ -71,7 +71,7 @@
     
   if([FBLCreateClient isEqualToString:call.method]) {
       //TODO flutter should pass something here.
-      [self createClient:nil];
+      [self createClient:nil result:result];
   } else if([FBLDestroyClient isEqualToString:call.method]) {
       [self destroyClient];
   } else if([FBLSetLogLevel isEqualToString:call.method]) {
@@ -139,10 +139,11 @@
     }
 }
 
-- (void)createClient:(NSString*)restoreIdentifierKey {
+- (void)createClient:(NSString*)restoreIdentifierKey  result: (FlutterResult) result  {
     _manager = [[BleClientManager alloc] initWithQueue:dispatch_get_main_queue()
                                   restoreIdentifierKey:restoreIdentifierKey];
      _manager.delegate = self;
+    result(nil);
 }
 
 - (void)destroyClient {
