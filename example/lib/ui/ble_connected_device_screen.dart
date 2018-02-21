@@ -51,6 +51,7 @@ class BleConnectedDeviceScreenState extends State<StatefulWidget> {
         .button;
     return new Scaffold(
       appBar: new AppBar(
+        backgroundColor: Colors.blueGrey,
         title: new Text(
             "${_connectedDevice.name ?? "Unkonwn"} device info."),
       ),

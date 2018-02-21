@@ -35,6 +35,7 @@ class BleServicesScreenState extends State<StatefulWidget> {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
+        backgroundColor: Colors.blueGrey,
         title: new Text(
             "${_connectedDevice.name ?? "Unkonwn"} device services."),
       ),
@@ -46,12 +47,12 @@ class BleServicesScreenState extends State<StatefulWidget> {
 class ServiceItem extends StatelessWidget {
 
   final BleService _bleService;
-  final VoidCallback _onCharacterisiticForDeviceClick;
-  final VoidCallback _onCharacterisiticForServiceClick;
+  final VoidCallback _onCharacteristicForDeviceClick;
+  final VoidCallback _onCharacteristicForServiceClick;
 
   ServiceItem(this._bleService,
-      this._onCharacterisiticForDeviceClick,
-      this._onCharacterisiticForServiceClick);
+      this._onCharacteristicForDeviceClick,
+      this._onCharacteristicForServiceClick);
 
   @override
   Widget build(BuildContext context) {
@@ -85,13 +86,13 @@ class ServiceItem extends StatelessWidget {
                 "Characterisitic for Device",
                 buttonStyle,
                 const EdgeInsets.only(top: 10.0, bottom: 10.0),
-                    () => _onCharacterisiticForDeviceClick()
+                    () => _onCharacteristicForDeviceClick()
             ),
             _button(
                 "Characterisitic for Service",
                 buttonStyle,
                 const EdgeInsets.only(bottom: 10.0),
-                    () => _onCharacterisiticForServiceClick()
+                    () => _onCharacteristicForServiceClick()
             )
           ],
         ),
