@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 import 'package:flutter_ble_lib_example/ui/ble_connected_device_screen.dart';
+import 'package:flutter_ble_lib_example/ui/log_level_dialog.dart';
 
 
 class BleScanResultList extends StatefulWidget {
@@ -178,6 +179,12 @@ class BleDevicesState extends State<BleDevicesScreen> {
       appBar: new AppBar(
         backgroundColor: Colors.blueGrey,
         title: new Text('Scan List'),
+        actions: <Widget>[
+          new IconButton( // action button
+            icon: new Icon(Icons.settings),
+            onPressed: ()  => showDialog(context: context, child: new LogLevelDialog()),
+          ),
+        ],
       ),
       floatingActionButton: new FloatingActionButton(
         child: new Icon(_isScan ? Icons.close : Icons.search),
