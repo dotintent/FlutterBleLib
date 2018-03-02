@@ -17,7 +17,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - images/flutter_logo.png
+    - images/flutter-ble-lib-logo-small.png
 
 
   # To add assets to your application, add an assets section, like this:

@@ -65,7 +65,7 @@ class WelcomeScreen extends StatelessWidget {
     final Widget flutterIcon = new Container(
         margin: const EdgeInsets.only(bottom: 20.0),
         child: new Image.asset(
-          'images/flutter_logo.png', width: 128.0, height: 128.0,)
+          'images/flutter-ble-lib-logo-small.png', width: 250.0, height: 145.0,)
     );
     final Text message = new Text(
       _welcomeMessage, style: textStyle, textAlign: TextAlign.center,);
