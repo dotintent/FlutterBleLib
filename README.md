@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="site/flutter-ble-lib-logo.png" />
+  <img src="https://github.com/Polidea/FlutterBleLib/blob/master/site/flutter-ble-lib-logo.png" />
 </p>
 
 # FlutterBle Library
@@ -22,6 +22,24 @@ To using Flutter you need to prepare the environment. Here you can find [the tut
   - [x] Listening characteristic notifications
 
 ## Usage
+
+### Configuration
+Add this to your package's pubspec.yaml file:
+```
+dependencies:
+  flutter_ble_lib: "^1.0.0"
+```
+You can install packages from the command line:
+
+- with pub: `$ pub get`
+
+- with Flutter: `$ flutter packages get`
+
+Alternatively, your editor might support pub get or packages get. Check the docs for your editor to learn more.
+
+Now in your Dart code, you can use:
+
+`import 'package:flutter_ble_lib/flutter_ble_lib.dart';`
 
 ### Create Client
 
