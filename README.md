@@ -1,7 +1,10 @@
+<p align="center">
+  <img src="site/flutter-ble-lib-logo.png" />
+</p>
+
 # FlutterBle Library
 
 FlutterBle Library is a flutter library that supports ble connections. It uses [RxAndroidBle](https://github.com/Polidea/RxAndroidBle) and [RxBluetoothKit](https://github.com/Polidea/RxBluetoothKit) as native libs.
-
 
 ## Getting Started
 
