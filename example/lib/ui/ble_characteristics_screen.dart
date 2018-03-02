@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 import 'package:flutter_ble_lib_example/ui/button_widget.dart';
+import 'package:flutter_ble_lib_example/ui/insert_value_dialog.dart';
 import 'package:uuid/uuid.dart';
 
 
@@ -42,6 +43,7 @@ class CharacteristicsScreenState extends State<StatefulWidget> {
         .body1;
     return new Scaffold(
       appBar: new AppBar(
+        backgroundColor: Colors.blueGrey,
         title: new Text(
             "${_bleService.device.name ?? "Unkonwn"} device services."),
       ),
@@ -64,7 +66,7 @@ class CharacteristicsScreenState extends State<StatefulWidget> {
   }
 
   onValuerPrint(String value) {
-  setState(() => logValue = "Value is ${value != null ?  value : ""}");
+    setState(() => logValue = "Value is ${value != null ? value : ""}");
   }
 }
 
@@ -229,36 +231,42 @@ class CharacteristicListState extends State<StatefulWidget> {
 
 
   _onWriteCharacteristic(Characteristic characteristic) {
-    //TODO fix value ???
-    FlutterBleLib.instance.writeCharacteristic(
-        characteristic.id,
-        [1],
-        characteristic.isWritableWithResponse,
-        new Uuid().v1())
-        .then((value) => _action(value.value));
+    showDialog(context: context,
+        child: new InsertValueDialog(characteristic, sendAction: (data) {
+          FlutterBleLib.instance.writeCharacteristic(
+              characteristic.id,
+              data,
+              characteristic.isWritableWithResponse,
+              new Uuid().v1())
+              .then((value) => _action(value.value));
+        },));
   }
 
   _onWriteCharacteristicForService(Characteristic characteristic) {
-    //TODO fix value ???
-    FlutterBleLib.instance.writeCharacteristicForService(
-        _bleService.id,
-        characteristic.uuid,
-        [1],
-        characteristic.isWritableWithResponse,
-        new Uuid().v1())
-        .then((value) => _action(value.value));
+    showDialog(context: context,
+        child: new InsertValueDialog(characteristic, sendAction: (data) {
+          FlutterBleLib.instance.writeCharacteristicForService(
+              _bleService.id,
+              characteristic.uuid,
+              data,
+              characteristic.isWritableWithResponse,
+              new Uuid().v1())
+              .then((value) => _action(value.value));
+        },));
   }
 
   _onWriteCharacteristicForDevice(Characteristic characteristic) {
-    //TODO fix value ???
-    FlutterBleLib.instance.writeCharacteristicForDevice(
-        _bleService.device.id,
-        _bleService.uuid,
-        characteristic.uuid,
-        [1],
-        characteristic.isWritableWithResponse,
-        new Uuid().v1())
-        .then((value) => _action(value.value));
+    showDialog(context: context,
+        child: new InsertValueDialog(characteristic, sendAction: (data) {
+          FlutterBleLib.instance.writeCharacteristicForDevice(
+              _bleService.device.id,
+              _bleService.uuid,
+              characteristic.uuid,
+              data,
+              characteristic.isWritableWithResponse,
+              new Uuid().v1())
+              .then((value) => _action(value.value));
+        },));
   }
 
   _onReadCharacteristic(Characteristic characteristic) {

@@ -1,9 +1,11 @@
 name: flutter_ble_lib
-description: A new flutter plugin project.
+description: FlutterBle Library is a flutter library that supports ble connections. It uses RxAndroidBle and RxBluetoothKit as native libs.
 version: 1.0.0-SNAPSHOT
-author: Polidea
-#TODO change it after migration on github
-hompage: https://gitlab2.polidea.com/Internal/flutter-ble-lib/
+author: "Polidea"
+homepage: https://github.com/Polidea/FlutterBleLib
+
+environment:
+  sdk: ">=1.8.0 <2.0.0"
 
 flutter:
   plugin:
@@ -14,6 +16,6 @@ dependencies:
   flutter:
     sdk: flutter
   convert: "^2.0.1"
-  protobuf: '^0.5.5'
+  protobuf: '^0.6.0'
 
 
