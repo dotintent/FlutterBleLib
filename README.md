@@ -4,52 +4,51 @@
 
 # FlutterBle Library
 
-FlutterBle Library is a flutter library that supports ble connections. It uses [RxAndroidBle](https://github.com/Polidea/RxAndroidBle) and [RxBluetoothKit](https://github.com/Polidea/RxBluetoothKit) as native libs.
+FlutterBle Library is a Flutter library that supports BLE connections. It internally utilizes [RxAndroidBle](https://github.com/Polidea/RxAndroidBle) and [RxBluetoothKit](https://github.com/Polidea/RxBluetoothKit) as native libs, which especially on Android helps a lot with many of known platform issues.
 
 ## Getting Started
 
-To using Flutter you need to prepare the environment. Here you can find [the tutorial](https://flutter.io/getting-started/) showing how to do this, step by step. 
+To start using Flutter, you have to prepare the environment. Here you can find [the tutorial](https://flutter.io/getting-started/) showing how to do this step by step. 
 
-## Features
+## Library Features
   - [x] Setting log level
-  - [x] Listening bluetooth state
+  - [x] Listening bluetooth adapter state
   - [x] Scanning devices
   - [x] Establish connection
-  - [x] Listening connection state changes
-  - [x] Reading services
+  - [x] Listening to connection state changes
+  - [x] Discovering services
   - [x] Reading characteristics
   - [x] Writing characteristics
-  - [x] Listening characteristic notifications
+  - [x] Listening to characteristic change notifications
 
 ## Usage
 
 ### Configuration
-Add this to your package's pubspec.yaml file:
+Add the snippet below to your `pubspec.yaml` file:
 ```
 dependencies:
   flutter_ble_lib: "^1.0.0"
 ```
-You can install packages from the command line:
+Package can be installed from the command line:
 
 - with pub: `$ pub get`
-
 - with Flutter: `$ flutter packages get`
 
-Alternatively, your editor might support pub get or packages get. Check the docs for your editor to learn more.
+Alternatively, your editor may support `pub get` or `packages get`. Refer to the documentation of your IDE to learn more.
 
-Now in your Dart code, you can use:
+Once the package is installed you can use:
 
 `import 'package:flutter_ble_lib/flutter_ble_lib.dart';`
 
 ### Create Client
 
-Firstly you need create client. It is very important to create only one single instance. You can do this via method 
+First, you need to create a client. It is very important to maintain only one instance of the client in your application. You can do this via the method 
 
     FlutterBleLib.instance.createClient(restoreId);
 
 ### Set up log level
 
-After creating the client, you can set up log level. There are a few defined log levels:
+After creating the client, you can set up a log level. There are a few defined log levels:
 - NONE (default value)
 - VERBOSE
 - DEBUG
@@ -57,28 +56,26 @@ After creating the client, you can set up log level. There are a few defined log
 - WARNING
 - ERROR
 
-You can set log level via 
+You can set the log level via 
 
     FlutterBleLib.instance.setLogLevel(logLevel);
     
-and, you will get set log level  as the response. You can also check current level log via: 
+and. You can also check the current level log via: 
   
     FlutterBleLib.instance.logLevel();
 
 
 ### Bluetooth state checking
 
-Library allows to check bluetooth state. You can register listener that informs about state changes. It is possible via:
+The library allows checking a Bluetooth state. You can register a listener that informs about state changes. It is possible via:
  
     FlutterBleLib.instance.onStateChange()
      
- This method returns stream that emits all bluetooth state changes. It is not the only one way to get information about bluetooth state. If you want to get current bluetooth state you can just call method 
+This method returns a stream that emits all Bluetooth state changes. If you want to get current Bluetooth state you can just call the method below
  
     FlutterBleLib.instance.state()
      
-to get current state.
-
-There is a few defined current state:
+Methods presented above may return/emit the following values:
 - UNKNOWN (default state)
 - RESETTING
 - UNSUPPORTED 
@@ -88,25 +85,25 @@ There is a few defined current state:
 
 ### The connection with the device
 
-After creating client, you can establish connection with device. There is possibility to scan all devices via: 
+After creating the client, you can establish a connection with the device. There is a feature to scan for devices via: 
  
     FlutterBleLib.instance.startDeviceScan(scanMode, calbackType, uuidsArray)
      
-method. This method returns stream that emits scanned devices. The information about the device contains device id that is used to create connection. All you need to do is calling: 
+method. This method returns a stream that emits scanned devices. The information about a device contains a `device id` that may be used to create the connection. All you need to do is to call: 
 
     FlutterBleLib.instance.connectToDevice(deviceId, isAutoConnect)
      
- method, as a response you will get information about connected device. You can check any time that device is connected via 
+method. As a response you will get an information about the connected device. You can verify if the device is connected via 
  
     FlutterBleLib.instance.isDeviceConnected(deviceId)
 
-at any time. It’s good to set up the monitor that allows to get the information about breaking connection. Library provides this functionality via the following method 
+at any time. It is recommended to set up a monitor that allows getting an information about the connection being broken. The library provides this functionality via the following method 
 
     FlutterBleLib.instance.onDeviceConnectionChanged()
      
- If some of the device's brake, this stream will emit information about this device.<br />
+If any of the device connection breaks the stream emits information about it.<br />
 
-When you are connected with your device you can discover services, write, read or listen notification from characteristic via relevant method.
+Once you are connected to your device, you can discover services, write, read or listen to notifications from characteristics.
 
 Full library functionality is shown in example app.
 
