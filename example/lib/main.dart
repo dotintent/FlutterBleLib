@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_ble_lib_example/ui/ble_devieces_screen.dart';
+import 'package:flutter_ble_lib_example/ui/ble_devices_screen.dart';
 import 'package:flutter_ble_lib_example/ui/screen_on_boarding.dart';
 import 'package:flutter_ble_lib_example/ui/screen_names.dart' as ScreenNames;
 
