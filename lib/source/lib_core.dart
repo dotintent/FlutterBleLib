@@ -34,16 +34,24 @@ class FlutterBleLib {
     });
   }
 
-  Future<Null> createClient(String restoreStateIdentifier) =>
-      _mainMethodChannel.invokeMethod(_createClient, <String, String> {_restoreStateIdentifier : restoreStateIdentifier});
+  Future<Null> createClient(String restoreStateIdentifier) async {
+    await _mainMethodChannel.invokeMethod(_createClient,
+        <String, String>{_restoreStateIdentifier: restoreStateIdentifier});
+    return;
+  }
 
-  Future<Null> destroyClient() =>
-      _mainMethodChannel.invokeMethod(_destroyClient);
+  Future<Null> destroyClient() async {
+    await _mainMethodChannel.invokeMethod(_destroyClient);
+    return;
+  }
 
-  Future<Null> cancelTransaction(String transactionId) =>
-      _mainMethodChannel.invokeMethod(_cancelTransaction,
-          transactionId
-      );
+  Future<Null> cancelTransaction(String transactionId) async {
+    await _mainMethodChannel.invokeMethod(_cancelTransaction,
+        transactionId
+    );
+    return;
+  }
+
 
   Future<Null> setLogLevel(LogLevel logLevel) =>
       _mainMethodChannel.invokeMethod(
@@ -105,8 +113,10 @@ class FlutterBleLib {
         .map((scanResultMessage) => ScanResult.fromMessage(scanResultMessage));
   }
 
-  Future<Null> stopDeviceScan() =>
-      _mainMethodChannel.invokeMethod(_stopDeviceScan);
+  Future<Null> stopDeviceScan() async {
+    await _mainMethodChannel.invokeMethod(_stopDeviceScan);
+    return;
+  }
 
   Future<BleDevice> connectToDevice(String macAddress,
       {bool isAutoConnect,
@@ -124,8 +134,9 @@ class FlutterBleLib {
         BleDevice.fromMessage(bleDeviceMessage));
   }
 
-  Future<bool> isDeviceConnected(String macAddress) {
-    return _mainMethodChannel.invokeMethod(_isDeviceConnected, macAddress);
+  Future<bool> isDeviceConnected(String macAddress) async {
+    final bool isConnected = await _mainMethodChannel.invokeMethod(_isDeviceConnected, macAddress);
+    return isConnected;
   }
 
 
