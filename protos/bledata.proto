@@ -19,6 +19,7 @@ message BleDeviceMessage {
     string name = 2;
     int32 rssi = 3;
     int32 mtu = 4;
+    bool isConnected = 5;
 }
 
 message ScanResultMessage {

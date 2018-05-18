@@ -44,6 +44,7 @@ const BleDeviceMessage$json = const {
     const {'1': 'name', '3': 2, '4': 1, '5': 9, '10': 'name'},
     const {'1': 'rssi', '3': 3, '4': 1, '5': 5, '10': 'rssi'},
     const {'1': 'mtu', '3': 4, '4': 1, '5': 5, '10': 'mtu'},
+    const {'1': 'isConnected', '3': 5, '4': 1, '5': 8, '10': 'isConnected'},
   ],
 };
 
