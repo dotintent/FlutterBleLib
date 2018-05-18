@@ -142,11 +142,15 @@ class Converter {
     }
 
     BleData.BleDeviceMessage convertToBleDeviceMessage(RxBleDevice device, int mtu, int rssi) {
+        final boolean isConnected = device.getConnectionState()
+                .equals(RxBleConnection.RxBleConnectionState.CONNECTED);
+
         return BleData.BleDeviceMessage.newBuilder()
                 .setId(stringUtils.safeNullInstance(device.getMacAddress()))
                 .setName(stringUtils.safeNullInstance(device.getName()))
                 .setMtu(mtu)
                 .setRssi(rssi)
+                .setIsConnected(isConnected)
                 .build();
     }
 
