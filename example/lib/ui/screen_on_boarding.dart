@@ -108,7 +108,7 @@ class InfoScreen extends StatelessWidget {
         .textTheme
         .body1;
     final Text message = new Text(_infoMessage, style: textStyle,);
-    final List<Checkbox> list = _infoPoints.map((text) =>
+    final List<Widget> list = _infoPoints.map((text) =>
         _checkboxWithLabel(context, text)).toList();
     return new Container(
       padding: const EdgeInsets.all(16.0),
@@ -124,7 +124,7 @@ class InfoScreen extends StatelessWidget {
     );
   }
 
-  _checkboxWithLabel(BuildContext context, String text) {
+  Widget _checkboxWithLabel(BuildContext context, String text) {
     final TextStyle textStyle = Theme
         .of(context)
         .textTheme
