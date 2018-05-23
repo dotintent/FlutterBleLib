@@ -8,11 +8,12 @@ class BleDevice {
   int rssi;
   bool isConnected = false;
 
-  BleDevice(this.id, this.name, this.mtu, this.rssi);
+  BleDevice(this.id, this.name, this.mtu, this.rssi, this.isConnected);
 
   static BleDevice fromMessage(bleData.BleDeviceMessage bleDeviceMessage) =>
       new BleDevice(bleDeviceMessage.id, bleDeviceMessage.name,
-          bleDeviceMessage.mtu, bleDeviceMessage.rssi);
+          bleDeviceMessage.mtu, bleDeviceMessage.rssi,
+          bleDeviceMessage.isConnected);
 
   @override
   String toString() {

@@ -125,6 +125,7 @@ typedef GPB_ENUM(BleDataBleDeviceMessage_FieldNumber) {
   BleDataBleDeviceMessage_FieldNumber_Name = 2,
   BleDataBleDeviceMessage_FieldNumber_Rssi = 3,
   BleDataBleDeviceMessage_FieldNumber_Mtu = 4,
+  BleDataBleDeviceMessage_FieldNumber_IsConnected = 5,
 };
 
 @interface BleDataBleDeviceMessage : GPBMessage
@@ -136,6 +137,8 @@ typedef GPB_ENUM(BleDataBleDeviceMessage_FieldNumber) {
 @property(nonatomic, readwrite) int32_t rssi;
 
 @property(nonatomic, readwrite) int32_t mtu;
+
+@property(nonatomic, readwrite) BOOL isConnected;
 
 @end
 

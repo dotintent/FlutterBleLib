@@ -206,6 +206,7 @@ typedef struct BleDataScanDataMessage__storage_ {
 @dynamic name;
 @dynamic rssi;
 @dynamic mtu;
+@dynamic isConnected;
 
 typedef struct BleDataBleDeviceMessage__storage_ {
   uint32_t _has_storage_[1];
@@ -257,6 +258,15 @@ typedef struct BleDataBleDeviceMessage__storage_ {
         .flags = GPBFieldOptional,
         .dataType = GPBDataTypeInt32,
       },
+      {
+        .name = "isConnected",
+        .dataTypeSpecific.className = NULL,
+        .number = BleDataBleDeviceMessage_FieldNumber_IsConnected,
+        .hasIndex = 4,
+        .offset = 5,  // Stored in _has_storage_ to save space.
+        .flags = (GPBFieldFlags)(GPBFieldOptional | GPBFieldTextFormatNameCustom),
+        .dataType = GPBDataTypeBool,
+      },
     };
     GPBDescriptor *localDescriptor =
         [GPBDescriptor allocDescriptorForClass:[BleDataBleDeviceMessage class]
@@ -266,6 +276,11 @@ typedef struct BleDataBleDeviceMessage__storage_ {
                                     fieldCount:(uint32_t)(sizeof(fields) / sizeof(GPBMessageFieldDescription))
                                    storageSize:sizeof(BleDataBleDeviceMessage__storage_)
                                          flags:GPBDescriptorInitializationFlag_None];
+#if !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
+    static const char *extraTextFormatInfo =
+        "\001\005\013\000";
+    [localDescriptor setupExtraTextInfo:extraTextFormatInfo];
+#endif  // !GPBOBJC_SKIP_MESSAGE_TEXTFORMAT_EXTRAS
     NSAssert(descriptor == nil, @"Startup recursed!");
     descriptor = localDescriptor;
   }

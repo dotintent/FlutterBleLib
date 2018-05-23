@@ -57,6 +57,7 @@ class BleDeviceMessage extends GeneratedMessage {
     ..a<String>(2, 'name', PbFieldType.OS)
     ..a<int>(3, 'rssi', PbFieldType.O3)
     ..a<int>(4, 'mtu', PbFieldType.O3)
+    ..a<bool>(5, 'isConnected', PbFieldType.OB)
     ..hasRequiredFields = false
   ;
 
@@ -95,6 +96,11 @@ class BleDeviceMessage extends GeneratedMessage {
   set mtu(int v) { $_setUnsignedInt32(3, 4, v); }
   bool hasMtu() => $_has(3, 4);
   void clearMtu() => clearField(4);
+
+  bool get isConnected => $_get(4, 5, false);
+  set isConnected(bool v) { $_setBool(4, 5, v); }
+  bool hasIsConnected() => $_has(4, 5);
+  void clearIsConnected() => clearField(5);
 }
 
 class _ReadonlyBleDeviceMessage extends BleDeviceMessage with ReadonlyMessageMixin {}
