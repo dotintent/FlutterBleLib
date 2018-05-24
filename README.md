@@ -21,9 +21,7 @@ To start using Flutter, you have to prepare the environment. Here you can find [
   - [x] Writing characteristics
   - [x] Listening to characteristic change notifications
 
-## Usage
-
-### Configuration
+## Configuration & Installation
 Add the snippet below to your `pubspec.yaml` file:
 ```
 dependencies:
@@ -35,6 +33,29 @@ Package can be installed from the command line:
 - with Flutter: `$ flutter packages get`
 
 Alternatively, your editor may support `pub get` or `packages get`. Refer to the documentation of your IDE to learn more.
+
+### iOS additional configuration
+In order to make it work on iOS you need to make 2 additional steps:
+- add `use_frameworks!` at the beginning of `ios/Podfile` file
+- add `config.build_settings['SWIFT_VERSION'] = '4.1.0'` in `post_install` block of `ios/Podfile` file
+
+Finally your `ios/Podfile` file should have following changes:
+```
++ use_frameworks!
+
+...
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['ENABLE_BITCODE'] = 'NO'
++      config.build_settings['SWIFT_VERSION'] = '4.1.0'
+    end
+  end
+end
+```
+
+## Usage
 
 Once the package is installed you can use:
 
