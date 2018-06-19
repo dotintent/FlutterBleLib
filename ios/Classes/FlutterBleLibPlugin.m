@@ -133,7 +133,7 @@
     } else if([BleEvent.stateChangeEvent isEqualToString: name]) {
         [_bluetoothStateHandler handleBluetoothState:[Converter convertToBleDataBluetoothStateMessageFromString:value]];
     } else if([BleEvent.disconnectionEvent isEqualToString: name]) {
-         [_deviceConnectionChangeHandler handleDeviceConnectionState:[Converter convertToBleDeviceMessage:value]];
+         [_deviceConnectionChangeHandler handleDeviceConnectionState:[Converter convertToBleDeviceMessage:value[1]]];
     } else if([BleEvent.readEvent isEqualToString: name]) {
         [_monitorCharacteristicHandler handleMonitorCharacteristic:[Converter conevrtToMonitorCharacteristicMessage:value]];
     }
