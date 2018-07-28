@@ -34,18 +34,18 @@ class FlutterBleLib {
     });
   }
 
-  Future<Null> createClient(String restoreStateIdentifier) async {
+  Future<dynamic> createClient(String restoreStateIdentifier) async {
     await _mainMethodChannel.invokeMethod(_createClient,
         <String, String>{_restoreStateIdentifier: restoreStateIdentifier});
     return;
   }
 
-  Future<Null> destroyClient() async {
+  Future<dynamic> destroyClient() async {
     await _mainMethodChannel.invokeMethod(_destroyClient);
     return;
   }
 
-  Future<Null> cancelTransaction(String transactionId) async {
+  Future<dynamic> cancelTransaction(String transactionId) async {
     await _mainMethodChannel.invokeMethod(_cancelTransaction,
         transactionId
     );
@@ -53,7 +53,7 @@ class FlutterBleLib {
   }
 
 
-  Future<Null> setLogLevel(LogLevel logLevel) =>
+  Future<dynamic> setLogLevel(LogLevel logLevel) =>
       _mainMethodChannel.invokeMethod(
           _setLogLevel,
           LogLevelConverter
