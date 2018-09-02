@@ -333,7 +333,7 @@ class FlutterBleLib {
         _transactionId : transactionId
       });
 
-  Stream<MonitorCharacteristic> monitorCharacteristic(int characteristicIdentifier, String transactionId) =>
+  Stream<MonitorCharacteristic> monitorCharacteristic(double characteristicIdentifier, String transactionId) =>
       _invokeMonitorCharacteristic(_monitorCharacteristic, <String, Object> {
         _characteristicIdentifier : characteristicIdentifier,
         _transactionId : transactionId
