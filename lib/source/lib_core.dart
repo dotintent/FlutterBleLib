@@ -339,6 +339,11 @@ class FlutterBleLib {
         _transactionId : transactionId
       });
 
+  /// Decodes a base64 string value.
+  Uint8List decodeCharacteristicValue(String encodedValue) {
+    return new Base64Decoder().convert(encodedValue);
+  }
+
   Stream<MonitorCharacteristic> _invokeMonitorCharacteristic(String methodName, [dynamic arguments]) async* {
     StreamSubscription subscription;
     StreamController controller;
