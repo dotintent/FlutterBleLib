@@ -192,7 +192,7 @@ class Characteristic {
   bool isNotificable;
   bool isIndicatable;
   bool isNotifing;
-  String value;
+  Uint8List value;
 
   Characteristic(this.id, this.uuid, this.serviceId, this.serviceUuid,
       this.deviceId, this.isReadable, this.isWritableWithResponse,
@@ -213,7 +213,7 @@ class Characteristic {
           characteristicMessage.isNotificable,
           characteristicMessage.isIndicatable,
           characteristicMessage.isNotifing,
-          characteristicMessage.value);
+          new Base64Decoder().convert(characteristicMessage.value));
 
   @override
   String toString() {
