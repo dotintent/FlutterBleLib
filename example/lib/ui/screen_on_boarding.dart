@@ -54,7 +54,7 @@ class _OnBoardingPagerState extends State<OnBoardingPager>
 }
 
 class WelcomeScreen extends StatelessWidget {
-  static const String _welcomeMessage = "Welcome in flutter ble example. This app shows you all functionality of our library. Swipe qright to get more information";
+  static const String _welcomeMessage = "Welcome in flutter ble example. This app shows you all functionality of our library. Swipe right to get more information";
 
   @override
   Widget build(BuildContext context) {

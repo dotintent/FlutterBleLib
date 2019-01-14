@@ -97,7 +97,7 @@ class InsertValueDialogState extends State<InsertValueDialog> {
 
   _dataAsBytes() {
     if (_currentDataType == DataType.STRING) {
-      return UTF8.encode(_controller.text);
+      return utf8.encode(_controller.text);
     }
     return new List<int>()
       ..add(int.parse(

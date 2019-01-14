@@ -36,17 +36,17 @@ class ScanDataMessage extends GeneratedMessage {
     if (v is! ScanDataMessage) checkItemFailed(v, 'ScanDataMessage');
   }
 
-  int get scanMode => $_get(0, 1, 0);
-  set scanMode(int v) { $_setUnsignedInt32(0, 1, v); }
-  bool hasScanMode() => $_has(0, 1);
+  int get scanMode => $_get(0, 0);
+  set scanMode(int v) { $_setUnsignedInt32(0, v); }
+  bool hasScanMode() => $_has(0);
   void clearScanMode() => clearField(1);
 
-  int get callbackType => $_get(1, 2, 0);
-  set callbackType(int v) { $_setUnsignedInt32(1, 2, v); }
-  bool hasCallbackType() => $_has(1, 2);
+  int get callbackType => $_get(1, 0);
+  set callbackType(int v) { $_setUnsignedInt32(1, v); }
+  bool hasCallbackType() => $_has(1);
   void clearCallbackType() => clearField(2);
 
-  List<String> get uuids => $_get(2, 3, null);
+  List<String> get uuids => $_get(2, null);
 }
 
 class _ReadonlyScanDataMessage extends ScanDataMessage with ReadonlyMessageMixin {}
@@ -77,29 +77,29 @@ class BleDeviceMessage extends GeneratedMessage {
     if (v is! BleDeviceMessage) checkItemFailed(v, 'BleDeviceMessage');
   }
 
-  String get id => $_get(0, 1, '');
-  set id(String v) { $_setString(0, 1, v); }
-  bool hasId() => $_has(0, 1);
+  String get id => $_get(0, '');
+  set id(String v) { $_setString(0, v); }
+  bool hasId() => $_has(0);
   void clearId() => clearField(1);
 
-  String get name => $_get(1, 2, '');
-  set name(String v) { $_setString(1, 2, v); }
-  bool hasName() => $_has(1, 2);
+  String get name => $_get(1, '');
+  set name(String v) { $_setString(1, v); }
+  bool hasName() => $_has(1);
   void clearName() => clearField(2);
 
-  int get rssi => $_get(2, 3, 0);
-  set rssi(int v) { $_setUnsignedInt32(2, 3, v); }
-  bool hasRssi() => $_has(2, 3);
+  int get rssi => $_get(2, 0);
+  set rssi(int v) { $_setUnsignedInt32(2, v); }
+  bool hasRssi() => $_has(2);
   void clearRssi() => clearField(3);
 
-  int get mtu => $_get(3, 4, 0);
-  set mtu(int v) { $_setUnsignedInt32(3, 4, v); }
-  bool hasMtu() => $_has(3, 4);
+  int get mtu => $_get(3, 0);
+  set mtu(int v) { $_setUnsignedInt32(3, v); }
+  bool hasMtu() => $_has(3);
   void clearMtu() => clearField(4);
 
-  bool get isConnected => $_get(4, 5, false);
-  set isConnected(bool v) { $_setBool(4, 5, v); }
-  bool hasIsConnected() => $_has(4, 5);
+  bool get isConnected => $_get(4, false);
+  set isConnected(bool v) { $_setBool(4, v); }
+  bool hasIsConnected() => $_has(4);
   void clearIsConnected() => clearField(5);
 }
 
@@ -130,24 +130,24 @@ class ScanResultMessage extends GeneratedMessage {
     if (v is! ScanResultMessage) checkItemFailed(v, 'ScanResultMessage');
   }
 
-  BleDeviceMessage get bleDeviceMessage => $_get(0, 1, null);
+  BleDeviceMessage get bleDeviceMessage => $_get(0, null);
   set bleDeviceMessage(BleDeviceMessage v) { setField(1, v); }
-  bool hasBleDeviceMessage() => $_has(0, 1);
+  bool hasBleDeviceMessage() => $_has(0);
   void clearBleDeviceMessage() => clearField(1);
 
-  int get rssi => $_get(1, 2, 0);
-  set rssi(int v) { $_setUnsignedInt32(1, 2, v); }
-  bool hasRssi() => $_has(1, 2);
+  int get rssi => $_get(1, 0);
+  set rssi(int v) { $_setUnsignedInt32(1, v); }
+  bool hasRssi() => $_has(1);
   void clearRssi() => clearField(2);
 
-  Int64 get timestampNanos => $_get(2, 3, null);
-  set timestampNanos(Int64 v) { $_setInt64(2, 3, v); }
-  bool hasTimestampNanos() => $_has(2, 3);
+  Int64 get timestampNanos => $_get(2, null);
+  set timestampNanos(Int64 v) { $_setInt64(2, v); }
+  bool hasTimestampNanos() => $_has(2);
   void clearTimestampNanos() => clearField(3);
 
-  int get scanCallbackTypeMessage => $_get(3, 4, 0);
-  set scanCallbackTypeMessage(int v) { $_setUnsignedInt32(3, 4, v); }
-  bool hasScanCallbackTypeMessage() => $_has(3, 4);
+  int get scanCallbackTypeMessage => $_get(3, 0);
+  set scanCallbackTypeMessage(int v) { $_setUnsignedInt32(3, v); }
+  bool hasScanCallbackTypeMessage() => $_has(3);
   void clearScanCallbackTypeMessage() => clearField(4);
 }
 
@@ -177,19 +177,19 @@ class ConnectToDeviceDataMessage extends GeneratedMessage {
     if (v is! ConnectToDeviceDataMessage) checkItemFailed(v, 'ConnectToDeviceDataMessage');
   }
 
-  String get macAddress => $_get(0, 1, '');
-  set macAddress(String v) { $_setString(0, 1, v); }
-  bool hasMacAddress() => $_has(0, 1);
+  String get macAddress => $_get(0, '');
+  set macAddress(String v) { $_setString(0, v); }
+  bool hasMacAddress() => $_has(0);
   void clearMacAddress() => clearField(1);
 
-  bool get isAutoConnect => $_get(1, 2, false);
-  set isAutoConnect(bool v) { $_setBool(1, 2, v); }
-  bool hasIsAutoConnect() => $_has(1, 2);
+  bool get isAutoConnect => $_get(1, false);
+  set isAutoConnect(bool v) { $_setBool(1, v); }
+  bool hasIsAutoConnect() => $_has(1);
   void clearIsAutoConnect() => clearField(2);
 
-  int get requestMtu => $_get(2, 3, 0);
-  set requestMtu(int v) { $_setUnsignedInt32(2, 3, v); }
-  bool hasRequestMtu() => $_has(2, 3);
+  int get requestMtu => $_get(2, 0);
+  set requestMtu(int v) { $_setUnsignedInt32(2, v); }
+  bool hasRequestMtu() => $_has(2);
   void clearRequestMtu() => clearField(3);
 }
 
@@ -217,7 +217,7 @@ class ServiceMessages extends GeneratedMessage {
     if (v is! ServiceMessages) checkItemFailed(v, 'ServiceMessages');
   }
 
-  List<ServiceMessage> get serviceMessages => $_get(0, 1, null);
+  List<ServiceMessage> get serviceMessages => $_get(0, null);
 }
 
 class _ReadonlyServiceMessages extends ServiceMessages with ReadonlyMessageMixin {}
@@ -247,24 +247,24 @@ class ServiceMessage extends GeneratedMessage {
     if (v is! ServiceMessage) checkItemFailed(v, 'ServiceMessage');
   }
 
-  double get id => $_get(0, 1, null);
-  set id(double v) { $_setDouble(0, 1, v); }
-  bool hasId() => $_has(0, 1);
+  double get id => $_get(0, null);
+  set id(double v) { $_setDouble(0, v); }
+  bool hasId() => $_has(0);
   void clearId() => clearField(1);
 
-  String get uuid => $_get(1, 2, '');
-  set uuid(String v) { $_setString(1, 2, v); }
-  bool hasUuid() => $_has(1, 2);
+  String get uuid => $_get(1, '');
+  set uuid(String v) { $_setString(1, v); }
+  bool hasUuid() => $_has(1);
   void clearUuid() => clearField(2);
 
-  BleDeviceMessage get device => $_get(2, 3, null);
+  BleDeviceMessage get device => $_get(2, null);
   set device(BleDeviceMessage v) { setField(3, v); }
-  bool hasDevice() => $_has(2, 3);
+  bool hasDevice() => $_has(2);
   void clearDevice() => clearField(3);
 
-  bool get isPrimary => $_get(3, 4, false);
-  set isPrimary(bool v) { $_setBool(3, 4, v); }
-  bool hasIsPrimary() => $_has(3, 4);
+  bool get isPrimary => $_get(3, false);
+  set isPrimary(bool v) { $_setBool(3, v); }
+  bool hasIsPrimary() => $_has(3);
   void clearIsPrimary() => clearField(4);
 }
 
@@ -292,7 +292,7 @@ class CharacteristicMessages extends GeneratedMessage {
     if (v is! CharacteristicMessages) checkItemFailed(v, 'CharacteristicMessages');
   }
 
-  List<CharacteristicMessage> get characteristicMessage => $_get(0, 1, null);
+  List<CharacteristicMessage> get characteristicMessage => $_get(0, null);
 }
 
 class _ReadonlyCharacteristicMessages extends CharacteristicMessages with ReadonlyMessageMixin {}
@@ -330,64 +330,64 @@ class CharacteristicMessage extends GeneratedMessage {
     if (v is! CharacteristicMessage) checkItemFailed(v, 'CharacteristicMessage');
   }
 
-  double get id => $_get(0, 1, null);
-  set id(double v) { $_setDouble(0, 1, v); }
-  bool hasId() => $_has(0, 1);
+  double get id => $_get(0, null);
+  set id(double v) { $_setDouble(0, v); }
+  bool hasId() => $_has(0);
   void clearId() => clearField(1);
 
-  String get uuid => $_get(1, 2, '');
-  set uuid(String v) { $_setString(1, 2, v); }
-  bool hasUuid() => $_has(1, 2);
+  String get uuid => $_get(1, '');
+  set uuid(String v) { $_setString(1, v); }
+  bool hasUuid() => $_has(1);
   void clearUuid() => clearField(2);
 
-  int get serviceId => $_get(2, 3, 0);
-  set serviceId(int v) { $_setUnsignedInt32(2, 3, v); }
-  bool hasServiceId() => $_has(2, 3);
+  int get serviceId => $_get(2, 0);
+  set serviceId(int v) { $_setUnsignedInt32(2, v); }
+  bool hasServiceId() => $_has(2);
   void clearServiceId() => clearField(3);
 
-  String get serviceUuid => $_get(3, 4, '');
-  set serviceUuid(String v) { $_setString(3, 4, v); }
-  bool hasServiceUuid() => $_has(3, 4);
+  String get serviceUuid => $_get(3, '');
+  set serviceUuid(String v) { $_setString(3, v); }
+  bool hasServiceUuid() => $_has(3);
   void clearServiceUuid() => clearField(4);
 
-  String get deviceId => $_get(4, 5, '');
-  set deviceId(String v) { $_setString(4, 5, v); }
-  bool hasDeviceId() => $_has(4, 5);
+  String get deviceId => $_get(4, '');
+  set deviceId(String v) { $_setString(4, v); }
+  bool hasDeviceId() => $_has(4);
   void clearDeviceId() => clearField(5);
 
-  bool get isReadable => $_get(5, 6, false);
-  set isReadable(bool v) { $_setBool(5, 6, v); }
-  bool hasIsReadable() => $_has(5, 6);
+  bool get isReadable => $_get(5, false);
+  set isReadable(bool v) { $_setBool(5, v); }
+  bool hasIsReadable() => $_has(5);
   void clearIsReadable() => clearField(6);
 
-  bool get isWritableWithResponse => $_get(6, 7, false);
-  set isWritableWithResponse(bool v) { $_setBool(6, 7, v); }
-  bool hasIsWritableWithResponse() => $_has(6, 7);
+  bool get isWritableWithResponse => $_get(6, false);
+  set isWritableWithResponse(bool v) { $_setBool(6, v); }
+  bool hasIsWritableWithResponse() => $_has(6);
   void clearIsWritableWithResponse() => clearField(7);
 
-  bool get isWritableWithoutResponse => $_get(7, 8, false);
-  set isWritableWithoutResponse(bool v) { $_setBool(7, 8, v); }
-  bool hasIsWritableWithoutResponse() => $_has(7, 8);
+  bool get isWritableWithoutResponse => $_get(7, false);
+  set isWritableWithoutResponse(bool v) { $_setBool(7, v); }
+  bool hasIsWritableWithoutResponse() => $_has(7);
   void clearIsWritableWithoutResponse() => clearField(8);
 
-  bool get isNotificable => $_get(8, 9, false);
-  set isNotificable(bool v) { $_setBool(8, 9, v); }
-  bool hasIsNotificable() => $_has(8, 9);
+  bool get isNotificable => $_get(8, false);
+  set isNotificable(bool v) { $_setBool(8, v); }
+  bool hasIsNotificable() => $_has(8);
   void clearIsNotificable() => clearField(9);
 
-  bool get isIndicatable => $_get(9, 10, false);
-  set isIndicatable(bool v) { $_setBool(9, 10, v); }
-  bool hasIsIndicatable() => $_has(9, 10);
+  bool get isIndicatable => $_get(9, false);
+  set isIndicatable(bool v) { $_setBool(9, v); }
+  bool hasIsIndicatable() => $_has(9);
   void clearIsIndicatable() => clearField(10);
 
-  bool get isNotifing => $_get(10, 11, false);
-  set isNotifing(bool v) { $_setBool(10, 11, v); }
-  bool hasIsNotifing() => $_has(10, 11);
+  bool get isNotifing => $_get(10, false);
+  set isNotifing(bool v) { $_setBool(10, v); }
+  bool hasIsNotifing() => $_has(10);
   void clearIsNotifing() => clearField(11);
 
-  String get value => $_get(11, 12, '');
-  set value(String v) { $_setString(11, 12, v); }
-  bool hasValue() => $_has(11, 12);
+  String get value => $_get(11, '');
+  set value(String v) { $_setString(11, v); }
+  bool hasValue() => $_has(11);
   void clearValue() => clearField(12);
 }
 
@@ -416,14 +416,14 @@ class MonitorCharacteristicMessage extends GeneratedMessage {
     if (v is! MonitorCharacteristicMessage) checkItemFailed(v, 'MonitorCharacteristicMessage');
   }
 
-  String get transactionId => $_get(0, 1, '');
-  set transactionId(String v) { $_setString(0, 1, v); }
-  bool hasTransactionId() => $_has(0, 1);
+  String get transactionId => $_get(0, '');
+  set transactionId(String v) { $_setString(0, v); }
+  bool hasTransactionId() => $_has(0);
   void clearTransactionId() => clearField(1);
 
-  CharacteristicMessage get characteristicMessage => $_get(1, 2, null);
+  CharacteristicMessage get characteristicMessage => $_get(1, null);
   set characteristicMessage(CharacteristicMessage v) { setField(2, v); }
-  bool hasCharacteristicMessage() => $_has(1, 2);
+  bool hasCharacteristicMessage() => $_has(1);
   void clearCharacteristicMessage() => clearField(2);
 }
 
