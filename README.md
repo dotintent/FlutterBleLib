@@ -4,7 +4,7 @@
 
 ## ATTENTION
 
-Thank you for your interest in the FlutterBle Library.  Unfortunately this repository is not maintained anymore as we are focusing on developing native iOS (RxBluetootkKit) and Android (RxAndroidBle) libraries. Stay tuned!
+Thank you for your interest in the FlutterBle Library. This repository was not maintained for some time as we were focusing on developing native [iOS (RxBluetootkKit)](https://github.com/Polidea/RxBluetoothKit), [Android (RxAndroidBle)](https://github.com/Polidea/RxAndroidBle) and [React Native (react-native-ble-plx)](https://github.com/Polidea/react-native-ble-plx) libraries. We plan to bring this library back to shape. Stay tuned!
 
 # FlutterBle Library
 
