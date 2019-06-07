@@ -157,3 +157,5 @@ Paweł Janeczek (pawel.janeczek@polidea.com)
 ## Maintained by
 
 [Polidea](http://www.polidea.com)
+
+Learn more about Polidea's BLE services [here](https://www.polidea.com/services/ble).
