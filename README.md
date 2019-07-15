@@ -1,5 +1,10 @@
 <p align="center">
-  <img src="https://github.com/Polidea/FlutterBleLib/blob/master/site/flutter-ble-lib-logo.png" />
+  <img
+    alt="FlutterBLE library logo"
+    src="site/flutter-ble-lib-logo.png"
+    height="300"
+    style="margin-top: 20px; margin-bottom: 20px;"
+  />
 </p>
 
 ## ATTENTION
