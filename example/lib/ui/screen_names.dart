@@ -1,1 +1,0 @@
-const bleDevicesScreen = "/bleDevicesScreen";
