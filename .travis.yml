@@ -3,10 +3,12 @@ git checlanguage: generic
 stages:
   - name: self-test
     if: type = push
-  - name: integration
+  - name: flutter
+    if: branch = master OR type = pull_request
+  - name: native
     if: branch = master OR type = pull_request
 
-_flutter_job_template:
+_flutter_job_template: &_flutter_job_template
   before_script:
     - git clone https://github.com/flutter/flutter.git -b stable
     - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
@@ -53,7 +55,10 @@ matrix:
   include:
     - <<: *android_job_template
       name: Build Android
-      stage: integration
+      stage: native
     - <<: *ios_job_template
       name: Build iOS
-      stage: integration
+      stage: native
+    - <<: *_flutter_job_template
+      name: Build Flutter
+      stage: flutter
