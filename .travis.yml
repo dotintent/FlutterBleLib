@@ -1,7 +1,59 @@
 git checlanguage: generic
-before_script:
-  - git clone https://github.com/flutter/flutter.git -b stable
-  - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
-script:
-  - flutter packages get
-  - flutter test
+
+stages:
+  - name: self-test
+    if: type = push
+  - name: integration
+    if: branch = master OR type = pull_request
+
+_flutter_job_template:
+  before_script:
+    - git clone https://github.com/flutter/flutter.git -b stable
+    - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
+  script:
+    - flutter packages get
+    - flutter test
+
+_android_job_template: &android_job_template
+  language: android
+  android:
+    components:
+      - tools
+      - build-tools-28.0.3
+      - android-28
+      - extra-android-m2repository
+    licenses:
+      - 'android-sdk-license-.+'
+  env:
+    global:
+      - GRADLE_OPTS="-Xms128m"
+      - ABI="default;armeabi-v7a"
+  before_cache:
+    - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+  cache:
+    directories:
+      - $HOME/.m2
+      - $HOME/.gradle/caches/
+      - $HOME/.gradle/wrapper/
+  script:
+    - cd android
+    - ./gradlew buildRelease
+
+_ios_job_template: &ios_job_template
+  language: objective-c
+  os: osx
+  osx_image: xcode11
+  xcode_project: iOS/MultiPlatformBLEAdapter.xcodeproj
+  xcode_scheme: MultiplatformBLEAdapter
+  script:
+    - cd ios
+    - xcodebuild
+
+matrix:
+  include:
+    - <<: *android_job_template
+      name: Build Android
+      stage: integration
+    - <<: *ios_job_template
+      name: Build iOS
+      stage: integration
