@@ -39,7 +39,7 @@ _android_job_template: &android_job_template
       - $HOME/.gradle/wrapper/
   script:
     - cd android
-    - ./gradlew buildRelease
+    - gradle buildRelease
 
 _ios_job_template: &ios_job_template
   language: objective-c
@@ -55,10 +55,10 @@ matrix:
   include:
     - <<: *android_job_template
       name: Build Android
-      stage: native
+      stage: flutter
     - <<: *ios_job_template
       name: Build iOS
-      stage: native
+      stage: flutter
     - <<: *_flutter_job_template
       name: Build Flutter
       stage: flutter
