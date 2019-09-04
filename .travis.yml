@@ -38,8 +38,8 @@ _android_job_template: &android_job_template
       - $HOME/.gradle/caches/
       - $HOME/.gradle/wrapper/
   script:
-    - cd android
-    - gradle buildRelease
+    - cd example
+    - flutter build apk
 
 _ios_job_template: &ios_job_template
   language: objective-c
@@ -48,8 +48,8 @@ _ios_job_template: &ios_job_template
   xcode_project: iOS/MultiPlatformBLEAdapter.xcodeproj
   xcode_scheme: MultiplatformBLEAdapter
   script:
-    - cd ios
-    - xcodebuild
+    - cd example
+    - flutter build ios
 
 matrix:
   include:
