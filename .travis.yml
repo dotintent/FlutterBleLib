@@ -61,10 +61,11 @@ matrix:
   include:
     - <<: *android_job_template
       name: Build Android
-      stage: flutter
-    - <<: *ios_job_template
-      name: Build iOS
-      stage: flutter
+      stage: native
+# Native build is turned off at the moment because of a certificate issue
+#    - <<: *ios_job_template
+#      name: Build iOS
+#      stage: ntive
     - <<: *_flutter_job_template
       name: Build Flutter
       stage: flutter
