@@ -1,20 +1,20 @@
 class BleManager {
-  Future<Null> createClient(String restoreStateIdentifier) async
-  Future<Null> destroyClient() async
+  Future<void> createClient(String restoreStateIdentifier) async
+  Future<void> destroyClient() async
 
-  Future<Null> enableRadio()
-  Future<Null> disableRadio()
+  Future<void> enableRadio()
+  Future<void> disableRadio()
   
-  Future<Null> cancelTransaction(String transactionId) async
+  Future<void> cancelTransaction(String transactionId) async
 
-  Future<Null> setLogLevel(LogLevel logLevel)
+  Future<void> setLogLevel(LogLevel logLevel)
   Future<LogLevel> logLevel()
 
   Future<BluetoothState> state()
   Stream<BluetoothState> onStateChange()
 
   Stream<ScanResult> startDeviceScan(int scanMode, int callbackType, List<String> uuids) async*
-  Future<Null> stopDeviceScan() async
+  Future<void> stopDeviceScan() async
 
   Future<List<Device>> devices(String[] ids)
   Future<List<Device>> connectedDevicesWithServices(String[] serviceUUIDs)
@@ -24,12 +24,12 @@ class Device {
   Future<Device> connect({ bool isAutoConnect, int requestMtu }) async
   Future<bool> isConnected() async
   Stream<Device> onConnectionChanged()
-  Future<Device> cancelConnection() async
+  Future<void> disconnectOrCancelConnection() async
 
-  Future<bool> requestMTU(int mtu, String transactionId) async
+  Future<int> requestMTU(int mtu, String transactionId) async
   Future<int> readRSSI(String transactionId) async
 
-  Future<Null>  discoverAllServicesAndCharacteristics() async
+  Future<void>  discoverAllServicesAndCharacteristics() async
   Future<List<Service>> services() async
   Future<List<Characteristic>> characteristics(String serviceUUID) async
   Future<List<Descriptor>> descriptors(String serviceUUID, String characteristicUUID) async
