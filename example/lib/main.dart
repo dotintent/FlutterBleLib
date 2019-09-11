@@ -28,8 +28,8 @@ class _MyAppState extends State<MyApp> {
     // setState to update our non-existent appearance.
 
     bleManager.createClient("5", (devices) {
-      if (!mounted) return;
       setState(() {
+        if (!mounted) return;
         this.devices = devices.toString();
       });
     });
