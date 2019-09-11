@@ -1,6 +1,7 @@
 package com.polidea.flutter_ble_lib;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.polidea.flutter_ble_lib.constant.ArgumentKey;
 import com.polidea.flutter_ble_lib.constant.MethodName;
@@ -28,10 +29,10 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), ChannelName.FLUTTER_BLE_LIB);
         final EventChannel bluetoothStateChannel = new EventChannel(registrar.messenger(), ChannelName.ADAPTER_STATE_CHANGES);
         final EventChannel restoreStateChannel = new EventChannel(registrar.messenger(), ChannelName.STATE_RESTORE_EVENTS);
-        final FlutterBleLibPlugin plugin = new FlutterBleLibPlugin(registrar.context());
+        final FlutterBleLibPlugin plugin = new FlutterBleLibPlugin(registrar.activity().getApplicationContext());
+        channel.setMethodCallHandler(plugin);
         bluetoothStateChannel.setStreamHandler(plugin.adapterStateStreamHandler);
         restoreStateChannel.setStreamHandler(plugin.restoreStateStreamHandler);
-        channel.setMethodCallHandler(plugin);
     }
 
     private FlutterBleLibPlugin(Context context) {
