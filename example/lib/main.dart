@@ -26,18 +26,20 @@ class _MyAppState extends State<MyApp> {
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
 
-    bleManager.createClient("5", (devices) {
-      setState(() {
-        if (!mounted) return;
-        this.preview = devices.toString();
-      });
-    });
+    bleManager.createClient(
+        restoreStateIdentifier: "5",
+        restoreStateAction: (devices) {
+          setState(() {
+            if (!mounted) return;
+            this.preview = devices.toString();
+          });
+        });
 
-    Future.delayed(Duration(milliseconds: 1500))
+    Future.delayed(Duration(milliseconds: 3000))
         .then((value) => bleManager.destroyClient())
         .then((value) => setState(() {
-          preview = preview + "\nBleClient destroyed after a delay";
-    }));
+              preview = preview + "\nBleClient destroyed after a delay";
+            }));
   }
 
   @override

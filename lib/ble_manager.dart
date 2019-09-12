@@ -1,6 +1,6 @@
 part of flutter_ble_lib;
 
-typedef RestoreStateAction = Function(List<Device> restoreStateIdentifier);
+typedef RestoreStateAction = Function(List<Peripheral> restoreStateIdentifier);
 
 class BleManager {
   FlutterBleLib _bleLib;

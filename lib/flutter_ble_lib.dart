@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 
 part 'constants.dart';
 
-part 'device.dart';
+part 'peripheral.dart';
 
 part 'ble_manager.dart';
 

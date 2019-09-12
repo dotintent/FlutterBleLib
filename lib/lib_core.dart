@@ -7,7 +7,7 @@ class FlutterBleLib {
   static const EventChannel _restoreStateEventChannel =
       const EventChannel(ChannelName.STATE_RESTORE_EVENTS);
 
-  Future<List<Device>> restoredState() => _restoreStateEventChannel
+  Future<List<Peripheral>> restoredState() => _restoreStateEventChannel
       .receiveBroadcastStream()
       .map(
         (jsonString) {
@@ -15,7 +15,7 @@ class FlutterBleLib {
             return null;
           else
             return [
-              Device.fromJson(jsonString)
+              Peripheral.fromJson(jsonString)
             ]; //TODO Add proper mapping from json here (11.09.2019)
         },
       )
