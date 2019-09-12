@@ -10,12 +10,12 @@ class BleManager {
   }
 
   Future<void> createClient(
-    String restoreStateIdentifier,
-    RestoreStateAction restoreStateAction,
-  ) {
-    _bleLib.restoredState().then((devices) {
-      restoreStateAction(devices);
-    });
+      {String restoreStateIdentifier, RestoreStateAction restoreStateAction}) {
+    if (restoreStateAction != null) {
+      _bleLib.restoredState().then((devices) {
+        restoreStateAction(devices);
+      });
+    }
     return _bleLib.createClient(restoreStateIdentifier);
   }
 

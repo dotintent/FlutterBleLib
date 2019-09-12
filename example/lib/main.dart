@@ -12,7 +12,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   BleManager bleManager = BleManager();
-  String devices = "";
+  String preview = "";
 
   @override
   void initState() {
@@ -22,7 +22,6 @@ class _MyAppState extends State<MyApp> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   void initBleManager() {
-
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
@@ -30,9 +29,15 @@ class _MyAppState extends State<MyApp> {
     bleManager.createClient("5", (devices) {
       setState(() {
         if (!mounted) return;
-        this.devices = devices.toString();
+        this.preview = devices.toString();
       });
     });
+
+    Future.delayed(Duration(milliseconds: 1500))
+        .then((value) => bleManager.destroyClient())
+        .then((value) => setState(() {
+          preview = preview + "\nBleClient destroyed after a delay";
+    }));
   }
 
   @override
@@ -43,7 +48,7 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Text('Devices: $devices'),
+          child: Text('Devices: $preview'),
         ),
       ),
     );
