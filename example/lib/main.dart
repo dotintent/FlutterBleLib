@@ -11,7 +11,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  BleManager bleManager = BleManager();
+  BleManager bleManager = BleManager.getInstance();
   String preview = "";
 
   @override
