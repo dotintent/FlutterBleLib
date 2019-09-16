@@ -52,41 +52,59 @@ public class ScanResultJsonConverter implements JsonConverter<ScanResult> {
 
     private void serializeAdvertisementData(JSONObject root,
                                             @NonNull AdvertisementData advertisementData) throws JSONException {
-        root.put(Metadata.MANUFACTURER_DATA, advertisementData.getManufacturerData() != null ?
-                Base64Converter.encode(advertisementData.getManufacturerData()) : JSONObject.NULL);
+        serializeManufacturerData(root, advertisementData);
+        serializeServiceData(root, advertisementData);
+        serializeServiceUuids(root, advertisementData);
+        serializeSolicitedServiceUuids(root, advertisementData);
+        root.put(Metadata.LOCAL_NAME, advertisementData.getLocalName() != null
+                ? advertisementData.getLocalName() : JSONObject.NULL);
+        root.put(Metadata.TX_POWER_LEVEL, advertisementData.getTxPowerLevel() != null
+                ? advertisementData.getTxPowerLevel() : JSONObject.NULL);
+    }
 
+    private void serializeManufacturerData(JSONObject target,
+                                           @NonNull AdvertisementData advertisementData) throws JSONException {
+        target.put(Metadata.MANUFACTURER_DATA, advertisementData.getManufacturerData() != null ?
+                Base64Converter.encode(advertisementData.getManufacturerData()) : JSONObject.NULL);
+    }
+
+    private void serializeServiceData(JSONObject target,
+                                      @NonNull AdvertisementData advertisementData) throws JSONException {
         if (advertisementData.getServiceData() != null && !advertisementData.getServiceData().isEmpty()) {
             Map<String, String> serviceData = new HashMap<>();
             for (Map.Entry<UUID, byte[]> entry : advertisementData.getServiceData().entrySet()) {
                 serviceData.put(UUIDConverter.fromUUID(entry.getKey()),
                         Base64Converter.encode(entry.getValue()));
             }
-            root.put(Metadata.SERVICE_DATA, new JSONObject(serviceData));
+            target.put(Metadata.SERVICE_DATA, new JSONObject(serviceData));
         } else {
-            root.put(Metadata.SERVICE_DATA, JSONObject.NULL);
+            target.put(Metadata.SERVICE_DATA, JSONObject.NULL);
         }
+    }
 
+    private void serializeServiceUuids(JSONObject target,
+                                       @NonNull AdvertisementData advertisementData) throws JSONException {
         if (advertisementData.getServiceUUIDs() != null && !advertisementData.getServiceUUIDs().isEmpty()) {
             List<String> serviceUuids = new ArrayList<>();
             for (UUID uuid : advertisementData.getServiceUUIDs()) {
                 serviceUuids.add(UUIDConverter.fromUUID(uuid));
             }
-            root.put(Metadata.SERVICE_UUIDS, new JSONArray(serviceUuids));
+            target.put(Metadata.SERVICE_UUIDS, new JSONArray(serviceUuids));
         } else {
-            root.put(Metadata.SERVICE_UUIDS, JSONObject.NULL);
+            target.put(Metadata.SERVICE_UUIDS, JSONObject.NULL);
         }
+    }
 
-        root.put(Metadata.LOCAL_NAME, advertisementData.getLocalName() != null ? advertisementData.getLocalName() : JSONObject.NULL);
-        root.put(Metadata.TX_POWER_LEVEL, advertisementData.getTxPowerLevel() != null ? advertisementData.getTxPowerLevel() : JSONObject.NULL);
-
+    private void serializeSolicitedServiceUuids(JSONObject target,
+                                                @NonNull AdvertisementData advertisementData) throws JSONException {
         if (advertisementData.getSolicitedServiceUUIDs() != null && !advertisementData.getSolicitedServiceUUIDs().isEmpty()) {
             List<String> solicitedServiceUuuids = new ArrayList<>();
             for (UUID uuid : advertisementData.getSolicitedServiceUUIDs()) {
                 solicitedServiceUuuids.add(UUIDConverter.fromUUID(uuid));
             }
-            root.put(Metadata.SOLICITED_SERVICE_UUIDS, new JSONArray(solicitedServiceUuuids));
+            target.put(Metadata.SOLICITED_SERVICE_UUIDS, new JSONArray(solicitedServiceUuuids));
         } else {
-            root.put(Metadata.SOLICITED_SERVICE_UUIDS, JSONObject.NULL);
+            target.put(Metadata.SOLICITED_SERVICE_UUIDS, JSONObject.NULL);
         }
     }
 }
