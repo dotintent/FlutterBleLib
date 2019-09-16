@@ -29,9 +29,9 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 public class FlutterBleLibPlugin implements MethodCallHandler {
 
     private BleAdapter bleAdapter;
-    private AdapterStateStreamHandler adapterStateStreamHandler;
-    private RestoreStateStreamHandler restoreStateStreamHandler;
-    private ScanningStreamHandler scanningStreamHandler;
+    private AdapterStateStreamHandler adapterStateStreamHandler = new AdapterStateStreamHandler();
+    private RestoreStateStreamHandler restoreStateStreamHandler = new RestoreStateStreamHandler();
+    private ScanningStreamHandler scanningStreamHandler = new ScanningStreamHandler();
 
     public static void registerWith(Registrar registrar) {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), ChannelName.FLUTTER_BLE_LIB);
@@ -47,9 +47,6 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
 
     private FlutterBleLibPlugin(Context context) {
         bleAdapter = new BleModule(context);
-        adapterStateStreamHandler = new AdapterStateStreamHandler();
-        restoreStateStreamHandler = new RestoreStateStreamHandler();
-        scanningStreamHandler = new ScanningStreamHandler();
     }
 
     @Override
@@ -94,7 +91,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
     }
 
     private void startDeviceScan(@NonNull MethodCall call, Result result) {
-        bleAdapter.startDeviceScan(null,
+        bleAdapter.startDeviceScan(call.<String[]>argument(ArgumentKey.RESTORE_STATE_IDENTIFIER),
                 call.<Integer>argument(ArgumentKey.SCAN_MODE),
                 call.<Integer>argument(ArgumentKey.CALLBACK_TYPE),
                 new OnEventCallback<ScanResult>() {

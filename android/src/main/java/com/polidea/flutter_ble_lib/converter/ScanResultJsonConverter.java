@@ -19,7 +19,7 @@ import java.util.UUID;
 
 public class ScanResultJsonConverter implements JsonConverter<ScanResult> {
 
-    interface Metadata {
+    private interface Metadata {
         String ID = "id";
         String NAME = "name";
         String RSSI = "rssi";
