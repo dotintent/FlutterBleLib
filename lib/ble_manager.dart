@@ -22,8 +22,8 @@ class BleManager {
   Future<void> destroyClient() => _bleLib.destroyClient();
 
   Stream<ScanResult> startDeviceScan({
-    int scanMode = ScanMode.LOW_POWER,
-    int callbackType = CallbackType.ALL_MATCHES,
+    int scanMode = ScanMode.lowPower,
+    int callbackType = CallbackType.allMatches,
     List<String> uuids,
   }) => _bleLib.startDeviceScan(scanMode, callbackType, uuids);
 

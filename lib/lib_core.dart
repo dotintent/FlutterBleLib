@@ -2,13 +2,13 @@ part of flutter_ble_lib;
 
 class FlutterBleLib {
   static const MethodChannel _methodChannel =
-  const MethodChannel(ChannelName.FLUTTER_BLE_LIB);
+  const MethodChannel(ChannelName.flutterBleLib);
 
   static const EventChannel _restoreStateEventChannel =
-  const EventChannel(ChannelName.STATE_RESTORE_EVENTS);
+  const EventChannel(ChannelName.stateRestoreEvents);
 
   static const EventChannel _scanEventChannel =
-  const EventChannel(ChannelName.SCANNING_EVENTS);
+  const EventChannel(ChannelName.scanningEvents);
 
   Future<List<Peripheral>> restoredState() => _restoreStateEventChannel
       .receiveBroadcastStream()
@@ -27,14 +27,14 @@ class FlutterBleLib {
 
   Future<void> createClient(String restoreStateIdentifier) async {
     await _methodChannel.invokeMethod(
-        MethodName.CREATE_CLIENT, <String, String>{
-      ArgumentName.RESTORE_STATE_IDENTIFIER: restoreStateIdentifier
+        MethodName.createClient, <String, String>{
+      ArgumentName.restoreStateIdentifier: restoreStateIdentifier
     });
     return;
   }
 
   Future<void> destroyClient() async {
-    await _methodChannel.invokeMethod(MethodName.DESTROY_CLIENT);
+    await _methodChannel.invokeMethod(MethodName.destroyClient);
     return;
   }
 
@@ -42,11 +42,11 @@ class FlutterBleLib {
       int callbackType,
       List<String> uuids,) async* {
     _methodChannel.invokeMethod(
-      MethodName.START_DEVICE_SCAN,
+      MethodName.startDeviceScan,
       <String, dynamic>{
-        ArgumentName.SCAN_MODE: scanMode,
-        ArgumentName.CALLBACK_TYPE: callbackType,
-        ArgumentName.UUIDS: uuids
+        ArgumentName.scanMode: scanMode,
+        ArgumentName.callbackType: callbackType,
+        ArgumentName.uuids: uuids
       },
     );
     yield* _scanEventChannel
@@ -58,7 +58,7 @@ class FlutterBleLib {
     });
   }
   Future<void> stopDeviceScan() async {
-    await _methodChannel.invokeMethod(MethodName.STOP_DEVICE_SCAN);
+    await _methodChannel.invokeMethod(MethodName.stopDeviceScan);
     return;
   }
 }

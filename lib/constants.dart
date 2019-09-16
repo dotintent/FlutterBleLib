@@ -1,35 +1,35 @@
 part of flutter_ble_lib;
 
 class MethodName {
-  static const String CREATE_CLIENT = "createClient";
-  static const String DESTROY_CLIENT = "destroyClient";
-  static const String START_DEVICE_SCAN = "startDeviceScan";
-  static const String STOP_DEVICE_SCAN = "stopDeviceScan";
+  static const String createClient = "createClient";
+  static const String destroyClient = "destroyClient";
+  static const String startDeviceScan = "startDeviceScan";
+  static const String stopDeviceScan = "stopDeviceScan";
 }
 
 class ChannelName {
-  static const String FLUTTER_BLE_LIB = "flutter_ble_lib";
-  static const String STATE_RESTORE_EVENTS =
-      FLUTTER_BLE_LIB + "/stateRestoreEvents";
-  static const String SCANNING_EVENTS = FLUTTER_BLE_LIB + "/scanningEvents";
+  static const String flutterBleLib = "flutter_ble_lib";
+  static const String stateRestoreEvents =
+      flutterBleLib + "/stateRestoreEvents";
+  static const String scanningEvents = flutterBleLib + "/scanningEvents";
 }
 
 class ArgumentName {
-  static const String RESTORE_STATE_IDENTIFIER = "restoreStateIdentifier";
-  static const String SCAN_MODE = "scanMode";
-  static const String CALLBACK_TYPE = "callbackType";
-  static const String UUIDS = "uuids";
+  static const String restoreStateIdentifier = "restoreStateIdentifier";
+  static const String scanMode = "scanMode";
+  static const String callbackType = "callbackType";
+  static const String uuids = "uuids";
 }
 
 abstract class ScanMode {
-  static const int OPPORTUNISTIC = -1;
-  static const int LOW_POWER = 0;
-  static const int BALANCED = 1;
-  static const int LOW_LATENCY = 2;
+  static const int opportunistic = -1;
+  static const int lowPower = 0;
+  static const int balanced = 1;
+  static const int lowLatency = 2;
 }
 
 abstract class CallbackType {
-  static const int ALL_MATCHES = 1;
-  static const int FIRST_MATCH = 2;
-  static const int MATCH_LOST = 4;
+  static const int allMatches = 1;
+  static const int firstMatch = 2;
+  static const int matchLost = 4;
 }
