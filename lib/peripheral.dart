@@ -1,8 +1,8 @@
 part of flutter_ble_lib;
 
 abstract class _PeripheralMetadata {
-  static const name = "deviceName";
-  static const identifier = "deviceId";
+  static const name = "name";
+  static const identifier = "id";
 }
 
 class Peripheral {
@@ -18,9 +18,9 @@ class Peripheral {
 
 
   Future<void> connect(
-          {bool isAutoConnect,
-          int requestMtu,
-          bool refreshGatt,
+          {bool isAutoConnect = false,
+          int requestMtu = 23,
+          bool refreshGatt = false,
           Duration timeout}) =>
       _manager.connectToPeripheral(identifier,
           isAutoConnect: isAutoConnect,

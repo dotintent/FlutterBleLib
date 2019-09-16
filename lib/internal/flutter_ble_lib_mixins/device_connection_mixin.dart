@@ -12,7 +12,7 @@ mixin DeviceConnectionMixin on FlutterBLE {
       ArgumentName.IS_AUTO_CONNECT: isAutoConnect,
       ArgumentName.REQUESTU_MTU: requestMtu,
       ArgumentName.REFRESH_GATT: refreshGatt,
-      ArgumentName.TIMEOUT_MILLIS: timeout.inMilliseconds
+      ArgumentName.TIMEOUT_MILLIS: timeout?.inMilliseconds
     });
   }
 

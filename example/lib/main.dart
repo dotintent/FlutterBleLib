@@ -13,6 +13,11 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   BleManager bleManager = BleManager.getInstance();
   String preview = "";
+  String deviceName = "";
+  String latestScan = "";
+  bool deviceConnectionAttempted = false;
+  PeripheralConnectionState connectionState =
+      PeripheralConnectionState.disconnected;
 
   @override
   void initState() {
@@ -21,12 +26,13 @@ class _MyAppState extends State<MyApp> {
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
-  void initBleManager() {
+  Future<void> initBleManager() async {
+
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
 
-    bleManager.createClient(
+    await bleManager.createClient(
         restoreStateIdentifier: "5",
         restoreStateAction: (devices) {
           setState(() {
@@ -34,17 +40,49 @@ class _MyAppState extends State<MyApp> {
             this.preview = devices.toString();
           });
         });
+  }
 
-    Future.delayed(Duration(milliseconds: 3000))
-        .then((value) => bleManager.destroyClient())
-        .then((value) => setState(() {
-              preview = preview + "\nBleClient destroyed after a delay";
-            }));
-    bleManager.startDeviceScan().listen((scanResult) {
-      print(scanResult);
+  void test() {
+    bleManager.startDeviceScan().listen((scanResult) async {
+      setState(() {
+        latestScan = scanResult.peripheral.identifier;
+      });
+
+      if (scanResult?.peripheral != null &&
+          scanResult.peripheral.name == "SensorTag" &&
+          !deviceConnectionAttempted) {
+        await bleManager.stopDeviceScan();
+        tryToConnect(scanResult.peripheral);
+      }
     }, onError: (error) {
       print(error);
     });
+  }
+
+  Future<void> tryToConnect(Peripheral peripheral) async {
+    deviceConnectionAttempted = true;
+    setState(() {
+      deviceName = peripheral.name;
+    });
+    await peripheral.connect();
+    bool isConnected = await peripheral.isConnected();
+    PeripheralConnectionState state;
+    if (isConnected) {
+      state = PeripheralConnectionState.connected;
+    } else {
+      state = PeripheralConnectionState.disconnected;
+    }
+    setState(() {
+      connectionState = state;
+    });
+
+//    await peripheral.disconnectOrCancelConnection();
+
+//    Future.delayed(Duration(milliseconds: 3000))
+//        .then((value) => bleManager.destroyClient())
+//        .then((value) => setState(() {
+//      preview = preview + "\nBleClient destroyed after a delay";
+//    }));
   }
 
   @override
@@ -54,8 +92,29 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Center(
-          child: Text('Devices: $preview'),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Text('Restored devices: $preview'),
+                  Text('Last scanned device: $latestScan'),
+                  Text('Current device: $deviceName'),
+                  Text('Connection state: $connectionState')
+                ],
+            ),
+            Row(
+              children: <Widget>[
+                RaisedButton(
+                  child: Text("TEST"),
+                  onPressed: this.test,
+                )
+              ],
+            ),
+          ],
         ),
       ),
     );
