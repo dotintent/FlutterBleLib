@@ -7,7 +7,9 @@ import android.util.Log;
 import com.polidea.flutter_ble_lib.constant.ArgumentKey;
 import com.polidea.flutter_ble_lib.constant.ChannelName;
 import com.polidea.flutter_ble_lib.constant.MethodName;
+import com.polidea.flutter_ble_lib.delegate.DeviceConnectionDelegate;
 import com.polidea.flutter_ble_lib.event.AdapterStateStreamHandler;
+import com.polidea.flutter_ble_lib.event.ConnectionStateStreamHandler;
 import com.polidea.flutter_ble_lib.event.RestoreStateStreamHandler;
 import com.polidea.flutter_ble_lib.event.ScanningStreamHandler;
 import com.polidea.multiplatformbleadapter.BleAdapter;
@@ -32,17 +34,26 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
     private AdapterStateStreamHandler adapterStateStreamHandler = new AdapterStateStreamHandler();
     private RestoreStateStreamHandler restoreStateStreamHandler = new RestoreStateStreamHandler();
     private ScanningStreamHandler scanningStreamHandler = new ScanningStreamHandler();
+    private ConnectionStateStreamHandler connectionStateStreamHandler = new ConnectionStateStreamHandler();
+
+    private DeviceConnectionDelegate deviceConnectionDelegate = new DeviceConnectionDelegate(bleAdapter, connectionStateStreamHandler);
 
     public static void registerWith(Registrar registrar) {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), ChannelName.FLUTTER_BLE_LIB);
+
         final EventChannel bluetoothStateChannel = new EventChannel(registrar.messenger(), ChannelName.ADAPTER_STATE_CHANGES);
         final EventChannel restoreStateChannel = new EventChannel(registrar.messenger(), ChannelName.STATE_RESTORE_EVENTS);
         final EventChannel scanningChannel = new EventChannel(registrar.messenger(), ChannelName.SCANNING_EVENTS);
+        final EventChannel connectionStateChannel = new EventChannel(registrar.messenger(), ChannelName.CONNECTION_STATE_CHANGE_EVENTS);
+
         final FlutterBleLibPlugin plugin = new FlutterBleLibPlugin(registrar.activity().getApplicationContext());
+
         channel.setMethodCallHandler(plugin);
+
         scanningChannel.setStreamHandler(plugin.scanningStreamHandler);
         bluetoothStateChannel.setStreamHandler(plugin.adapterStateStreamHandler);
         restoreStateChannel.setStreamHandler(plugin.restoreStateStreamHandler);
+        connectionStateChannel.setStreamHandler(plugin.connectionStateStreamHandler);
     }
 
     private FlutterBleLibPlugin(Context context) {
@@ -63,6 +74,12 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                 break;
             case MethodName.STOP_DEVICE_SCAN:
                 stopDeviceScan(result);
+                break;
+            case MethodName.CONNECT_TO_DEVICE:
+            case MethodName.IS_DEVICE_CONNECTED:
+            case MethodName.OBSERVE_CONNECTION_STATE:
+            case MethodName.CANCEL_CONNECTION:
+                deviceConnectionDelegate.onMethodCall(call, result);
                 break;
             default:
                 result.notImplemented();
