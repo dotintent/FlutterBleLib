@@ -40,6 +40,11 @@ class _MyAppState extends State<MyApp> {
         .then((value) => setState(() {
               preview = preview + "\nBleClient destroyed after a delay";
             }));
+    bleManager.startDeviceScan().listen((scanResult) {
+      print(scanResult);
+    }, onError: (error) {
+      print(error);
+    });
   }
 
   @override
