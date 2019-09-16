@@ -41,7 +41,7 @@ class FlutterBleLib {
   Stream<ScanResult> startDeviceScan(int scanMode,
       int callbackType,
       List<String> uuids,) async* {
-    await _methodChannel.invokeMethod(
+    _methodChannel.invokeMethod(
       MethodName.START_DEVICE_SCAN,
       <String, dynamic>{
         ArgumentName.SCAN_MODE: scanMode,
