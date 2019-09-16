@@ -44,7 +44,7 @@ class AdvertisementData {
 
   AdvertisementData._fromJson(Map<String, dynamic> json)
       : manufacturerData = _decodeBase64OrNull(_Metadata.manufacturerData),
-        serviceData = _getServiceDataOrNull(json),
+        serviceData = _getServiceDataOrNull(json[_Metadata.serviceData]),
         serviceUUIDs = _mapToListOfStringsOrNull(json[_Metadata.serviceUuids]),
         localName = json[_Metadata.localName],
         txPowerLevel = json[_Metadata.txPowerLevel],
@@ -52,8 +52,8 @@ class AdvertisementData {
             _mapToListOfStringsOrNull(json[_Metadata.solicitedServiceUuids]);
 
   static Map<String, Int8List> _getServiceDataOrNull(
-      Map<String, dynamic> json) {
-    return json[_Metadata.serviceData]?.map(
+      Map<String, dynamic> serviceData) {
+    return serviceData?.map(
       (key, value) => MapEntry(key, Int8List.fromList(base64Decode(value))),
     );
   }
