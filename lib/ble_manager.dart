@@ -19,7 +19,13 @@ class BleManager {
     return _bleLib.createClient(restoreStateIdentifier);
   }
 
-  Future<void> destroyClient() async {
-    return _bleLib.destroyClient();
-  }
+  Future<void> destroyClient() => _bleLib.destroyClient();
+
+  Stream<ScanResult> startDeviceScan({
+    int scanMode = ScanMode.lowPower,
+    int callbackType = CallbackType.allMatches,
+    List<String> uuids,
+  }) => _bleLib.startDeviceScan(scanMode, callbackType, uuids);
+
+  Future<void> stopDeviceScan() => _bleLib.stopDeviceScan();
 }
