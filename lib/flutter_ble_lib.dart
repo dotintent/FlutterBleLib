@@ -10,8 +10,6 @@ part 'constants.dart';
 
 part 'peripheral.dart';
 
-part 'characteristic.dart';
-
 part 'scan_result.dart';
 
 part 'ble_manager.dart';
