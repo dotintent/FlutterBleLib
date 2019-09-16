@@ -28,7 +28,7 @@ class Peripheral {
           refreshGatt: refreshGatt,
           timeout: timeout);
 
-  Stream<PeripheralConnectionState> observeConnectionState({bool emitCurrentValue}) =>
+  Stream<PeripheralConnectionState> observeConnectionState({bool emitCurrentValue = false}) =>
       _manager.observePeripheralConnectionState(identifier,
           emitCurrentValue: emitCurrentValue);
 

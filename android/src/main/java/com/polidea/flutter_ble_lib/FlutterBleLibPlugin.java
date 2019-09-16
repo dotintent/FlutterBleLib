@@ -36,7 +36,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
     private ScanningStreamHandler scanningStreamHandler = new ScanningStreamHandler();
     private ConnectionStateStreamHandler connectionStateStreamHandler = new ConnectionStateStreamHandler();
 
-    private DeviceConnectionDelegate deviceConnectionDelegate = new DeviceConnectionDelegate(bleAdapter, connectionStateStreamHandler);
+    private DeviceConnectionDelegate deviceConnectionDelegate;
 
     public static void registerWith(Registrar registrar) {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), ChannelName.FLUTTER_BLE_LIB);
@@ -58,6 +58,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
 
     private FlutterBleLibPlugin(Context context) {
         bleAdapter = new BleModule(context);
+        deviceConnectionDelegate = new DeviceConnectionDelegate(bleAdapter, connectionStateStreamHandler);
     }
 
     @Override

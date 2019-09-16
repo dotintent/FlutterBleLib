@@ -19,7 +19,7 @@ public class ConnectionStateStreamHandler implements EventChannel.StreamHandler 
 
     public void onNewConnectionState(ConnectionState newState) {
         if (eventSink != null) {
-            eventSink.success(newState.name());
+            eventSink.success(newState.value);
         }
     }
 }
