@@ -73,7 +73,7 @@ class _MyAppState extends State<MyApp> {
 
     Future.delayed(Duration(seconds: 10))
         .then((_) => peripheral.disconnectOrCancelConnection())
-        .then((_) => Future.delayed(Duration(seconds: 10))
+        .then((_) => Future.delayed(Duration(seconds: 10)))
         .then((_) => bleManager.destroyClient())
         .then((_) => setState(() {
               info = "\BleClient destroyed after a delay";
