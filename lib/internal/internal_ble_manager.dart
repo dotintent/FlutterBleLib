@@ -58,4 +58,19 @@ class InternalBleManager implements BleManager, PeripheralManager {
   @override
   Future<bool> isPeripheralConnected(String peripheralIdentifier) =>
       _bleLib.isPeripheralConnected(peripheralIdentifier);
+
+  @override
+  Future<List<Characteristic>> characteristics(
+      Peripheral peripheral, String serviceUuid) =>
+      _bleLib.characteristics(peripheral, serviceUuid);
+
+  @override
+  Future<List<Service>> services(Peripheral peripheral) =>
+      _bleLib.services(peripheral);
+
+  @override
+  Future<void> discoverAllServicesAndCharacteristics(
+      Peripheral peripheral, String transactionId) =>
+      _bleLib.discoverAllServicesAndCharacteristics(
+          peripheral, transactionId);
 }

@@ -4,11 +4,10 @@ abstract class FlutterBLE {
   InternalBleManager _manager;
 
   final MethodChannel _methodChannel =
-      const MethodChannel(ChannelName.flutterBleLib);
+  const MethodChannel(ChannelName.flutterBleLib);
 }
 
-class FlutterBleLib extends FlutterBLE
-    with DeviceConnectionMixin, ScanningMixin {
+class FlutterBleLib extends FlutterBLE with DeviceConnectionMixin, DiscoveryMixin, ScanningMixin {
   final EventChannel _restoreStateEventChannel =
       const EventChannel(ChannelName.stateRestoreEvents);
 
@@ -32,7 +31,8 @@ class FlutterBleLib extends FlutterBLE
       .single;
 
   Future<void> createClient(String restoreStateIdentifier) async {
-    await _methodChannel.invokeMethod(MethodName.createClient, <String, String>{
+    await _methodChannel.invokeMethod(
+        MethodName.createClient, <String, String>{
       ArgumentName.restoreStateIdentifier: restoreStateIdentifier
     });
     return;

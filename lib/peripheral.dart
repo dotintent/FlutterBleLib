@@ -37,4 +37,12 @@ class Peripheral {
 
   Future<void> disconnectOrCancelConnection() =>
       _manager.disconnectOrCancelPeripheralConnection(identifier);
+
+  Future<void> discoverAllServicesAndCharacteristics({String transactionId}) =>
+      _manager.discoverAllServicesAndCharacteristics(this, transactionId);
+
+  Future<List<Service>> services() => _manager.services(this);
+
+  Future<List<Characteristic>> characteristics(String servicedUuid) =>
+      _manager.characteristics(this, servicedUuid);
 }

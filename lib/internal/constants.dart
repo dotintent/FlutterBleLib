@@ -3,12 +3,19 @@ part of flutter_ble_lib;
 class MethodName {
   static const String createClient = "createClient";
   static const String destroyClient = "destroyClient";
+
   static const String startDeviceScan = "startDeviceScan";
   static const String stopDeviceScan = "stopDeviceScan";
+
   static const String connectToDevice = "connectToDevice";
   static const String isDeviceConnected = "isDeviceConnected";
   static const String observeConnectionState = "observeConnectionState";
   static const String cancelConnection = "cancelConnection";
+
+  static const String discoverAllServicesAndCharacteristics =
+      "discoverAllServicesAndCharacteristics";
+  static const String services = "services";
+  static const String characteristics = "characteristics";
 }
 
 class ChannelName {
@@ -16,8 +23,8 @@ class ChannelName {
   static const String stateRestoreEvents =
       flutterBleLib + "/stateRestoreEvents";
   static const String scanningEvents = flutterBleLib + "/scanningEvents";
-  static const String connectionStateChangeEvents = flutterBleLib +
-      "/connectionStateChangeEvents";
+  static const String connectionStateChangeEvents =
+      flutterBleLib + "/connectionStateChangeEvents";
 }
 
 class ArgumentName {
@@ -34,6 +41,8 @@ class ArgumentName {
   static const String refreshGatt = "refreshGatt";
   static const String timeoutMillis = "timeoutMillis";
   static const String emitCurrentValue = "emitCurrentValue";
+
+  static const String serviceUuid = "serviceUuid";
 }
 
 abstract class ScanMode {
