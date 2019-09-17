@@ -6,6 +6,8 @@ abstract class _PeripheralMetadata {
 }
 
 class Peripheral {
+  static const int _minimumMtu = 23;
+
   PeripheralManager _manager;
 
   String name;
@@ -16,10 +18,9 @@ class Peripheral {
         name = json[_PeripheralMetadata.name],
         identifier = json[_PeripheralMetadata.identifier];
 
-
   Future<void> connect(
           {bool isAutoConnect = false,
-          int requestMtu = 23,
+          int requestMtu = _minimumMtu,
           bool refreshGatt = false,
           Duration timeout}) =>
       _manager.connectToPeripheral(identifier,
@@ -28,9 +29,9 @@ class Peripheral {
           refreshGatt: refreshGatt,
           timeout: timeout);
 
-  Stream<PeripheralConnectionState> observeConnectionState({bool emitCurrentValue = false}) =>
-      _manager.observePeripheralConnectionState(identifier,
-          emitCurrentValue: emitCurrentValue);
+  Stream<PeripheralConnectionState> observeConnectionState(
+          {bool emitCurrentValue = false}) =>
+      _manager.observePeripheralConnectionState(identifier, emitCurrentValue);
 
   Future<bool> isConnected() => _manager.isPeripheralConnected(identifier);
 

@@ -37,23 +37,22 @@ class InternalBleManager implements BleManager, PeripheralManager {
 
   @override
   Future<void> connectToPeripheral(String identifier,
-      {bool isAutoConnect,
-        int requestMtu,
-        bool refreshGatt,
-        Duration timeout}) async =>
+          {bool isAutoConnect,
+          int requestMtu,
+          bool refreshGatt,
+          Duration timeout}) async =>
       _bleLib.connectToPeripheral(
           identifier, isAutoConnect, requestMtu, refreshGatt, timeout);
 
   @override
   Stream<PeripheralConnectionState> observePeripheralConnectionState(
-      String peripheralIdentifier,
-      {bool emitCurrentValue}) =>
+          String peripheralIdentifier, bool emitCurrentValue) =>
       _bleLib.observePeripheralConnectionState(
           peripheralIdentifier, emitCurrentValue);
 
   @override
   Future<Function> disconnectOrCancelPeripheralConnection(
-      String peripheralIdentifier) =>
+          String peripheralIdentifier) =>
       _bleLib.disconnectOrCancelPeripheralConnection(peripheralIdentifier);
 
   @override

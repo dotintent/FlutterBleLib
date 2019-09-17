@@ -5,10 +5,10 @@ class MethodName {
   static const String destroyClient = "destroyClient";
   static const String startDeviceScan = "startDeviceScan";
   static const String stopDeviceScan = "stopDeviceScan";
-  static const String CONNECT_TO_DEVICE = "connectToDevice";
-  static const String IS_DEVICE_CONNECTED = "isDeviceConnected";
-  static const String OBSERVE_CONNECTION_STATE = "observeConnectionState";
-  static const String CANCEL_CONNECTION = "cancelConnection";
+  static const String connectToDevice = "connectToDevice";
+  static const String isDeviceConnected = "isDeviceConnected";
+  static const String observeConnectionState = "observeConnectionState";
+  static const String cancelConnection = "cancelConnection";
 }
 
 class ChannelName {
@@ -16,7 +16,7 @@ class ChannelName {
   static const String stateRestoreEvents =
       flutterBleLib + "/stateRestoreEvents";
   static const String scanningEvents = flutterBleLib + "/scanningEvents";
-  static const String CONNECTION_STATE_CHANGE_EVENTS = flutterBleLib +
+  static const String connectionStateChangeEvents = flutterBleLib +
       "/connectionStateChangeEvents";
 }
 
@@ -26,12 +26,14 @@ class ArgumentName {
   static const String callbackType = "callbackType";
   static const String uuids = "uuids";
 
-  static const String DEVICE_IDENTIFIER = "deviceIdentifier";
-  static const String IS_AUTO_CONNECT = "isAutoConnect";
-  static const String REQUESTU_MTU = "requestMtu";
-  static const String REFRESH_GATT = "refreshGatt";
-  static const String TIMEOUT_MILLIS = "timeoutMillis";
-  static const String EMIT_CURRENT_VALUE = "emitCurrentValue";
+  static const String transactionId = "transactionId";
+
+  static const String deviceIdentifier = "deviceIdentifier";
+  static const String isAutoConnect = "isAutoConnect";
+  static const String requestMtu = "requestMtu";
+  static const String refreshGatt = "refreshGatt";
+  static const String timeoutMillis = "timeoutMillis";
+  static const String emitCurrentValue = "emitCurrentValue";
 }
 
 abstract class ScanMode {
@@ -48,8 +50,8 @@ abstract class CallbackType {
 }
 
 abstract class NativeConnectionState {
-  static const String CONNECTING = "connecting";
-  static const String CONNECTED = "connected";
-  static const String DISCONNECTING = "disconnecting";
-  static const String DISCONNECTED = "disconnected";
+  static const String connecting = "connecting";
+  static const String connected = "connected";
+  static const String disconnecting = "disconnecting";
+  static const String disconnected = "disconnected";
 }

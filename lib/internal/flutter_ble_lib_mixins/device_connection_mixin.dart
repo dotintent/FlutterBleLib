@@ -2,59 +2,60 @@ part of flutter_ble_lib;
 
 mixin DeviceConnectionMixin on FlutterBLE {
   final EventChannel _peripheralConnectionStateEventChannel =
-  const EventChannel(ChannelName.CONNECTION_STATE_CHANGE_EVENTS);
+      const EventChannel(ChannelName.connectionStateChangeEvents);
 
   Future<void> connectToPeripheral(String deviceIdentifier, bool isAutoConnect,
       int requestMtu, bool refreshGatt, Duration timeout) async {
     return await _methodChannel
-        .invokeMethod(MethodName.CONNECT_TO_DEVICE, <String, dynamic>{
-      ArgumentName.DEVICE_IDENTIFIER: deviceIdentifier,
-      ArgumentName.IS_AUTO_CONNECT: isAutoConnect,
-      ArgumentName.REQUESTU_MTU: requestMtu,
-      ArgumentName.REFRESH_GATT: refreshGatt,
-      ArgumentName.TIMEOUT_MILLIS: timeout?.inMilliseconds
+        .invokeMethod(MethodName.connectToDevice, <String, dynamic>{
+      ArgumentName.deviceIdentifier: deviceIdentifier,
+      ArgumentName.isAutoConnect: isAutoConnect,
+      ArgumentName.requestMtu: requestMtu,
+      ArgumentName.refreshGatt: refreshGatt,
+      ArgumentName.timeoutMillis: timeout?.inMilliseconds
     });
   }
 
   Stream<PeripheralConnectionState> observePeripheralConnectionState(
       String identifier, bool emitCurrentValue) async* {
-    _methodChannel
-        .invokeMethod(MethodName.OBSERVE_CONNECTION_STATE, <String, dynamic>{
-      ArgumentName.DEVICE_IDENTIFIER: identifier,
-      ArgumentName.EMIT_CURRENT_VALUE: emitCurrentValue
-    });
-
     yield* _peripheralConnectionStateEventChannel
         .receiveBroadcastStream()
         .map((rawValue) {
       switch (rawValue) {
-        case NativeConnectionState.CONNECTED:
+        case NativeConnectionState.connected:
           return PeripheralConnectionState.connected;
-        case NativeConnectionState.CONNECTING:
+        case NativeConnectionState.connecting:
           return PeripheralConnectionState.connecting;
-        case NativeConnectionState.DISCONNECTED:
+        case NativeConnectionState.disconnected:
           return PeripheralConnectionState.disconnected;
-        case NativeConnectionState.DISCONNECTING:
+        case NativeConnectionState.disconnecting:
           return PeripheralConnectionState.disconnecting;
         default:
           throw FormatException(
               "Unrecognized value of device connection state. Value: $rawValue");
       }
     });
+
+    _methodChannel
+        .invokeMethod(MethodName.observeConnectionState, <String, dynamic>{
+      ArgumentName.deviceIdentifier: identifier,
+      ArgumentName.emitCurrentValue: emitCurrentValue
+    });
   }
 
-  Future<bool> isPeripheralConnected(String peripheralIdentifier) async {
-    return await _methodChannel.invokeMethod(
-        MethodName.IS_DEVICE_CONNECTED, <String, dynamic>{
-      ArgumentName.DEVICE_IDENTIFIER: peripheralIdentifier
+  Future<bool> isPeripheralConnected(
+      String peripheralIdentifier) async {
+    return await _methodChannel
+        .invokeMethod(MethodName.isDeviceConnected, <String, dynamic>{
+      ArgumentName.deviceIdentifier: peripheralIdentifier
     });
   }
 
   Future<void> disconnectOrCancelPeripheralConnection(
       String peripheralIdentifier) async {
-    return await _methodChannel.invokeMethod(
-        MethodName.CANCEL_CONNECTION, <String, dynamic>{
-      ArgumentName.DEVICE_IDENTIFIER: peripheralIdentifier
+    return await _methodChannel
+        .invokeMethod(MethodName.cancelConnection, <String, dynamic>{
+      ArgumentName.deviceIdentifier: peripheralIdentifier
     });
   }
 }
