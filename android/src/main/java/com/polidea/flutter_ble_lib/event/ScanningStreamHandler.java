@@ -1,7 +1,9 @@
 package com.polidea.flutter_ble_lib.event;
 
+import com.polidea.flutter_ble_lib.converter.BleErrorJsonConverter;
 import com.polidea.flutter_ble_lib.converter.ScanResultJsonConverter;
 import com.polidea.multiplatformbleadapter.ScanResult;
+import com.polidea.multiplatformbleadapter.errors.BleError;
 
 import org.json.JSONException;
 
@@ -11,6 +13,7 @@ public class ScanningStreamHandler implements EventChannel.StreamHandler {
 
     private EventChannel.EventSink scanResultsSink;
     private ScanResultJsonConverter scanResultJsonConverter = new ScanResultJsonConverter();
+    private BleErrorJsonConverter bleErrorJsonConverter = new BleErrorJsonConverter();
 
     @Override
     public void onListen(Object o, EventChannel.EventSink eventSink) {
@@ -22,9 +25,24 @@ public class ScanningStreamHandler implements EventChannel.StreamHandler {
         scanResultsSink = null;
     }
 
-    public void onScanResult(ScanResult scanResult) throws JSONException {
+    public void onScanResult(ScanResult scanResult) {
         if (scanResultsSink != null) {
-            scanResultsSink.success(scanResultJsonConverter.toJson(scanResult));
+            try {
+                scanResultsSink.success(scanResultJsonConverter.toJson(scanResult));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void onError(BleError error) {
+        try {
+            scanResultsSink.error(
+                    String.valueOf(error.errorCode.code),
+                    error.reason,
+                    bleErrorJsonConverter.toJson(error));
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 }

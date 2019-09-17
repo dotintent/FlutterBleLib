@@ -20,29 +20,25 @@ public class BleErrorJsonConverter implements JsonConverter<BleError> {
     }
 
     @Override
-    public String toJson(BleError error) {
+    public String toJson(BleError error) throws JSONException {
         JSONObject root = new JSONObject();
-        try {
-            root.put(Metadata.ERROR_CODE, error.errorCode.code);
-            if (error.androidCode == null || error.androidCode >= 0x80 || error.androidCode < 0) {
-                root.put(Metadata.ATT_ERROR_CODE, JSONObject.NULL);
-            } else {
-                root.put(Metadata.ATT_ERROR_CODE, error.androidCode.intValue());
-            }
-            if (error.androidCode == null || error.androidCode < 0x80) {
-                root.put(Metadata.ANDROID_ERROR_CODE, JSONObject.NULL);
-            } else {
-                root.put(Metadata.ANDROID_ERROR_CODE, error.androidCode.intValue());
-            }
-            root.put(Metadata.REASON, error.reason);
-            root.put(Metadata.DEVICE_ID, error.deviceID);
-            root.put(Metadata.SERVICE_UUID, error.serviceUUID);
-            root.put(Metadata.CHARACTERISTIC_UUID, error.characteristicUUID);
-            root.put(Metadata.DESCRIPTOR_UUID, error.descriptorUUID);
-            root.put(Metadata.INTERNAL_MESSAGE, error.internalMessage);
-        } catch (JSONException jsonException) {
-            jsonException.printStackTrace();
+        root.put(Metadata.ERROR_CODE, error.errorCode.code);
+        if (error.androidCode == null || error.androidCode >= 0x80 || error.androidCode < 0) {
+            root.put(Metadata.ATT_ERROR_CODE, JSONObject.NULL);
+        } else {
+            root.put(Metadata.ATT_ERROR_CODE, error.androidCode.intValue());
         }
+        if (error.androidCode == null || error.androidCode < 0x80) {
+            root.put(Metadata.ANDROID_ERROR_CODE, JSONObject.NULL);
+        } else {
+            root.put(Metadata.ANDROID_ERROR_CODE, error.androidCode.intValue());
+        }
+        root.put(Metadata.REASON, error.reason);
+        root.put(Metadata.DEVICE_ID, error.deviceID);
+        root.put(Metadata.SERVICE_UUID, error.serviceUUID);
+        root.put(Metadata.CHARACTERISTIC_UUID, error.characteristicUUID);
+        root.put(Metadata.DESCRIPTOR_UUID, error.descriptorUUID);
+        root.put(Metadata.INTERNAL_MESSAGE, error.internalMessage);
         return root.toString();
     }
 }

@@ -2,7 +2,6 @@ package com.polidea.flutter_ble_lib;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.polidea.flutter_ble_lib.constant.ArgumentKey;
 import com.polidea.flutter_ble_lib.constant.ChannelName;
@@ -19,11 +18,6 @@ import com.polidea.multiplatformbleadapter.OnErrorCallback;
 import com.polidea.multiplatformbleadapter.OnEventCallback;
 import com.polidea.multiplatformbleadapter.ScanResult;
 import com.polidea.multiplatformbleadapter.errors.BleError;
-
-import org.json.JSONException;
-
-import java.util.LinkedList;
-import java.util.List;
 
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
@@ -121,16 +115,12 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                 new OnEventCallback<ScanResult>() {
                     @Override
                     public void onEvent(ScanResult data) {
-                        try {
-                            scanningStreamHandler.onScanResult(data);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        scanningStreamHandler.onScanResult(data);
                     }
                 }, new OnErrorCallback() {
                     @Override
                     public void onError(BleError error) {
-                        Log.d("scanning_error", error.toString());
+                        scanningStreamHandler.onError(error);
                     }
                 });
         result.success(null);
