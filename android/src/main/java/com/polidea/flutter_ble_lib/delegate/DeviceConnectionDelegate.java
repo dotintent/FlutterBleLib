@@ -65,7 +65,7 @@ public class DeviceConnectionDelegate implements CallDelegate {
                 cancelConnection(deviceId, result);
                 return;
             default:
-                throw new IllegalStateException("");
+                throw new IllegalArgumentException(call.method + " cannot be handle by this delegate");
         }
     }
 
@@ -87,8 +87,9 @@ public class DeviceConnectionDelegate implements CallDelegate {
                     }
                 });
 
+        int connectionPriorityBalanced = 0; //BluetoothGatt.CONNECTION_PRIORITY_BALANCED
         bleAdapter.connectToDevice(deviceId,
-                new ConnectionOptions(isAutoConnect, requestMtu, refreshGattMoment, timeoutMillis, 0 /* BluetoothGatt.CONNECTION_PRIORITY_BALANCED */),
+                new ConnectionOptions(isAutoConnect, requestMtu, refreshGattMoment, timeoutMillis, connectionPriorityBalanced),
                 new OnSuccessCallback<Device>() {
                     @Override
                     public void onSuccess(Device data) {

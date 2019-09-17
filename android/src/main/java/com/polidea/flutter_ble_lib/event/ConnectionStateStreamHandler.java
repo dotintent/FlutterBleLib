@@ -8,16 +8,16 @@ public class ConnectionStateStreamHandler implements EventChannel.StreamHandler 
     private EventChannel.EventSink eventSink;
 
     @Override
-    public void onListen(Object o, EventChannel.EventSink eventSink) {
+    synchronized public void onListen(Object o, EventChannel.EventSink eventSink) {
         this.eventSink = eventSink;
     }
 
     @Override
-    public void onCancel(Object o) {
+    synchronized public void onCancel(Object o) {
         eventSink = null;
     }
 
-    public void onNewConnectionState(ConnectionState newState) {
+    synchronized public void onNewConnectionState(ConnectionState newState) {
         if (eventSink != null) {
             eventSink.success(newState.value);
         }
