@@ -13,6 +13,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   BleManager bleManager = BleManager.getInstance();
   String preview = "";
+  String info = "";
   String deviceName = "";
   String latestScan = "";
   bool deviceConnectionAttempted = false;
@@ -21,15 +22,9 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    initBleManager();
   }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initBleManager() async {
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-
+  void test() async {
     await bleManager.createClient(
         restoreStateIdentifier: "5",
         restoreStateAction: (devices) {
@@ -38,9 +33,7 @@ class _MyAppState extends State<MyApp> {
             this.preview = devices.toString();
           });
         });
-  }
 
-  void test() {
     bleManager.startDeviceScan().listen((scanResult) async {
       setState(() {
         latestScan = scanResult.peripheral.identifier;
@@ -63,7 +56,9 @@ class _MyAppState extends State<MyApp> {
       deviceName = peripheral.name;
     });
     await peripheral.connect();
-    peripheral.observeConnectionState(emitCurrentValue: true).listen((connectionState) {
+    peripheral
+        .observeConnectionState(emitCurrentValue: true)
+        .listen((connectionState) {
       setState(() {
         this.connectionState = connectionState;
       });
@@ -73,13 +68,13 @@ class _MyAppState extends State<MyApp> {
       deviceConnectionAttempted = false;
     });
 
-//    await peripheral.disconnectOrCancelConnection();
-
-//    Future.delayed(Duration(milliseconds: 3000))
-//        .then((value) => bleManager.destroyClient())
-//        .then((value) => setState(() {
-//      preview = preview + "\nBleClient destroyed after a delay";
-//    }));
+    Future.delayed(Duration(milliseconds: 1000))
+        .then((_) => peripheral.disconnectOrCancelConnection())
+        .then((_) => Future.delayed(Duration(milliseconds: 2000)))
+        .then((_) => bleManager.destroyClient())
+        .then((_) => setState(() {
+              info = "\BleClient destroyed after a delay";
+            }));
   }
 
   @override
@@ -98,6 +93,7 @@ class _MyAppState extends State<MyApp> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Text('Restored devices: $preview'),
+                Text('$info'),
                 Text('Last scanned device: $latestScan'),
                 Text('Current device: $deviceName'),
                 Text('Connection state: $connectionState')

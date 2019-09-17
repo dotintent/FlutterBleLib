@@ -51,7 +51,7 @@ class InternalBleManager implements BleManager, PeripheralManager {
           peripheralIdentifier, emitCurrentValue);
 
   @override
-  Future<Function> disconnectOrCancelPeripheralConnection(
+  Future<void> disconnectOrCancelPeripheralConnection(
           String peripheralIdentifier) =>
       _bleLib.disconnectOrCancelPeripheralConnection(peripheralIdentifier);
 
