@@ -68,14 +68,12 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
 
     @Override
     public void onMethodCall(MethodCall call, Result result) {
-        boolean handled = false;
         for (CallDelegate delegate : delegates) {
             if (delegate.canHandle(call)) {
                 delegate.onMethodCall(call, result);
-                handled = true;
+                return;
             }
         }
-        if (handled) return;
 
         switch (call.method) {
             case MethodName.CREATE_CLIENT:
