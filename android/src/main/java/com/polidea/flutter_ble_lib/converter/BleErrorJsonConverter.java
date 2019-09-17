@@ -11,8 +11,8 @@ public class BleErrorJsonConverter implements JsonConverter<BleError> {
         String ERROR_CODE = "errorCode";
         String ATT_ERROR_CODE = "attErrorCode";
         String ANDROID_ERROR_CODE = "androidErrorCode";
-        String REASON = "androidErrorCode";
-        String DEVICE_ID = "reason";
+        String REASON = "reason";
+        String DEVICE_ID = "deviceID";
         String SERVICE_UUID = "serviceUUID";
         String CHARACTERISTIC_UUID = "characteristicUUID";
         String DESCRIPTOR_UUID = "descriptorUUID";
