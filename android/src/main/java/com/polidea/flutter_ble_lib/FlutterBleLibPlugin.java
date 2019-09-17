@@ -7,6 +7,7 @@ import android.util.Log;
 import com.polidea.flutter_ble_lib.constant.ArgumentKey;
 import com.polidea.flutter_ble_lib.constant.ChannelName;
 import com.polidea.flutter_ble_lib.constant.MethodName;
+import com.polidea.flutter_ble_lib.delegate.CallDelegate;
 import com.polidea.flutter_ble_lib.delegate.DeviceConnectionDelegate;
 import com.polidea.flutter_ble_lib.event.AdapterStateStreamHandler;
 import com.polidea.flutter_ble_lib.event.ConnectionStateStreamHandler;
@@ -20,6 +21,9 @@ import com.polidea.multiplatformbleadapter.ScanResult;
 import com.polidea.multiplatformbleadapter.errors.BleError;
 
 import org.json.JSONException;
+
+import java.util.LinkedList;
+import java.util.List;
 
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
@@ -36,7 +40,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
     private ScanningStreamHandler scanningStreamHandler = new ScanningStreamHandler();
     private ConnectionStateStreamHandler connectionStateStreamHandler = new ConnectionStateStreamHandler();
 
-    private DeviceConnectionDelegate deviceConnectionDelegate;
+    private List<CallDelegate> delegates;
 
     public static void registerWith(Registrar registrar) {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), ChannelName.FLUTTER_BLE_LIB);
@@ -58,11 +62,21 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
 
     private FlutterBleLibPlugin(Context context) {
         bleAdapter = new BleModule(context);
-        deviceConnectionDelegate = new DeviceConnectionDelegate(bleAdapter, connectionStateStreamHandler);
+        delegates = new LinkedList<>();
+        delegates.add(new DeviceConnectionDelegate(bleAdapter, connectionStateStreamHandler));
     }
 
     @Override
     public void onMethodCall(MethodCall call, Result result) {
+        boolean handled = false;
+        for (CallDelegate delegate : delegates) {
+            if (delegate.canHandle(call)) {
+                delegate.onMethodCall(call, result);
+                handled = true;
+            }
+        }
+        if (handled) return;
+
         switch (call.method) {
             case MethodName.CREATE_CLIENT:
                 createClient(call, result);
@@ -75,12 +89,6 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
                 break;
             case MethodName.STOP_DEVICE_SCAN:
                 stopDeviceScan(result);
-                break;
-            case MethodName.CONNECT_TO_DEVICE:
-            case MethodName.IS_DEVICE_CONNECTED:
-            case MethodName.OBSERVE_CONNECTION_STATE:
-            case MethodName.CANCEL_CONNECTION:
-                deviceConnectionDelegate.onMethodCall(call, result);
                 break;
             default:
                 result.notImplemented();

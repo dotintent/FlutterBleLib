@@ -17,7 +17,7 @@ class _MyAppState extends State<MyApp> {
   String deviceName = "";
   String latestScan = "";
   bool deviceConnectionAttempted = false;
-  PeripheralConnectionState connectionState = null;
+  PeripheralConnectionState connectionState;
 
   @override
   void initState() {
@@ -61,6 +61,9 @@ class _MyAppState extends State<MyApp> {
         .listen((connectionState) {
       setState(() {
         this.connectionState = connectionState;
+        if (connectionState == PeripheralConnectionState.disconnected) {
+          deviceName = null;
+        }
       });
     });
 
@@ -68,9 +71,9 @@ class _MyAppState extends State<MyApp> {
       deviceConnectionAttempted = false;
     });
 
-    Future.delayed(Duration(milliseconds: 1000))
+    Future.delayed(Duration(seconds: 10))
         .then((_) => peripheral.disconnectOrCancelConnection())
-        .then((_) => Future.delayed(Duration(milliseconds: 2000)))
+        .then((_) => Future.delayed(Duration(seconds: 10))
         .then((_) => bleManager.destroyClient())
         .then((_) => setState(() {
               info = "\BleClient destroyed after a delay";

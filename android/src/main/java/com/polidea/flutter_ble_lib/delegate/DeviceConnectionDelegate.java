@@ -21,7 +21,7 @@ import com.polidea.multiplatformbleadapter.errors.BleError;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 
-public class DeviceConnectionDelegate implements MethodChannel.MethodCallHandler {
+public class DeviceConnectionDelegate implements CallDelegate {
 
     private BleAdapter bleAdapter;
     private ConnectionStateStreamHandler streamHandler;
@@ -29,6 +29,18 @@ public class DeviceConnectionDelegate implements MethodChannel.MethodCallHandler
     public DeviceConnectionDelegate(BleAdapter bleAdapter, ConnectionStateStreamHandler streamHandler) {
         this.bleAdapter = bleAdapter;
         this.streamHandler = streamHandler;
+    }
+
+    @Override
+    public boolean canHandle(MethodCall call) {
+        switch (call.method) {
+            case MethodName.CONNECT_TO_DEVICE:
+            case MethodName.IS_DEVICE_CONNECTED:
+            case MethodName.OBSERVE_CONNECTION_STATE:
+            case MethodName.CANCEL_CONNECTION:
+                return true;
+        }
+        return false;
     }
 
     @Override
