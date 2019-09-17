@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
+import 'error/ble_error.dart';
 
 part 'peripheral_connection_state.dart';
 part 'peripheral.dart';
