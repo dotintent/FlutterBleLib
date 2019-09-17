@@ -1,14 +1,22 @@
 part of flutter_ble_lib;
 
-class FlutterBleLib {
-  static const MethodChannel _methodChannel =
+abstract class FlutterBLE {
+  InternalBleManager _manager;
+
+  final MethodChannel _methodChannel =
   const MethodChannel(ChannelName.flutterBleLib);
+}
 
-  static const EventChannel _restoreStateEventChannel =
-  const EventChannel(ChannelName.stateRestoreEvents);
+class FlutterBleLib extends FlutterBLE with DeviceConnectionMixin {
+  final EventChannel _restoreStateEventChannel =
+      const EventChannel(ChannelName.stateRestoreEvents);
 
-  static const EventChannel _scanEventChannel =
-  const EventChannel(ChannelName.scanningEvents);
+  final EventChannel _scanEventChannel =
+      const EventChannel(ChannelName.scanningEvents);
+
+  void registerManager(InternalBleManager manager) {
+    _manager = manager;
+  }
 
   Future<List<Peripheral>> restoredState() => _restoreStateEventChannel
       .receiveBroadcastStream()
@@ -18,12 +26,12 @@ class FlutterBleLib {
             return null;
           else
             return [
-              Peripheral.fromJson(jsonString)
+              Peripheral.fromJson(jsonDecode(jsonString), _manager)
             ]; //TODO Add proper mapping from json here (11.09.2019)
         },
       )
-          .take(1)
-          .single;
+      .take(1)
+      .single;
 
   Future<void> createClient(String restoreStateIdentifier) async {
     await _methodChannel.invokeMethod(
@@ -49,14 +57,13 @@ class FlutterBleLib {
         ArgumentName.uuids: uuids
       },
     );
-    yield* _scanEventChannel
-        .receiveBroadcastStream()
-        .map((scanResultJson) {
+    yield* _scanEventChannel.receiveBroadcastStream().map((scanResultJson) {
       return ScanResult.fromJson(
-        jsonDecode(scanResultJson),
+        jsonDecode(scanResultJson), _manager
       );
     });
   }
+
   Future<void> stopDeviceScan() async {
     await _methodChannel.invokeMethod(MethodName.stopDeviceScan);
     return;

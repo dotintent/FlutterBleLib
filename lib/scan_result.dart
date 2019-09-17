@@ -1,6 +1,6 @@
 part of flutter_ble_lib;
 
-abstract class _Metadata {
+abstract class _ScanResultMetadata {
   static const String id = "id";
   static const String name = "name";
   static const String rssi = "rssi";
@@ -16,21 +16,19 @@ abstract class _Metadata {
 }
 
 class ScanResult {
-  String deviceId;
-  String deviceName;
+  Peripheral peripheral;
   int rssi;
   int mtu;
   bool isConnectable;
   List<String> overflowServiceUUIDs;
   AdvertisementData advertisementData;
 
-  ScanResult.fromJson(Map<String, dynamic> json)
-      : deviceId = json[_Metadata.id],
-        deviceName = json[_Metadata.name],
-        rssi = json[_Metadata.rssi],
-        mtu = json[_Metadata.mtu],
-        isConnectable = json[_Metadata.isConnectable],
-        overflowServiceUUIDs = json[_Metadata.overflowServiceUuids],
+  ScanResult.fromJson(Map<String, dynamic> json, PeripheralManager manager)
+      : peripheral = Peripheral.fromJson(json, manager),
+        rssi = json[_ScanResultMetadata.rssi],
+        mtu = json[_ScanResultMetadata.mtu],
+        isConnectable = json[_ScanResultMetadata.isConnectable],
+        overflowServiceUUIDs = json[_ScanResultMetadata.overflowServiceUuids],
         advertisementData = AdvertisementData._fromJson(json);
 }
 
@@ -43,13 +41,13 @@ class AdvertisementData {
   List<String> solicitedServiceUUIDs;
 
   AdvertisementData._fromJson(Map<String, dynamic> json)
-      : manufacturerData = _decodeBase64OrNull(_Metadata.manufacturerData),
-        serviceData = _getServiceDataOrNull(json[_Metadata.serviceData]),
-        serviceUUIDs = _mapToListOfStringsOrNull(json[_Metadata.serviceUuids]),
-        localName = json[_Metadata.localName],
-        txPowerLevel = json[_Metadata.txPowerLevel],
+      : manufacturerData = _decodeBase64OrNull(_ScanResultMetadata.manufacturerData),
+        serviceData = _getServiceDataOrNull(json[_ScanResultMetadata.serviceData]),
+        serviceUUIDs = _mapToListOfStringsOrNull(json[_ScanResultMetadata.serviceUuids]),
+        localName = json[_ScanResultMetadata.localName],
+        txPowerLevel = json[_ScanResultMetadata.txPowerLevel],
         solicitedServiceUUIDs =
-            _mapToListOfStringsOrNull(json[_Metadata.solicitedServiceUuids]);
+            _mapToListOfStringsOrNull(json[_ScanResultMetadata.solicitedServiceUuids]);
 
   static Map<String, Int8List> _getServiceDataOrNull(
       Map<String, dynamic> serviceData) {
