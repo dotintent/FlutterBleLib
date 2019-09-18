@@ -5,8 +5,6 @@ import com.polidea.flutter_ble_lib.converter.ScanResultJsonConverter;
 import com.polidea.multiplatformbleadapter.ScanResult;
 import com.polidea.multiplatformbleadapter.errors.BleError;
 
-import org.json.JSONException;
-
 import io.flutter.plugin.common.EventChannel;
 
 public class ScanningStreamHandler implements EventChannel.StreamHandler {
@@ -27,25 +25,17 @@ public class ScanningStreamHandler implements EventChannel.StreamHandler {
 
     synchronized public void onScanResult(ScanResult scanResult) {
         if (scanResultsSink != null) {
-            try {
-                scanResultsSink.success(scanResultJsonConverter.toJson(scanResult));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            scanResultsSink.success(scanResultJsonConverter.toJson(scanResult));
         }
     }
 
     synchronized public void onError(BleError error) {
-        try {
-            if (scanResultsSink != null) {
-                scanResultsSink.error(
-                        String.valueOf(error.errorCode.code),
-                        error.reason,
-                        bleErrorJsonConverter.toJson(error));
-                scanResultsSink.endOfStream();
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (scanResultsSink != null) {
+            scanResultsSink.error(
+                    String.valueOf(error.errorCode.code),
+                    error.reason,
+                    bleErrorJsonConverter.toJson(error));
+            scanResultsSink.endOfStream();
         }
     }
 
