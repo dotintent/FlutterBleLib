@@ -37,12 +37,21 @@ public class ScanningStreamHandler implements EventChannel.StreamHandler {
 
     public void onError(BleError error) {
         try {
-            scanResultsSink.error(
-                    String.valueOf(error.errorCode.code),
-                    error.reason,
-                    bleErrorJsonConverter.toJson(error));
+            if (scanResultsSink != null) {
+                scanResultsSink.error(
+                        String.valueOf(error.errorCode.code),
+                        error.reason,
+                        bleErrorJsonConverter.toJson(error));
+                scanResultsSink.endOfStream();
+            }
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void onComplete() {
+        if (scanResultsSink != null) {
+            scanResultsSink.endOfStream();
         }
     }
 }

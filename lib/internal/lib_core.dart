@@ -39,7 +39,6 @@ class FlutterBleLib extends FlutterBLE
   }
 
   Future<void> destroyClient() async {
-    _deinitScanning();
     await _methodChannel.invokeMethod(MethodName.destroyClient);
     return;
   }

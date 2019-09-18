@@ -108,6 +108,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
 
     private void destroyClient(Result result) {
         bleAdapter.destroyClient();
+        scanningStreamHandler.onComplete();
         result.success(null);
     }
 
@@ -131,6 +132,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
 
     private void stopDeviceScan(Result result) {
         bleAdapter.stopDeviceScan();
+        scanningStreamHandler.onComplete();
         result.success(null);
     }
 }
