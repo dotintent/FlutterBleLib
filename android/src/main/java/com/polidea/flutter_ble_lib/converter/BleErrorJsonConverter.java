@@ -9,6 +9,8 @@ import org.json.JSONObject;
 
 public class BleErrorJsonConverter implements JsonConverter<BleError> {
 
+    public static final int MAX_ATT_ERROR = 0x80;
+
     private interface Metadata {
         String ERROR_CODE = "errorCode";
         String ATT_ERROR_CODE = "attErrorCode";
@@ -27,12 +29,12 @@ public class BleErrorJsonConverter implements JsonConverter<BleError> {
         try {
             JSONObject root = new JSONObject();
             root.put(Metadata.ERROR_CODE, error.errorCode.code);
-            if (error.androidCode == null || error.androidCode >= 0x80 || error.androidCode < 0) {
+            if (error.androidCode == null || error.androidCode > MAX_ATT_ERROR || error.androidCode < 0) {
                 root.put(Metadata.ATT_ERROR_CODE, JSONObject.NULL);
             } else {
                 root.put(Metadata.ATT_ERROR_CODE, error.androidCode.intValue());
             }
-            if (error.androidCode == null || error.androidCode < 0x80) {
+            if (error.androidCode == null || error.androidCode <= MAX_ATT_ERROR) {
                 root.put(Metadata.ANDROID_ERROR_CODE, JSONObject.NULL);
             } else {
                 root.put(Metadata.ANDROID_ERROR_CODE, error.androidCode.intValue());
