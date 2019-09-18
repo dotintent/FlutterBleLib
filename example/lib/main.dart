@@ -71,7 +71,17 @@ class _MyAppState extends State<MyApp> {
       deviceConnectionAttempted = false;
     });
 
-    Future.delayed(Duration(seconds: 10))
+    peripheral
+        .discoverAllServicesAndCharacteristics()
+        .then((_) => peripheral.services())
+        .then((services) {
+          print(services);
+          return services.first;
+        })
+        .then((service) => peripheral.characteristics(service.uuid))
+        .then(
+            (characteristics) => characteristics.forEach((e) => print(e.uuid)))
+        .then((_) => Future.delayed(Duration(seconds: 10)))
         .then((_) => peripheral.disconnectOrCancelConnection())
         .then((_) => Future.delayed(Duration(seconds: 10)))
         .then((_) => bleManager.destroyClient())

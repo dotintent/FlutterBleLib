@@ -16,4 +16,6 @@ class Service {
       : peripheral = peripheral,
         uuid = jsonObject[_ServiceMetadata.uuid],
         id = jsonObject[_ServiceMetadata.id];
+
+  //TODO add characteristics()
 }

@@ -30,12 +30,15 @@ class Characteristic {
 
   Characteristic.fromJson(Map<String, dynamic> jsonObject, Service service)
       : service = service,
+        id = jsonObject[_CharacteristicMetadata.id],
         uuid = jsonObject[_CharacteristicMetadata.uuid],
-        isReadable = jsonObject[_CharacteristicMetadata.isReadable],
+        isReadable = jsonObject[_CharacteristicMetadata.isReadable] as bool,
         isWritableWithResponse =
-            jsonObject[_CharacteristicMetadata.isWritableWithResponse],
+            jsonObject[_CharacteristicMetadata.isWritableWithResponse] as bool,
         isWritableWithoutResponse =
-            jsonObject[_CharacteristicMetadata.isWritableWithoutResponse],
-        isNotifiable = jsonObject[_CharacteristicMetadata.isNotifiable],
-        isIndicatable = jsonObject[_CharacteristicMetadata.isIndicatable];
+            jsonObject[_CharacteristicMetadata.isWritableWithoutResponse]
+                as bool,
+        isNotifiable = jsonObject[_CharacteristicMetadata.isNotifiable] as bool,
+        isIndicatable =
+            jsonObject[_CharacteristicMetadata.isIndicatable] as bool;
 }

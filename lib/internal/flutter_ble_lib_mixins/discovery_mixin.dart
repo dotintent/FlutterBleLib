@@ -16,9 +16,12 @@ mixin DiscoveryMixin on FlutterBLE {
       ArgumentName.deviceIdentifier: peripheral.identifier
     });
 
-    List<Map<String, dynamic>> services = jsonDecode(jsonString);
+    List<String> decodedJson = (jsonDecode(jsonString) as List<dynamic>).cast();
 
-    return services.map((value) => Service.fromJson(value, peripheral));
+    return decodedJson
+        .map((serviceJsonString) =>
+            Service.fromJson(jsonDecode(serviceJsonString), peripheral))
+        .toList();
   }
 
   Future<List<Characteristic>> characteristics(
@@ -30,11 +33,12 @@ mixin DiscoveryMixin on FlutterBLE {
     });
 
     Map<String, dynamic> jsonObject = jsonDecode(jsonString);
-    List<Map<String, dynamic>> jsonCharacteristics = jsonObject["characteristics"];
+    List<String> jsonCharacteristics =
+        (jsonObject["characteristics"] as List<dynamic>).cast();
     Service service = Service.fromJson(jsonObject, peripheral);
 
-    return jsonCharacteristics.map((characteristic) {
-      Characteristic.fromJson(characteristic, service);
-    }).cast();
+    return jsonCharacteristics.map((characteristicJsonString) {
+      return Characteristic.fromJson(jsonDecode(characteristicJsonString), service);
+    }).toList();
   }
 }
