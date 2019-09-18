@@ -113,7 +113,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
     }
 
     private void startDeviceScan(@NonNull MethodCall call, Result result) {
-        bleAdapter.startDeviceScan(call.<String[]>argument(ArgumentKey.RESTORE_STATE_IDENTIFIER),
+        bleAdapter.startDeviceScan(call.<String[]>argument(ArgumentKey.UUIDS),
                 call.<Integer>argument(ArgumentKey.SCAN_MODE),
                 call.<Integer>argument(ArgumentKey.CALLBACK_TYPE),
                 new OnEventCallback<ScanResult>() {
