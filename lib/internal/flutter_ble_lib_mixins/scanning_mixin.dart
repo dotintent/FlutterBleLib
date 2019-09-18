@@ -9,6 +9,14 @@ mixin ScanningMixin on FlutterBLE {
     int callbackType,
     List<String> uuids,
   ) async* {
+    _methodChannel.invokeMethod(
+      MethodName.startDeviceScan,
+      <String, dynamic>{
+        ArgumentName.scanMode: scanMode,
+        ArgumentName.callbackType: callbackType,
+        ArgumentName.uuids: uuids
+      },
+    );
     yield* _scanEventChannel.receiveBroadcastStream().handleError(
       (errorJson) {
         throw BleError.fromJson(jsonDecode(errorJson.details));
