@@ -14,6 +14,7 @@ part 'ble_manager.dart';
 
 
 part 'internal/flutter_ble_lib_mixins/device_connection_mixin.dart';
+part 'internal/flutter_ble_lib_mixins/scanning_mixin.dart';
 part 'internal/internal_ble_manager.dart';
 part 'internal/peripheral_manager.dart';
 part 'internal/constants.dart';
