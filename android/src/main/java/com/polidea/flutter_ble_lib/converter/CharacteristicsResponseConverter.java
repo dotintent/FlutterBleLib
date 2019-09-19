@@ -11,7 +11,7 @@ public class CharacteristicsResponseConverter implements JsonConverter<Character
 
     private interface Metadata {
         String uuid = "serviceUuid";
-        String id = "id";
+        String id = "serviceId";
         String characteristics = "characteristics";
     }
 

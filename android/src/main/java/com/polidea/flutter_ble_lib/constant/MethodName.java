@@ -14,4 +14,5 @@ public interface MethodName {
     String DISCOVER_ALL_SERVICES_AND_CHARACTERISTICS = "discoverAllServicesAndCharacteristics";
     String SERVICES = "services";
     String CHARACTERISTICS = "characteristics";
+    String CHARACTERISTICS_FOR_SERVICE = "characteristicsForService";
 }

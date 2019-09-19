@@ -6,6 +6,7 @@ import com.polidea.flutter_ble_lib.CharacteristicsResponse;
 import com.polidea.flutter_ble_lib.SafeMainThreadResolver;
 import com.polidea.flutter_ble_lib.constant.ArgumentKey;
 import com.polidea.flutter_ble_lib.constant.MethodName;
+import com.polidea.flutter_ble_lib.converter.CharacteristicConverter;
 import com.polidea.flutter_ble_lib.converter.CharacteristicsResponseConverter;
 import com.polidea.flutter_ble_lib.converter.ServiceConverter;
 import com.polidea.multiplatformbleadapter.BleAdapter;
@@ -37,6 +38,7 @@ public class DiscoveryDelegate implements CallDelegate {
             case MethodName.DISCOVER_ALL_SERVICES_AND_CHARACTERISTICS:
             case MethodName.CHARACTERISTICS:
             case MethodName.SERVICES:
+            case MethodName.CHARACTERISTICS_FOR_SERVICE:
                 return true;
         }
         return false;
@@ -63,6 +65,8 @@ public class DiscoveryDelegate implements CallDelegate {
                         result
                 );
                 return;
+            case MethodName.CHARACTERISTICS_FOR_SERVICE:
+                characteristicsForService(call.<Integer>argument(ArgumentKey.SERVICE_ID), result);
             default:
                 throw new IllegalArgumentException(call.method + " cannot be handled by this delegate");
         }
@@ -154,6 +158,31 @@ public class DiscoveryDelegate implements CallDelegate {
                         result.success(jsonArray.toString());
                     }
                 }, new OnErrorCallback() {
+                    @Override
+                    public void onError(BleError error) {
+                        result.error(String.valueOf(error.errorCode.code), error.reason, null);
+                    }
+                });
+    }
+
+    private void characteristicsForService(Integer serviceId, final MethodChannel.Result result) {
+        adapter.getCharacteristicsForService(serviceId,
+                new OnSuccessCallback<Characteristic[]>() {
+                    @Override
+                    public void onSuccess(Characteristic[] data) {
+                        try {
+                            JSONArray jsonArray = new JSONArray();
+                            CharacteristicConverter converter = new CharacteristicConverter();
+                            for (Characteristic characteristic : data) {
+                                jsonArray.put(converter.toJson(characteristic));
+                            }
+                            result.success(jsonArray.toString());
+                        } catch (JSONException e) {
+                            result.error(e.toString(), e.getMessage(), null);
+                        }
+                    }
+                },
+                new OnErrorCallback() {
                     @Override
                     public void onError(BleError error) {
                         result.error(String.valueOf(error.errorCode.code), error.reason, null);

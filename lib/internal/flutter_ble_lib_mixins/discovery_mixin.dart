@@ -20,7 +20,7 @@ mixin DiscoveryMixin on FlutterBLE {
 
     return decodedJson
         .map((serviceJsonString) =>
-            Service.fromJson(jsonDecode(serviceJsonString), peripheral))
+            Service.fromJson(jsonDecode(serviceJsonString), peripheral, _manager))
         .toList();
   }
 
@@ -35,10 +35,26 @@ mixin DiscoveryMixin on FlutterBLE {
     Map<String, dynamic> jsonObject = jsonDecode(jsonString);
     List<String> jsonCharacteristics =
         (jsonObject["characteristics"] as List<dynamic>).cast();
-    Service service = Service.fromJson(jsonObject, peripheral);
+    Service service = Service.fromJson(jsonObject, peripheral, _manager);
 
     return jsonCharacteristics.map((characteristicJsonString) {
-      return Characteristic.fromJson(jsonDecode(characteristicJsonString), service);
+      return Characteristic.fromJson(
+          jsonDecode(characteristicJsonString), service);
+    }).toList();
+  }
+
+  Future<List<Characteristic>> characteristicsForService(
+      Service service) async {
+    String jsonString = await _methodChannel
+        .invokeMethod(MethodName.characteristicsForService, <String, dynamic>{
+      ArgumentName.serviceId: service._id,
+    });
+
+    List<String> jsonList = (jsonDecode(jsonString) as List<dynamic>).cast();
+
+    return jsonList.map((characteristicJsonString) {
+      return Characteristic.fromJson(
+          jsonDecode(characteristicJsonString), service);
     }).toList();
   }
 }

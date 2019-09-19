@@ -14,14 +14,14 @@ abstract class _CharacteristicMetadata {
 class Characteristic {
   Service service;
   String uuid;
-  int id;
+  int _id;
   bool isReadable;
   bool isWritableWithResponse;
   bool isWritableWithoutResponse;
   bool isNotifiable;
   bool isIndicatable;
 
-  Characteristic(this.uuid, this.service, this.id,
+  Characteristic(this.uuid, this.service, this._id,
       {this.isReadable,
       this.isWritableWithResponse,
       this.isWritableWithoutResponse,
@@ -30,7 +30,7 @@ class Characteristic {
 
   Characteristic.fromJson(Map<String, dynamic> jsonObject, Service service)
       : service = service,
-        id = jsonObject[_CharacteristicMetadata.id],
+        _id = jsonObject[_CharacteristicMetadata.id],
         uuid = jsonObject[_CharacteristicMetadata.uuid],
         isReadable = jsonObject[_CharacteristicMetadata.isReadable] as bool,
         isWritableWithResponse =

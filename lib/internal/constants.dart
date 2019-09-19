@@ -1,6 +1,6 @@
 part of flutter_ble_lib;
 
-class MethodName {
+abstract class MethodName {
   static const String createClient = "createClient";
   static const String destroyClient = "destroyClient";
 
@@ -16,9 +16,10 @@ class MethodName {
       "discoverAllServicesAndCharacteristics";
   static const String services = "services";
   static const String characteristics = "characteristics";
+  static const String characteristicsForService = "characteristicsForService";
 }
 
-class ChannelName {
+abstract class ChannelName {
   static const String flutterBleLib = "flutter_ble_lib";
   static const String stateRestoreEvents =
       flutterBleLib + "/stateRestoreEvents";
@@ -27,7 +28,7 @@ class ChannelName {
       flutterBleLib + "/connectionStateChangeEvents";
 }
 
-class ArgumentName {
+abstract class ArgumentName {
   static const String restoreStateIdentifier = "restoreStateIdentifier";
   static const String scanMode = "scanMode";
   static const String callbackType = "callbackType";
@@ -43,6 +44,7 @@ class ArgumentName {
   static const String emitCurrentValue = "emitCurrentValue";
 
   static const String serviceUuid = "serviceUuid";
+  static const String serviceId = "serviceId";
 }
 
 abstract class ScanMode {

@@ -23,7 +23,7 @@ class ScanResult {
   List<String> overflowServiceUUIDs;
   AdvertisementData advertisementData;
 
-  ScanResult.fromJson(Map<String, dynamic> json, PeripheralManager manager)
+  ScanResult.fromJson(Map<String, dynamic> json, ManagerForPeripheral manager)
       : peripheral = Peripheral.fromJson(json, manager),
         rssi = json[_ScanResultMetadata.rssi],
         mtu = json[_ScanResultMetadata.mtu],

@@ -8,12 +8,12 @@ abstract class _PeripheralMetadata {
 class Peripheral {
   static const int _minimumMtu = 23;
 
-  PeripheralManager _manager;
+  ManagerForPeripheral _manager;
 
   String name;
   String identifier;
 
-  Peripheral.fromJson(Map<String, dynamic> json, PeripheralManager manager)
+  Peripheral.fromJson(Map<String, dynamic> json, ManagerForPeripheral manager)
       : _manager = manager,
         name = json[_PeripheralMetadata.name],
         identifier = json[_PeripheralMetadata.identifier];

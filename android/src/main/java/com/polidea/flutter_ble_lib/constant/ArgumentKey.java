@@ -16,4 +16,5 @@ public interface ArgumentKey {
     String EMIT_CURRENT_VALUE = "emitCurrentValue";
 
     String SERVICE_UUID = "serviceUuid";
+    String SERVICE_ID = "serviceId";
 }

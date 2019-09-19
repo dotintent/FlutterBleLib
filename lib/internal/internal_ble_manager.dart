@@ -1,6 +1,7 @@
 part of flutter_ble_lib;
 
-class InternalBleManager implements BleManager, PeripheralManager {
+class InternalBleManager
+    implements BleManager, ManagerForPeripheral, ManagerForService {
   FlutterBleLib _bleLib;
 
   InternalBleManager() {
@@ -25,7 +26,7 @@ class InternalBleManager implements BleManager, PeripheralManager {
   Future<void> destroyClient() => _bleLib.destroyClient();
 
   @override
-  Stream<ScanResult> startDeviceScan({
+  Stream<ScanResult> startPeripheralScan({
     int scanMode = ScanMode.lowPower,
     int callbackType = CallbackType.allMatches,
     List<String> uuids,
@@ -37,22 +38,22 @@ class InternalBleManager implements BleManager, PeripheralManager {
 
   @override
   Future<void> connectToPeripheral(String identifier,
-          {bool isAutoConnect,
-          int requestMtu,
-          bool refreshGatt,
-          Duration timeout}) async =>
+      {bool isAutoConnect,
+        int requestMtu,
+        bool refreshGatt,
+        Duration timeout}) async =>
       _bleLib.connectToPeripheral(
           identifier, isAutoConnect, requestMtu, refreshGatt, timeout);
 
   @override
   Stream<PeripheralConnectionState> observePeripheralConnectionState(
-          String peripheralIdentifier, bool emitCurrentValue) =>
+      String peripheralIdentifier, bool emitCurrentValue) =>
       _bleLib.observePeripheralConnectionState(
           peripheralIdentifier, emitCurrentValue);
 
   @override
   Future<void> disconnectOrCancelPeripheralConnection(
-          String peripheralIdentifier) =>
+      String peripheralIdentifier) =>
       _bleLib.disconnectOrCancelPeripheralConnection(peripheralIdentifier);
 
   @override
@@ -60,8 +61,8 @@ class InternalBleManager implements BleManager, PeripheralManager {
       _bleLib.isPeripheralConnected(peripheralIdentifier);
 
   @override
-  Future<List<Characteristic>> characteristics(
-      Peripheral peripheral, String serviceUuid) =>
+  Future<List<Characteristic>> characteristics(Peripheral peripheral,
+      String serviceUuid) =>
       _bleLib.characteristics(peripheral, serviceUuid);
 
   @override
@@ -69,8 +70,12 @@ class InternalBleManager implements BleManager, PeripheralManager {
       _bleLib.services(peripheral);
 
   @override
-  Future<void> discoverAllServicesAndCharacteristics(
-      Peripheral peripheral, String transactionId) =>
+  Future<void> discoverAllServicesAndCharacteristics(Peripheral peripheral,
+      String transactionId) =>
       _bleLib.discoverAllServicesAndCharacteristics(
           peripheral, transactionId);
+
+  @override
+  Future<List<Characteristic>> characteristicsForService(Service service) =>
+      _bleLib.characteristicsForService(service);
 }

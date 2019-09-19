@@ -9,7 +9,7 @@ public class ServiceConverter implements JsonConverter<Service> {
 
     private interface Metadata {
         String uuid = "serviceUuid";
-        String id = "id";
+        String id = "serviceId";
     }
 
     @Override

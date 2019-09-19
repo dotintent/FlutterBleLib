@@ -2,20 +2,24 @@ part of flutter_ble_lib;
 
 abstract class _ServiceMetadata {
   static const String uuid = "serviceUuid";
-  static const String id = "id";
+  static const String id = "serviceId";
 }
 
 class Service {
   Peripheral peripheral;
+  ManagerForService _manager;
   String uuid;
-  int id;
+  int _id;
 
-  Service(this.uuid, this.peripheral);
+  Service(this.uuid, this.peripheral, this._manager, this._id);
 
-  Service.fromJson(Map<String, dynamic> jsonObject, Peripheral peripheral)
+  Service.fromJson(Map<String, dynamic> jsonObject, Peripheral peripheral,
+      ManagerForService managerForService)
       : peripheral = peripheral,
         uuid = jsonObject[_ServiceMetadata.uuid],
-        id = jsonObject[_ServiceMetadata.id];
+        _manager = managerForService,
+        _id = jsonObject[_ServiceMetadata.id];
 
-  //TODO add characteristics()
+  Future<List<Characteristic>> characteristics() =>
+      _manager.characteristicsForService(this);
 }

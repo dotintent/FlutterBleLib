@@ -20,7 +20,7 @@ abstract class BleManager {
 
   Future<void> destroyClient();
 
-  Stream<ScanResult> startDeviceScan({
+  Stream<ScanResult> startPeripheralScan({
     int scanMode = ScanMode.lowPower,
     int callbackType = CallbackType.allMatches,
     List<String> uuids,

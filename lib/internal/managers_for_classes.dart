@@ -1,6 +1,6 @@
 part of flutter_ble_lib;
 
-abstract class PeripheralManager {
+abstract class ManagerForPeripheral {
   Future<void> connectToPeripheral(String peripheralIdentifier,
       {bool isAutoConnect, int requestMtu, bool refreshGatt, Duration timeout});
 
@@ -19,4 +19,8 @@ abstract class PeripheralManager {
 
   Future<List<Characteristic>> characteristics(
       Peripheral peripheral, String serviceUuid);
+}
+
+abstract class ManagerForService {
+  Future<List<Characteristic>> characteristicsForService(Service service);
 }
