@@ -14,7 +14,7 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_ble_lib/ios"
 
 SPEC CHECKSUMS:
-  Flutter: 58dd7d1b27887414a370fcccb9e645c08ffd7a6a
+  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
   flutter_ble_lib: 6edddb2cb2ef57239d0ce0e4bff71be03edacaab
 
 PODFILE CHECKSUM: 7fb83752f59ead6285236625b82473f90b1cb932
