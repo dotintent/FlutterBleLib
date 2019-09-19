@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import com.polidea.flutter_ble_lib.SafeMainThreadResolver;
 import com.polidea.flutter_ble_lib.constant.ArgumentKey;
 import com.polidea.flutter_ble_lib.constant.MethodName;
+import com.polidea.flutter_ble_lib.converter.BleErrorJsonConverter;
 import com.polidea.flutter_ble_lib.event.ConnectionStateStreamHandler;
 import com.polidea.multiplatformbleadapter.BleAdapter;
 import com.polidea.multiplatformbleadapter.ConnectionOptions;
@@ -25,6 +26,7 @@ public class DeviceConnectionDelegate implements CallDelegate {
 
     private BleAdapter bleAdapter;
     private ConnectionStateStreamHandler streamHandler;
+    private BleErrorJsonConverter bleErrorJsonConverter = new BleErrorJsonConverter();
 
     public DeviceConnectionDelegate(BleAdapter bleAdapter, ConnectionStateStreamHandler streamHandler) {
         this.bleAdapter = bleAdapter;
@@ -65,7 +67,7 @@ public class DeviceConnectionDelegate implements CallDelegate {
                 cancelConnection(deviceId, result);
                 return;
             default:
-                throw new IllegalArgumentException(call.method + " cannot be handle by this delegate");
+                throw new IllegalArgumentException(call.method + " cannot be handled by this delegate");
         }
     }
 
@@ -83,7 +85,7 @@ public class DeviceConnectionDelegate implements CallDelegate {
                 new OnErrorCallback() {
                     @Override
                     public void onError(BleError error) {
-                        result.error(String.valueOf(error.errorCode.code), error.reason, null); //TODO @BartoszWilk convert this error
+                        result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
                     }
                 });
 
@@ -130,7 +132,7 @@ public class DeviceConnectionDelegate implements CallDelegate {
                 new OnErrorCallback() {
                     @Override
                     public void onError(BleError error) {
-                        result.error(String.valueOf(error.errorCode.code), error.reason, null); //TODO @BartoszWilk convert this error
+                        result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
                     }
                 });
 
@@ -160,7 +162,7 @@ public class DeviceConnectionDelegate implements CallDelegate {
                 new OnErrorCallback() {
                     @Override
                     public void onError(BleError error) {
-                        result.error(String.valueOf(error.errorCode.code), error.reason, null); //TODO @BartoszWilk convert this error
+                        result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
                     }
                 });
 
@@ -189,7 +191,7 @@ public class DeviceConnectionDelegate implements CallDelegate {
                 new OnErrorCallback() {
                     @Override
                     public void onError(BleError error) {
-                        result.error(String.valueOf(error.errorCode.code), error.reason, null); //TODO @BartoszWilk convert this error
+                        result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
                     }
                 });
 

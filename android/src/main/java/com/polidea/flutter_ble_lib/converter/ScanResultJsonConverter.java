@@ -1,6 +1,7 @@
 package com.polidea.flutter_ble_lib.converter;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.polidea.multiplatformbleadapter.AdvertisementData;
 import com.polidea.multiplatformbleadapter.ScanResult;
@@ -36,18 +37,24 @@ public class ScanResultJsonConverter implements JsonConverter<ScanResult> {
     }
 
     @Override
-    public String toJson(ScanResult value) throws JSONException {
-        JSONObject root = new JSONObject();
-        root.put(Metadata.ID, value.getDeviceId() != null ? value.getDeviceId() : JSONObject.NULL);
-        root.put(Metadata.NAME, value.getDeviceName() != null ? value.getDeviceName() : JSONObject.NULL);
-        root.put(Metadata.RSSI, value.getRssi());
-        root.put(Metadata.MTU, value.getMtu());
-        if (value.getAdvertisementData() != null) {
-            serializeAdvertisementData(root, value.getAdvertisementData());
+    @Nullable
+    public String toJson(ScanResult value) {
+        try {
+            JSONObject root = new JSONObject();
+            root.put(Metadata.ID, value.getDeviceId() != null ? value.getDeviceId() : JSONObject.NULL);
+            root.put(Metadata.NAME, value.getDeviceName() != null ? value.getDeviceName() : JSONObject.NULL);
+            root.put(Metadata.RSSI, value.getRssi());
+            root.put(Metadata.MTU, value.getMtu());
+            if (value.getAdvertisementData() != null) {
+                serializeAdvertisementData(root, value.getAdvertisementData());
+            }
+            root.put(Metadata.IS_CONNECTABLE, JSONObject.NULL);
+            root.put(Metadata.OVERFLOW_SERVICE_UUIDS, JSONObject.NULL);
+            return root.toString();
+        } catch (JSONException jsonException) {
+            jsonException.printStackTrace();
+            return null;
         }
-        root.put(Metadata.IS_CONNECTABLE, JSONObject.NULL);
-        root.put(Metadata.OVERFLOW_SERVICE_UUIDS, JSONObject.NULL);
-        return root.toString();
     }
 
     private void serializeAdvertisementData(JSONObject root,
