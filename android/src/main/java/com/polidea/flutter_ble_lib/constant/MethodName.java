@@ -12,7 +12,7 @@ public interface MethodName {
     String CANCEL_CONNECTION = "cancelConnection";
 
     String DISCOVER_ALL_SERVICES_AND_CHARACTERISTICS = "discoverAllServicesAndCharacteristics";
-    String SERVICES = "services";
-    String CHARACTERISTICS = "characteristics";
-    String CHARACTERISTICS_FOR_SERVICE = "characteristicsForService";
+    String GET_SERVICES = "services";
+    String GET_CHARACTERISTICS = "characteristics";
+    String GET_CHARACTERISTICS_FOR_SERVICE = "characteristicsForService";
 }

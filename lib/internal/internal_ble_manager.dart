@@ -37,23 +37,27 @@ class InternalBleManager
   Future<void> stopDeviceScan() => _bleLib.stopDeviceScan();
 
   @override
-  Future<void> connectToPeripheral(String identifier,
-      {bool isAutoConnect,
-        int requestMtu,
-        bool refreshGatt,
-        Duration timeout}) async =>
+  Future<void> connectToPeripheral(
+    String identifier, {
+    bool isAutoConnect,
+    int requestMtu,
+    bool refreshGatt,
+    Duration timeout,
+  }) async =>
       _bleLib.connectToPeripheral(
           identifier, isAutoConnect, requestMtu, refreshGatt, timeout);
 
   @override
   Stream<PeripheralConnectionState> observePeripheralConnectionState(
-      String peripheralIdentifier, bool emitCurrentValue) =>
+    String peripheralIdentifier,
+    bool emitCurrentValue,
+  ) =>
       _bleLib.observePeripheralConnectionState(
           peripheralIdentifier, emitCurrentValue);
 
   @override
   Future<void> disconnectOrCancelPeripheralConnection(
-      String peripheralIdentifier) =>
+          String peripheralIdentifier) =>
       _bleLib.disconnectOrCancelPeripheralConnection(peripheralIdentifier);
 
   @override
@@ -61,8 +65,10 @@ class InternalBleManager
       _bleLib.isPeripheralConnected(peripheralIdentifier);
 
   @override
-  Future<List<Characteristic>> characteristics(Peripheral peripheral,
-      String serviceUuid) =>
+  Future<List<Characteristic>> characteristics(
+    Peripheral peripheral,
+    String serviceUuid,
+  ) =>
       _bleLib.characteristics(peripheral, serviceUuid);
 
   @override
@@ -70,10 +76,11 @@ class InternalBleManager
       _bleLib.services(peripheral);
 
   @override
-  Future<void> discoverAllServicesAndCharacteristics(Peripheral peripheral,
-      String transactionId) =>
-      _bleLib.discoverAllServicesAndCharacteristics(
-          peripheral, transactionId);
+  Future<void> discoverAllServicesAndCharacteristics(
+    Peripheral peripheral,
+    String transactionId,
+  ) =>
+      _bleLib.discoverAllServicesAndCharacteristics(peripheral, transactionId);
 
   @override
   Future<List<Characteristic>> characteristicsForService(Service service) =>

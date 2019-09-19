@@ -11,11 +11,11 @@ class Service {
   String uuid;
   int _id;
 
-  Service(this.uuid, this.peripheral, this._manager, this._id);
-
-  Service.fromJson(Map<String, dynamic> jsonObject, Peripheral peripheral,
-      ManagerForService managerForService)
-      : peripheral = peripheral,
+  Service.fromJson(
+    Map<String, dynamic> jsonObject,
+    Peripheral peripheral,
+    ManagerForService managerForService,
+  )   : peripheral = peripheral,
         uuid = jsonObject[_ServiceMetadata.uuid],
         _manager = managerForService,
         _id = jsonObject[_ServiceMetadata.id];

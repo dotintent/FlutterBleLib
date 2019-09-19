@@ -6,9 +6,9 @@ import com.polidea.flutter_ble_lib.CharacteristicsResponse;
 import com.polidea.flutter_ble_lib.SafeMainThreadResolver;
 import com.polidea.flutter_ble_lib.constant.ArgumentKey;
 import com.polidea.flutter_ble_lib.constant.MethodName;
-import com.polidea.flutter_ble_lib.converter.CharacteristicConverter;
-import com.polidea.flutter_ble_lib.converter.CharacteristicsResponseConverter;
-import com.polidea.flutter_ble_lib.converter.ServiceConverter;
+import com.polidea.flutter_ble_lib.converter.CharacteristicJsonConverter;
+import com.polidea.flutter_ble_lib.converter.CharacteristicsResponseJsonConverter;
+import com.polidea.flutter_ble_lib.converter.ServiceJsonConverter;
 import com.polidea.multiplatformbleadapter.BleAdapter;
 import com.polidea.multiplatformbleadapter.Characteristic;
 import com.polidea.multiplatformbleadapter.Device;
@@ -36,9 +36,9 @@ public class DiscoveryDelegate implements CallDelegate {
     public boolean canHandle(MethodCall call) {
         switch (call.method) {
             case MethodName.DISCOVER_ALL_SERVICES_AND_CHARACTERISTICS:
-            case MethodName.CHARACTERISTICS:
-            case MethodName.SERVICES:
-            case MethodName.CHARACTERISTICS_FOR_SERVICE:
+            case MethodName.GET_CHARACTERISTICS:
+            case MethodName.GET_SERVICES:
+            case MethodName.GET_CHARACTERISTICS_FOR_SERVICE:
                 return true;
         }
         return false;
@@ -53,20 +53,22 @@ public class DiscoveryDelegate implements CallDelegate {
                         call.<String>argument(ArgumentKey.TRANSACTION_ID),
                         result);
                 return;
-            case MethodName.CHARACTERISTICS:
-                characteristics(
+            case MethodName.GET_CHARACTERISTICS:
+                getCharacteristics(
                         call.<String>argument(ArgumentKey.DEVICE_IDENTIFIER),
                         call.<String>argument(ArgumentKey.SERVICE_UUID),
                         result
                 );
-            case MethodName.SERVICES:
-                services(
+                return;
+            case MethodName.GET_SERVICES:
+                getServices(
                         call.<String>argument(ArgumentKey.DEVICE_IDENTIFIER),
                         result
                 );
                 return;
-            case MethodName.CHARACTERISTICS_FOR_SERVICE:
-                characteristicsForService(call.<Integer>argument(ArgumentKey.SERVICE_ID), result);
+            case MethodName.GET_CHARACTERISTICS_FOR_SERVICE:
+                getCharacteristicsForService(call.<Integer>argument(ArgumentKey.SERVICE_ID), result);
+                return;
             default:
                 throw new IllegalArgumentException(call.method + " cannot be handled by this delegate");
         }
@@ -101,7 +103,7 @@ public class DiscoveryDelegate implements CallDelegate {
                 });
     }
 
-    private void characteristics(String deviceId, final String serviceUuid, final MethodChannel.Result result) {
+    private void getCharacteristics(String deviceId, final String serviceUuid, final MethodChannel.Result result) {
         adapter.getServicesForDevice(deviceId,
                 new OnSuccessCallback<Service[]>() {
                     @Override
@@ -114,7 +116,7 @@ public class DiscoveryDelegate implements CallDelegate {
                                             public void onSuccess(Characteristic[] data) {
                                                 CharacteristicsResponse characteristicsResponse = new CharacteristicsResponse(data, service);
                                                 try {
-                                                    String json = new CharacteristicsResponseConverter().toJson(characteristicsResponse);
+                                                    String json = new CharacteristicsResponseJsonConverter().toJson(characteristicsResponse);
                                                     result.success(json);
                                                 } catch (JSONException e) {
                                                     result.error(e.toString(), e.getMessage(), null);
@@ -140,12 +142,12 @@ public class DiscoveryDelegate implements CallDelegate {
                 });
     }
 
-    private void services(String deviceId, final MethodChannel.Result result) {
+    private void getServices(String deviceId, final MethodChannel.Result result) {
         adapter.getServicesForDevice(deviceId,
                 new OnSuccessCallback<Service[]>() {
                     @Override
                     public void onSuccess(final Service[] data) {
-                        ServiceConverter converter = new ServiceConverter();
+                        ServiceJsonConverter converter = new ServiceJsonConverter();
                         JSONArray jsonArray = new JSONArray();
                         try {
                             for (Service service : data) {
@@ -165,14 +167,14 @@ public class DiscoveryDelegate implements CallDelegate {
                 });
     }
 
-    private void characteristicsForService(Integer serviceId, final MethodChannel.Result result) {
+    private void getCharacteristicsForService(Integer serviceId, final MethodChannel.Result result) {
         adapter.getCharacteristicsForService(serviceId,
                 new OnSuccessCallback<Characteristic[]>() {
                     @Override
                     public void onSuccess(Characteristic[] data) {
                         try {
                             JSONArray jsonArray = new JSONArray();
-                            CharacteristicConverter converter = new CharacteristicConverter();
+                            CharacteristicJsonConverter converter = new CharacteristicJsonConverter();
                             for (Characteristic characteristic : data) {
                                 jsonArray.put(converter.toJson(characteristic));
                             }

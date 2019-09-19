@@ -7,29 +7,28 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class CharacteristicsResponseConverter implements JsonConverter<CharacteristicsResponse> {
+public class CharacteristicsResponseJsonConverter implements JsonConverter<CharacteristicsResponse> {
 
     private interface Metadata {
-        String uuid = "serviceUuid";
-        String id = "serviceId";
-        String characteristics = "characteristics";
+        String UUID = "serviceUuid";
+        String ID = "serviceId";
+        String CHARACTERISTICS = "characteristics";
     }
 
     @Override
     public String toJson(CharacteristicsResponse characteristicsResponse) throws JSONException {
         JSONObject jsonObject = new JSONObject();
 
-        jsonObject.put(Metadata.uuid, characteristicsResponse.getService().getUuid());
-        jsonObject.put(Metadata.id, characteristicsResponse.getService().getId());
+        jsonObject.put(Metadata.UUID, characteristicsResponse.getService().getUuid());
+        jsonObject.put(Metadata.ID, characteristicsResponse.getService().getId());
 
         JSONArray jsonArray = new JSONArray();
-        CharacteristicConverter characteristicConverter = new CharacteristicConverter();
+        CharacteristicJsonConverter characteristicJsonConverter = new CharacteristicJsonConverter();
         for (Characteristic characteristic : characteristicsResponse.getCharacteristics()) {
-            jsonArray.put(characteristicConverter.toJson(characteristic));
+            jsonArray.put(characteristicJsonConverter.toJson(characteristic));
         }
 
-
-        jsonObject.put(Metadata.characteristics, jsonArray);
+        jsonObject.put(Metadata.CHARACTERISTICS, jsonArray);
         return jsonObject.toString();
     }
 }

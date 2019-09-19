@@ -4,33 +4,39 @@ mixin DiscoveryMixin on FlutterBLE {
   Future<void> discoverAllServicesAndCharacteristics(
       Peripheral peripheral, String transactionId) async {
     await _methodChannel.invokeMethod(
-        MethodName.discoverAllServicesAndCharacteristics, <String, dynamic>{
-      ArgumentName.deviceIdentifier: peripheral.identifier,
-      ArgumentName.transactionId: transactionId
-    });
+      MethodName.discoverAllServicesAndCharacteristics,
+      <String, dynamic>{
+        ArgumentName.deviceIdentifier: peripheral.identifier,
+        ArgumentName.transactionId: transactionId,
+      },
+    );
   }
 
   Future<List<Service>> services(Peripheral peripheral) async {
     String jsonString = await _methodChannel.invokeMethod(
-        MethodName.services, <String, dynamic>{
-      ArgumentName.deviceIdentifier: peripheral.identifier
-    });
+      MethodName.services,
+      <String, dynamic>{
+        ArgumentName.deviceIdentifier: peripheral.identifier,
+      },
+    );
 
     List<String> decodedJson = (jsonDecode(jsonString) as List<dynamic>).cast();
 
     return decodedJson
-        .map((serviceJsonString) =>
-            Service.fromJson(jsonDecode(serviceJsonString), peripheral, _manager))
+        .map((serviceJsonString) => Service.fromJson(
+            jsonDecode(serviceJsonString), peripheral, _manager))
         .toList();
   }
 
   Future<List<Characteristic>> characteristics(
       Peripheral peripheral, String serviceUuid) async {
-    String jsonString = await _methodChannel
-        .invokeMethod(MethodName.characteristics, <String, dynamic>{
-      ArgumentName.deviceIdentifier: peripheral.identifier,
-      ArgumentName.serviceUuid: serviceUuid
-    });
+    String jsonString = await _methodChannel.invokeMethod(
+      MethodName.characteristics,
+      <String, dynamic>{
+        ArgumentName.deviceIdentifier: peripheral.identifier,
+        ArgumentName.serviceUuid: serviceUuid,
+      },
+    );
 
     Map<String, dynamic> jsonObject = jsonDecode(jsonString);
     List<String> jsonCharacteristics =
@@ -45,10 +51,12 @@ mixin DiscoveryMixin on FlutterBLE {
 
   Future<List<Characteristic>> characteristicsForService(
       Service service) async {
-    String jsonString = await _methodChannel
-        .invokeMethod(MethodName.characteristicsForService, <String, dynamic>{
-      ArgumentName.serviceId: service._id,
-    });
+    String jsonString = await _methodChannel.invokeMethod(
+      MethodName.characteristicsForService,
+      <String, dynamic>{
+        ArgumentName.serviceId: service._id,
+      },
+    );
 
     List<String> jsonList = (jsonDecode(jsonString) as List<dynamic>).cast();
 

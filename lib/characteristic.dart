@@ -21,24 +21,15 @@ class Characteristic {
   bool isNotifiable;
   bool isIndicatable;
 
-  Characteristic(this.uuid, this.service, this._id,
-      {this.isReadable,
-      this.isWritableWithResponse,
-      this.isWritableWithoutResponse,
-      this.isNotifiable,
-      this.isIndicatable});
-
   Characteristic.fromJson(Map<String, dynamic> jsonObject, Service service)
       : service = service,
         _id = jsonObject[_CharacteristicMetadata.id],
         uuid = jsonObject[_CharacteristicMetadata.uuid],
-        isReadable = jsonObject[_CharacteristicMetadata.isReadable] as bool,
+        isReadable = jsonObject[_CharacteristicMetadata.isReadable],
         isWritableWithResponse =
-            jsonObject[_CharacteristicMetadata.isWritableWithResponse] as bool,
+            jsonObject[_CharacteristicMetadata.isWritableWithResponse],
         isWritableWithoutResponse =
-            jsonObject[_CharacteristicMetadata.isWritableWithoutResponse]
-                as bool,
-        isNotifiable = jsonObject[_CharacteristicMetadata.isNotifiable] as bool,
-        isIndicatable =
-            jsonObject[_CharacteristicMetadata.isIndicatable] as bool;
+            jsonObject[_CharacteristicMetadata.isWritableWithoutResponse],
+        isNotifiable = jsonObject[_CharacteristicMetadata.isNotifiable],
+        isIndicatable = jsonObject[_CharacteristicMetadata.isIndicatable];
 }

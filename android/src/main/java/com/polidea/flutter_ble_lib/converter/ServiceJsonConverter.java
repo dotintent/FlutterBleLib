@@ -5,7 +5,7 @@ import com.polidea.multiplatformbleadapter.Service;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ServiceConverter implements JsonConverter<Service> {
+public class ServiceJsonConverter implements JsonConverter<Service> {
 
     private interface Metadata {
         String uuid = "serviceUuid";
