@@ -1,7 +1,5 @@
 package com.polidea.flutter_ble_lib.event;
 
-import com.polidea.multiplatformbleadapter.ConnectionState;
-
 import io.flutter.plugin.common.EventChannel;
 
 public class ConnectionStateStreamHandler implements EventChannel.StreamHandler {
@@ -17,9 +15,9 @@ public class ConnectionStateStreamHandler implements EventChannel.StreamHandler 
         eventSink = null;
     }
 
-    synchronized public void onNewConnectionState(ConnectionState newState) {
+    synchronized public void onNewConnectionState(String newState) {
         if (eventSink != null) {
-            eventSink.success(newState.value);
+            eventSink.success(newState);
         }
     }
 }

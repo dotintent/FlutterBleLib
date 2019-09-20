@@ -4,10 +4,12 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 
+import com.polidea.flutter_ble_lib.ConnectionStateChange;
 import com.polidea.flutter_ble_lib.SafeMainThreadResolver;
 import com.polidea.flutter_ble_lib.constant.ArgumentKey;
 import com.polidea.flutter_ble_lib.constant.MethodName;
 import com.polidea.flutter_ble_lib.converter.BleErrorJsonConverter;
+import com.polidea.flutter_ble_lib.converter.ConnectionStateChangeJsonConverter;
 import com.polidea.flutter_ble_lib.event.ConnectionStateStreamHandler;
 import com.polidea.multiplatformbleadapter.BleAdapter;
 import com.polidea.multiplatformbleadapter.ConnectionOptions;
@@ -21,6 +23,8 @@ import com.polidea.multiplatformbleadapter.errors.BleError;
 
 import java.util.Arrays;
 import java.util.List;
+
+import org.json.JSONException;
 
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -70,7 +74,7 @@ public class DeviceConnectionDelegate extends CallDelegate {
         }
     }
 
-    private void connectToDevice(String deviceId, Boolean isAutoConnect, Integer requestMtu, Boolean refreshGatt, Long timeoutMillis, @NonNull final MethodChannel.Result result) {
+    private void connectToDevice(final String deviceId, Boolean isAutoConnect, Integer requestMtu, Boolean refreshGatt, Long timeoutMillis, @NonNull final MethodChannel.Result result) {
         RefreshGattMoment refreshGattMoment = null;
         if (refreshGatt) refreshGattMoment = RefreshGattMoment.ON_CONNECTED;
 
@@ -96,13 +100,25 @@ public class DeviceConnectionDelegate extends CallDelegate {
                     public void onSuccess(Device data) {
                         safeMainThreadResolver.onSuccess(null);
                     }
-                }, new OnEventCallback<ConnectionState>() {
+                },
+                new OnEventCallback<ConnectionState>() {
                     @Override
                     public void onEvent(final ConnectionState data) {
+                        String temp;
+                        try {
+                            temp = new ConnectionStateChangeJsonConverter().toJson(new ConnectionStateChange(deviceId, data));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            return;
+                        }
+
+                        final String newData = temp;
+
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
-                                streamHandler.onNewConnectionState(data);
+
+                                streamHandler.onNewConnectionState(newData);
                             }
                         });
                     }
@@ -114,17 +130,28 @@ public class DeviceConnectionDelegate extends CallDelegate {
                 });
     }
 
-    private void observeConnectionState(String deviceId, boolean emitCurrentValue, @NonNull final MethodChannel.Result result) {
+    private void observeConnectionState(final String deviceId, boolean emitCurrentValue, @NonNull final MethodChannel.Result result) {
         //emit current value if needed; rest is published automatically through connectToDevice()
 
         final SafeMainThreadResolver safeMainThreadResolver = new SafeMainThreadResolver<>(
                 new OnSuccessCallback<Boolean>() {
                     @Override
                     public void onSuccess(Boolean data) {
+                        String newData;
+
+                        ConnectionState state;
                         if (data)
-                            streamHandler.onNewConnectionState(ConnectionState.CONNECTED);
+                            state = ConnectionState.CONNECTED;
                         else
-                            streamHandler.onNewConnectionState(ConnectionState.DISCONNECTED);
+                            state = ConnectionState.DISCONNECTED;
+
+                        try {
+                            newData = new ConnectionStateChangeJsonConverter().toJson(new ConnectionStateChange(deviceId, state));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            return;
+                        }
+                        streamHandler.onNewConnectionState(newData);
                         result.success(data);
                     }
                 },
