@@ -6,6 +6,7 @@ import com.polidea.flutter_ble_lib.CharacteristicsResponse;
 import com.polidea.flutter_ble_lib.SafeMainThreadResolver;
 import com.polidea.flutter_ble_lib.constant.ArgumentKey;
 import com.polidea.flutter_ble_lib.constant.MethodName;
+import com.polidea.flutter_ble_lib.converter.BleErrorJsonConverter;
 import com.polidea.flutter_ble_lib.converter.CharacteristicJsonConverter;
 import com.polidea.flutter_ble_lib.converter.CharacteristicsResponseJsonConverter;
 import com.polidea.flutter_ble_lib.converter.ServiceJsonConverter;
@@ -27,6 +28,7 @@ import io.flutter.plugin.common.MethodChannel;
 
 public class DiscoveryDelegate implements CallDelegate {
     private BleAdapter adapter;
+    private BleErrorJsonConverter bleErrorJsonConverter = new BleErrorJsonConverter();
 
     public DiscoveryDelegate(BleAdapter adapter) {
         this.adapter = adapter;
@@ -85,7 +87,7 @@ public class DiscoveryDelegate implements CallDelegate {
                 new OnErrorCallback() {
                     @Override
                     public void onError(BleError error) {
-                        result.error(String.valueOf(error.errorCode.code), error.reason, null);
+                        result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
                     }
                 });
 
@@ -104,42 +106,49 @@ public class DiscoveryDelegate implements CallDelegate {
     }
 
     private void getCharacteristics(String deviceId, final String serviceUuid, final MethodChannel.Result result) {
-        adapter.getServicesForDevice(deviceId,
-                new OnSuccessCallback<Service[]>() {
-                    @Override
-                    public void onSuccess(final Service[] data) {
-                        for (final Service service : data) {
-                            if (service.getUuid().equals(UUID.fromString(serviceUuid))) {
-                                adapter.getCharacteristicsForService(service.getId(),
-                                        new OnSuccessCallback<Characteristic[]>() {
-                                            @Override
-                                            public void onSuccess(Characteristic[] data) {
-                                                CharacteristicsResponse characteristicsResponse = new CharacteristicsResponse(data, service);
-                                                try {
-                                                    String json = new CharacteristicsResponseJsonConverter().toJson(characteristicsResponse);
-                                                    result.success(json);
-                                                } catch (JSONException e) {
-                                                    result.error(e.toString(), e.getMessage(), null);
-                                                }
-                                            }
-                                        },
-                                        new OnErrorCallback() {
-                                            @Override
-                                            public void onError(BleError error) {
-                                                result.error(String.valueOf(error.errorCode.code), error.reason, null);
-                                            }
-                                        });
-                                return;
-                            }
-                        }
+        final OnErrorCallback errorCallback = new OnErrorCallback() {
+            @Override
+            public void onError(BleError error) {
+                result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
+            }
+        };
 
+        OnSuccessCallback<Service[]> serviceFetchSuccessCallback = new OnSuccessCallback<Service[]>() {
+            @Override
+            public void onSuccess(final Service[] data) {
+                Service foundService = null;
+                for (final Service service : data) {
+                    if (service.getUuid().equals(UUID.fromString(serviceUuid))) {
+                        foundService = service;
+                        break;
                     }
-                }, new OnErrorCallback() {
-                    @Override
-                    public void onError(BleError error) {
-                        result.error(String.valueOf(error.errorCode.code), error.reason, null);
-                    }
-                });
+                }
+
+                if (foundService == null) {
+                    result.error("UnknownServiceException", "Service not found", "Unknown service UUID " + serviceUuid);
+                    return;
+                }
+
+                final Service finalService = foundService;
+
+                adapter.getCharacteristicsForService(foundService.getId(),
+                        new OnSuccessCallback<Characteristic[]>() {
+                            @Override
+                            public void onSuccess(Characteristic[] data) {
+                                CharacteristicsResponse characteristicsResponse = new CharacteristicsResponse(data, finalService);
+                                try {
+                                    String json = new CharacteristicsResponseJsonConverter().toJson(characteristicsResponse);
+                                    result.success(json);
+                                } catch (JSONException e) {
+                                    result.error(e.toString(), e.getMessage(), null);
+                                }
+                            }
+                        },
+                        errorCallback);
+            }
+        };
+
+        adapter.getServicesForDevice(deviceId, serviceFetchSuccessCallback, errorCallback);
     }
 
     private void getServices(String deviceId, final MethodChannel.Result result) {
@@ -162,7 +171,7 @@ public class DiscoveryDelegate implements CallDelegate {
                 }, new OnErrorCallback() {
                     @Override
                     public void onError(BleError error) {
-                        result.error(String.valueOf(error.errorCode.code), error.reason, null);
+                        result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
                     }
                 });
     }
@@ -187,7 +196,7 @@ public class DiscoveryDelegate implements CallDelegate {
                 new OnErrorCallback() {
                     @Override
                     public void onError(BleError error) {
-                        result.error(String.valueOf(error.errorCode.code), error.reason, null);
+                        result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
                     }
                 });
     }
