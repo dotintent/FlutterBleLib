@@ -20,11 +20,12 @@ mixin DiscoveryMixin on FlutterBLE {
       },
     );
 
-    List<String> decodedJson = (jsonDecode(jsonString) as List<dynamic>).cast();
+    List<Map<String, dynamic>> decodedJson =
+        (jsonDecode(jsonString) as List<dynamic>).cast();
 
     return decodedJson
-        .map((serviceJsonString) => Service.fromJson(
-            jsonDecode(serviceJsonString), peripheral, _manager))
+        .map((serviceJson) =>
+            Service.fromJson(serviceJson, peripheral, _manager))
         .toList();
   }
 
@@ -39,13 +40,12 @@ mixin DiscoveryMixin on FlutterBLE {
     );
 
     Map<String, dynamic> jsonObject = jsonDecode(jsonString);
-    List<String> jsonCharacteristics =
+    List<Map<String, dynamic>> jsonCharacteristics =
         (jsonObject["characteristics"] as List<dynamic>).cast();
     Service service = Service.fromJson(jsonObject, peripheral, _manager);
 
-    return jsonCharacteristics.map((characteristicJsonString) {
-      return Characteristic.fromJson(
-          jsonDecode(characteristicJsonString), service);
+    return jsonCharacteristics.map((characteristicJson) {
+      return Characteristic.fromJson(characteristicJson, service);
     }).toList();
   }
 
@@ -58,11 +58,11 @@ mixin DiscoveryMixin on FlutterBLE {
       },
     );
 
-    List<String> jsonList = (jsonDecode(jsonString) as List<dynamic>).cast();
+    List<Map<String, dynamic>> jsonList =
+        (jsonDecode(jsonString) as List<dynamic>).cast();
 
-    return jsonList.map((characteristicJsonString) {
-      return Characteristic.fromJson(
-          jsonDecode(characteristicJsonString), service);
+    return jsonList.map((characteristicJson) {
+      return Characteristic.fromJson(characteristicJson, service);
     }).toList();
   }
 }

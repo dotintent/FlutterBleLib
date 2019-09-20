@@ -22,11 +22,7 @@ public class CharacteristicsResponseJsonConverter implements JsonConverter<Chara
         jsonObject.put(Metadata.UUID, characteristicsResponse.getService().getUuid());
         jsonObject.put(Metadata.ID, characteristicsResponse.getService().getId());
 
-        JSONArray jsonArray = new JSONArray();
-        CharacteristicJsonConverter characteristicJsonConverter = new CharacteristicJsonConverter();
-        for (Characteristic characteristic : characteristicsResponse.getCharacteristics()) {
-            jsonArray.put(characteristicJsonConverter.toJson(characteristic));
-        }
+        JSONArray jsonArray = new CharacteristicJsonConverter().toJsonArray(characteristicsResponse.getCharacteristics());
 
         jsonObject.put(Metadata.CHARACTERISTICS, jsonArray);
         return jsonObject.toString();

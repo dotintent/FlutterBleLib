@@ -156,17 +156,11 @@ public class DiscoveryDelegate implements CallDelegate {
                 new OnSuccessCallback<Service[]>() {
                     @Override
                     public void onSuccess(final Service[] data) {
-                        ServiceJsonConverter converter = new ServiceJsonConverter();
-                        JSONArray jsonArray = new JSONArray();
                         try {
-                            for (Service service : data) {
-                                jsonArray.put(converter.toJson(service));
-                            }
+                            result.success(new ServiceJsonConverter().toJson(data));
                         } catch (JSONException e) {
                             result.error(e.toString(), e.getMessage(), null);
-                            return;
                         }
-                        result.success(jsonArray.toString());
                     }
                 }, new OnErrorCallback() {
                     @Override
@@ -182,12 +176,7 @@ public class DiscoveryDelegate implements CallDelegate {
                     @Override
                     public void onSuccess(Characteristic[] data) {
                         try {
-                            JSONArray jsonArray = new JSONArray();
-                            CharacteristicJsonConverter converter = new CharacteristicJsonConverter();
-                            for (Characteristic characteristic : data) {
-                                jsonArray.put(converter.toJson(characteristic));
-                            }
-                            result.success(jsonArray.toString());
+                            result.success(new CharacteristicJsonConverter().toJson(data));
                         } catch (JSONException e) {
                             result.error(e.toString(), e.getMessage(), null);
                         }

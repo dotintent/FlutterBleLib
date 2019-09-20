@@ -2,6 +2,7 @@ package com.polidea.flutter_ble_lib.converter;
 
 import com.polidea.multiplatformbleadapter.Characteristic;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,6 +21,22 @@ public class CharacteristicJsonConverter implements JsonConverter<Characteristic
 
     @Override
     public String toJson(Characteristic characteristic) throws JSONException {
+        return toJsonObject(characteristic).toString();
+    }
+
+    public String toJson(Characteristic[] characteristics) throws JSONException {
+        return toJsonArray(characteristics).toString();
+    }
+
+    public JSONArray toJsonArray(Characteristic[] characteristics) throws JSONException {
+        JSONArray jsonArray = new JSONArray();
+        for (Characteristic characteristic : characteristics) {
+            jsonArray.put(toJsonObject(characteristic));
+        }
+        return jsonArray;
+    }
+
+    private JSONObject toJsonObject(Characteristic characteristic) throws JSONException {
         JSONObject jsonObject = new JSONObject();
 
         jsonObject.put(Metadata.UUID, characteristic.getUuid());
@@ -31,6 +48,6 @@ public class CharacteristicJsonConverter implements JsonConverter<Characteristic
         jsonObject.put(Metadata.IS_INDICATABLE, characteristic.isIndicatable());
         jsonObject.put(Metadata.VALUE, characteristic.getValue());
 
-        return jsonObject.toString();
+        return jsonObject;
     }
 }
