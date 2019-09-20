@@ -7,7 +7,11 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
-import 'error/ble_error.dart';
+import 'package:flutter_ble_lib/internal/bridge/internal_bridge_lib.dart';
+
+import 'internal/internal_ble_manager.dart';
+import 'internal/constants.dart';
+import 'internal/managers_for_classes.dart';
 
 part 'peripheral_connection_state.dart';
 part 'peripheral.dart';
@@ -15,13 +19,3 @@ part 'scan_result.dart';
 part 'ble_manager.dart';
 part 'service.dart';
 part 'characteristic.dart';
-
-
-part 'internal/flutter_ble_lib_mixins/device_connection_mixin.dart';
-part 'internal/flutter_ble_lib_mixins/scanning_mixin.dart';
-part 'internal/flutter_ble_lib_mixins/log_level_mixin.dart';
-part 'internal/flutter_ble_lib_mixins/discovery_mixin.dart';
-part 'internal/internal_ble_manager.dart';
-part 'internal/managers_for_classes.dart';
-part 'internal/constants.dart';
-part 'internal/lib_core.dart';

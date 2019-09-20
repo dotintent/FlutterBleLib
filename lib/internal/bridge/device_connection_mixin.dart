@@ -1,4 +1,4 @@
-part of flutter_ble_lib;
+part of internal_bridge_lib;
 
 mixin DeviceConnectionMixin on FlutterBLE {
   final EventChannel _peripheralConnectionStateEventChannel =
@@ -20,6 +20,9 @@ mixin DeviceConnectionMixin on FlutterBLE {
       String identifier, bool emitCurrentValue) async* {
     yield* _peripheralConnectionStateEventChannel
         .receiveBroadcastStream()
+        .map((jsonString) => ConnectionStateContainer.fromJson(jsonDecode(jsonString)))
+        .where((container) => container.peripheralIdentifier == identifier)
+        .map((container) => container.connectionState)
         .map((rawValue) {
       switch (rawValue) {
         case NativeConnectionState.connected:
