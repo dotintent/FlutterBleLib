@@ -1,26 +1,34 @@
 part of flutter_ble_lib;
 
-class MethodName {
+abstract class MethodName {
   static const String createClient = "createClient";
   static const String destroyClient = "destroyClient";
+
   static const String startDeviceScan = "startDeviceScan";
   static const String stopDeviceScan = "stopDeviceScan";
+
   static const String connectToDevice = "connectToDevice";
   static const String isDeviceConnected = "isDeviceConnected";
   static const String observeConnectionState = "observeConnectionState";
   static const String cancelConnection = "cancelConnection";
+
+  static const String discoverAllServicesAndCharacteristics =
+      "discoverAllServicesAndCharacteristics";
+  static const String services = "services";
+  static const String characteristics = "characteristics";
+  static const String characteristicsForService = "characteristicsForService";
 }
 
-class ChannelName {
+abstract class ChannelName {
   static const String flutterBleLib = "flutter_ble_lib";
   static const String stateRestoreEvents =
       flutterBleLib + "/stateRestoreEvents";
   static const String scanningEvents = flutterBleLib + "/scanningEvents";
-  static const String connectionStateChangeEvents = flutterBleLib +
-      "/connectionStateChangeEvents";
+  static const String connectionStateChangeEvents =
+      flutterBleLib + "/connectionStateChangeEvents";
 }
 
-class ArgumentName {
+abstract class ArgumentName {
   static const String restoreStateIdentifier = "restoreStateIdentifier";
   static const String scanMode = "scanMode";
   static const String callbackType = "callbackType";
@@ -34,6 +42,9 @@ class ArgumentName {
   static const String refreshGatt = "refreshGatt";
   static const String timeoutMillis = "timeoutMillis";
   static const String emitCurrentValue = "emitCurrentValue";
+
+  static const String serviceUuid = "serviceUuid";
+  static const String serviceId = "serviceId";
 }
 
 abstract class ScanMode {
