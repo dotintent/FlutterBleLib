@@ -1,26 +1,37 @@
-import 'dart:typed_data';
-
+import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_ble_lib_example/devices_list/devices_bloc_provider.dart';
+import 'package:flutter_ble_lib_example/devices_list/devices_list_view.dart';
 
+import 'device_details/device_details_view.dart';
+import 'device_details/devices_details_bloc_provider.dart';
 import 'package:flutter_ble_lib_example/test_scenario_view.dart';
 
-void main() => runApp(MyApp());
 
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
+
+void main() {
+  Fimber.plantTree(DebugTree());
+  runApp(MyApp());
 }
 
-class _MyAppState extends State<MyApp> {
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
+
+class MyApp extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
+        title: 'FlutterBleLib example',
+        theme: new ThemeData(
+          primaryColor: new Color(0xFF0A3D91),
+          accentColor: new Color(0xFFCC0000),
         ),
-        body: TestScenarioWidget(),
-      ),
-    );
+        initialRoute: "/",
+        routes: <String, WidgetBuilder>{
+          "/": (context) => DevicesBlocProvider(child: DevicesListScreen()),
+          "/details": (context) => DeviceDetailsBlocProvider(child: DeviceDetailsView()),
+        },
+        navigatorObservers: [routeObserver],
+      );
   }
 }

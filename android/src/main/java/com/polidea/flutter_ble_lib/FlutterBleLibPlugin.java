@@ -9,6 +9,7 @@ import com.polidea.flutter_ble_lib.constant.MethodName;
 import com.polidea.flutter_ble_lib.delegate.CallDelegate;
 import com.polidea.flutter_ble_lib.delegate.CharacteristicsDelegate;
 import com.polidea.flutter_ble_lib.delegate.DeviceConnectionDelegate;
+import com.polidea.flutter_ble_lib.delegate.LogLevelDelegate;
 import com.polidea.flutter_ble_lib.delegate.DiscoveryDelegate;
 import com.polidea.flutter_ble_lib.event.AdapterStateStreamHandler;
 import com.polidea.flutter_ble_lib.event.CharacteristicsMonitorStreamHandler;
@@ -67,6 +68,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
         bleAdapter = new BleModule(context);
         delegates = new LinkedList<>();
         delegates.add(new DeviceConnectionDelegate(bleAdapter, connectionStateStreamHandler));
+        delegates.add(new LogLevelDelegate(bleAdapter));
         delegates.add(new DiscoveryDelegate(bleAdapter));
         delegates.add(new CharacteristicsDelegate(bleAdapter, characteristicsMonitorStreamHandler));
     }
@@ -117,6 +119,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
     private void destroyClient(Result result) {
         bleAdapter.destroyClient();
         scanningStreamHandler.onComplete();
+        connectionStateStreamHandler.onComplete();
         result.success(null);
     }
 

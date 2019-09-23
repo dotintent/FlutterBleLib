@@ -86,3 +86,10 @@ class Peripheral {
         transactionId,
       );
 }
+
+enum PeripheralConnectionState {
+  connecting,
+  connected,
+  disconnected,
+  disconnecting
+}

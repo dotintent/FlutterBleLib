@@ -1,4 +1,3 @@
-part of flutter_ble_lib;
 
 abstract class MethodName {
   static const String createClient = "createClient";
@@ -17,6 +16,9 @@ abstract class MethodName {
   static const String services = "services";
   static const String characteristics = "characteristics";
   static const String characteristicsForService = "characteristicsForService";
+  
+  static const String setLogLevel = "setLogLevel";
+  static const String logLevel = "logLevel";
 
   static const String readCharacteristicForIdentifier = "readCharacteristicForIdentifier";
   static const String readCharacteristicForDevice = "readCharacteristicForDevice";
@@ -64,6 +66,8 @@ abstract class ArgumentName {
 
   static const String bytes = "bytes";
   static const String withResponse = "withResponse";
+  
+  static const String logLevel = "logLevel";
 }
 
 abstract class ScanMode {

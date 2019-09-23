@@ -1,4 +1,4 @@
-part of flutter_ble_lib;
+import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 
 abstract class ManagerForPeripheral {
   Future<void> connectToPeripheral(String peripheralIdentifier,

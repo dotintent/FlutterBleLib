@@ -32,20 +32,16 @@ public class DiscoveryDelegate implements CallDelegate {
     private ServiceJsonConverter serviceJsonConverter = new ServiceJsonConverter();
     private MultiCharacteristicsResponseJsonConverter multiCharacteristicsResponseJsonConverter = new MultiCharacteristicsResponseJsonConverter();
 
-    public DiscoveryDelegate(BleAdapter adapter) {
-        this.adapter = adapter;
-    }
+    private static List<String> supportedMethods = Arrays.asList(
+            MethodName.DISCOVER_ALL_SERVICES_AND_CHARACTERISTICS,
+            MethodName.GET_CHARACTERISTICS,
+            MethodName.GET_SERVICES,
+            MethodName.GET_CHARACTERISTICS_FOR_SERVICE
+            );
 
-    @Override
-    public boolean canHandle(MethodCall call) {
-        switch (call.method) {
-            case MethodName.DISCOVER_ALL_SERVICES_AND_CHARACTERISTICS:
-            case MethodName.GET_CHARACTERISTICS:
-            case MethodName.GET_SERVICES:
-            case MethodName.GET_CHARACTERISTICS_FOR_SERVICE:
-                return true;
-        }
-        return false;
+    public DiscoveryDelegate(BleAdapter adapter) {
+        super(supportedMethods);
+        this.adapter = adapter;
     }
 
     @Override

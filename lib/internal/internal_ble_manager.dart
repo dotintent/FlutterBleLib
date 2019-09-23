@@ -1,4 +1,7 @@
-part of flutter_ble_lib;
+import 'package:flutter_ble_lib/flutter_ble_lib.dart';
+import 'package:flutter_ble_lib/internal/managers_for_classes.dart';
+import 'package:flutter_ble_lib/internal/constants.dart';
+import 'package:flutter_ble_lib/internal/bridge/internal_bridge_lib.dart';
 
 class InternalBleManager
     implements
@@ -67,6 +70,16 @@ class InternalBleManager
   @override
   Future<bool> isPeripheralConnected(String peripheralIdentifier) =>
       _bleLib.isPeripheralConnected(peripheralIdentifier);
+
+  @override
+  Future<LogLevel> logLevel() {
+    return _bleLib.logLevel();
+  }
+
+  @override
+  Future<void> setLogLevel(LogLevel logLevel) {
+    return _bleLib.setLogLevel(logLevel);
+  }
 
   @override
   Future<List<Characteristic>> characteristics(

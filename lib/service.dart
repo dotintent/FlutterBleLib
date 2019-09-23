@@ -5,7 +5,7 @@ abstract class _ServiceMetadata {
   static const String id = "serviceId";
 }
 
-class Service {
+class Service extends InternalService {
   Peripheral peripheral;
   ManagerForService _manager;
   String uuid;

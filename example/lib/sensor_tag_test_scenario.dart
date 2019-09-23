@@ -11,7 +11,6 @@ class TestScenario {
   BleManager bleManager = BleManager.getInstance();
   bool deviceConnectionAttempted = false;
   StreamSubscription monitoringStreamSubscription;
-
   Future<void> runTestScenario(Logger log, Logger logError) async {
     log("CREATING CLIENT...");
     await bleManager.createClient(
@@ -23,7 +22,6 @@ class TestScenario {
     log("CREATED CLIENT");
     log("STARTING SCAN...");
     log("Looking for Sensor Tag...");
-
     bleManager.startPeripheralScan().listen((scanResult) async {
       log("RECEIVED SCAN RESULT: "
           "\n name: ${scanResult.peripheral.name}"
@@ -42,7 +40,6 @@ class TestScenario {
       logError(error);
     });
   }
-
   Future<void> _tryToConnect(
       Peripheral peripheral, Logger log, Logger logError) async {
     log("OBSERVING connection state \nfor ${peripheral.name},"
@@ -56,7 +53,6 @@ class TestScenario {
         log("${peripheral.name} has DISCONNECTED");
       }
     });
-
     log("CONNECTING to ${peripheral.name}, ${peripheral.identifier}...");
     await peripheral.connect();
     log("CONNECTED to ${peripheral.name}, ${peripheral.identifier}!");
