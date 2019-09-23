@@ -1,6 +1,9 @@
 part of flutter_ble_lib;
 
 mixin CharacteristicsMixin on FlutterBLE {
+  final EventChannel _monitoringChannel =
+      const EventChannel(ChannelName.monitorCharacteristic);
+
   Future<CharacteristicWithValue> readCharacteristicForIdentifier(
     Peripheral peripheral,
     int characteristicIdentifier, {
@@ -54,7 +57,7 @@ mixin CharacteristicsMixin on FlutterBLE {
             _parseCharacteristicResponse(peripheral, rawJsonValue).first,
       );
 
-  Future<Characteristic> writeCharacteristicForIdentifier(
+  Future<CharacteristicWithValue> writeCharacteristicForIdentifier(
     Peripheral peripheral,
     int characteristicIdentifier,
     Uint8List bytes,
@@ -74,7 +77,7 @@ mixin CharacteristicsMixin on FlutterBLE {
             _parseCharacteristicResponse(peripheral, rawJsonValue).first,
       );
 
-  Future<Characteristic> writeCharacteristicForDevice(
+  Future<CharacteristicWithValue> writeCharacteristicForDevice(
           Peripheral peripheral,
           String serviceUUID,
           String characteristicUUID,
@@ -96,7 +99,7 @@ mixin CharacteristicsMixin on FlutterBLE {
             _parseCharacteristicResponse(peripheral, rawJsonValue).first,
       );
 
-  Future<Characteristic> writeCharacteristicForService(
+  Future<CharacteristicWithValue> writeCharacteristicForService(
     Peripheral peripheral,
     int serviceIdentifier,
     String characteristicUUID,
@@ -117,6 +120,64 @@ mixin CharacteristicsMixin on FlutterBLE {
         (rawJsonValue) =>
             _parseCharacteristicResponse(peripheral, rawJsonValue).first,
       );
+
+  Stream<CharacteristicWithValue> monitorCharacteristicForIdentifier(
+    Peripheral peripheral,
+    int characteristicIdentifier, {
+    String transactionId,
+  }) async* {
+    yield* _monitoringChannel.receiveBroadcastStream().map(
+          (rawJsonValue) =>
+              _parseCharacteristicResponse(peripheral, rawJsonValue).first,
+        );
+    _methodChannel.invokeMethod(
+      MethodName.monitorCharacteristicForIdentifier,
+      <String, dynamic>{
+        ArgumentName.characteristicIdentifier: characteristicIdentifier,
+        ArgumentName.transactionId: transactionId,
+      },
+    );
+  }
+
+  Stream<CharacteristicWithValue> monitorCharacteristicForDevice(
+    Peripheral peripheral,
+    String serviceUuid,
+    String characteristicUUID, {
+    String transactionId,
+  }) async* {
+    yield* _monitoringChannel.receiveBroadcastStream().map(
+          (rawJsonValue) =>
+              _parseCharacteristicResponse(peripheral, rawJsonValue).first,
+        );
+    _methodChannel.invokeMethod(
+      MethodName.monitorCharacteristicForDevice,
+      <String, dynamic>{
+        ArgumentName.serviceUuid: serviceUuid,
+        ArgumentName.characteristicUuid: characteristicUUID,
+        ArgumentName.transactionId: transactionId,
+      },
+    );
+  }
+
+  Stream<CharacteristicWithValue> monitorCharacteristicForService(
+    Peripheral peripheral,
+    int serviceIdentifier,
+    String characteristicUUID, {
+    String transactionId,
+  }) async* {
+    yield* _monitoringChannel.receiveBroadcastStream().map(
+          (rawJsonValue) =>
+              _parseCharacteristicResponse(peripheral, rawJsonValue).first,
+        );
+    _methodChannel.invokeMethod(
+      MethodName.monitorCharacteristicForService,
+      <String, dynamic>{
+        ArgumentName.serviceId: serviceIdentifier,
+        ArgumentName.characteristicUuid: characteristicUUID,
+        ArgumentName.transactionId: transactionId,
+      },
+    );
+  }
 
   List<CharacteristicWithValue> _parseCharacteristicResponse(
       Peripheral peripheral, rawJsonValue) {

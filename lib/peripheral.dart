@@ -73,4 +73,16 @@ class Peripheral {
         withResponse,
         transactionId: transactionId,
       );
+
+  Stream<CharacteristicWithValue> monitorCharacteristic(
+    String serviceUUID,
+    String characteristicUUID, {
+    String transactionId,
+  }) =>
+      _manager.monitorCharacteristicForDevice(
+        this,
+        serviceUUID,
+        characteristicUUID,
+        transactionId: transactionId,
+      );
 }

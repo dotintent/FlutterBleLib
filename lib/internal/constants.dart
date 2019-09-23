@@ -35,6 +35,8 @@ abstract class ChannelName {
   static const String scanningEvents = flutterBleLib + "/scanningEvents";
   static const String connectionStateChangeEvents =
       flutterBleLib + "/connectionStateChangeEvents";
+  static const String monitorCharacteristic = flutterBleLib +
+      "/monitorCharacteristic";
 }
 
 abstract class ArgumentName {

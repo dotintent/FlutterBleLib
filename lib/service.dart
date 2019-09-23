@@ -41,4 +41,15 @@ class Service {
         characteristicUUID,
         transactionId: transactionId,
       );
+
+  Stream<CharacteristicWithValue> monitorCharacteristic(
+    String characteristicUUID, {
+    String transactionId,
+  }) =>
+      _manager.monitorCharacteristicForService(
+        peripheral,
+        _id,
+        characteristicUUID,
+        transactionId: transactionId,
+      );
 }

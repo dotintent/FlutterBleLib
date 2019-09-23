@@ -53,6 +53,13 @@ class Characteristic {
         withResponse,
         transactionId: transactionId,
       );
+
+  Stream<CharacteristicWithValue> monitor({String transactionId}) =>
+      _manager.monitorCharacteristicForIdentifier(
+        service.peripheral,
+        _id,
+        transactionId: transactionId,
+      );
 }
 
 mixin WithValue on Characteristic {

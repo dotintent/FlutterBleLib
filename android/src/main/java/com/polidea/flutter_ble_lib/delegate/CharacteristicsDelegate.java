@@ -380,14 +380,6 @@ public class CharacteristicsDelegate implements CallDelegate {
         result.success(null);
     }
 
-    private byte[] convertToBytes(List<Byte> ints) {
-        byte[] bytes = new byte[ints.size()];
-        for (int i = 0; i < ints.size(); i++) {
-            bytes[i++] = ints.get(i);
-        }
-        return bytes;
-    }
-
     private CharacteristicsResponse createResponseWithSingleCharacteristic(Characteristic characteristic) {
         return new CharacteristicsResponse(
                 new Characteristic[]{characteristic},

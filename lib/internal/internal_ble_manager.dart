@@ -167,4 +167,44 @@ class InternalBleManager
         withResponse,
         transactionId: transactionId,
       );
+
+  @override
+  Stream<CharacteristicWithValue> monitorCharacteristicForDevice(
+    Peripheral peripheral,
+    String serviceUUID,
+    String characteristicUUID, {
+    String transactionId,
+  }) =>
+      _bleLib.monitorCharacteristicForDevice(
+        peripheral,
+        serviceUUID,
+        characteristicUUID,
+        transactionId: transactionId,
+      );
+
+  @override
+  Stream<CharacteristicWithValue> monitorCharacteristicForService(
+    Peripheral peripheral,
+    int serviceIdentifier,
+    String characteristicUUID, {
+    String transactionId,
+  }) =>
+      _bleLib.monitorCharacteristicForService(
+        peripheral,
+        serviceIdentifier,
+        characteristicUUID,
+        transactionId: transactionId,
+      );
+
+  @override
+  Stream<CharacteristicWithValue> monitorCharacteristicForIdentifier(
+    Peripheral peripheral,
+    int characteristicIdentifier, {
+    String transactionId,
+  }) =>
+      _bleLib.monitorCharacteristicForIdentifier(
+        peripheral,
+        characteristicIdentifier,
+        transactionId: transactionId,
+      );
 }

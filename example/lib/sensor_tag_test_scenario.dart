@@ -16,6 +16,7 @@ abstract class SensorTagTemperatureUuids {
 class TestScenario {
   BleManager bleManager = BleManager.getInstance();
   bool deviceConnectionAttempted = false;
+  StreamSubscription monitoringStreamSubscription;
 
   Future<void> runTestScenario(Logger log, Logger logError) async {
     log("CREATING CLIENT...");
@@ -66,6 +67,19 @@ class TestScenario {
     await peripheral.connect();
     log("CONNECTED to ${peripheral.name}, ${peripheral.identifier}!");
     deviceConnectionAttempted = false;
+
+    monitoringStreamSubscription?.cancel();
+    monitoringStreamSubscription = peripheral
+        .monitorCharacteristic(SensorTagTemperatureUuids.temperatureService,
+            SensorTagTemperatureUuids.temperatureConfig)
+        .listen(
+      (characteristic) {
+        log("Characteristic ${characteristic.uuid} changed. New value: ${characteristic.value}");
+      },
+      onError: (error) {
+        log("Error when trying to modify characteristic value. $error");
+      },
+    );
 
     peripheral
         .discoverAllServicesAndCharacteristics()
