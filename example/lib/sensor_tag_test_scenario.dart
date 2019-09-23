@@ -3,15 +3,9 @@ import 'dart:typed_data';
 
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 
-typedef Logger = Function(String);
+import 'sensor_tag_config.dart';
 
-abstract class SensorTagTemperatureUuids {
-  static const String temperatureService =
-      "F000AA00-0451-4000-B000-000000000000";
-  static const String temperatureData = "F000AA01-0451-4000-B000-000000000000";
-  static const String temperatureConfig =
-      "F000AA02-0451-4000-B000-000000000000";
-}
+typedef Logger = Function(String);
 
 class TestScenario {
   BleManager bleManager = BleManager.getInstance();
@@ -71,7 +65,7 @@ class TestScenario {
     monitoringStreamSubscription?.cancel();
     monitoringStreamSubscription = peripheral
         .monitorCharacteristic(SensorTagTemperatureUuids.temperatureService,
-            SensorTagTemperatureUuids.temperatureConfig)
+            SensorTagTemperatureUuids.temperatureConfigCharacteristic)
         .listen(
       (characteristic) {
         log("Characteristic ${characteristic.uuid} changed. New value: ${characteristic.value}");
@@ -106,14 +100,14 @@ class TestScenario {
           log("Turn off temperature update");
           return peripheral.writeCharacteristic(
               SensorTagTemperatureUuids.temperatureService,
-              SensorTagTemperatureUuids.temperatureConfig,
+              SensorTagTemperatureUuids.temperatureConfigCharacteristic,
               Uint8List.fromList([0]),
               false);
         })
         .then((_) {
           return peripheral.readCharacteristic(
               SensorTagTemperatureUuids.temperatureService,
-              SensorTagTemperatureUuids.temperatureData);
+              SensorTagTemperatureUuids.temperatureDataCharacteristic);
         })
         .then((data) {
           log("Temperature value ${data.value}");
@@ -122,7 +116,7 @@ class TestScenario {
           log("Turn on temperature update");
           return peripheral.writeCharacteristic(
               SensorTagTemperatureUuids.temperatureService,
-              SensorTagTemperatureUuids.temperatureConfig,
+              SensorTagTemperatureUuids.temperatureConfigCharacteristic,
               Uint8List.fromList([1]),
               false);
         })
@@ -130,7 +124,7 @@ class TestScenario {
         .then((_) {
           return peripheral.readCharacteristic(
               SensorTagTemperatureUuids.temperatureService,
-              SensorTagTemperatureUuids.temperatureData);
+              SensorTagTemperatureUuids.temperatureDataCharacteristic);
         })
         .then((data) {
           log("Temperature value ${data.value}");
