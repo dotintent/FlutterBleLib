@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import 'error/ble_error.dart';
@@ -18,6 +19,7 @@ part 'characteristic.dart';
 
 part 'internal/flutter_ble_lib_mixins/device_connection_mixin.dart';
 part 'internal/flutter_ble_lib_mixins/scanning_mixin.dart';
+part 'internal/flutter_ble_lib_mixins/log_level_mixin.dart';
 part 'internal/flutter_ble_lib_mixins/discovery_mixin.dart';
 part 'internal/internal_ble_manager.dart';
 part 'internal/managers_for_classes.dart';

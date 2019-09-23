@@ -15,4 +15,7 @@ public interface MethodName {
     String GET_SERVICES = "services";
     String GET_CHARACTERISTICS = "characteristics";
     String GET_CHARACTERISTICS_FOR_SERVICE = "characteristicsForService";
+
+    String LOG_LEVEL = "logLevel";
+    String SET_LOG_LEVEL = "setLogLevel";
 }

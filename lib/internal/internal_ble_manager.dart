@@ -65,6 +65,16 @@ class InternalBleManager
       _bleLib.isPeripheralConnected(peripheralIdentifier);
 
   @override
+  Future<LogLevel> logLevel() {
+    return _bleLib.logLevel();
+  }
+
+  @override
+  Future<void> setLogLevel(LogLevel logLevel) {
+    return _bleLib.setLogLevel(logLevel);
+  }
+
+  @override
   Future<List<Characteristic>> characteristics(
     Peripheral peripheral,
     String serviceUuid,

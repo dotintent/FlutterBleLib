@@ -17,6 +17,8 @@ abstract class MethodName {
   static const String services = "services";
   static const String characteristics = "characteristics";
   static const String characteristicsForService = "characteristicsForService";
+  static const String setLogLevel = "setLogLevel";
+  static const String logLevel = "logLevel";
 }
 
 abstract class ChannelName {
@@ -45,6 +47,8 @@ abstract class ArgumentName {
 
   static const String serviceUuid = "serviceUuid";
   static const String serviceId = "serviceId";
+
+  static const String logLevel = "logLevel";
 }
 
 abstract class ScanMode {

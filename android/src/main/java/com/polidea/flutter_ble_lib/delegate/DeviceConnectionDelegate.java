@@ -19,30 +19,29 @@ import com.polidea.multiplatformbleadapter.OnSuccessCallback;
 import com.polidea.multiplatformbleadapter.RefreshGattMoment;
 import com.polidea.multiplatformbleadapter.errors.BleError;
 
+import java.util.Arrays;
+import java.util.List;
+
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 
-public class DeviceConnectionDelegate implements CallDelegate {
+public class DeviceConnectionDelegate extends CallDelegate {
+
+    private static  List<String> supportedMethods = Arrays.asList(
+            MethodName.CONNECT_TO_DEVICE,
+            MethodName.IS_DEVICE_CONNECTED,
+            MethodName.OBSERVE_CONNECTION_STATE,
+            MethodName.CANCEL_CONNECTION
+    );
 
     private BleAdapter bleAdapter;
     private ConnectionStateStreamHandler streamHandler;
     private BleErrorJsonConverter bleErrorJsonConverter = new BleErrorJsonConverter();
 
     public DeviceConnectionDelegate(BleAdapter bleAdapter, ConnectionStateStreamHandler streamHandler) {
+        super(supportedMethods);
         this.bleAdapter = bleAdapter;
         this.streamHandler = streamHandler;
-    }
-
-    @Override
-    public boolean canHandle(MethodCall call) {
-        switch (call.method) {
-            case MethodName.CONNECT_TO_DEVICE:
-            case MethodName.IS_DEVICE_CONNECTED:
-            case MethodName.OBSERVE_CONNECTION_STATE:
-            case MethodName.CANCEL_CONNECTION:
-                return true;
-        }
-        return false;
     }
 
     @Override
@@ -132,7 +131,7 @@ public class DeviceConnectionDelegate implements CallDelegate {
                 new OnErrorCallback() {
                     @Override
                     public void onError(BleError error) {
-                        result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
+                        result.error(String.valueOf(error.errorCode), error.reason, bleErrorJsonConverter.toJson(error));
                     }
                 });
 
