@@ -18,6 +18,9 @@ abstract class BleDevice {
 
   BleDevice(this.name, this.id, this.peripheral) {
     _category = _nameToCategory(name);
+    if(this.name == null) {
+
+    }
   }
 
   factory BleDevice.connected(BleDevice bleDevice) {
@@ -43,7 +46,7 @@ abstract class BleDevice {
 
   @override
   bool operator ==(other) =>
-      other is BleDevice && compareAsciiLowerCase(this.name, other.name) == 0;
+      other is BleDevice && this.name != null && other.name != null && compareAsciiLowerCase(this.name, other.name) == 0;
 
   @override
   String toString() {
@@ -57,7 +60,7 @@ class DisconnectedBleDevice extends BleDevice {
   StreamController<BleDevice> _devicesInConnectingProcess;
 
   DisconnectedBleDevice(String name, String id, Peripheral peripheral)
-      : super(name, id, peripheral);
+      : super(name ?? "", id, peripheral);
 
   @override
   String toString() {
@@ -72,15 +75,11 @@ class DisconnectedBleDevice extends BleDevice {
 class ConnectedBleDevice extends BleDevice {
 
   ConnectedBleDevice(String name, String id, Peripheral peripheral)
-      : super(name, id, peripheral);
+      : super(name ?? "", id, peripheral);
 
   @override
   void abandon() {
-
   }
-
-
 }
-
 
 enum DeviceCategory { sensorTag, hex, other }

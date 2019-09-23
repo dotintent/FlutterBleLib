@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:fimber/fimber.dart';
@@ -13,60 +12,123 @@ import 'package:rxdart/rxdart.dart';
 class DeviceDetailsBloc {
   final BleManager _bleManager;
   final DeviceRepository _deviceRepository;
-//  SensorTagFactoryag _sensorTag;
 
   BehaviorSubject<BleDevice> _deviceController;
 
   ValueObservable<BleDevice> get device => _deviceController.stream;
 
+  BehaviorSubject<PeripheralConnectionState> _connectionStateController;
+
+  ValueObservable<PeripheralConnectionState> get connectionState =>
+      _connectionStateController.stream;
+
+  Subject<List<DebugLog>> _logsController;
+
+  Observable<List<DebugLog>> get logs => _logsController.stream;
+
   StreamSubscription connectionSubscription;
 
-  Stream<BleDevice> get disconnectedDevice => _deviceRepository.pickedDevice.skipWhile((bleDevice) => bleDevice != null);
+  Stream<BleDevice> get disconnectedDevice => _deviceRepository.pickedDevice
+      .skipWhile((bleDevice) => bleDevice != null);
 
   DeviceDetailsBloc(this._deviceRepository, this._bleManager) {
-    _deviceController =
-        BehaviorSubject<BleDevice>.seeded(_deviceRepository.pickedDevice.value);
+    var device = _deviceRepository.pickedDevice.value;
+    _deviceController = BehaviorSubject<BleDevice>.seeded(device);
 
+    _connectionStateController =
+        BehaviorSubject<PeripheralConnectionState>.seeded(device.isConnected
+            ? PeripheralConnectionState.connected
+            : PeripheralConnectionState.disconnected);
+
+    _logsController = PublishSubject<List<DebugLog>>();
   }
 
   void init() {
     Fimber.d("init bloc");
     _deviceController.stream.listen((bleDevice) {
       Fimber.d("got bleDevice: $bleDevice");
-      bleDevice.peripheral.isConnected()
-        .then((isConnected) {
-          if (!isConnected) {
-            bleDevice.peripheral.connect().then((_) {
-              _deviceController.add(BleDevice.connected(bleDevice));
-            });
-          }
-        })
-      .catchError((error) => Fimber.e("Connection problem", ex: error));
-
-//      if (bleDevice.bluetoothDeviceState == BluetoothDeviceState.disconnected) {
-//        _devicesInConnectingProcess = (bleDevice as DisconnectedBleDevice).connect();
-//        _devicesInConnectingProcess.pipe(_deviceController);
-//        return;
-//      }
-//    });
-//    _deviceController.listen((BleDevice bleDevice) {
-//      if (bleDevice is ConnectedBleDevice ) {
-//        _sensorTag = _sensorTagFactory.create(bleDevice)..initAllSensors();
-//        _sensorTag.ambientTemperature.pipe(_ambientTemperaturSubject);
-//      }
-//    });
+      bleDevice.peripheral.isConnected().then((isConnected) {
+        Fimber.d('The device is connected: $isConnected');
+        if (!isConnected) {
+          _connectTo(bleDevice);
+        }
+      }).catchError((error) => Fimber.e("Connection problem", ex: error));
     });
   }
 
-  void disconnect() {
-    _deviceController.stream.value.peripheral.disconnectOrCancelConnection()
-    .then((_) { _deviceRepository.pickDevice(null); });
+  Future<void> disconnect() async {
+    return _deviceController.stream.value.peripheral
+        .disconnectOrCancelConnection()
+        .then((_) {
+      _deviceRepository.pickDevice(null);
+    });
   }
 
   void dispose() async {
     _deviceController.value?.abandon();
     await _deviceController.drain();
     _deviceController.close();
+
+    await _connectionStateController.drain();
+    _connectionStateController.close();
   }
 
+  void _connectTo(BleDevice bleDevice) async {
+    var peripheral = bleDevice.peripheral;
+    peripheral
+        .observeConnectionState(emitCurrentValue: true)
+        .listen((connectionState) {
+      Fimber.d('Observerd new connection state: $connectionState');
+      _connectionStateController.add(connectionState);
+    });
+
+    Fimber.d('Try to connecto the device');
+    await peripheral.connect();
+    Fimber.d("Connected to the device");
+    List<DebugLog> logs = [];
+    Function log = (text) {
+      logs.insert(0, DebugLog(DateTime.now().toString(), text));
+      _logsController.add(logs);
+    };
+
+    peripheral
+        .discoverAllServicesAndCharacteristics()
+        .then((_) => peripheral.services())
+        .then((services) {
+          log("PRINTING SERVICES for ${peripheral.name}");
+          services.forEach((service) => log("Found service ${service.uuid}"));
+          return services.first;
+        })
+        .then((service) async {
+          log("PRINTING CHARACTERISTICS FOR SERVICE \n${service.uuid}");
+          List<Characteristic> characteristics =
+              await service.characteristics();
+          characteristics.forEach((characteristic) {
+            log("${characteristic.uuid}");
+          });
+
+          log("PRINTING CHARACTERISTICS FROM \nPERIPHERAL for the same service");
+          return peripheral.characteristics(service.uuid);
+        })
+        .then((characteristics) => characteristics.forEach((characteristic) =>
+            log("Found characteristic \n ${characteristic.uuid}")))
+        .then((_) {
+          log("WAITING 10 SECOND BEFORE DISCONNECTING");
+          return Future.delayed(Duration(seconds: 10));
+        })
+        .then((_) {
+          log("DISCONNECTING...");
+          return peripheral.disconnectOrCancelConnection();
+        })
+        .then((_) {
+          log("Disconnected!");
+        });
+  }
+}
+
+class DebugLog {
+  String time;
+  String content;
+
+  DebugLog(this.time, this.content);
 }
