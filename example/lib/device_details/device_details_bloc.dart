@@ -112,6 +112,10 @@ class DeviceDetailsBloc {
         })
         .then((characteristics) => characteristics.forEach((characteristic) =>
             log("Found characteristic \n ${characteristic.uuid}")))
+        .then((_) async {
+            int rssi = await peripheral.rssi();
+            log("rssi $rssi");
+        })
         .then((_) {
           log("WAITING 10 SECOND BEFORE DISCONNECTING");
           return Future.delayed(Duration(seconds: 10));
