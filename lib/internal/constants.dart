@@ -17,12 +17,15 @@ abstract class MethodName {
   static const String services = "services";
   static const String characteristics = "characteristics";
   static const String characteristicsForService = "characteristicsForService";
-  static const String readCharacteristicForIdentifier = "readCharacteristic";
+
+  static const String readCharacteristicForIdentifier = "readCharacteristicForIdentifier";
   static const String readCharacteristicForDevice = "readCharacteristicForDevice";
   static const String readCharacteristicForService = "readCharacteristicForService";
+
   static const String writeCharacteristicForIdentifier = "writeCharacteristicForIdentifier";
   static const String writeCharacteristicForDevice = "writeCharacteristicForDevice";
   static const String writeCharacteristicForService = "writeCharacteristicForService";
+
   static const String monitorCharacteristicForIdentifier = "monitorCharacteristicForIdentifier";
   static const String monitorCharacteristicForDevice = "monitorCharacteristicForDevice";
   static const String monitorCharacteristicForService = "monitorCharacteristicForService";
