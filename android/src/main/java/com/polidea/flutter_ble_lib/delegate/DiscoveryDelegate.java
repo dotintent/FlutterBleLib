@@ -28,6 +28,9 @@ import io.flutter.plugin.common.MethodChannel;
 public class DiscoveryDelegate implements CallDelegate {
     private BleAdapter adapter;
     private BleErrorJsonConverter bleErrorJsonConverter = new BleErrorJsonConverter();
+    private CharacteristicJsonConverter characteristicJsonConverter = new CharacteristicJsonConverter();
+    private ServiceJsonConverter serviceJsonConverter = new ServiceJsonConverter();
+    private MultiCharacteristicsResponseJsonConverter multiCharacteristicsResponseJsonConverter = new MultiCharacteristicsResponseJsonConverter();
 
     public DiscoveryDelegate(BleAdapter adapter) {
         this.adapter = adapter;
@@ -120,11 +123,9 @@ public class DiscoveryDelegate implements CallDelegate {
                 return;
             }
 
-            final Service finalService = foundService;
-
             Characteristic[] characteristics = adapter.getCharacteristicsForService(foundService.getId());
-            MultiCharacteristicsResponse characteristicsResponse = new MultiCharacteristicsResponse(characteristics, finalService);
-            String json = new MultiCharacteristicsResponseJsonConverter().toJson(characteristicsResponse);
+            MultiCharacteristicsResponse characteristicsResponse = new MultiCharacteristicsResponse(characteristics, foundService);
+            String json = multiCharacteristicsResponseJsonConverter.toJson(characteristicsResponse);
             result.success(json);
         } catch (BleError error) {
             error.printStackTrace();
@@ -138,7 +139,7 @@ public class DiscoveryDelegate implements CallDelegate {
     private void getServices(String deviceId, final MethodChannel.Result result) {
         try {
             Service[] services = adapter.getServicesForDevice(deviceId);
-            result.success(new ServiceJsonConverter().toJson(services));
+            result.success(serviceJsonConverter.toJson(services));
         } catch (BleError error) {
             error.printStackTrace();
             result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
@@ -151,7 +152,7 @@ public class DiscoveryDelegate implements CallDelegate {
     private void getCharacteristicsForService(Integer serviceId, final MethodChannel.Result result) {
         try {
             Characteristic[] characteristics = adapter.getCharacteristicsForService(serviceId);
-            result.success(new CharacteristicJsonConverter().toJson(characteristics));
+            result.success(characteristicJsonConverter.toJson(characteristics));
         } catch (BleError error) {
             error.printStackTrace();
             result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
