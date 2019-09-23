@@ -13,6 +13,5 @@ import 'internal/managers_for_classes.dart';
 part 'ble_manager.dart';
 part 'characteristic.dart';
 part 'peripheral.dart';
-part 'enums.dart';
 part 'scan_result.dart';
 part 'service.dart';

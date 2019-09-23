@@ -46,3 +46,10 @@ class Peripheral {
   Future<List<Characteristic>> characteristics(String servicedUuid) =>
       _manager.characteristics(this, servicedUuid);
 }
+
+enum PeripheralConnectionState {
+  connecting,
+  connected,
+  disconnected,
+  disconnecting
+}
