@@ -55,7 +55,7 @@ class Peripheral {
         this,
         serviceUUID,
         characteristicUUID,
-        transactionId: transactionId,
+        transactionId,
       );
 
   Future<Characteristic> writeCharacteristic(
@@ -71,7 +71,7 @@ class Peripheral {
         characteristicUUID,
         bytes,
         withResponse,
-        transactionId: transactionId,
+        transactionId,
       );
 
   Stream<CharacteristicWithValue> monitorCharacteristic(
@@ -83,6 +83,6 @@ class Peripheral {
         this,
         serviceUUID,
         characteristicUUID,
-        transactionId: transactionId,
+        transactionId,
       );
 }

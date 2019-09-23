@@ -93,20 +93,20 @@ class InternalBleManager
   @override
   Future<CharacteristicWithValue> readCharacteristicForIdentifier(
           Peripheral peripheral, int characteristicIdentifier,
-          {String transactionId}) =>
+          String transactionId) =>
       _bleLib.readCharacteristicForIdentifier(
           peripheral, characteristicIdentifier,
-          transactionId: transactionId);
+          transactionId);
 
   @override
   Future<CharacteristicWithValue> readCharacteristicForDevice(
           Peripheral peripheral, String serviceUuid, String characteristicUUID,
-          {String transactionId}) =>
+          String transactionId) =>
       _bleLib.readCharacteristicForDevice(
         peripheral,
         serviceUuid,
         characteristicUUID,
-        transactionId: transactionId,
+        transactionId,
       );
 
   @override
@@ -114,24 +114,24 @@ class InternalBleManager
           Peripheral peripheral,
           int serviceIdentifier,
           String characteristicUUID,
-          {String transactionId}) =>
+          String transactionId) =>
       _bleLib.readCharacteristicForService(
         peripheral,
         serviceIdentifier,
         characteristicUUID,
-        transactionId: transactionId,
+        transactionId,
       );
 
   @override
   Future<Characteristic> writeCharacteristicForIdentifier(Peripheral peripheral,
           int characteristicIdentifier, Uint8List bytes, bool withResponse,
-          {String transactionId}) =>
+          String transactionId) =>
       _bleLib.writeCharacteristicForIdentifier(
         peripheral,
         characteristicIdentifier,
         bytes,
         withResponse,
-        transactionId: transactionId,
+        transactionId,
       );
 
   @override
@@ -141,14 +141,14 @@ class InternalBleManager
           String characteristicUUID,
           Uint8List bytes,
           bool withResponse,
-          {String transactionId}) =>
+          String transactionId) =>
       _bleLib.writeCharacteristicForDevice(
         peripheral,
         serviceUUID,
         characteristicUUID,
         bytes,
         withResponse,
-        transactionId: transactionId,
+        transactionId,
       );
 
   @override
@@ -158,53 +158,53 @@ class InternalBleManager
           String characteristicUUID,
           Uint8List bytes,
           bool withResponse,
-          {String transactionId}) =>
+          String transactionId) =>
       _bleLib.writeCharacteristicForService(
         peripheral,
         serviceIdentifier,
         characteristicUUID,
         bytes,
         withResponse,
-        transactionId: transactionId,
+        transactionId,
       );
 
   @override
   Stream<CharacteristicWithValue> monitorCharacteristicForDevice(
     Peripheral peripheral,
     String serviceUUID,
-    String characteristicUUID, {
+    String characteristicUUID,
     String transactionId,
-  }) =>
+  ) =>
       _bleLib.monitorCharacteristicForDevice(
         peripheral,
         serviceUUID,
         characteristicUUID,
-        transactionId: transactionId,
+        transactionId,
       );
 
   @override
   Stream<CharacteristicWithValue> monitorCharacteristicForService(
     Peripheral peripheral,
     int serviceIdentifier,
-    String characteristicUUID, {
+    String characteristicUUID,
     String transactionId,
-  }) =>
+  ) =>
       _bleLib.monitorCharacteristicForService(
         peripheral,
         serviceIdentifier,
         characteristicUUID,
-        transactionId: transactionId,
+        transactionId,
       );
 
   @override
   Stream<CharacteristicWithValue> monitorCharacteristicForIdentifier(
     Peripheral peripheral,
-    int characteristicIdentifier, {
+    int characteristicIdentifier,
     String transactionId,
-  }) =>
+  ) =>
       _bleLib.monitorCharacteristicForIdentifier(
         peripheral,
         characteristicIdentifier,
-        transactionId: transactionId,
+        transactionId,
       );
 }

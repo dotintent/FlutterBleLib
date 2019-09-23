@@ -29,9 +29,8 @@ class Service {
     bool withResponse, {
     String transactionId,
   }) =>
-      _manager.writeCharacteristicForService(
-          peripheral, _id, characteristicUUID, bytes, withResponse,
-          transactionId: transactionId);
+      _manager.writeCharacteristicForService(peripheral, _id,
+          characteristicUUID, bytes, withResponse, transactionId);
 
   Future<Characteristic> readCharacteristic(String characteristicUUID,
           {String transactionId}) =>
@@ -39,7 +38,7 @@ class Service {
         peripheral,
         _id,
         characteristicUUID,
-        transactionId: transactionId,
+        transactionId,
       );
 
   Stream<CharacteristicWithValue> monitorCharacteristic(
@@ -50,6 +49,6 @@ class Service {
         peripheral,
         _id,
         characteristicUUID,
-        transactionId: transactionId,
+        transactionId,
       );
 }

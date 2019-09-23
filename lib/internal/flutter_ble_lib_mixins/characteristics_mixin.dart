@@ -6,9 +6,9 @@ mixin CharacteristicsMixin on FlutterBLE {
 
   Future<CharacteristicWithValue> readCharacteristicForIdentifier(
     Peripheral peripheral,
-    int characteristicIdentifier, {
+    int characteristicIdentifier,
     String transactionId,
-  }) =>
+  ) =>
       _methodChannel.invokeMethod(
         MethodName.readCharacteristicForIdentifier,
         <String, dynamic>{
@@ -23,9 +23,9 @@ mixin CharacteristicsMixin on FlutterBLE {
   Future<CharacteristicWithValue> readCharacteristicForDevice(
     Peripheral peripheral,
     String serviceUuid,
-    String characteristicUUID, {
+    String characteristicUUID,
     String transactionId,
-  }) =>
+  ) =>
       _methodChannel.invokeMethod(
         MethodName.readCharacteristicForDevice,
         <String, dynamic>{
@@ -42,9 +42,9 @@ mixin CharacteristicsMixin on FlutterBLE {
   Future<CharacteristicWithValue> readCharacteristicForService(
     Peripheral peripheral,
     int serviceIdentifier,
-    String characteristicUUID, {
+    String characteristicUUID,
     String transactionId,
-  }) =>
+  ) =>
       _methodChannel.invokeMethod(
         MethodName.readCharacteristicForService,
         <String, dynamic>{
@@ -61,9 +61,9 @@ mixin CharacteristicsMixin on FlutterBLE {
     Peripheral peripheral,
     int characteristicIdentifier,
     Uint8List bytes,
-    bool withResponse, {
+    bool withResponse,
     String transactionId,
-  }) =>
+  ) =>
       _methodChannel.invokeMethod(
         MethodName.writeCharacteristicForIdentifier,
         <String, dynamic>{
@@ -83,7 +83,7 @@ mixin CharacteristicsMixin on FlutterBLE {
           String characteristicUUID,
           Uint8List bytes,
           bool withResponse,
-          {String transactionId}) =>
+          String transactionId) =>
       _methodChannel.invokeMethod(
         MethodName.writeCharacteristicForDevice,
         <String, dynamic>{
@@ -104,9 +104,9 @@ mixin CharacteristicsMixin on FlutterBLE {
     int serviceIdentifier,
     String characteristicUUID,
     Uint8List bytes,
-    bool withResponse, {
+    bool withResponse,
     String transactionId,
-  }) =>
+  ) =>
       _methodChannel.invokeMethod(
         MethodName.writeCharacteristicForService,
         <String, dynamic>{
@@ -123,9 +123,9 @@ mixin CharacteristicsMixin on FlutterBLE {
 
   Stream<CharacteristicWithValue> monitorCharacteristicForIdentifier(
     Peripheral peripheral,
-    int characteristicIdentifier, {
+    int characteristicIdentifier,
     String transactionId,
-  }) async* {
+  ) async* {
     yield* _monitoringChannel.receiveBroadcastStream().map(
           (rawJsonValue) =>
               _parseCharacteristicResponse(peripheral, rawJsonValue),
@@ -142,9 +142,9 @@ mixin CharacteristicsMixin on FlutterBLE {
   Stream<CharacteristicWithValue> monitorCharacteristicForDevice(
     Peripheral peripheral,
     String serviceUuid,
-    String characteristicUUID, {
+    String characteristicUUID,
     String transactionId,
-  }) async* {
+  ) async* {
     yield* _monitoringChannel.receiveBroadcastStream().map(
           (rawJsonValue) =>
               _parseCharacteristicResponse(peripheral, rawJsonValue),
@@ -162,9 +162,9 @@ mixin CharacteristicsMixin on FlutterBLE {
   Stream<CharacteristicWithValue> monitorCharacteristicForService(
     Peripheral peripheral,
     int serviceIdentifier,
-    String characteristicUUID, {
+    String characteristicUUID,
     String transactionId,
-  }) async* {
+  ) async* {
     yield* _monitoringChannel.receiveBroadcastStream().map(
           (rawJsonValue) =>
               _parseCharacteristicResponse(peripheral, rawJsonValue),

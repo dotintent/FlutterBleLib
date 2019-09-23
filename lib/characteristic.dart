@@ -38,7 +38,7 @@ class Characteristic {
       _manager.readCharacteristicForIdentifier(
         service.peripheral,
         _id,
-        transactionId: transactionId,
+        transactionId,
       );
 
   Future<Characteristic> write(
@@ -51,14 +51,14 @@ class Characteristic {
         _id,
         bytes,
         withResponse,
-        transactionId: transactionId,
+        transactionId,
       );
 
   Stream<CharacteristicWithValue> monitor({String transactionId}) =>
       _manager.monitorCharacteristicForIdentifier(
         service.peripheral,
         _id,
-        transactionId: transactionId,
+        transactionId,
       );
 }
 

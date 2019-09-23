@@ -23,9 +23,9 @@ abstract class ManagerForPeripheral {
   Future<CharacteristicWithValue> readCharacteristicForDevice(
     Peripheral peripheral,
     String serviceUuid,
-    String characteristicUUID, {
+    String characteristicUUID,
     String transactionId,
-  });
+  );
 
   Future<Characteristic> writeCharacteristicForDevice(
       Peripheral peripheral,
@@ -33,14 +33,14 @@ abstract class ManagerForPeripheral {
       String characteristicUUID,
       Uint8List bytes,
       bool withResponse,
-      {String transactionId});
+      String transactionId);
 
   Stream<CharacteristicWithValue> monitorCharacteristicForDevice(
     Peripheral peripheral,
     String serviceUUID,
-    String characteristicUUID, {
+    String characteristicUUID,
     String transactionId,
-  });
+  );
 }
 
 abstract class ManagerForService {
@@ -49,45 +49,45 @@ abstract class ManagerForService {
   Future<CharacteristicWithValue> readCharacteristicForService(
     Peripheral peripheral,
     int serviceIdentifier,
-    String characteristicUUID, {
+    String characteristicUUID,
     String transactionId,
-  });
+  );
 
   Future<Characteristic> writeCharacteristicForService(
     Peripheral peripheral,
     int serviceIdentifier,
     String characteristicUUID,
     Uint8List bytes,
-    bool withResponse, {
+    bool withResponse,
     String transactionId,
-  });
+  );
 
   Stream<CharacteristicWithValue> monitorCharacteristicForService(
     Peripheral peripheral,
     int serviceIdentifier,
-    String characteristicUUID, {
+    String characteristicUUID,
     String transactionId,
-  });
+  );
 }
 
 abstract class ManagerForCharacteristic {
   Future<CharacteristicWithValue> readCharacteristicForIdentifier(
     Peripheral peripheral,
-    int characteristicIdentifier, {
+    int characteristicIdentifier,
     String transactionId,
-  });
+  );
 
   Future<Characteristic> writeCharacteristicForIdentifier(
     Peripheral peripheral,
     int characteristicIdentifier,
     Uint8List bytes,
-    bool withResponse, {
+    bool withResponse,
     String transactionId,
-  });
+  );
 
   Stream<CharacteristicWithValue> monitorCharacteristicForIdentifier(
     Peripheral peripheral,
-    int characteristicIdentifier, {
+    int characteristicIdentifier,
     String transactionId,
-  });
+  );
 }
