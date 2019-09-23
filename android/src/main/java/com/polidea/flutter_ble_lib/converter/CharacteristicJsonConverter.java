@@ -21,13 +21,8 @@ public class CharacteristicJsonConverter implements JsonConverter<Characteristic
     }
 
     @Override
-    public String toJson(Characteristic characteristic) {
-        try {
-            return toJsonObject(characteristic).toString();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return "";
+    public String toJson(Characteristic characteristic) throws JSONException {
+        return toJsonObject(characteristic).toString();
     }
 
     public String toJson(Characteristic[] characteristics) throws JSONException {

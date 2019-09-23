@@ -131,7 +131,7 @@ public class DiscoveryDelegate implements CallDelegate {
             result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
         } catch (JSONException e) {
             e.printStackTrace();
-            result.error(e.toString(), e.getMessage(), null);
+            result.error(null, e.getMessage(), null);
         }
     }
 
@@ -144,7 +144,7 @@ public class DiscoveryDelegate implements CallDelegate {
             result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
         } catch (JSONException e) {
             e.printStackTrace();
-            result.error(e.toString(), e.getMessage(), null);
+            result.error(null, e.getMessage(), null);
         }
     }
 
@@ -157,7 +157,7 @@ public class DiscoveryDelegate implements CallDelegate {
             result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
         } catch (JSONException e) {
             e.printStackTrace();
-            result.error(e.toString(), e.getMessage(), null);
+            result.error(null, e.getMessage(), null);
         }
     }
 }

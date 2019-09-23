@@ -6,6 +6,7 @@ import com.polidea.flutter_ble_lib.SafeMainThreadResolver;
 import com.polidea.flutter_ble_lib.SingleCharacteristicResponse;
 import com.polidea.flutter_ble_lib.constant.ArgumentKey;
 import com.polidea.flutter_ble_lib.constant.MethodName;
+import com.polidea.flutter_ble_lib.converter.BleErrorJsonConverter;
 import com.polidea.flutter_ble_lib.converter.SingleCharacteristicResponseJsonConverter;
 import com.polidea.flutter_ble_lib.event.CharacteristicsMonitorStreamHandler;
 import com.polidea.multiplatformbleadapter.BleAdapter;
@@ -27,6 +28,7 @@ public class CharacteristicsDelegate implements CallDelegate {
     private SingleCharacteristicResponseJsonConverter characteristicsResponseJsonConverter =
             new SingleCharacteristicResponseJsonConverter();
     private CharacteristicsMonitorStreamHandler characteristicsMonitorStreamHandler;
+    private BleErrorJsonConverter bleErrorJsonConverter = new BleErrorJsonConverter();
 
     public CharacteristicsDelegate(BleAdapter bleAdapter, CharacteristicsMonitorStreamHandler characteristicsMonitorStreamHandler) {
         this.bleAdapter = bleAdapter;
@@ -139,12 +141,13 @@ public class CharacteristicsDelegate implements CallDelegate {
                             result.success(characteristicsResponseJsonConverter.toJson(createCharacteristicResponse(data)));
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            result.error(null, e.getMessage(), null);
                         }
                     }
                 }, new OnErrorCallback() {
                     @Override
                     public void onError(BleError error) {
-                        result.error(String.valueOf(error.errorCode.code), error.reason, null); //TODO Fix after merging errors handling
+                        result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
                     }
                 });
     }
@@ -164,13 +167,14 @@ public class CharacteristicsDelegate implements CallDelegate {
                             result.success(characteristicsResponseJsonConverter.toJson(createCharacteristicResponse(data)));
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            result.error(null, e.getMessage(), null);
                         }
                     }
                 },
                 new OnErrorCallback() {
                     @Override
                     public void onError(BleError error) {
-                        result.error(String.valueOf(error.errorCode.code), error.reason, null); //TODO Fix after merging errors handling
+                        result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
                     }
                 }
         );
@@ -200,12 +204,13 @@ public class CharacteristicsDelegate implements CallDelegate {
                             result.success(characteristicsResponseJsonConverter.toJson(createCharacteristicResponse(data)));
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            result.error(null, e.getMessage(), null);
                         }
                     }
                 }, new OnErrorCallback() {
                     @Override
                     public void onError(BleError error) {
-                        result.error(String.valueOf(error.errorCode.code), error.reason, null); //TODO Fix after merging errors handling
+                        result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
                     }
                 });
     }
@@ -227,12 +232,13 @@ public class CharacteristicsDelegate implements CallDelegate {
                             result.success(characteristicsResponseJsonConverter.toJson(createCharacteristicResponse(data)));
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            result.error(null, e.getMessage(), null);
                         }
                     }
                 }, new OnErrorCallback() {
                     @Override
                     public void onError(BleError error) {
-                        result.error(String.valueOf(error.errorCode.code), error.reason, null); //TODO Fix after merging errors handling
+                        result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
                     }
                 });
     }
@@ -252,13 +258,14 @@ public class CharacteristicsDelegate implements CallDelegate {
                             result.success(characteristicsResponseJsonConverter.toJson(createCharacteristicResponse(data)));
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            result.error(null, e.getMessage(), null);
                         }
                     }
                 },
                 new OnErrorCallback() {
                     @Override
                     public void onError(BleError error) {
-                        result.error(String.valueOf(error.errorCode.code), error.reason, null); //TODO Fix after merging errors handling
+                        result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
                     }
                 }
         );
@@ -301,19 +308,20 @@ public class CharacteristicsDelegate implements CallDelegate {
                             result.success(characteristicsResponseJsonConverter.toJson(createCharacteristicResponse(data)));
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            result.error(null, e.getMessage(), null);
                         }
                     }
                 }, new OnErrorCallback() {
                     @Override
                     public void onError(BleError error) {
-                        result.error(String.valueOf(error.errorCode.code), error.reason, null); //TODO Fix after merging errors handling
+                        result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
                     }
                 });
     }
 
     private void monitorCharacteristicForIdentifier(int characteristicIdentifier,
                                                     String transactionId,
-                                                    MethodChannel.Result result) {
+                                                    final MethodChannel.Result result) {
         bleAdapter.monitorCharacteristic(
                 characteristicIdentifier,
                 transactionId, new OnEventCallback<Characteristic>() {
@@ -325,6 +333,7 @@ public class CharacteristicsDelegate implements CallDelegate {
                             );
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            result.error(null, e.getMessage(), null);
                         }
                     }
                 }, new OnErrorCallback() {
@@ -340,7 +349,7 @@ public class CharacteristicsDelegate implements CallDelegate {
                                                 String serviceUuid,
                                                 String characteristicUuid,
                                                 String transactionId,
-                                                MethodChannel.Result result) {
+                                                final MethodChannel.Result result) {
         bleAdapter.monitorCharacteristicForDevice(
                 deviceIdentifier,
                 serviceUuid,
@@ -355,6 +364,7 @@ public class CharacteristicsDelegate implements CallDelegate {
                             );
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            result.error(null, e.getMessage(), null);
                         }
                     }
                 }, new OnErrorCallback() {
@@ -369,7 +379,7 @@ public class CharacteristicsDelegate implements CallDelegate {
     private void monitorCharacteristicForService(int serviceIdentifier,
                                                  String characteristicUuid,
                                                  String transactionId,
-                                                 MethodChannel.Result result) {
+                                                 final MethodChannel.Result result) {
         bleAdapter.monitorCharacteristicForService(
                 serviceIdentifier,
                 characteristicUuid,
@@ -383,6 +393,7 @@ public class CharacteristicsDelegate implements CallDelegate {
                             );
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            result.error(null, e.getMessage(), null);
                         }
                     }
                 }, new OnErrorCallback() {
