@@ -98,4 +98,11 @@ class InternalBleManager
   @override
   Future<List<Characteristic>> characteristicsForService(Service service) =>
       _bleLib.characteristicsForService(service);
+
+  @override
+  Future<int> rssi(
+      Peripheral peripheral,
+      String transactionId,
+      ) =>
+      _bleLib.rssi(peripheral, transactionId);
 }

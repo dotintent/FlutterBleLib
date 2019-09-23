@@ -45,6 +45,10 @@ class Peripheral {
 
   Future<List<Characteristic>> characteristics(String servicedUuid) =>
       _manager.characteristics(this, servicedUuid);
+
+  Future<int> rssi({String transactionId}) {
+    return _manager.rssi(this, transactionId);
+  }
 }
 
 enum PeripheralConnectionState {

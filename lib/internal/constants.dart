@@ -16,8 +16,11 @@ abstract class MethodName {
   static const String services = "services";
   static const String characteristics = "characteristics";
   static const String characteristicsForService = "characteristicsForService";
+
   static const String setLogLevel = "setLogLevel";
   static const String logLevel = "logLevel";
+
+  static const String rssi = "rssi";
 }
 
 abstract class ChannelName {

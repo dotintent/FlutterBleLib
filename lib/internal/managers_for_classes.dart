@@ -19,6 +19,8 @@ abstract class ManagerForPeripheral {
 
   Future<List<Characteristic>> characteristics(
       Peripheral peripheral, String serviceUuid);
+
+  Future<int> rssi(Peripheral peripheral, String transactionId);
 }
 
 abstract class ManagerForService {
