@@ -3,6 +3,7 @@ package com.polidea.flutter_ble_lib.delegate;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.polidea.flutter_ble_lib.SafeMainThreadResolver;
 import com.polidea.flutter_ble_lib.constant.ArgumentKey;
 import com.polidea.flutter_ble_lib.constant.MethodName;
 import com.polidea.flutter_ble_lib.converter.BleErrorJsonConverter;
@@ -45,17 +46,34 @@ public class RssiDelegate extends CallDelegate {
         }
     }
 
-    private void rssi(@NonNull String deviceIdentifier, String transactionId, @NonNull final MethodChannel.Result result) {
+    private void rssi(@NonNull final String deviceIdentifier, String transactionId, @NonNull final MethodChannel.Result result) {
         Log.d(TAG, "Read rssi for device " + deviceIdentifier + " transactionId: " + transactionId);
+
+        final SafeMainThreadResolver resolver = new SafeMainThreadResolver<>(
+                new OnSuccessCallback<Integer>() {
+                    @Override
+                    public void onSuccess(Integer data) {
+                        result.success(data);
+                    }
+                },
+                new OnErrorCallback() {
+                    @Override
+                    public void onError(BleError error) {
+                        Log.e(TAG, "RSSI error " + error.reason + "  " + error.internalMessage);
+                        result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
+                    }
+                });
+
         bleAdapter.readRSSIForDevice(deviceIdentifier, transactionId, new OnSuccessCallback<Device>() {
             @Override
             public void onSuccess(Device device) {
-                result.success(device.getRssi());
+                Log.d(TAG, "rssi ready on native side: " + device.getRssi());
+                resolver.onSuccess(device.getRssi());
             }
         }, new OnErrorCallback() {
             @Override
             public void onError(BleError error) {
-                result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
+                resolver.onError(error);
             }
         });
     }
