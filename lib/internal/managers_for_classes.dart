@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 
 abstract class ManagerForPeripheral {
@@ -27,7 +29,7 @@ abstract class ManagerForPeripheral {
     String transactionId,
   );
 
-  Future<Characteristic> writeCharacteristicForDevice(
+  Future<CharacteristicWithValue> writeCharacteristicForDevice(
       Peripheral peripheral,
       String serviceUUID,
       String characteristicUUID,
@@ -53,7 +55,7 @@ abstract class ManagerForService {
     String transactionId,
   );
 
-  Future<Characteristic> writeCharacteristicForService(
+  Future<CharacteristicWithValue> writeCharacteristicForService(
     Peripheral peripheral,
     int serviceIdentifier,
     String characteristicUUID,
@@ -77,7 +79,7 @@ abstract class ManagerForCharacteristic {
     String transactionId,
   );
 
-  Future<Characteristic> writeCharacteristicForIdentifier(
+  Future<CharacteristicWithValue> writeCharacteristicForIdentifier(
     Peripheral peripheral,
     int characteristicIdentifier,
     Uint8List bytes,

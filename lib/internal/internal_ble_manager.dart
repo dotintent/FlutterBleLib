@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 import 'package:flutter_ble_lib/internal/managers_for_classes.dart';
 import 'package:flutter_ble_lib/internal/constants.dart';
@@ -136,7 +138,7 @@ class InternalBleManager
       );
 
   @override
-  Future<Characteristic> writeCharacteristicForIdentifier(Peripheral peripheral,
+  Future<CharacteristicWithValue> writeCharacteristicForIdentifier(Peripheral peripheral,
           int characteristicIdentifier, Uint8List bytes, bool withResponse,
           String transactionId) =>
       _bleLib.writeCharacteristicForIdentifier(
@@ -148,7 +150,7 @@ class InternalBleManager
       );
 
   @override
-  Future<Characteristic> writeCharacteristicForDevice(
+  Future<CharacteristicWithValue> writeCharacteristicForDevice(
           Peripheral peripheral,
           String serviceUUID,
           String characteristicUUID,
@@ -165,7 +167,7 @@ class InternalBleManager
       );
 
   @override
-  Future<Characteristic> writeCharacteristicForService(
+  Future<CharacteristicWithValue> writeCharacteristicForService(
           Peripheral peripheral,
           int serviceIdentifier,
           String characteristicUUID,

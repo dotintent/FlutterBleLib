@@ -20,12 +20,14 @@ import com.polidea.multiplatformbleadapter.errors.BleError;
 
 import org.json.JSONException;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 
-public class DiscoveryDelegate implements CallDelegate {
+public class DiscoveryDelegate extends CallDelegate {
     private BleAdapter adapter;
     private BleErrorJsonConverter bleErrorJsonConverter = new BleErrorJsonConverter();
     private CharacteristicJsonConverter characteristicJsonConverter = new CharacteristicJsonConverter();

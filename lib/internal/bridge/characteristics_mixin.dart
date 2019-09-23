@@ -1,4 +1,4 @@
-part of flutter_ble_lib;
+part of internal_bridge_lib;
 
 mixin CharacteristicsMixin on FlutterBLE {
   final EventChannel _monitoringChannel =

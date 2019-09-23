@@ -1,6 +1,7 @@
 library internal_bridge_lib;
 
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -15,4 +16,5 @@ part 'scanning_mixin.dart';
 part 'device_connection_mixin.dart';
 part 'discovery_mixin.dart';
 part 'log_level_mixin.dart';
+part 'characteristics_mixin.dart';
 part '../base_entities.dart';

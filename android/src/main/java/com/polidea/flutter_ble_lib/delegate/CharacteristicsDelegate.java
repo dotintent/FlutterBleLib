@@ -19,10 +19,25 @@ import com.polidea.multiplatformbleadapter.utils.Base64Converter;
 
 import org.json.JSONException;
 
+import java.util.Arrays;
+import java.util.List;
+
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 
-public class CharacteristicsDelegate implements CallDelegate {
+public class CharacteristicsDelegate extends CallDelegate {
+
+    private static List<String> supportedMethods = Arrays.asList(
+            MethodName.READ_CHARACTERISTIC_FOR_IDENTIFIER,
+            MethodName.READ_CHARACTERISTIC_FOR_DEVICE,
+            MethodName.READ_CHARACTERISTIC_FOR_SERVICE,
+            MethodName.WRITE_CHARACTERISTIC_FOR_IDENTIFIER,
+            MethodName.WRITE_CHARACTERISTIC_FOR_DEVICE,
+            MethodName.WRITE_CHARACTERISTIC_FOR_SERVICE,
+            MethodName.MONITOR_CHARACTERISTIC_FOR_IDENTIFIER,
+            MethodName.MONITOR_CHARACTERISTIC_FOR_DEVICE,
+            MethodName.MONITOR_CHARACTERISTIC_FOR_SERVICE
+    );
 
     private BleAdapter bleAdapter;
     private SingleCharacteristicResponseJsonConverter characteristicsResponseJsonConverter =
@@ -31,6 +46,7 @@ public class CharacteristicsDelegate implements CallDelegate {
     private BleErrorJsonConverter bleErrorJsonConverter = new BleErrorJsonConverter();
 
     public CharacteristicsDelegate(BleAdapter bleAdapter, CharacteristicsMonitorStreamHandler characteristicsMonitorStreamHandler) {
+        super(supportedMethods);
         this.bleAdapter = bleAdapter;
         this.characteristicsMonitorStreamHandler = characteristicsMonitorStreamHandler;
     }
