@@ -2,13 +2,13 @@ package com.polidea.flutter_ble_lib.delegate;
 
 import android.support.annotation.NonNull;
 
-import com.polidea.flutter_ble_lib.CharacteristicsResponse;
+import com.polidea.flutter_ble_lib.MultiCharacteristicsResponse;
 import com.polidea.flutter_ble_lib.SafeMainThreadResolver;
 import com.polidea.flutter_ble_lib.constant.ArgumentKey;
 import com.polidea.flutter_ble_lib.constant.MethodName;
 import com.polidea.flutter_ble_lib.converter.BleErrorJsonConverter;
 import com.polidea.flutter_ble_lib.converter.CharacteristicJsonConverter;
-import com.polidea.flutter_ble_lib.converter.CharacteristicsResponseJsonConverter;
+import com.polidea.flutter_ble_lib.converter.MultiCharacteristicsResponseJsonConverter;
 import com.polidea.flutter_ble_lib.converter.ServiceJsonConverter;
 import com.polidea.multiplatformbleadapter.BleAdapter;
 import com.polidea.multiplatformbleadapter.Characteristic;
@@ -18,10 +18,8 @@ import com.polidea.multiplatformbleadapter.OnSuccessCallback;
 import com.polidea.multiplatformbleadapter.Service;
 import com.polidea.multiplatformbleadapter.errors.BleError;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.util.List;
 import java.util.UUID;
 
 import io.flutter.plugin.common.MethodCall;
@@ -125,8 +123,8 @@ public class DiscoveryDelegate implements CallDelegate {
             final Service finalService = foundService;
 
             Characteristic[] characteristics = adapter.getCharacteristicsForService(foundService.getId());
-            CharacteristicsResponse characteristicsResponse = new CharacteristicsResponse(characteristics, finalService.getId(), finalService.getUuid());
-            String json = new CharacteristicsResponseJsonConverter().toJson(characteristicsResponse);
+            MultiCharacteristicsResponse characteristicsResponse = new MultiCharacteristicsResponse(characteristics, finalService);
+            String json = new MultiCharacteristicsResponseJsonConverter().toJson(characteristicsResponse);
             result.success(json);
         } catch (BleError error) {
             error.printStackTrace();

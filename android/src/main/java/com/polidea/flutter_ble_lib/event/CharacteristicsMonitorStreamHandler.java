@@ -1,15 +1,18 @@
 package com.polidea.flutter_ble_lib.event;
 
-import com.polidea.flutter_ble_lib.converter.CharacteristicJsonConverter;
-import com.polidea.multiplatformbleadapter.Characteristic;
+import com.polidea.flutter_ble_lib.SingleCharacteristicResponse;
+import com.polidea.flutter_ble_lib.converter.SingleCharacteristicResponseJsonConverter;
 import com.polidea.multiplatformbleadapter.errors.BleError;
+
+import org.json.JSONException;
 
 import io.flutter.plugin.common.EventChannel;
 
 public class CharacteristicsMonitorStreamHandler implements EventChannel.StreamHandler {
 
     private EventChannel.EventSink eventSink;
-    private CharacteristicJsonConverter characteristicJsonConverter = new CharacteristicJsonConverter();
+    private SingleCharacteristicResponseJsonConverter characteristicResponseJsonConverter
+            = new SingleCharacteristicResponseJsonConverter();
 
     @Override
     synchronized public void onListen(Object o, EventChannel.EventSink eventSink) {
@@ -21,9 +24,9 @@ public class CharacteristicsMonitorStreamHandler implements EventChannel.StreamH
         eventSink = null;
     }
 
-    synchronized public void onCharacteristicsUpdate(Characteristic characteristic) {
+    synchronized public void onCharacteristicsUpdate(SingleCharacteristicResponse characteristic) throws JSONException {
         if (eventSink != null) {
-            eventSink.success(characteristicJsonConverter.toJson(characteristic));
+            eventSink.success(characteristicResponseJsonConverter.toJson(characteristic));
         }
     }
 

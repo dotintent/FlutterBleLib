@@ -1,13 +1,12 @@
 package com.polidea.flutter_ble_lib.converter;
 
-import com.polidea.flutter_ble_lib.CharacteristicsResponse;
-import com.polidea.multiplatformbleadapter.Characteristic;
+import com.polidea.flutter_ble_lib.MultiCharacteristicsResponse;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class CharacteristicsResponseJsonConverter implements JsonConverter<CharacteristicsResponse> {
+public class MultiCharacteristicsResponseJsonConverter implements JsonConverter<MultiCharacteristicsResponse> {
 
     private interface Metadata {
         String UUID = "serviceUuid";
@@ -16,11 +15,11 @@ public class CharacteristicsResponseJsonConverter implements JsonConverter<Chara
     }
 
     @Override
-    public String toJson(CharacteristicsResponse characteristicsResponse) throws JSONException {
+    public String toJson(MultiCharacteristicsResponse characteristicsResponse) throws JSONException {
         JSONObject jsonObject = new JSONObject();
 
-        jsonObject.put(Metadata.UUID, characteristicsResponse.getServiceUuid());
-        jsonObject.put(Metadata.ID, characteristicsResponse.getServiceId());
+        jsonObject.put(Metadata.UUID, characteristicsResponse.getService().getUuid());
+        jsonObject.put(Metadata.ID, characteristicsResponse.getService().getId());
 
         JSONArray jsonArray = new CharacteristicJsonConverter().toJsonArray(characteristicsResponse.getCharacteristics());
 

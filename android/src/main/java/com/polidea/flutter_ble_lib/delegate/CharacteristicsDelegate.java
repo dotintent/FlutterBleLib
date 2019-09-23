@@ -2,26 +2,21 @@ package com.polidea.flutter_ble_lib.delegate;
 
 import android.support.annotation.NonNull;
 
-import com.polidea.flutter_ble_lib.CharacteristicsResponse;
 import com.polidea.flutter_ble_lib.SafeMainThreadResolver;
+import com.polidea.flutter_ble_lib.SingleCharacteristicResponse;
 import com.polidea.flutter_ble_lib.constant.ArgumentKey;
 import com.polidea.flutter_ble_lib.constant.MethodName;
-import com.polidea.flutter_ble_lib.converter.CharacteristicsResponseJsonConverter;
+import com.polidea.flutter_ble_lib.converter.SingleCharacteristicResponseJsonConverter;
 import com.polidea.flutter_ble_lib.event.CharacteristicsMonitorStreamHandler;
 import com.polidea.multiplatformbleadapter.BleAdapter;
 import com.polidea.multiplatformbleadapter.Characteristic;
 import com.polidea.multiplatformbleadapter.OnErrorCallback;
 import com.polidea.multiplatformbleadapter.OnEventCallback;
 import com.polidea.multiplatformbleadapter.OnSuccessCallback;
-import com.polidea.multiplatformbleadapter.Service;
 import com.polidea.multiplatformbleadapter.errors.BleError;
 import com.polidea.multiplatformbleadapter.utils.Base64Converter;
-import com.polidea.multiplatformbleadapter.utils.ServiceFactory;
 
 import org.json.JSONException;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -29,7 +24,8 @@ import io.flutter.plugin.common.MethodChannel;
 public class CharacteristicsDelegate implements CallDelegate {
 
     private BleAdapter bleAdapter;
-    private CharacteristicsResponseJsonConverter characteristicsResponseJsonConverter = new CharacteristicsResponseJsonConverter();
+    private SingleCharacteristicResponseJsonConverter characteristicsResponseJsonConverter =
+            new SingleCharacteristicResponseJsonConverter();
     private CharacteristicsMonitorStreamHandler characteristicsMonitorStreamHandler;
 
     public CharacteristicsDelegate(BleAdapter bleAdapter, CharacteristicsMonitorStreamHandler characteristicsMonitorStreamHandler) {
@@ -140,7 +136,7 @@ public class CharacteristicsDelegate implements CallDelegate {
                     @Override
                     public void onSuccess(Characteristic data) {
                         try {
-                            result.success(characteristicsResponseJsonConverter.toJson(createResponseWithSingleCharacteristic(data)));
+                            result.success(characteristicsResponseJsonConverter.toJson(createCharacteristicResponse(data)));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -165,7 +161,7 @@ public class CharacteristicsDelegate implements CallDelegate {
                     @Override
                     public void onSuccess(Characteristic data) {
                         try {
-                            result.success(characteristicsResponseJsonConverter.toJson(createResponseWithSingleCharacteristic(data)));
+                            result.success(characteristicsResponseJsonConverter.toJson(createCharacteristicResponse(data)));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -201,7 +197,7 @@ public class CharacteristicsDelegate implements CallDelegate {
                     @Override
                     public void onSuccess(Characteristic data) {
                         try {
-                            result.success(characteristicsResponseJsonConverter.toJson(createResponseWithSingleCharacteristic(data)));
+                            result.success(characteristicsResponseJsonConverter.toJson(createCharacteristicResponse(data)));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -228,7 +224,7 @@ public class CharacteristicsDelegate implements CallDelegate {
                     @Override
                     public void onSuccess(Characteristic data) {
                         try {
-                            result.success(characteristicsResponseJsonConverter.toJson(createResponseWithSingleCharacteristic(data)));
+                            result.success(characteristicsResponseJsonConverter.toJson(createCharacteristicResponse(data)));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -253,7 +249,7 @@ public class CharacteristicsDelegate implements CallDelegate {
                     @Override
                     public void onSuccess(Characteristic data) {
                         try {
-                            result.success(characteristicsResponseJsonConverter.toJson(createResponseWithSingleCharacteristic(data)));
+                            result.success(characteristicsResponseJsonConverter.toJson(createCharacteristicResponse(data)));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -302,7 +298,7 @@ public class CharacteristicsDelegate implements CallDelegate {
                     @Override
                     public void onSuccess(Characteristic data) {
                         try {
-                            result.success(characteristicsResponseJsonConverter.toJson(createResponseWithSingleCharacteristic(data)));
+                            result.success(characteristicsResponseJsonConverter.toJson(createCharacteristicResponse(data)));
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -323,7 +319,13 @@ public class CharacteristicsDelegate implements CallDelegate {
                 transactionId, new OnEventCallback<Characteristic>() {
                     @Override
                     public void onEvent(Characteristic data) {
-                        characteristicsMonitorStreamHandler.onCharacteristicsUpdate(data);
+                        try {
+                            characteristicsMonitorStreamHandler.onCharacteristicsUpdate(
+                                    createCharacteristicResponse(data)
+                            );
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }, new OnErrorCallback() {
                     @Override
@@ -347,7 +349,13 @@ public class CharacteristicsDelegate implements CallDelegate {
                 new OnEventCallback<Characteristic>() {
                     @Override
                     public void onEvent(Characteristic data) {
-                        characteristicsMonitorStreamHandler.onCharacteristicsUpdate(data);
+                        try {
+                            characteristicsMonitorStreamHandler.onCharacteristicsUpdate(
+                                    createCharacteristicResponse(data)
+                            );
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }, new OnErrorCallback() {
                     @Override
@@ -369,7 +377,13 @@ public class CharacteristicsDelegate implements CallDelegate {
                 new OnEventCallback<Characteristic>() {
                     @Override
                     public void onEvent(Characteristic data) {
-                        characteristicsMonitorStreamHandler.onCharacteristicsUpdate(data);
+                        try {
+                            characteristicsMonitorStreamHandler.onCharacteristicsUpdate(
+                                    createCharacteristicResponse(data)
+                            );
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }, new OnErrorCallback() {
                     @Override
@@ -380,9 +394,9 @@ public class CharacteristicsDelegate implements CallDelegate {
         result.success(null);
     }
 
-    private CharacteristicsResponse createResponseWithSingleCharacteristic(Characteristic characteristic) {
-        return new CharacteristicsResponse(
-                new Characteristic[]{characteristic},
+    private SingleCharacteristicResponse createCharacteristicResponse(Characteristic characteristic) {
+        return new SingleCharacteristicResponse(
+                characteristic,
                 characteristic.getServiceID(),
                 characteristic.getServiceUUID());
     }

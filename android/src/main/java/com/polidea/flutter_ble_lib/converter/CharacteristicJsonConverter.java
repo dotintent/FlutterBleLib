@@ -42,7 +42,7 @@ public class CharacteristicJsonConverter implements JsonConverter<Characteristic
         return jsonArray;
     }
 
-    private JSONObject toJsonObject(Characteristic characteristic) throws JSONException {
+    public JSONObject toJsonObject(Characteristic characteristic) throws JSONException {
         JSONObject jsonObject = new JSONObject();
 
         jsonObject.put(Metadata.UUID, characteristic.getUuid());

@@ -17,7 +17,7 @@ mixin CharacteristicsMixin on FlutterBLE {
         },
       ).then(
         (rawJsonValue) =>
-            _parseCharacteristicResponse(peripheral, rawJsonValue).first,
+            _parseCharacteristicResponse(peripheral, rawJsonValue),
       );
 
   Future<CharacteristicWithValue> readCharacteristicForDevice(
@@ -36,7 +36,7 @@ mixin CharacteristicsMixin on FlutterBLE {
         },
       ).then(
         (rawJsonValue) =>
-            _parseCharacteristicResponse(peripheral, rawJsonValue).first,
+            _parseCharacteristicResponse(peripheral, rawJsonValue),
       );
 
   Future<CharacteristicWithValue> readCharacteristicForService(
@@ -54,7 +54,7 @@ mixin CharacteristicsMixin on FlutterBLE {
         },
       ).then(
         (rawJsonValue) =>
-            _parseCharacteristicResponse(peripheral, rawJsonValue).first,
+            _parseCharacteristicResponse(peripheral, rawJsonValue),
       );
 
   Future<CharacteristicWithValue> writeCharacteristicForIdentifier(
@@ -74,7 +74,7 @@ mixin CharacteristicsMixin on FlutterBLE {
         },
       ).then(
         (rawJsonValue) =>
-            _parseCharacteristicResponse(peripheral, rawJsonValue).first,
+            _parseCharacteristicResponse(peripheral, rawJsonValue),
       );
 
   Future<CharacteristicWithValue> writeCharacteristicForDevice(
@@ -96,7 +96,7 @@ mixin CharacteristicsMixin on FlutterBLE {
         },
       ).then(
         (rawJsonValue) =>
-            _parseCharacteristicResponse(peripheral, rawJsonValue).first,
+            _parseCharacteristicResponse(peripheral, rawJsonValue),
       );
 
   Future<CharacteristicWithValue> writeCharacteristicForService(
@@ -118,7 +118,7 @@ mixin CharacteristicsMixin on FlutterBLE {
         },
       ).then(
         (rawJsonValue) =>
-            _parseCharacteristicResponse(peripheral, rawJsonValue).first,
+            _parseCharacteristicResponse(peripheral, rawJsonValue),
       );
 
   Stream<CharacteristicWithValue> monitorCharacteristicForIdentifier(
@@ -128,7 +128,7 @@ mixin CharacteristicsMixin on FlutterBLE {
   }) async* {
     yield* _monitoringChannel.receiveBroadcastStream().map(
           (rawJsonValue) =>
-              _parseCharacteristicResponse(peripheral, rawJsonValue).first,
+              _parseCharacteristicResponse(peripheral, rawJsonValue),
         );
     _methodChannel.invokeMethod(
       MethodName.monitorCharacteristicForIdentifier,
@@ -147,7 +147,7 @@ mixin CharacteristicsMixin on FlutterBLE {
   }) async* {
     yield* _monitoringChannel.receiveBroadcastStream().map(
           (rawJsonValue) =>
-              _parseCharacteristicResponse(peripheral, rawJsonValue).first,
+              _parseCharacteristicResponse(peripheral, rawJsonValue),
         );
     _methodChannel.invokeMethod(
       MethodName.monitorCharacteristicForDevice,
@@ -167,7 +167,7 @@ mixin CharacteristicsMixin on FlutterBLE {
   }) async* {
     yield* _monitoringChannel.receiveBroadcastStream().map(
           (rawJsonValue) =>
-              _parseCharacteristicResponse(peripheral, rawJsonValue).first,
+              _parseCharacteristicResponse(peripheral, rawJsonValue),
         );
     _methodChannel.invokeMethod(
       MethodName.monitorCharacteristicForService,
@@ -179,15 +179,12 @@ mixin CharacteristicsMixin on FlutterBLE {
     );
   }
 
-  List<CharacteristicWithValue> _parseCharacteristicResponse(
+  CharacteristicWithValue _parseCharacteristicResponse(
       Peripheral peripheral, rawJsonValue) {
-    Map<String, dynamic> jsonObject = jsonDecode(rawJsonValue);
-    List<Map<String, dynamic>> jsonCharacteristics =
-        (jsonObject["characteristics"] as List<dynamic>).cast();
-    Service service = Service.fromJson(jsonObject, peripheral, _manager);
+    Map<String, dynamic> rootObject = jsonDecode(rawJsonValue);
+    Service service = Service.fromJson(rootObject, peripheral, _manager);
 
-    return jsonCharacteristics.map((characteristicJson) {
-      return CharacteristicWithValue.fromJson(characteristicJson, service);
-    });
+    return CharacteristicWithValue.fromJson(
+        rootObject["characteristic"], service);
   }
 }
