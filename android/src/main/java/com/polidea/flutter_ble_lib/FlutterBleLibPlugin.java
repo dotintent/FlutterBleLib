@@ -113,6 +113,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
     private void destroyClient(Result result) {
         bleAdapter.destroyClient();
         scanningStreamHandler.onComplete();
+        connectionStateStreamHandler.onComplete();
         result.success(null);
     }
 
