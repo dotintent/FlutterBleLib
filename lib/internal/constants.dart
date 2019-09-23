@@ -1,4 +1,3 @@
-part of flutter_ble_lib;
 
 abstract class MethodName {
   static const String createClient = "createClient";

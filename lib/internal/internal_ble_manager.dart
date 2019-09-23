@@ -1,4 +1,7 @@
-part of flutter_ble_lib;
+import 'package:flutter_ble_lib/flutter_ble_lib.dart';
+import 'package:flutter_ble_lib/internal/managers_for_classes.dart';
+import 'package:flutter_ble_lib/internal/constants.dart';
+import 'package:flutter_ble_lib/internal/bridge/internal_bridge_lib.dart';
 
 class InternalBleManager
     implements BleManager, ManagerForPeripheral, ManagerForService {

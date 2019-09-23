@@ -1,4 +1,4 @@
-part of flutter_ble_lib;
+part of internal_bridge_lib;
 
 mixin DeviceConnectionMixin on FlutterBLE {
   final EventChannel _peripheralConnectionStateEventChannel =
@@ -18,10 +18,16 @@ mixin DeviceConnectionMixin on FlutterBLE {
 
   Stream<PeripheralConnectionState> observePeripheralConnectionState(
       String identifier, bool emitCurrentValue) async* {
-    yield* _peripheralConnectionStateEventChannel
-        .receiveBroadcastStream()
-        .map((rawValue) {
-      switch (rawValue) {
+    Stream<PeripheralConnectionState> peripheralConnectionStateStream =
+        _peripheralConnectionStateEventChannel
+            .receiveBroadcastStream()
+            .map((jsonString) =>
+                ConnectionStateContainer.fromJson(jsonDecode(jsonString)))
+            .where((connectionStateContainer) =>
+                connectionStateContainer.peripheralIdentifier == identifier)
+            .map((connectionStateContainer) => connectionStateContainer.connectionState)
+            .map((connectionStateString) {
+      switch (connectionStateString.toLowerCase()) {
         case NativeConnectionState.connected:
           return PeripheralConnectionState.connected;
         case NativeConnectionState.connecting:
@@ -32,22 +38,23 @@ mixin DeviceConnectionMixin on FlutterBLE {
           return PeripheralConnectionState.disconnecting;
         default:
           throw FormatException(
-              "Unrecognized value of device connection state. Value: $rawValue");
+              "Unrecognized value of device connection state. Value: $connectionStateString");
       }
     });
+
+    yield* peripheralConnectionStateStream;
 
     _methodChannel
         .invokeMethod(MethodName.observeConnectionState, <String, dynamic>{
       ArgumentName.deviceIdentifier: identifier,
-      ArgumentName.emitCurrentValue: emitCurrentValue
+      ArgumentName.emitCurrentValue: emitCurrentValue,
     });
   }
 
-  Future<bool> isPeripheralConnected(
-      String peripheralIdentifier) async {
+  Future<bool> isPeripheralConnected(String peripheralIdentifier) async {
     return await _methodChannel
         .invokeMethod(MethodName.isDeviceConnected, <String, dynamic>{
-      ArgumentName.deviceIdentifier: peripheralIdentifier
+      ArgumentName.deviceIdentifier: peripheralIdentifier,
     });
   }
 
@@ -55,7 +62,7 @@ mixin DeviceConnectionMixin on FlutterBLE {
       String peripheralIdentifier) async {
     return await _methodChannel
         .invokeMethod(MethodName.cancelConnection, <String, dynamic>{
-      ArgumentName.deviceIdentifier: peripheralIdentifier
+      ArgumentName.deviceIdentifier: peripheralIdentifier,
     });
   }
 }

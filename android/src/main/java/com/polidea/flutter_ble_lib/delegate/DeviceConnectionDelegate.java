@@ -4,10 +4,12 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 
+import com.polidea.flutter_ble_lib.ConnectionStateChange;
 import com.polidea.flutter_ble_lib.SafeMainThreadResolver;
 import com.polidea.flutter_ble_lib.constant.ArgumentKey;
 import com.polidea.flutter_ble_lib.constant.MethodName;
 import com.polidea.flutter_ble_lib.converter.BleErrorJsonConverter;
+import com.polidea.flutter_ble_lib.converter.ConnectionStateChangeJsonConverter;
 import com.polidea.flutter_ble_lib.event.ConnectionStateStreamHandler;
 import com.polidea.multiplatformbleadapter.BleAdapter;
 import com.polidea.multiplatformbleadapter.ConnectionOptions;
@@ -21,6 +23,8 @@ import com.polidea.multiplatformbleadapter.errors.BleError;
 
 import java.util.Arrays;
 import java.util.List;
+
+import org.json.JSONException;
 
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -70,7 +74,7 @@ public class DeviceConnectionDelegate extends CallDelegate {
         }
     }
 
-    private void connectToDevice(String deviceId, Boolean isAutoConnect, Integer requestMtu, Boolean refreshGatt, Long timeoutMillis, @NonNull final MethodChannel.Result result) {
+    private void connectToDevice(final String deviceId, Boolean isAutoConnect, Integer requestMtu, Boolean refreshGatt, Long timeoutMillis, @NonNull final MethodChannel.Result result) {
         RefreshGattMoment refreshGattMoment = null;
         if (refreshGatt) refreshGattMoment = RefreshGattMoment.ON_CONNECTED;
 
@@ -96,15 +100,11 @@ public class DeviceConnectionDelegate extends CallDelegate {
                     public void onSuccess(Device data) {
                         safeMainThreadResolver.onSuccess(null);
                     }
-                }, new OnEventCallback<ConnectionState>() {
+                },
+                new OnEventCallback<ConnectionState>() {
                     @Override
                     public void onEvent(final ConnectionState data) {
-                        new Handler(Looper.getMainLooper()).post(new Runnable() {
-                            @Override
-                            public void run() {
-                                streamHandler.onNewConnectionState(data);
-                            }
-                        });
+                        streamHandler.onNewConnectionState(new ConnectionStateChange(deviceId, data));
                     }
                 }, new OnErrorCallback() {
                     @Override
@@ -114,18 +114,21 @@ public class DeviceConnectionDelegate extends CallDelegate {
                 });
     }
 
-    private void observeConnectionState(String deviceId, boolean emitCurrentValue, @NonNull final MethodChannel.Result result) {
+    private void observeConnectionState(final String deviceId, boolean emitCurrentValue, @NonNull final MethodChannel.Result result) {
         //emit current value if needed; rest is published automatically through connectToDevice()
 
         final SafeMainThreadResolver safeMainThreadResolver = new SafeMainThreadResolver<>(
                 new OnSuccessCallback<Boolean>() {
                     @Override
-                    public void onSuccess(Boolean data) {
-                        if (data)
-                            streamHandler.onNewConnectionState(ConnectionState.CONNECTED);
+                    public void onSuccess(Boolean isConnected) {
+                        ConnectionState state;
+                        if (isConnected)
+                            state = ConnectionState.CONNECTED;
                         else
-                            streamHandler.onNewConnectionState(ConnectionState.DISCONNECTED);
-                        result.success(data);
+                            state = ConnectionState.DISCONNECTED;
+
+                        streamHandler.onNewConnectionState(new ConnectionStateChange(deviceId, state));
+                        result.success(null);
                     }
                 },
                 new OnErrorCallback() {
@@ -135,7 +138,7 @@ public class DeviceConnectionDelegate extends CallDelegate {
                     }
                 });
 
-        if (emitCurrentValue)
+        if (emitCurrentValue) {
             bleAdapter.isDeviceConnected(deviceId,
                     new OnSuccessCallback<Boolean>() {
                         @Override
@@ -148,6 +151,9 @@ public class DeviceConnectionDelegate extends CallDelegate {
                             safeMainThreadResolver.onError(error);
                         }
                     });
+        } else {
+            result.success(null);
+        }
     }
 
     private void isDeviceConnected(String deviceId, @NonNull final MethodChannel.Result result) {

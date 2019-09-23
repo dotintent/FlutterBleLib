@@ -2,6 +2,7 @@ part of flutter_ble_lib;
 
 typedef RestoreStateAction = Function(List<Peripheral> restoreStateIdentifier);
 
+enum LogLevel { none, verbose, debug, info, warning, error }
 
 abstract class BleManager {
   static BleManager _instance;
@@ -30,5 +31,6 @@ abstract class BleManager {
   Future<void> stopDeviceScan();
 
   Future<void> setLogLevel(LogLevel logLevel);
+
   Future<LogLevel> logLevel();
 }

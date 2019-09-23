@@ -1,6 +1,4 @@
-part of flutter_ble_lib;
-
-enum LogLevel { NONE, VERBOSE, DEBUG, INFO, WARNING, ERROR }
+part of internal_bridge_lib;
 
 mixin LogLevelMixin on FlutterBLE {
 
