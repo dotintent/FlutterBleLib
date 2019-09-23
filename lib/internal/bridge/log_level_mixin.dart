@@ -1,7 +1,5 @@
 part of internal_bridge_lib;
 
-enum LogLevel { NONE, VERBOSE, DEBUG, INFO, WARNING, ERROR }
-
 mixin LogLevelMixin on FlutterBLE {
 
   Future<void> setLogLevel(LogLevel logLevel) async {

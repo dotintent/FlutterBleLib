@@ -6,3 +6,5 @@ enum PeripheralConnectionState {
   disconnected,
   disconnecting
 }
+
+enum LogLevel { none, verbose, debug, info, warning, error }
