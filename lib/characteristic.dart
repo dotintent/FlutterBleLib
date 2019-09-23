@@ -64,6 +64,6 @@ class CharacteristicWithValue extends Characteristic with WithValue {
     Map<String, dynamic> jsonObject,
     Service service,
   ) : super.fromJson(jsonObject, service) {
-    value = jsonObject[_CharacteristicMetadata.value];
+    value = base64Decode(jsonObject[_CharacteristicMetadata.value]);
   }
 }

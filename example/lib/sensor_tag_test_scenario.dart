@@ -90,7 +90,7 @@ class TestScenario {
             log("Found characteristic \n ${characteristic.uuid}")))
         .then((_) {
           log("Turn off temperature update");
-          peripheral.writeCharacteristic(
+          return peripheral.writeCharacteristic(
               SensorTagTemperatureUuids.temperatureService,
               SensorTagTemperatureUuids.temperatureConfig,
               Uint8List.fromList([0]),
@@ -106,12 +106,13 @@ class TestScenario {
         })
         .then((_) {
           log("Turn on temperature update");
-          peripheral.writeCharacteristic(
+          return peripheral.writeCharacteristic(
               SensorTagTemperatureUuids.temperatureService,
               SensorTagTemperatureUuids.temperatureConfig,
               Uint8List.fromList([1]),
               false);
         })
+        .then((_) => Future.delayed(Duration(seconds: 1)))
         .then((_) {
           return peripheral.readCharacteristic(
               SensorTagTemperatureUuids.temperatureService,

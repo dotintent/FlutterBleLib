@@ -12,10 +12,10 @@ mixin CharacteristicsMixin on FlutterBLE {
           ArgumentName.characteristicIdentifier: characteristicIdentifier,
           ArgumentName.transactionId: transactionId
         },
-      ).then((rawJsonValue) {
-        Service service = Service.fromJson(rawJsonValue, peripheral, _manager);
-        return CharacteristicWithValue.fromJson(rawJsonValue, service);
-      });
+      ).then(
+        (rawJsonValue) =>
+            _parseCharacteristicResponse(peripheral, rawJsonValue).first,
+      );
 
   Future<CharacteristicWithValue> readCharacteristicForDevice(
     Peripheral peripheral,
@@ -31,10 +31,10 @@ mixin CharacteristicsMixin on FlutterBLE {
           ArgumentName.characteristicUuid: characteristicUUID,
           ArgumentName.transactionId: transactionId
         },
-      ).then((rawJsonValue) {
-        Service service = Service.fromJson(rawJsonValue, peripheral, _manager);
-        return CharacteristicWithValue.fromJson(rawJsonValue, service);
-      });
+      ).then(
+        (rawJsonValue) =>
+            _parseCharacteristicResponse(peripheral, rawJsonValue).first,
+      );
 
   Future<CharacteristicWithValue> readCharacteristicForService(
     Peripheral peripheral,
@@ -49,10 +49,10 @@ mixin CharacteristicsMixin on FlutterBLE {
           ArgumentName.characteristicUuid: characteristicUUID,
           ArgumentName.transactionId: transactionId
         },
-      ).then((rawJsonValue) {
-        Service service = Service.fromJson(rawJsonValue, peripheral, _manager);
-        return CharacteristicWithValue.fromJson(rawJsonValue, service);
-      });
+      ).then(
+        (rawJsonValue) =>
+            _parseCharacteristicResponse(peripheral, rawJsonValue).first,
+      );
 
   Future<Characteristic> writeCharacteristicForIdentifier(
     Peripheral peripheral,
@@ -69,10 +69,10 @@ mixin CharacteristicsMixin on FlutterBLE {
           ArgumentName.withResponse: withResponse,
           ArgumentName.transactionId: transactionId,
         },
-      ).then((rawJsonValue) {
-        Service service = Service.fromJson(rawJsonValue, peripheral, _manager);
-        return CharacteristicWithValue.fromJson(rawJsonValue, service);
-      });
+      ).then(
+        (rawJsonValue) =>
+            _parseCharacteristicResponse(peripheral, rawJsonValue).first,
+      );
 
   Future<Characteristic> writeCharacteristicForDevice(
           Peripheral peripheral,
@@ -91,10 +91,10 @@ mixin CharacteristicsMixin on FlutterBLE {
           ArgumentName.withResponse: withResponse,
           ArgumentName.transactionId: transactionId,
         },
-      ).then((rawJsonValue) {
-        Service service = Service.fromJson(rawJsonValue, peripheral, _manager);
-        return CharacteristicWithValue.fromJson(rawJsonValue, service);
-      });
+      ).then(
+        (rawJsonValue) =>
+            _parseCharacteristicResponse(peripheral, rawJsonValue).first,
+      );
 
   Future<Characteristic> writeCharacteristicForService(
     Peripheral peripheral,
@@ -113,8 +113,20 @@ mixin CharacteristicsMixin on FlutterBLE {
           ArgumentName.withResponse: withResponse,
           ArgumentName.transactionId: transactionId,
         },
-      ).then((rawJsonValue) {
-        Service service = Service.fromJson(rawJsonValue, peripheral, _manager);
-        return CharacteristicWithValue.fromJson(rawJsonValue, service);
-      });
+      ).then(
+        (rawJsonValue) =>
+            _parseCharacteristicResponse(peripheral, rawJsonValue).first,
+      );
+
+  List<CharacteristicWithValue> _parseCharacteristicResponse(
+      Peripheral peripheral, rawJsonValue) {
+    Map<String, dynamic> jsonObject = jsonDecode(rawJsonValue);
+    List<Map<String, dynamic>> jsonCharacteristics =
+        (jsonObject["characteristics"] as List<dynamic>).cast();
+    Service service = Service.fromJson(jsonObject, peripheral, _manager);
+
+    return jsonCharacteristics.map((characteristicJson) {
+      return CharacteristicWithValue.fromJson(characteristicJson, service);
+    });
+  }
 }

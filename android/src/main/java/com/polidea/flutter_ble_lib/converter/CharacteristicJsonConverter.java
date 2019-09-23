@@ -1,6 +1,7 @@
 package com.polidea.flutter_ble_lib.converter;
 
 import com.polidea.multiplatformbleadapter.Characteristic;
+import com.polidea.multiplatformbleadapter.utils.Base64Converter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,7 +21,7 @@ public class CharacteristicJsonConverter implements JsonConverter<Characteristic
     }
 
     @Override
-    public String toJson(Characteristic characteristic)  {
+    public String toJson(Characteristic characteristic) {
         try {
             return toJsonObject(characteristic).toString();
         } catch (JSONException e) {
@@ -51,7 +52,8 @@ public class CharacteristicJsonConverter implements JsonConverter<Characteristic
         jsonObject.put(Metadata.IS_WRITABLE_WITHOUT_RESPONSE, characteristic.isWritableWithoutResponse());
         jsonObject.put(Metadata.IS_NOTIFIABLE, characteristic.isNotifiable());
         jsonObject.put(Metadata.IS_INDICATABLE, characteristic.isIndicatable());
-        jsonObject.put(Metadata.VALUE, characteristic.getValue());
+        jsonObject.put(Metadata.VALUE, characteristic.getValue() != null ?
+                Base64Converter.encode(characteristic.getValue()) : JSONObject.NULL);
 
         return jsonObject;
     }
