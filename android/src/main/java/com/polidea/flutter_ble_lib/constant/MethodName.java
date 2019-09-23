@@ -15,4 +15,14 @@ public interface MethodName {
     String GET_SERVICES = "services";
     String GET_CHARACTERISTICS = "characteristics";
     String GET_CHARACTERISTICS_FOR_SERVICE = "characteristicsForService";
+
+    String READ_CHARACTERISTIC_FOR_IDENTIFIER = "readCharacteristicForIdentifier";
+    String READ_CHARACTERISTIC_FOR_DEVICE = "readCharacteristicForDevice";
+    String READ_CHARACTERISTIC_FOR_SERVICE = "readCharacteristicForService";
+    String WRITE_CHARACTERISTIC_FOR_IDENTIFIER = "writeCharacteristicForIdentifier";
+    String WRITE_CHARACTERISTIC_FOR_DEVICE = "writeCharacteristicForDevice";
+    String WRITE_CHARACTERISTIC_FOR_SERVICE = "writeCharacteristicForService";
+    String MONITOR_CHARACTERISTIC_FOR_IDENTIFIER = "monitorCharacteristicForIdentifier";
+    String MONITOR_CHARACTERISTIC_FOR_DEVICE = "monitorCharacteristicForDevice";
+    String MONITOR_CHARACTERISTIC_FOR_SERVICE = "monitorCharacteristicForService";
 }

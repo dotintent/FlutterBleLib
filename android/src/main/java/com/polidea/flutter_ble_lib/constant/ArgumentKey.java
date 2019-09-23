@@ -14,7 +14,10 @@ public interface ArgumentKey {
     String REFRESH_GATT = "refreshGatt";
     String TIMEOUT_MILLIS = "timeoutMillis";
     String EMIT_CURRENT_VALUE = "emitCurrentValue";
-
     String SERVICE_UUID = "serviceUuid";
-    String SERVICE_ID = "serviceId";
+    String SERVICE_IDENTIFIER = "serviceId";
+    String CHARACTERISTIC_UUID = "characteristicUuid";
+    String CHARACTERISTIC_IDENTIFIER = "characteristicIdentifier";
+    String BYTES = "bytes";
+    String WITH_RESPONSE = "withResponse";
 }

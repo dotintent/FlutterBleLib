@@ -3,20 +3,28 @@ package com.polidea.flutter_ble_lib;
 import com.polidea.multiplatformbleadapter.Characteristic;
 import com.polidea.multiplatformbleadapter.Service;
 
+import java.util.UUID;
+
 public class CharacteristicsResponse {
     private final Characteristic[] characteristics;
-    private final Service service;
+    private int serviceId;
+    private UUID serviceUuid;
 
-    public CharacteristicsResponse(Characteristic[] characteristics, Service service) {
+    public CharacteristicsResponse(Characteristic[] characteristics, int serviceId, UUID serviceUuid) {
         this.characteristics = characteristics;
-        this.service = service;
+        this.serviceId = serviceId;
+        this.serviceUuid = serviceUuid;
     }
 
     public Characteristic[] getCharacteristics() {
         return characteristics;
     }
 
-    public Service getService() {
-        return service;
+    public int getServiceId() {
+        return serviceId;
+    }
+
+    public UUID getServiceUuid() {
+        return serviceUuid;
     }
 }

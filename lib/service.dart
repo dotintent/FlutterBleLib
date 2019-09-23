@@ -22,4 +22,23 @@ class Service {
 
   Future<List<Characteristic>> characteristics() =>
       _manager.characteristicsForService(this);
+
+  Future<Characteristic> writeCharacteristic(
+    String characteristicUUID,
+    Uint8List bytes,
+    bool withResponse, {
+    String transactionId,
+  }) =>
+      _manager.writeCharacteristicForService(
+          peripheral, _id, characteristicUUID, bytes, withResponse,
+          transactionId: transactionId);
+
+  Future<Characteristic> readCharacteristic(String characteristicUUID,
+          {String transactionId}) =>
+      _manager.readCharacteristicForService(
+        peripheral,
+        _id,
+        characteristicUUID,
+        transactionId: transactionId,
+      );
 }

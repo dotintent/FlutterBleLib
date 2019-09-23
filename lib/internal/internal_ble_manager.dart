@@ -1,7 +1,11 @@
 part of flutter_ble_lib;
 
 class InternalBleManager
-    implements BleManager, ManagerForPeripheral, ManagerForService {
+    implements
+        BleManager,
+        ManagerForPeripheral,
+        ManagerForService,
+        ManagerForCharacteristic {
   FlutterBleLib _bleLib;
 
   InternalBleManager() {
@@ -85,4 +89,82 @@ class InternalBleManager
   @override
   Future<List<Characteristic>> characteristicsForService(Service service) =>
       _bleLib.characteristicsForService(service);
+
+  @override
+  Future<CharacteristicWithValue> readCharacteristicForIdentifier(
+          Peripheral peripheral, int characteristicIdentifier,
+          {String transactionId}) =>
+      _bleLib.readCharacteristicForIdentifier(
+          peripheral, characteristicIdentifier,
+          transactionId: transactionId);
+
+  @override
+  Future<CharacteristicWithValue> readCharacteristicForDevice(
+          Peripheral peripheral, String serviceUuid, String characteristicUUID,
+          {String transactionId}) =>
+      _bleLib.readCharacteristicForDevice(
+        peripheral,
+        serviceUuid,
+        characteristicUUID,
+        transactionId: transactionId,
+      );
+
+  @override
+  Future<CharacteristicWithValue> readCharacteristicForService(
+          Peripheral peripheral,
+          int serviceIdentifier,
+          String characteristicUUID,
+          {String transactionId}) =>
+      _bleLib.readCharacteristicForService(
+        peripheral,
+        serviceIdentifier,
+        characteristicUUID,
+        transactionId: transactionId,
+      );
+
+  @override
+  Future<Characteristic> writeCharacteristicForIdentifier(Peripheral peripheral,
+          int characteristicIdentifier, Uint8List bytes, bool withResponse,
+          {String transactionId}) =>
+      _bleLib.writeCharacteristicForIdentifier(
+        peripheral,
+        characteristicIdentifier,
+        bytes,
+        withResponse,
+        transactionId: transactionId,
+      );
+
+  @override
+  Future<Characteristic> writeCharacteristicForDevice(
+          Peripheral peripheral,
+          String serviceUUID,
+          String characteristicUUID,
+          Uint8List bytes,
+          bool withResponse,
+          {String transactionId}) =>
+      _bleLib.writeCharacteristicForDevice(
+        peripheral,
+        serviceUUID,
+        characteristicUUID,
+        bytes,
+        withResponse,
+        transactionId: transactionId,
+      );
+
+  @override
+  Future<Characteristic> writeCharacteristicForService(
+          Peripheral peripheral,
+          int serviceIdentifier,
+          String characteristicUUID,
+          Uint8List bytes,
+          bool withResponse,
+          {String transactionId}) =>
+      _bleLib.writeCharacteristicForService(
+        peripheral,
+        serviceIdentifier,
+        characteristicUUID,
+        bytes,
+        withResponse,
+        transactionId: transactionId,
+      );
 }

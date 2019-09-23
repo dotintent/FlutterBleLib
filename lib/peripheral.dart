@@ -45,4 +45,32 @@ class Peripheral {
 
   Future<List<Characteristic>> characteristics(String servicedUuid) =>
       _manager.characteristics(this, servicedUuid);
+
+  Future<CharacteristicWithValue> readCharacteristic(
+    String serviceUUID,
+    String characteristicUUID, {
+    String transactionId,
+  }) =>
+      _manager.readCharacteristicForDevice(
+        this,
+        serviceUUID,
+        characteristicUUID,
+        transactionId: transactionId,
+      );
+
+  Future<Characteristic> writeCharacteristic(
+    String serviceUUID,
+    String characteristicUUID,
+    Uint8List bytes,
+    bool withResponse, {
+    String transactionId,
+  }) =>
+      _manager.writeCharacteristicForDevice(
+        this,
+        serviceUUID,
+        characteristicUUID,
+        bytes,
+        withResponse,
+        transactionId: transactionId,
+      );
 }

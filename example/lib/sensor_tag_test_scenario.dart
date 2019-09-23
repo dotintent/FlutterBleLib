@@ -1,8 +1,17 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 
 typedef Logger = Function(String);
+
+abstract class SensorTagTemperatureUuids {
+  static const String temperatureService =
+      "F000AA00-0451-4000-B000-000000000000";
+  static const String temperatureData = "F000AA01-0451-4000-B000-000000000000";
+  static const String temperatureConfig =
+      "F000AA02-0451-4000-B000-000000000000";
+}
 
 class TestScenario {
   BleManager bleManager = BleManager.getInstance();
@@ -79,6 +88,38 @@ class TestScenario {
         })
         .then((characteristics) => characteristics.forEach((characteristic) =>
             log("Found characteristic \n ${characteristic.uuid}")))
+        .then((_) {
+          log("Turn off temperature update");
+          peripheral.writeCharacteristic(
+              SensorTagTemperatureUuids.temperatureService,
+              SensorTagTemperatureUuids.temperatureConfig,
+              Uint8List.fromList([0]),
+              false);
+        })
+        .then((_) {
+          return peripheral.readCharacteristic(
+              SensorTagTemperatureUuids.temperatureService,
+              SensorTagTemperatureUuids.temperatureData);
+        })
+        .then((data) {
+          log("Temperature value ${data.value}");
+        })
+        .then((_) {
+          log("Turn on temperature update");
+          peripheral.writeCharacteristic(
+              SensorTagTemperatureUuids.temperatureService,
+              SensorTagTemperatureUuids.temperatureConfig,
+              Uint8List.fromList([1]),
+              false);
+        })
+        .then((_) {
+          return peripheral.readCharacteristic(
+              SensorTagTemperatureUuids.temperatureService,
+              SensorTagTemperatureUuids.temperatureData);
+        })
+        .then((data) {
+          log("Temperature value ${data.value}");
+        })
         .then((_) {
           log("WAITING 10 SECOND BEFORE DISCONNECTING");
           return Future.delayed(Duration(seconds: 10));

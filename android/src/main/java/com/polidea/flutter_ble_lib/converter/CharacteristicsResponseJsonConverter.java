@@ -19,8 +19,8 @@ public class CharacteristicsResponseJsonConverter implements JsonConverter<Chara
     public String toJson(CharacteristicsResponse characteristicsResponse) throws JSONException {
         JSONObject jsonObject = new JSONObject();
 
-        jsonObject.put(Metadata.UUID, characteristicsResponse.getService().getUuid());
-        jsonObject.put(Metadata.ID, characteristicsResponse.getService().getId());
+        jsonObject.put(Metadata.UUID, characteristicsResponse.getServiceUuid());
+        jsonObject.put(Metadata.ID, characteristicsResponse.getServiceId());
 
         JSONArray jsonArray = new CharacteristicJsonConverter().toJsonArray(characteristicsResponse.getCharacteristics());
 

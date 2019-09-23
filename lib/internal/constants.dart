@@ -17,6 +17,15 @@ abstract class MethodName {
   static const String services = "services";
   static const String characteristics = "characteristics";
   static const String characteristicsForService = "characteristicsForService";
+  static const String readCharacteristicForIdentifier = "readCharacteristic";
+  static const String readCharacteristicForDevice = "readCharacteristicForDevice";
+  static const String readCharacteristicForService = "readCharacteristicForService";
+  static const String writeCharacteristicForIdentifier = "writeCharacteristicForIdentifier";
+  static const String writeCharacteristicForDevice = "writeCharacteristicForDevice";
+  static const String writeCharacteristicForService = "writeCharacteristicForService";
+  static const String monitorCharacteristicForIdentifier = "monitorCharacteristicForIdentifier";
+  static const String monitorCharacteristicForDevice = "monitorCharacteristicForDevice";
+  static const String monitorCharacteristicForService = "monitorCharacteristicForService";
 }
 
 abstract class ChannelName {
@@ -45,6 +54,11 @@ abstract class ArgumentName {
 
   static const String serviceUuid = "serviceUuid";
   static const String serviceId = "serviceId";
+  static const String characteristicUuid = "characteristicUuid";
+  static const String characteristicIdentifier = "characteristicIdentifier";
+
+  static const String bytes = "bytes";
+  static const String withResponse = "withResponse";
 }
 
 abstract class ScanMode {
