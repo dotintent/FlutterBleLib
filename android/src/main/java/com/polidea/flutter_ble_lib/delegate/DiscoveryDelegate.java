@@ -21,29 +21,27 @@ import com.polidea.multiplatformbleadapter.errors.BleError;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 
-public class DiscoveryDelegate implements CallDelegate {
+public class DiscoveryDelegate extends CallDelegate {
     private BleAdapter adapter;
     private BleErrorJsonConverter bleErrorJsonConverter = new BleErrorJsonConverter();
 
-    public DiscoveryDelegate(BleAdapter adapter) {
-        this.adapter = adapter;
-    }
+    private static List<String> supportedMethods = Arrays.asList(
+            MethodName.DISCOVER_ALL_SERVICES_AND_CHARACTERISTICS,
+            MethodName.GET_CHARACTERISTICS,
+            MethodName.GET_SERVICES,
+            MethodName.GET_CHARACTERISTICS_FOR_SERVICE
+            );
 
-    @Override
-    public boolean canHandle(MethodCall call) {
-        switch (call.method) {
-            case MethodName.DISCOVER_ALL_SERVICES_AND_CHARACTERISTICS:
-            case MethodName.GET_CHARACTERISTICS:
-            case MethodName.GET_SERVICES:
-            case MethodName.GET_CHARACTERISTICS_FOR_SERVICE:
-                return true;
-        }
-        return false;
+    public DiscoveryDelegate(BleAdapter adapter) {
+        super(supportedMethods);
+        this.adapter = adapter;
     }
 
     @Override
