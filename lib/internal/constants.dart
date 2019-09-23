@@ -21,6 +21,7 @@ abstract class MethodName {
   static const String logLevel = "logLevel";
 
   static const String rssi = "rssi";
+  static const String requestMtu = "requestMtu";
 }
 
 abstract class ChannelName {
@@ -51,6 +52,8 @@ abstract class ArgumentName {
   static const String serviceId = "serviceId";
 
   static const String logLevel = "logLevel";
+
+  static const String mtu = "mtu";
 }
 
 abstract class ScanMode {

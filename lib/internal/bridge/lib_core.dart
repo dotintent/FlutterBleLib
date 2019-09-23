@@ -8,7 +8,8 @@ abstract class FlutterBLE {
 }
 
 class FlutterBleLib extends FlutterBLE
-    with DeviceConnectionMixin, ScanningMixin, LogLevelMixin, DiscoveryMixin, RssiMixin {
+    with DeviceConnectionMixin, ScanningMixin, LogLevelMixin, DiscoveryMixin,
+        RssiMixin, MtuMixin {
   final EventChannel _restoreStateEventChannel =
       const EventChannel(ChannelName.stateRestoreEvents);
 

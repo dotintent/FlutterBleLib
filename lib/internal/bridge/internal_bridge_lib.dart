@@ -16,4 +16,5 @@ part 'device_connection_mixin.dart';
 part 'discovery_mixin.dart';
 part 'log_level_mixin.dart';
 part 'device_rssi_mixin.dart';
+part 'mtu_mixin.dart';
 part '../base_entities.dart';

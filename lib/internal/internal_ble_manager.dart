@@ -5,6 +5,9 @@ import 'package:flutter_ble_lib/internal/bridge/internal_bridge_lib.dart';
 
 class InternalBleManager
     implements BleManager, ManagerForPeripheral, ManagerForService {
+
+
+
   FlutterBleLib _bleLib;
 
   InternalBleManager() {
@@ -103,6 +106,15 @@ class InternalBleManager
   Future<int> rssi(
       Peripheral peripheral,
       String transactionId,
-      ) =>
-      _bleLib.rssi(peripheral, transactionId);
+      ) {
+    print("call channel read RSSI");
+    return _bleLib.rssi(peripheral, transactionId);
+  }
+
+  @override
+  Future<void> requestMtu(Peripheral peripheral, int mtu, String transactionId) {
+   return _bleLib.requestMtu(peripheral, mtu, transactionId);
+  }
+
+
 }

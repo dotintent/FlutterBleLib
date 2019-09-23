@@ -74,6 +74,7 @@ class DeviceDetailsBloc {
   }
 
   void _connectTo(BleDevice bleDevice) async {
+    _bleManager.setLogLevel(LogLevel.debug);
     var peripheral = bleDevice.peripheral;
     peripheral
         .observeConnectionState(emitCurrentValue: true)
@@ -115,6 +116,10 @@ class DeviceDetailsBloc {
         .then((_) async {
             int rssi = await peripheral.rssi();
             log("rssi $rssi");
+        })
+        .then((_) async {
+          await peripheral.requestMtu(74);
+          log("MTU requested");
         })
         .then((_) {
           log("WAITING 10 SECOND BEFORE DISCONNECTING");

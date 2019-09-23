@@ -21,6 +21,8 @@ abstract class ManagerForPeripheral {
       Peripheral peripheral, String serviceUuid);
 
   Future<int> rssi(Peripheral peripheral, String transactionId);
+
+  Future<void> requestMtu(Peripheral peripheral, int mtu, String transactionId);
 }
 
 abstract class ManagerForService {
