@@ -1,7 +1,5 @@
 package com.polidea.flutter_ble_lib.delegate;
 
-import com.polidea.flutter_ble_lib.constant.MethodName;
-
 import java.util.List;
 
 import io.flutter.plugin.common.MethodCall;

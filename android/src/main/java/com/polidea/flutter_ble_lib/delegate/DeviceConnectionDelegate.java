@@ -104,23 +104,7 @@ public class DeviceConnectionDelegate extends CallDelegate {
                 new OnEventCallback<ConnectionState>() {
                     @Override
                     public void onEvent(final ConnectionState data) {
-                        String temp;
-                        try {
-                            temp = new ConnectionStateChangeJsonConverter().toJson(new ConnectionStateChange(deviceId, data));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            return;
-                        }
-
-                        final String newData = temp;
-
-                        new Handler(Looper.getMainLooper()).post(new Runnable() {
-                            @Override
-                            public void run() {
-
-                                streamHandler.onNewConnectionState(newData);
-                            }
-                        });
+                        streamHandler.onNewConnectionState(new ConnectionStateChange(deviceId, data));
                     }
                 }, new OnErrorCallback() {
                     @Override
@@ -136,23 +120,15 @@ public class DeviceConnectionDelegate extends CallDelegate {
         final SafeMainThreadResolver safeMainThreadResolver = new SafeMainThreadResolver<>(
                 new OnSuccessCallback<Boolean>() {
                     @Override
-                    public void onSuccess(Boolean data) {
-                        String newData;
-
+                    public void onSuccess(Boolean isConnected) {
                         ConnectionState state;
-                        if (data)
+                        if (isConnected)
                             state = ConnectionState.CONNECTED;
                         else
                             state = ConnectionState.DISCONNECTED;
 
-                        try {
-                            newData = new ConnectionStateChangeJsonConverter().toJson(new ConnectionStateChange(deviceId, state));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            return;
-                        }
-                        streamHandler.onNewConnectionState(newData);
-                        result.success(data);
+                        streamHandler.onNewConnectionState(new ConnectionStateChange(deviceId, state));
+                        result.success(null);
                     }
                 },
                 new OnErrorCallback() {
@@ -162,7 +138,7 @@ public class DeviceConnectionDelegate extends CallDelegate {
                     }
                 });
 
-        if (emitCurrentValue)
+        if (emitCurrentValue) {
             bleAdapter.isDeviceConnected(deviceId,
                     new OnSuccessCallback<Boolean>() {
                         @Override
@@ -175,6 +151,9 @@ public class DeviceConnectionDelegate extends CallDelegate {
                             safeMainThreadResolver.onError(error);
                         }
                     });
+        } else {
+            result.success(null);
+        }
     }
 
     private void isDeviceConnected(String deviceId, @NonNull final MethodChannel.Result result) {
