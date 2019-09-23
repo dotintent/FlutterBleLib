@@ -1,10 +1,6 @@
-import 'dart:async';
+part of test_scenarios;
 
-import 'package:flutter_ble_lib/flutter_ble_lib.dart';
-
-typedef Logger = Function(String);
-
-class TestScenario {
+class SensorTagTestScenario implements TestScenario {
   BleManager bleManager = BleManager.getInstance();
   bool deviceConnectionAttempted = false;
 
@@ -58,7 +54,7 @@ class TestScenario {
     log("CONNECTED to ${peripheral.name}, ${peripheral.identifier}!");
     deviceConnectionAttempted = false;
 
-    peripheral
+    await peripheral
         .discoverAllServicesAndCharacteristics()
         .then((_) => peripheral.services())
         .then((services) {

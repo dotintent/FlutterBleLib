@@ -15,3 +15,4 @@ part 'characteristic.dart';
 part 'peripheral.dart';
 part 'scan_result.dart';
 part 'service.dart';
+part 'characteristic.dart';

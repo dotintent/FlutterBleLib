@@ -3,6 +3,9 @@ abstract class MethodName {
   static const String createClient = "createClient";
   static const String destroyClient = "destroyClient";
 
+  static const String enableRadio = "enableRadio";
+  static const String disableRadio = "disableRadio";
+
   static const String startDeviceScan = "startDeviceScan";
   static const String stopDeviceScan = "stopDeviceScan";
 
