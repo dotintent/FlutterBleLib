@@ -9,6 +9,8 @@ import 'dart:math';
 import 'package:flutter_ble_lib_example/repository/device_repository.dart';
 import 'package:rxdart/rxdart.dart';
 
+import '../sensor_tag_config.dart';
+
 class DeviceDetailsBloc {
   final BleManager _bleManager;
   final DeviceRepository _deviceRepository;
@@ -112,6 +114,39 @@ class DeviceDetailsBloc {
         })
         .then((characteristics) => characteristics.forEach((characteristic) =>
             log("Found characteristic \n ${characteristic.uuid}")))
+        .then((_) {
+          log("Turn off temperature update");
+          return peripheral.writeCharacteristic(
+              SensorTagTemperatureUuids.temperatureService,
+              SensorTagTemperatureUuids.temperatureConfigCharacteristic,
+              Uint8List.fromList([0]),
+              false);
+        })
+        .then((_) {
+          return peripheral.readCharacteristic(
+              SensorTagTemperatureUuids.temperatureService,
+              SensorTagTemperatureUuids.temperatureDataCharacteristic);
+        })
+        .then((data) {
+          log("Temperature value ${data.value}");
+        })
+        .then((_) {
+          log("Turn on temperature update");
+          return peripheral.writeCharacteristic(
+              SensorTagTemperatureUuids.temperatureService,
+              SensorTagTemperatureUuids.temperatureConfigCharacteristic,
+              Uint8List.fromList([1]),
+              false);
+        })
+        .then((_) => Future.delayed(Duration(seconds: 1)))
+        .then((_) {
+          return peripheral.readCharacteristic(
+              SensorTagTemperatureUuids.temperatureService,
+              SensorTagTemperatureUuids.temperatureDataCharacteristic);
+        })
+        .then((data) {
+          log("Temperature value ${data.value}");
+        })
         .then((_) {
           log("WAITING 10 SECOND BEFORE DISCONNECTING");
           return Future.delayed(Duration(seconds: 10));
