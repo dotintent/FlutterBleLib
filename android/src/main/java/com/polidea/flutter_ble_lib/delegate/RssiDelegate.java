@@ -52,8 +52,8 @@ public class RssiDelegate extends CallDelegate {
         final SafeMainThreadResolver resolver = new SafeMainThreadResolver<>(
                 new OnSuccessCallback<Integer>() {
                     @Override
-                    public void onSuccess(Integer data) {
-                        result.success(data);
+                    public void onSuccess(Integer rssi) {
+                        result.success(rssi);
                     }
                 },
                 new OnErrorCallback() {

@@ -51,7 +51,7 @@ public class MtuDelegate extends CallDelegate {
         bleAdapter.requestMTUForDevice(deviceIdentifier, mtu, transactionId, new OnSuccessCallback<Device>() {
             @Override
             public void onSuccess(Device device) {
-                result.success(device.getRssi());
+                result.success(null);
             }
         }, new OnErrorCallback() {
             @Override

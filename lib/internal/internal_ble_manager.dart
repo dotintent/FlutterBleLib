@@ -107,7 +107,6 @@ class InternalBleManager
       Peripheral peripheral,
       String transactionId,
       ) {
-    print("call channel read RSSI");
     return _bleLib.rssi(peripheral, transactionId);
   }
 
@@ -115,6 +114,4 @@ class InternalBleManager
   Future<void> requestMtu(Peripheral peripheral, int mtu, String transactionId) {
    return _bleLib.requestMtu(peripheral, mtu, transactionId);
   }
-
-
 }
