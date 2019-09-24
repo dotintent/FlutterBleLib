@@ -6,8 +6,6 @@ import 'package:flutter_ble_lib/internal/bridge/internal_bridge_lib.dart';
 class InternalBleManager
     implements BleManager, ManagerForPeripheral, ManagerForService {
 
-
-
   FlutterBleLib _bleLib;
 
   InternalBleManager() {
