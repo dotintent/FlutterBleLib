@@ -15,11 +15,12 @@ import com.polidea.flutter_ble_lib.event.ConnectionStateStreamHandler;
 import com.polidea.flutter_ble_lib.event.RestoreStateStreamHandler;
 import com.polidea.flutter_ble_lib.event.ScanningStreamHandler;
 import com.polidea.multiplatformbleadapter.BleAdapter;
-import com.polidea.multiplatformbleadapter.BleModule;
+import com.polidea.multiplatformbleadapter.BleAdapterFactory;
 import com.polidea.multiplatformbleadapter.OnErrorCallback;
 import com.polidea.multiplatformbleadapter.OnEventCallback;
 import com.polidea.multiplatformbleadapter.ScanResult;
 import com.polidea.multiplatformbleadapter.errors.BleError;
+import com.polidea.blemulator.SimulatorPlugin;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -34,6 +35,7 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 public class FlutterBleLibPlugin implements MethodCallHandler {
 
     private BleAdapter bleAdapter;
+    private Context context;
     private AdapterStateStreamHandler adapterStateStreamHandler = new AdapterStateStreamHandler();
     private RestoreStateStreamHandler restoreStateStreamHandler = new RestoreStateStreamHandler();
     private ScanningStreamHandler scanningStreamHandler = new ScanningStreamHandler();
@@ -57,10 +59,17 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
         bluetoothStateChannel.setStreamHandler(plugin.adapterStateStreamHandler);
         restoreStateChannel.setStreamHandler(plugin.restoreStateStreamHandler);
         connectionStateChannel.setStreamHandler(plugin.connectionStateStreamHandler);
+
+        //TEMPORARY
+        SimulatorPlugin.registerWith(registrar);
     }
 
     private FlutterBleLibPlugin(Context context) {
-        bleAdapter = new BleModule(context);
+        this.context = context;
+    }
+
+    private void setupAdapter(Context context) {
+        bleAdapter = BleAdapterFactory.getNewAdapter(context);
         delegates = new LinkedList<>();
         delegates.add(new DeviceConnectionDelegate(bleAdapter, connectionStateStreamHandler));
         delegates.add(new LogLevelDelegate(bleAdapter));
@@ -95,6 +104,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
     }
 
     private void createClient(MethodCall call, Result result) {
+        setupAdapter(context);
         bleAdapter.createClient(call.<String>argument(ArgumentKey.RESTORE_STATE_IDENTIFIER),
                 new OnEventCallback<String>() {
                     @Override
@@ -114,6 +124,8 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
         bleAdapter.destroyClient();
         scanningStreamHandler.onComplete();
         connectionStateStreamHandler.onComplete();
+        bleAdapter = null;
+        delegates.clear();
         result.success(null);
     }
 
