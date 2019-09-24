@@ -34,14 +34,14 @@ class Characteristic {
         isNotifiable = jsonObject[_CharacteristicMetadata.isNotifiable],
         isIndicatable = jsonObject[_CharacteristicMetadata.isIndicatable];
 
-  Future<CharacteristicWithValue> read({String transactionId}) =>
+  Future<Uint8List> read({String transactionId}) =>
       _manager.readCharacteristicForIdentifier(
         service.peripheral,
         _id,
         transactionId,
       );
 
-  Future<Characteristic> write(
+  Future<void> write(
     Uint8List bytes,
     bool withResponse, {
     String transactionId,
@@ -54,7 +54,7 @@ class Characteristic {
         transactionId,
       );
 
-  Stream<CharacteristicWithValue> monitor({String transactionId}) =>
+  Stream<Uint8List> monitor({String transactionId}) =>
       _manager.monitorCharacteristicForIdentifier(
         service.peripheral,
         _id,

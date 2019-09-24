@@ -4,7 +4,7 @@ mixin CharacteristicsMixin on FlutterBLE {
   final EventChannel _monitoringChannel =
       const EventChannel(ChannelName.monitorCharacteristic);
 
-  Future<CharacteristicWithValue> readCharacteristicForIdentifier(
+  Future<Uint8List> readCharacteristicForIdentifier(
     Peripheral peripheral,
     int characteristicIdentifier,
     String transactionId,
@@ -15,10 +15,8 @@ mixin CharacteristicsMixin on FlutterBLE {
           ArgumentName.characteristicIdentifier: characteristicIdentifier,
           ArgumentName.transactionId: transactionId
         },
-      ).then(
-        (rawJsonValue) =>
-            _parseCharacteristicResponse(peripheral, rawJsonValue),
-      );
+      ).then((rawJsonValue) =>
+          _parseCharacteristicResponse(peripheral, rawJsonValue).value);
 
   Future<CharacteristicWithValue> readCharacteristicForDevice(
     Peripheral peripheral,
@@ -57,7 +55,7 @@ mixin CharacteristicsMixin on FlutterBLE {
             _parseCharacteristicResponse(peripheral, rawJsonValue),
       );
 
-  Future<CharacteristicWithValue> writeCharacteristicForIdentifier(
+  Future<void> writeCharacteristicForIdentifier(
     Peripheral peripheral,
     int characteristicIdentifier,
     Uint8List bytes,
@@ -72,12 +70,9 @@ mixin CharacteristicsMixin on FlutterBLE {
           ArgumentName.withResponse: withResponse,
           ArgumentName.transactionId: transactionId,
         },
-      ).then(
-        (rawJsonValue) =>
-            _parseCharacteristicResponse(peripheral, rawJsonValue),
       );
 
-  Future<CharacteristicWithValue> writeCharacteristicForDevice(
+  Future<Characteristic> writeCharacteristicForDevice(
           Peripheral peripheral,
           String serviceUUID,
           String characteristicUUID,
@@ -99,7 +94,7 @@ mixin CharacteristicsMixin on FlutterBLE {
             _parseCharacteristicResponse(peripheral, rawJsonValue),
       );
 
-  Future<CharacteristicWithValue> writeCharacteristicForService(
+  Future<Characteristic> writeCharacteristicForService(
     Peripheral peripheral,
     int serviceIdentifier,
     String characteristicUUID,
@@ -121,15 +116,19 @@ mixin CharacteristicsMixin on FlutterBLE {
             _parseCharacteristicResponse(peripheral, rawJsonValue),
       );
 
-  Stream<CharacteristicWithValue> monitorCharacteristicForIdentifier(
+  Stream<Uint8List> monitorCharacteristicForIdentifier(
     Peripheral peripheral,
     int characteristicIdentifier,
     String transactionId,
   ) async* {
-    yield* _monitoringChannel.receiveBroadcastStream().map(
+    yield* _monitoringChannel
+        .receiveBroadcastStream()
+        .map(
           (rawJsonValue) =>
               _parseCharacteristicResponse(peripheral, rawJsonValue),
-        );
+        )
+        .map((characteristicWithValue) => characteristicWithValue.value);
+
     _methodChannel.invokeMethod(
       MethodName.monitorCharacteristicForIdentifier,
       <String, dynamic>{

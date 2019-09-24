@@ -30,7 +30,7 @@ abstract class ManagerForPeripheral {
     String transactionId,
   );
 
-  Future<CharacteristicWithValue> writeCharacteristicForDevice(
+  Future<Characteristic> writeCharacteristicForDevice(
       Peripheral peripheral,
       String serviceUUID,
       String characteristicUUID,
@@ -56,7 +56,7 @@ abstract class ManagerForService {
     String transactionId,
   );
 
-  Future<CharacteristicWithValue> writeCharacteristicForService(
+  Future<Characteristic> writeCharacteristicForService(
     Peripheral peripheral,
     InternalService service,
     String characteristicUUID,
@@ -74,13 +74,13 @@ abstract class ManagerForService {
 }
 
 abstract class ManagerForCharacteristic {
-  Future<CharacteristicWithValue> readCharacteristicForIdentifier(
+  Future<Uint8List> readCharacteristicForIdentifier(
     Peripheral peripheral,
     int characteristicIdentifier,
     String transactionId,
   );
 
-  Future<CharacteristicWithValue> writeCharacteristicForIdentifier(
+  Future<void> writeCharacteristicForIdentifier(
     Peripheral peripheral,
     int characteristicIdentifier,
     Uint8List bytes,
@@ -88,7 +88,7 @@ abstract class ManagerForCharacteristic {
     String transactionId,
   );
 
-  Stream<CharacteristicWithValue> monitorCharacteristicForIdentifier(
+  Stream<Uint8List> monitorCharacteristicForIdentifier(
     Peripheral peripheral,
     int characteristicIdentifier,
     String transactionId,

@@ -32,7 +32,7 @@ class Service extends InternalService {
       _manager.writeCharacteristicForService(peripheral, this,
           characteristicUUID, bytes, withResponse, transactionId);
 
-  Future<Characteristic> readCharacteristic(String characteristicUUID,
+  Future<CharacteristicWithValue> readCharacteristic(String characteristicUUID,
           {String transactionId}) =>
       _manager.readCharacteristicForService(
         peripheral,
