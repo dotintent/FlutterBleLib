@@ -5,6 +5,7 @@ import 'package:flutter_ble_lib_example/model/ble_device.dart';
 import 'package:flutter_ble_lib_example/repository/device_repository.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
+import 'package:flutter_ble_lib/blemulator/blemulator.dart';
 
 
 class DevicesBloc {
@@ -44,6 +45,7 @@ class DevicesBloc {
 
   void init() {
     Fimber.d("Init devices bloc");
+//    Blemulator().simulate();
     _bleManager.createClient()
         .then((it) => startScan())
         .catchError((e) => Fimber.d("Couldn't create BLE client", ex: e));

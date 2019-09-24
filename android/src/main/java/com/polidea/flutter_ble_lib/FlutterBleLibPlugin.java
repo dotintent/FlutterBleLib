@@ -41,7 +41,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
     private ScanningStreamHandler scanningStreamHandler = new ScanningStreamHandler();
     private ConnectionStateStreamHandler connectionStateStreamHandler = new ConnectionStateStreamHandler();
 
-    private List<CallDelegate> delegates;
+    private List<CallDelegate> delegates = new LinkedList<>();
 
     public static void registerWith(Registrar registrar) {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), ChannelName.FLUTTER_BLE_LIB);
@@ -70,7 +70,6 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
 
     private void setupAdapter(Context context) {
         bleAdapter = BleAdapterFactory.getNewAdapter(context);
-        delegates = new LinkedList<>();
         delegates.add(new DeviceConnectionDelegate(bleAdapter, connectionStateStreamHandler));
         delegates.add(new LogLevelDelegate(bleAdapter));
         delegates.add(new DiscoveryDelegate(bleAdapter));
