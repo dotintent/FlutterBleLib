@@ -1,9 +1,4 @@
-import 'dart:typed_data';
-
-import 'package:flutter_ble_lib/flutter_ble_lib.dart';
-import 'package:flutter_ble_lib/internal/managers_for_classes.dart';
-import 'package:flutter_ble_lib/internal/constants.dart';
-import 'package:flutter_ble_lib/internal/bridge/internal_bridge_lib.dart';
+part of internal_bridge_lib;
 
 class InternalBleManager
     implements
@@ -127,12 +122,12 @@ class InternalBleManager
   @override
   Future<CharacteristicWithValue> readCharacteristicForService(
           Peripheral peripheral,
-          int serviceIdentifier,
+          InternalService service,
           String characteristicUUID,
           String transactionId) =>
       _bleLib.readCharacteristicForService(
         peripheral,
-        serviceIdentifier,
+        service._id,
         characteristicUUID,
         transactionId,
       );
@@ -169,14 +164,14 @@ class InternalBleManager
   @override
   Future<CharacteristicWithValue> writeCharacteristicForService(
           Peripheral peripheral,
-          int serviceIdentifier,
+          InternalService service,
           String characteristicUUID,
           Uint8List bytes,
           bool withResponse,
           String transactionId) =>
       _bleLib.writeCharacteristicForService(
         peripheral,
-        serviceIdentifier,
+        service._id,
         characteristicUUID,
         bytes,
         withResponse,
@@ -200,13 +195,13 @@ class InternalBleManager
   @override
   Stream<CharacteristicWithValue> monitorCharacteristicForService(
     Peripheral peripheral,
-    int serviceIdentifier,
+    InternalService service,
     String characteristicUUID,
     String transactionId,
   ) =>
       _bleLib.monitorCharacteristicForService(
         peripheral,
-        serviceIdentifier,
+        service._id,
         characteristicUUID,
         transactionId,
       );

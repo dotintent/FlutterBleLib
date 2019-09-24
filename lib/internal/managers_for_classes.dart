@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
+import 'package:flutter_ble_lib/internal/bridge/internal_bridge_lib.dart';
 
 abstract class ManagerForPeripheral {
   Future<void> connectToPeripheral(String peripheralIdentifier,
@@ -50,14 +51,14 @@ abstract class ManagerForService {
 
   Future<CharacteristicWithValue> readCharacteristicForService(
     Peripheral peripheral,
-    int serviceIdentifier,
+    InternalService service,
     String characteristicUUID,
     String transactionId,
   );
 
   Future<CharacteristicWithValue> writeCharacteristicForService(
     Peripheral peripheral,
-    int serviceIdentifier,
+    InternalService service,
     String characteristicUUID,
     Uint8List bytes,
     bool withResponse,
@@ -66,7 +67,7 @@ abstract class ManagerForService {
 
   Stream<CharacteristicWithValue> monitorCharacteristicForService(
     Peripheral peripheral,
-    int serviceIdentifier,
+    InternalService service,
     String characteristicUUID,
     String transactionId,
   );
