@@ -20,7 +20,6 @@ import com.polidea.multiplatformbleadapter.OnErrorCallback;
 import com.polidea.multiplatformbleadapter.OnEventCallback;
 import com.polidea.multiplatformbleadapter.ScanResult;
 import com.polidea.multiplatformbleadapter.errors.BleError;
-import com.polidea.blemulator.SimulatorPlugin;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -59,9 +58,6 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
         bluetoothStateChannel.setStreamHandler(plugin.adapterStateStreamHandler);
         restoreStateChannel.setStreamHandler(plugin.restoreStateStreamHandler);
         connectionStateChannel.setStreamHandler(plugin.connectionStateStreamHandler);
-
-        //TEMPORARY
-        SimulatorPlugin.registerWith(registrar);
     }
 
     private FlutterBleLibPlugin(Context context) {
