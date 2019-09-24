@@ -15,6 +15,7 @@ import com.polidea.multiplatformbleadapter.OnErrorCallback;
 import com.polidea.multiplatformbleadapter.OnEventCallback;
 import com.polidea.multiplatformbleadapter.OnSuccessCallback;
 import com.polidea.multiplatformbleadapter.errors.BleError;
+import com.polidea.multiplatformbleadapter.errors.ErrorConverter;
 import com.polidea.multiplatformbleadapter.utils.Base64Converter;
 
 import org.json.JSONException;
@@ -44,6 +45,7 @@ public class CharacteristicsDelegate extends CallDelegate {
             new SingleCharacteristicResponseJsonConverter();
     private CharacteristicsMonitorStreamHandler characteristicsMonitorStreamHandler;
     private BleErrorJsonConverter bleErrorJsonConverter = new BleErrorJsonConverter();
+    private ErrorConverter errorConverter = new ErrorConverter();
 
     public CharacteristicsDelegate(BleAdapter bleAdapter, CharacteristicsMonitorStreamHandler characteristicsMonitorStreamHandler) {
         super(supportedMethods);
@@ -335,7 +337,7 @@ public class CharacteristicsDelegate extends CallDelegate {
                 });
     }
 
-    private void monitorCharacteristicForIdentifier(int characteristicIdentifier,
+    private void monitorCharacteristicForIdentifier(final int characteristicIdentifier,
                                                     String transactionId,
                                                     final MethodChannel.Result result) {
         bleAdapter.monitorCharacteristic(
@@ -349,7 +351,7 @@ public class CharacteristicsDelegate extends CallDelegate {
                             );
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            result.error(null, e.getMessage(), null);
+                            characteristicsMonitorStreamHandler.onError(errorConverter.toError(e));
                         }
                     }
                 }, new OnErrorCallback() {
@@ -380,7 +382,7 @@ public class CharacteristicsDelegate extends CallDelegate {
                             );
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            result.error(null, e.getMessage(), null);
+                            characteristicsMonitorStreamHandler.onError(errorConverter.toError(e));
                         }
                     }
                 }, new OnErrorCallback() {
@@ -409,7 +411,7 @@ public class CharacteristicsDelegate extends CallDelegate {
                             );
                         } catch (JSONException e) {
                             e.printStackTrace();
-                            result.error(null, e.getMessage(), null);
+                            characteristicsMonitorStreamHandler.onError(errorConverter.toError(e));
                         }
                     }
                 }, new OnErrorCallback() {
