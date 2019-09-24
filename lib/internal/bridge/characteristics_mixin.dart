@@ -151,6 +151,7 @@ mixin CharacteristicsMixin on FlutterBLE {
     _methodChannel.invokeMethod(
       MethodName.monitorCharacteristicForDevice,
       <String, dynamic>{
+        ArgumentName.deviceIdentifier: peripheral.identifier,
         ArgumentName.serviceUuid: serviceUuid,
         ArgumentName.characteristicUuid: characteristicUUID,
         ArgumentName.transactionId: transactionId,
