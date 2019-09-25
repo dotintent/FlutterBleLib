@@ -5,9 +5,7 @@ import com.polidea.multiplatformbleadapter.errors.BleErrorCode;
 
 
 public class BleErrorFactory {
-
-    public static final int JSON_PASING_ERROR_CODE = -100;
-
+    
     public static BleError fromThrowable(Throwable exception) {
         return new BleError(BleErrorCode.UnknownError, exception.toString(), null);
     }
