@@ -75,7 +75,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
     }
 }
 
-// MARK: - MBA Library Methods
+// MARK: - MBA Methods - Client lifecycle
 
 - (void)createClient:(FlutterMethodCall*)call result:(FlutterResult)result {
     _manager = [[BleClientManager alloc] initWithQueue:dispatch_get_main_queue()
@@ -93,10 +93,12 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
     [self destroyClient];
 }
 
+// MARK: - MBA Methods - Scanning
+
 - (void)startDeviceScan:(FlutterMethodCall*)call result:(FlutterResult)result {
-    NSDictionary* arguments = (NSDictionary<NSString *, id> *)call.arguments;
+    NSArray* expectedArguments = [NSArray arrayWithObjects:ARGUMENT_KEY_SCAN_MODE, nil];
     [_manager startDeviceScan:[self validStringArrayOrNil:call.arguments[ARGUMENT_KEY_UUIDS]]
-                      options:nil];
+                      options:[self validDictionaryOrNil:expectedArguments in:call.arguments]];
     result(nil);
 }
 
@@ -105,6 +107,9 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
     [self.scanningStreamHandler onComplete];
     result(nil);
 }
+
+// MARK: - MBA Methods - Connection
+
 - (void)connectToDevice:(FlutterMethodCall*)call result:(FlutterResult)result {
     [_manager connectToDevice:[self validStringOrNil:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]]
                       options:nil
@@ -125,7 +130,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 
 }
 
-// MARK: - BleClientManagerDelegate implementation
+// MARK: - MBA Methods - BleClientManagerDelegate implementation
 
 - (void)dispatchEvent:(NSString * _Nonnull)name value:(id _Nonnull)value {
     if ([BleEvent.restoreStateEvent isEqualToString:name]) {
@@ -150,6 +155,14 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
     };
 }
 
+- (nullable id)validArgumentOrNil:(id)argument {
+    if (argument != nil && (NSNull *)argument != [NSNull null]) {
+        return argument;
+    } else {
+        return nil;
+    }
+}
+
 - (nullable NSString*)validStringOrNil:(id)argument {
     if (argument != nil && (NSNull *)argument != [NSNull null] && [argument isKindOfClass:[NSString class]]) {
         return (NSString*)argument;
@@ -164,6 +177,16 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
     } else {
         return nil;
     }
+}
+
+- (nullable NSDictionary<NSString*, id>*)validDictionaryOrNil:(NSArray<NSString*>*)argumentKeys in:(NSDictionary<NSString*, id>*)dictionary {
+    NSMutableDictionary<NSString*, id>* resultDictionary = [NSMutableDictionary new];
+    for (NSString *argumentKey in argumentKeys) {
+        if ([dictionary objectForKey:argumentKey] != nil) {
+            [resultDictionary setValue:[self validArgumentOrNil:[dictionary objectForKey:argumentKey]] forKey:argumentKey];
+        }
+    }
+    return resultDictionary;
 }
 
 @end
