@@ -60,7 +60,7 @@ abstract class ArgumentName {
   static const String emitCurrentValue = "emitCurrentValue";
 
   static const String serviceUuid = "serviceUuid";
-  static const String serviceId = "serviceId";
+  static const String serviceIdentifier = "serviceId";
   static const String characteristicUuid = "characteristicUuid";
   static const String characteristicIdentifier = "characteristicIdentifier";
 

@@ -46,7 +46,7 @@ mixin CharacteristicsMixin on FlutterBLE {
       _methodChannel.invokeMethod(
         MethodName.readCharacteristicForService,
         <String, dynamic>{
-          ArgumentName.serviceId: serviceIdentifier,
+          ArgumentName.serviceIdentifier: serviceIdentifier,
           ArgumentName.characteristicUuid: characteristicUUID,
           ArgumentName.transactionId: transactionId
         },
@@ -105,7 +105,7 @@ mixin CharacteristicsMixin on FlutterBLE {
       _methodChannel.invokeMethod(
         MethodName.writeCharacteristicForService,
         <String, dynamic>{
-          ArgumentName.serviceId: serviceIdentifier,
+          ArgumentName.serviceIdentifier: serviceIdentifier,
           ArgumentName.characteristicUuid: characteristicUUID,
           ArgumentName.bytes: bytes,
           ArgumentName.withResponse: withResponse,
@@ -172,7 +172,7 @@ mixin CharacteristicsMixin on FlutterBLE {
     _methodChannel.invokeMethod(
       MethodName.monitorCharacteristicForService,
       <String, dynamic>{
-        ArgumentName.serviceId: serviceIdentifier,
+        ArgumentName.serviceIdentifier: serviceIdentifier,
         ArgumentName.characteristicUuid: characteristicUUID,
         ArgumentName.transactionId: transactionId,
       },

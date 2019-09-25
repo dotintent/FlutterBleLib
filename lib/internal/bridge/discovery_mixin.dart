@@ -54,7 +54,7 @@ mixin DiscoveryMixin on FlutterBLE {
     String jsonString = await _methodChannel.invokeMethod(
       MethodName.characteristicsForService,
       <String, dynamic>{
-        ArgumentName.serviceId: service._id,
+        ArgumentName.serviceIdentifier: service._id,
       },
     );
 
