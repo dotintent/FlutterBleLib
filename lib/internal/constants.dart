@@ -3,6 +3,9 @@ abstract class MethodName {
   static const String createClient = "createClient";
   static const String destroyClient = "destroyClient";
 
+  static const String enableRadio = "enableRadio";
+  static const String disableRadio = "disableRadio";
+
   static const String startDeviceScan = "startDeviceScan";
   static const String stopDeviceScan = "stopDeviceScan";
 
@@ -16,9 +19,12 @@ abstract class MethodName {
   static const String services = "services";
   static const String characteristics = "characteristics";
   static const String characteristicsForService = "characteristicsForService";
-  
+
   static const String setLogLevel = "setLogLevel";
   static const String logLevel = "logLevel";
+
+  static const String rssi = "rssi";
+  static const String requestMtu = "requestMtu";
 
   static const String readCharacteristicForIdentifier = "readCharacteristicForIdentifier";
   static const String readCharacteristicForDevice = "readCharacteristicForDevice";
@@ -68,6 +74,8 @@ abstract class ArgumentName {
   static const String withResponse = "withResponse";
   
   static const String logLevel = "logLevel";
+
+  static const String mtu = "mtu";
 }
 
 abstract class ScanMode {

@@ -23,4 +23,6 @@ public interface ArgumentKey {
     String CHARACTERISTIC_IDENTIFIER = "characteristicIdentifier";
     String BYTES = "bytes";
     String WITH_RESPONSE = "withResponse";
+    
+    String MTU = "mtu";
 }

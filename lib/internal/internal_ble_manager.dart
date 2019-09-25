@@ -30,6 +30,14 @@ class InternalBleManager
   Future<void> destroyClient() => _bleLib.destroyClient();
 
   @override
+  Future<void> enableRadio({String transactionId}) =>
+      _bleLib.enableRadio(transactionId);
+
+  @override
+  Future<void> disableRadio({String transactionId}) =>
+      _bleLib.disableRadio(transactionId);
+
+  @override
   Stream<ScanResult> startPeripheralScan({
     int scanMode = ScanMode.lowPower,
     int callbackType = CallbackType.allMatches,
@@ -99,6 +107,19 @@ class InternalBleManager
   @override
   Future<List<Characteristic>> characteristicsForService(Service service) =>
       _bleLib.characteristicsForService(service);
+
+  @override
+  Future<int> rssi(
+      Peripheral peripheral,
+      String transactionId,
+      ) {
+    return _bleLib.rssi(peripheral, transactionId);
+  }
+
+  @override
+  Future<void> requestMtu(Peripheral peripheral, int mtu, String transactionId) {
+   return _bleLib.requestMtu(peripheral, mtu, transactionId);
+  }
 
   @override
   Future<Uint8List> readCharacteristicForIdentifier(Peripheral peripheral,

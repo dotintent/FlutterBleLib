@@ -3,6 +3,10 @@ package com.polidea.flutter_ble_lib.constant;
 public interface MethodName {
     String CREATE_CLIENT = "createClient";
     String DESTROY_CLIENT = "destroyClient";
+
+    String ENABLE_RADIO = "enableRadio";
+    String DISABLE_RADIO = "disableRadio";
+
     String START_DEVICE_SCAN = "startDeviceScan";
     String STOP_DEVICE_SCAN = "stopDeviceScan";
 
@@ -18,6 +22,10 @@ public interface MethodName {
 
     String LOG_LEVEL = "logLevel";
     String SET_LOG_LEVEL = "setLogLevel";
+
+    String RSSI = "rssi";
+
+    String REQUEST_MTU = "requestMtu";
 
     String READ_CHARACTERISTIC_FOR_IDENTIFIER = "readCharacteristicForIdentifier";
     String READ_CHARACTERISTIC_FOR_DEVICE = "readCharacteristicForDevice";

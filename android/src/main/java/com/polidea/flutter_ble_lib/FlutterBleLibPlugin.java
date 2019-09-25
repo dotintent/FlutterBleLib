@@ -6,11 +6,14 @@ import android.support.annotation.NonNull;
 import com.polidea.flutter_ble_lib.constant.ArgumentKey;
 import com.polidea.flutter_ble_lib.constant.ChannelName;
 import com.polidea.flutter_ble_lib.constant.MethodName;
+import com.polidea.flutter_ble_lib.delegate.BluetoothStateDelegate;
 import com.polidea.flutter_ble_lib.delegate.CallDelegate;
 import com.polidea.flutter_ble_lib.delegate.CharacteristicsDelegate;
 import com.polidea.flutter_ble_lib.delegate.DeviceConnectionDelegate;
 import com.polidea.flutter_ble_lib.delegate.LogLevelDelegate;
 import com.polidea.flutter_ble_lib.delegate.DiscoveryDelegate;
+import com.polidea.flutter_ble_lib.delegate.MtuDelegate;
+import com.polidea.flutter_ble_lib.delegate.RssiDelegate;
 import com.polidea.flutter_ble_lib.event.AdapterStateStreamHandler;
 import com.polidea.flutter_ble_lib.event.CharacteristicsMonitorStreamHandler;
 import com.polidea.flutter_ble_lib.event.ConnectionStateStreamHandler;
@@ -70,6 +73,9 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
         delegates.add(new DeviceConnectionDelegate(bleAdapter, connectionStateStreamHandler));
         delegates.add(new LogLevelDelegate(bleAdapter));
         delegates.add(new DiscoveryDelegate(bleAdapter));
+        delegates.add(new BluetoothStateDelegate(bleAdapter));
+        delegates.add(new RssiDelegate(bleAdapter));
+        delegates.add(new MtuDelegate(bleAdapter));
         delegates.add(new CharacteristicsDelegate(bleAdapter, characteristicsMonitorStreamHandler));
     }
 
