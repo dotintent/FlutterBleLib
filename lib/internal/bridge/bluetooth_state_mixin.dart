@@ -1,4 +1,5 @@
-part of flutter_ble_lib;
+part of internal_bridge_lib;
+
 
 mixin BluetoothStateMixin on FlutterBLE {
   Future<void> enableRadio(String transactionId) async {
