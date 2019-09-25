@@ -45,7 +45,7 @@ mixin DiscoveryMixin on FlutterBLE {
     Service service = Service.fromJson(jsonObject, peripheral, _manager);
 
     return jsonCharacteristics.map((characteristicJson) {
-      return Characteristic.fromJson(characteristicJson, service);
+      return Characteristic.fromJson(characteristicJson, service, _manager);
     }).toList();
   }
 
@@ -62,7 +62,7 @@ mixin DiscoveryMixin on FlutterBLE {
         (jsonDecode(jsonString) as List<dynamic>).cast();
 
     return jsonList.map((characteristicJson) {
-      return Characteristic.fromJson(characteristicJson, service);
+      return Characteristic.fromJson(characteristicJson, service, _manager);
     }).toList();
   }
 }

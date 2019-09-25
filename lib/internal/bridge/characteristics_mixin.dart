@@ -185,6 +185,6 @@ mixin CharacteristicsMixin on FlutterBLE {
     Service service = Service.fromJson(rootObject, peripheral, _manager);
 
     return CharacteristicWithValue.fromJson(
-        rootObject["characteristic"], service);
+        rootObject["characteristic"], service, _manager);
   }
 }

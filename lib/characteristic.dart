@@ -22,8 +22,10 @@ class Characteristic {
   bool isNotifiable;
   bool isIndicatable;
 
-  Characteristic.fromJson(Map<String, dynamic> jsonObject, Service service)
-      : service = service,
+  Characteristic.fromJson(Map<String, dynamic> jsonObject, Service service,
+      ManagerForCharacteristic manager)
+      : _manager = manager,
+        service = service,
         _id = jsonObject[_CharacteristicMetadata.id],
         uuid = jsonObject[_CharacteristicMetadata.uuid],
         isReadable = jsonObject[_CharacteristicMetadata.isReadable],
@@ -70,7 +72,8 @@ class CharacteristicWithValue extends Characteristic with WithValue {
   CharacteristicWithValue.fromJson(
     Map<String, dynamic> jsonObject,
     Service service,
-  ) : super.fromJson(jsonObject, service) {
+    ManagerForCharacteristic manager,
+  ) : super.fromJson(jsonObject, service, manager) {
     value = base64Decode(jsonObject[_CharacteristicMetadata.value]);
   }
 }
