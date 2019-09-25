@@ -33,4 +33,8 @@ abstract class BleManager {
   Future<void> setLogLevel(LogLevel logLevel);
 
   Future<LogLevel> logLevel();
+
+  Future<void> enableRadio({String transactionId});
+
+  Future<void> disableRadio({String transactionId});
 }
