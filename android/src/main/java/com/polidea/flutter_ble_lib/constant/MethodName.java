@@ -10,6 +10,7 @@ public interface MethodName {
     String IS_DEVICE_CONNECTED = "isDeviceConnected";
     String OBSERVE_CONNECTION_STATE = "observeConnectionState";
     String CANCEL_CONNECTION = "cancelConnection";
+
     String DISCOVER_ALL_SERVICES_AND_CHARACTERISTICS = "discoverAllServicesAndCharacteristics";
     String GET_SERVICES = "services";
     String GET_CHARACTERISTICS = "characteristics";

@@ -1,7 +1,10 @@
 package com.polidea.flutter_ble_lib.delegate;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 
+import com.polidea.flutter_ble_lib.BleErrorFactory;
 import com.polidea.flutter_ble_lib.SafeMainThreadResolver;
 import com.polidea.flutter_ble_lib.SingleCharacteristicResponse;
 import com.polidea.flutter_ble_lib.constant.ArgumentKey;
@@ -15,6 +18,7 @@ import com.polidea.multiplatformbleadapter.OnErrorCallback;
 import com.polidea.multiplatformbleadapter.OnEventCallback;
 import com.polidea.multiplatformbleadapter.OnSuccessCallback;
 import com.polidea.multiplatformbleadapter.errors.BleError;
+import com.polidea.multiplatformbleadapter.errors.BleErrorCode;
 import com.polidea.multiplatformbleadapter.errors.ErrorConverter;
 import com.polidea.multiplatformbleadapter.utils.Base64Converter;
 
@@ -45,29 +49,12 @@ public class CharacteristicsDelegate extends CallDelegate {
             new SingleCharacteristicResponseJsonConverter();
     private CharacteristicsMonitorStreamHandler characteristicsMonitorStreamHandler;
     private BleErrorJsonConverter bleErrorJsonConverter = new BleErrorJsonConverter();
-    private ErrorConverter errorConverter = new ErrorConverter();
+    private Handler mainThreadHandler = new Handler(Looper.getMainLooper());
 
     public CharacteristicsDelegate(BleAdapter bleAdapter, CharacteristicsMonitorStreamHandler characteristicsMonitorStreamHandler) {
         super(supportedMethods);
         this.bleAdapter = bleAdapter;
         this.characteristicsMonitorStreamHandler = characteristicsMonitorStreamHandler;
-    }
-
-    @Override
-    public boolean canHandle(MethodCall call) {
-        switch (call.method) {
-            case MethodName.READ_CHARACTERISTIC_FOR_IDENTIFIER:
-            case MethodName.READ_CHARACTERISTIC_FOR_DEVICE:
-            case MethodName.READ_CHARACTERISTIC_FOR_SERVICE:
-            case MethodName.WRITE_CHARACTERISTIC_FOR_IDENTIFIER:
-            case MethodName.WRITE_CHARACTERISTIC_FOR_DEVICE:
-            case MethodName.WRITE_CHARACTERISTIC_FOR_SERVICE:
-            case MethodName.MONITOR_CHARACTERISTIC_FOR_IDENTIFIER:
-            case MethodName.MONITOR_CHARACTERISTIC_FOR_DEVICE:
-            case MethodName.MONITOR_CHARACTERISTIC_FOR_SERVICE:
-                return true;
-        }
-        return false;
     }
 
     @Override
@@ -151,7 +138,7 @@ public class CharacteristicsDelegate extends CallDelegate {
             int characteristicIdentifier,
             String transactionId,
             final MethodChannel.Result result) {
-        bleAdapter.readCharacteristic(characteristicIdentifier, transactionId,
+        final SafeMainThreadResolver<Characteristic> safeMainThreadResolver = new SafeMainThreadResolver<>(
                 new OnSuccessCallback<Characteristic>() {
                     @Override
                     public void onSuccess(Characteristic data) {
@@ -162,10 +149,24 @@ public class CharacteristicsDelegate extends CallDelegate {
                             result.error(null, e.getMessage(), null);
                         }
                     }
-                }, new OnErrorCallback() {
+                },
+                new OnErrorCallback() {
                     @Override
                     public void onError(BleError error) {
                         result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
+                    }
+                }
+        );
+        bleAdapter.readCharacteristic(characteristicIdentifier, transactionId,
+                new OnSuccessCallback<Characteristic>() {
+                    @Override
+                    public void onSuccess(Characteristic data) {
+                        safeMainThreadResolver.onSuccess(data);
+                    }
+                }, new OnErrorCallback() {
+                    @Override
+                    public void onError(BleError error) {
+                        safeMainThreadResolver.onError(error);
                     }
                 });
     }
@@ -211,10 +212,7 @@ public class CharacteristicsDelegate extends CallDelegate {
     }
 
     private void readCharacteristicForService(int serviceIdentifier, String characteristicUuid, String transactionId, final MethodChannel.Result result) {
-        bleAdapter.readCharacteristicForService(
-                serviceIdentifier,
-                characteristicUuid,
-                transactionId,
+        final SafeMainThreadResolver<Characteristic> safeMainThreadResolver = new SafeMainThreadResolver<>(
                 new OnSuccessCallback<Characteristic>() {
                     @Override
                     public void onSuccess(Characteristic data) {
@@ -225,10 +223,28 @@ public class CharacteristicsDelegate extends CallDelegate {
                             result.error(null, e.getMessage(), null);
                         }
                     }
-                }, new OnErrorCallback() {
+                },
+                new OnErrorCallback() {
                     @Override
                     public void onError(BleError error) {
                         result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
+                    }
+                }
+        );
+
+        bleAdapter.readCharacteristicForService(
+                serviceIdentifier,
+                characteristicUuid,
+                transactionId,
+                new OnSuccessCallback<Characteristic>() {
+                    @Override
+                    public void onSuccess(Characteristic data) {
+                        safeMainThreadResolver.onSuccess(data);
+                    }
+                }, new OnErrorCallback() {
+                    @Override
+                    public void onError(BleError error) {
+                        safeMainThreadResolver.onError(error);
                     }
                 });
     }
@@ -238,6 +254,25 @@ public class CharacteristicsDelegate extends CallDelegate {
                                                   boolean withResponse,
                                                   String transactionId,
                                                   final MethodChannel.Result result) {
+        final SafeMainThreadResolver<Characteristic> safeMainThreadResolver = new SafeMainThreadResolver<>(
+                new OnSuccessCallback<Characteristic>() {
+                    @Override
+                    public void onSuccess(Characteristic data) {
+                        try {
+                            result.success(characteristicsResponseJsonConverter.toJson(createCharacteristicResponse(data)));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            result.error(null, e.getMessage(), null);
+                        }
+                    }
+                },
+                new OnErrorCallback() {
+                    @Override
+                    public void onError(BleError error) {
+                        result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
+                    }
+                }
+        );
         bleAdapter.writeCharacteristic(
                 characteristicIdentifier,
                 Base64Converter.encode(bytesToWrite),
@@ -313,12 +348,7 @@ public class CharacteristicsDelegate extends CallDelegate {
                                                boolean withResponse,
                                                String transactionId,
                                                final MethodChannel.Result result) {
-        bleAdapter.writeCharacteristicForService(
-                serviceIdentifier,
-                characteristicUuid,
-                Base64Converter.encode(bytesToWrite),
-                withResponse,
-                transactionId,
+        final SafeMainThreadResolver<Characteristic> safeMainThreadResolver = new SafeMainThreadResolver<>(
                 new OnSuccessCallback<Characteristic>() {
                     @Override
                     public void onSuccess(Characteristic data) {
@@ -329,10 +359,29 @@ public class CharacteristicsDelegate extends CallDelegate {
                             result.error(null, e.getMessage(), null);
                         }
                     }
-                }, new OnErrorCallback() {
+                },
+                new OnErrorCallback() {
                     @Override
                     public void onError(BleError error) {
                         result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
+                    }
+                }
+        );
+        bleAdapter.writeCharacteristicForService(
+                serviceIdentifier,
+                characteristicUuid,
+                Base64Converter.encode(bytesToWrite),
+                withResponse,
+                transactionId,
+                new OnSuccessCallback<Characteristic>() {
+                    @Override
+                    public void onSuccess(Characteristic data) {
+                        safeMainThreadResolver.onSuccess(data);
+                    }
+                }, new OnErrorCallback() {
+                    @Override
+                    public void onError(BleError error) {
+                        safeMainThreadResolver.onError(error);
                     }
                 });
     }
@@ -344,20 +393,30 @@ public class CharacteristicsDelegate extends CallDelegate {
                 characteristicIdentifier,
                 transactionId, new OnEventCallback<Characteristic>() {
                     @Override
-                    public void onEvent(Characteristic data) {
-                        try {
-                            characteristicsMonitorStreamHandler.onCharacteristicsUpdate(
-                                    createCharacteristicResponse(data)
-                            );
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            characteristicsMonitorStreamHandler.onError(errorConverter.toError(e));
-                        }
+                    public void onEvent(final Characteristic data) {
+                        mainThreadHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    characteristicsMonitorStreamHandler.onCharacteristicsUpdate(
+                                            createCharacteristicResponse(data)
+                                    );
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                    characteristicsMonitorStreamHandler.onError(BleErrorFactory.fromThrowable(e));
+                                }
+                            }
+                        });
                     }
                 }, new OnErrorCallback() {
                     @Override
-                    public void onError(BleError error) {
-                        characteristicsMonitorStreamHandler.onError(error);
+                    public void onError(final BleError error) {
+                        mainThreadHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                characteristicsMonitorStreamHandler.onError(error);
+                            }
+                        });
                     }
                 });
         result.success(null);
@@ -375,20 +434,30 @@ public class CharacteristicsDelegate extends CallDelegate {
                 transactionId,
                 new OnEventCallback<Characteristic>() {
                     @Override
-                    public void onEvent(Characteristic data) {
-                        try {
-                            characteristicsMonitorStreamHandler.onCharacteristicsUpdate(
-                                    createCharacteristicResponse(data)
-                            );
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            characteristicsMonitorStreamHandler.onError(errorConverter.toError(e));
-                        }
+                    public void onEvent(final Characteristic data) {
+                        mainThreadHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    characteristicsMonitorStreamHandler.onCharacteristicsUpdate(
+                                            createCharacteristicResponse(data)
+                                    );
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                    characteristicsMonitorStreamHandler.onError(BleErrorFactory.fromThrowable(e));
+                                }
+                            }
+                        });
                     }
                 }, new OnErrorCallback() {
                     @Override
-                    public void onError(BleError error) {
-                        characteristicsMonitorStreamHandler.onError(error);
+                    public void onError(final BleError error) {
+                        mainThreadHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                characteristicsMonitorStreamHandler.onError(error);
+                            }
+                        });
                     }
                 });
         result.success(null);
@@ -404,20 +473,30 @@ public class CharacteristicsDelegate extends CallDelegate {
                 transactionId,
                 new OnEventCallback<Characteristic>() {
                     @Override
-                    public void onEvent(Characteristic data) {
-                        try {
-                            characteristicsMonitorStreamHandler.onCharacteristicsUpdate(
-                                    createCharacteristicResponse(data)
-                            );
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            characteristicsMonitorStreamHandler.onError(errorConverter.toError(e));
-                        }
+                    public void onEvent(final Characteristic data) {
+                        mainThreadHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    characteristicsMonitorStreamHandler.onCharacteristicsUpdate(
+                                            createCharacteristicResponse(data)
+                                    );
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                    characteristicsMonitorStreamHandler.onError(BleErrorFactory.fromThrowable(e));
+                                }
+                            }
+                        });
                     }
                 }, new OnErrorCallback() {
                     @Override
-                    public void onError(BleError error) {
-                        characteristicsMonitorStreamHandler.onError(error);
+                    public void onError(final BleError error) {
+                        mainThreadHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                characteristicsMonitorStreamHandler.onError(error);
+                            }
+                        });
                     }
                 });
         result.success(null);
