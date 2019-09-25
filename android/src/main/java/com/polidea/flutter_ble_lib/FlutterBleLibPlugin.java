@@ -10,6 +10,8 @@ import com.polidea.flutter_ble_lib.delegate.CallDelegate;
 import com.polidea.flutter_ble_lib.delegate.DeviceConnectionDelegate;
 import com.polidea.flutter_ble_lib.delegate.LogLevelDelegate;
 import com.polidea.flutter_ble_lib.delegate.DiscoveryDelegate;
+import com.polidea.flutter_ble_lib.delegate.MtuDelegate;
+import com.polidea.flutter_ble_lib.delegate.RssiDelegate;
 import com.polidea.flutter_ble_lib.event.AdapterStateStreamHandler;
 import com.polidea.flutter_ble_lib.event.ConnectionStateStreamHandler;
 import com.polidea.flutter_ble_lib.event.RestoreStateStreamHandler;
@@ -65,6 +67,8 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
         delegates.add(new DeviceConnectionDelegate(bleAdapter, connectionStateStreamHandler));
         delegates.add(new LogLevelDelegate(bleAdapter));
         delegates.add(new DiscoveryDelegate(bleAdapter));
+        delegates.add(new RssiDelegate(bleAdapter));
+        delegates.add(new MtuDelegate(bleAdapter));
     }
 
     @Override

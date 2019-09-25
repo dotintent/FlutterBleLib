@@ -18,4 +18,8 @@ public interface MethodName {
 
     String LOG_LEVEL = "logLevel";
     String SET_LOG_LEVEL = "setLogLevel";
+
+    String RSSI = "rssi";
+
+    String REQUEST_MTU = "requestMtu";
 }

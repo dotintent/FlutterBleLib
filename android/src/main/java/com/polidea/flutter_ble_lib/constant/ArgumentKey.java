@@ -19,4 +19,6 @@ public interface ArgumentKey {
 
     String SERVICE_UUID = "serviceUuid";
     String SERVICE_ID = "serviceId";
+
+    String MTU = "mtu";
 }

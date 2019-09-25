@@ -45,6 +45,14 @@ class Peripheral {
 
   Future<List<Characteristic>> characteristics(String servicedUuid) =>
       _manager.characteristics(this, servicedUuid);
+
+  Future<int> rssi({String transactionId}) {
+    return _manager.rssi(this, transactionId);
+  }
+
+  Future<void> requestMtu(int mtu, {String transactionId}) {
+    return _manager.requestMtu(this, mtu, transactionId);
+  }
 }
 
 enum PeripheralConnectionState {
