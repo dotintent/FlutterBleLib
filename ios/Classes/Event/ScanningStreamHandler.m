@@ -15,19 +15,23 @@
     return nil;
 }
 
-- (void)onScanResult:(id)scanResult {
+- (void)onScanResult:(NSArray*)scanResult {
     if (scanResultsSink != nil) {
-        // Temporary implementation just to showcase the results
-        if ([scanResult isKindOfClass:NSArray.class]) {
-            NSArray* testArray = (NSArray*)scanResult;
-            if (testArray != nil) {
-                NSError* error = nil;
-                NSData* jsonData = [NSJSONSerialization dataWithJSONObject:testArray[1] options:NSJSONWritingPrettyPrinted error:&error];
-                NSString* jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-                scanResultsSink(jsonString);
-            }
+        assert(scanResult.count == 2 &&
+               (scanResult[0] == [NSNull null] || (scanResult[1] == [NSNull null] && [scanResult[0] isKindOfClass:NSString.class])));
+        if (scanResult[0] == [NSNull null]) {
+            NSData* jsonData = [NSJSONSerialization dataWithJSONObject:scanResult[1]
+                                                               options:NSJSONWritingPrettyPrinted
+                                                                 error:nil];
+            scanResultsSink([[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding]);
         } else {
-            NSLog(@"Nope");
+            NSDictionary* dictionary = [NSJSONSerialization JSONObjectWithData:[scanResult[0] dataUsingEncoding:NSUTF8StringEncoding]
+                                                                       options:NSJSONReadingMutableContainers
+                                                                         error:nil];
+            scanResultsSink([FlutterError errorWithCode:[dictionary objectForKey:@"errorCode"]
+                                                message:[dictionary objectForKey:@"reason"]
+                                                details:scanResult[0]]);
+            [self onComplete];
         }
     }
 }
@@ -35,6 +39,14 @@
 - (void)onComplete {
     if (scanResultsSink != nil) {
         scanResultsSink(FlutterEndOfEventStream);
+    }
+}
+
+- (nullable NSString*)validStringOrNil:(id)argument {
+    if (argument != nil && (NSNull *)argument != [NSNull null] && [argument isKindOfClass:[NSString class]]) {
+        return (NSString*)argument;
+    } else {
+        return nil;
     }
 }
 

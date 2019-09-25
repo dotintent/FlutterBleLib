@@ -138,7 +138,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
     } else if ([BleEvent.stateChangeEvent isEqualToString:name]) {
         [self.adapterStateStreamHandler onNewAdapterState:value];
     } else if ([BleEvent.scanEvent isEqualToString:name]) {
-        [self.scanningStreamHandler onScanResult:value];
+        [self.scanningStreamHandler onScanResult:(NSArray*)value];
     }
 }
 
