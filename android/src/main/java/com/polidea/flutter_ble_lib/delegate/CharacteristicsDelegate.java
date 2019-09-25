@@ -281,17 +281,12 @@ public class CharacteristicsDelegate extends CallDelegate {
                 new OnSuccessCallback<Characteristic>() {
                     @Override
                     public void onSuccess(Characteristic data) {
-                        try {
-                            result.success(characteristicsResponseJsonConverter.toJson(createCharacteristicResponse(data)));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            result.error(null, e.getMessage(), null);
-                        }
+                        safeMainThreadResolver.onSuccess(data);
                     }
                 }, new OnErrorCallback() {
                     @Override
                     public void onError(BleError error) {
-                        result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
+                        safeMainThreadResolver.onError(error);
                     }
                 });
     }
