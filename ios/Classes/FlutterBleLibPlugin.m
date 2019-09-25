@@ -8,6 +8,9 @@
 #import "Event/ScanningStreamHandler.h"
 #import "Event/ConnectionStateStreamHandler.h"
 
+typedef void (^Resolve)(id result);
+typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
+
 @interface FlutterBleLibPlugin () <BleClientManagerDelegate>
 
 @property (nonatomic) BleClientManager* manager;
@@ -15,9 +18,6 @@
 @property (nonatomic) RestoreStateStreamHandler* restoreStateStreamHandler;
 @property (nonatomic) ScanningStreamHandler* scanningStreamHandler;
 @property (nonatomic) ConnectionStateStreamHandler* connectionStateStreamHandler;
-
-typedef void (^Resolve)(id result);
-typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 
 @end
 
@@ -81,7 +81,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
     _manager = [[BleClientManager alloc] initWithQueue:dispatch_get_main_queue()
                                   restoreIdentifierKey:[self validStringOrNil:call.arguments[ARGUMENT_KEY_RESTORE_STATE_IDENTIFIER]]];
     _manager.delegate = self;
-    result(@"createClient.finished");
+    result(nil);
 }
 
 - (void)destroyClient {
@@ -97,43 +97,31 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
     NSDictionary* arguments = (NSDictionary<NSString *, id> *)call.arguments;
     [_manager startDeviceScan:[self validStringArrayOrNil:call.arguments[ARGUMENT_KEY_UUIDS]]
                       options:nil];
-    result(@"startDeviceScan.finished");
+    result(nil);
 }
 
 - (void)stopDeviceScan:(FlutterResult)result {
     [_manager stopDeviceScan];
     [self.scanningStreamHandler onComplete];
-    result(@"stopDeviceScan.finished");
+    result(nil);
 }
 - (void)connectToDevice:(FlutterMethodCall*)call result:(FlutterResult)result {
-    Resolve resolve = result;
-    Reject reject = ^(NSString *code, NSString *message, NSError *error) {
-        result(@"connectToDevice.error");
-    };
     [_manager connectToDevice:[self validStringOrNil:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]]
                       options:nil
-                      resolve:resolve
-                       reject:reject];
+                      resolve:result
+                       reject:[self rejectForFlutterResult:result]];
 }
 
 - (void)cancelDeviceConnection:(FlutterMethodCall*)call result:(FlutterResult)result {
-    Resolve resolve = result;
-    Reject reject = ^(NSString *code, NSString *message, NSError *error) {
-        result(@"cancelDeviceConnection.error");
-    };
     [_manager cancelDeviceConnection:[self validStringOrNil:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]]
-                             resolve:resolve
-                              reject:reject];
+                             resolve:result
+                              reject:[self rejectForFlutterResult:result]];
 }
 
 - (void)isDeviceConnected:(FlutterMethodCall*)call result:(FlutterResult)result {
-    Resolve resolve = result;
-    Reject reject = ^(NSString *code, NSString *message, NSError *error) {
-        result(@"isDeviceConnected.error");
-    };
     [_manager isDeviceConnected:[self validStringOrNil:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]]
-                        resolve:resolve
-                         reject:reject];
+                        resolve:result
+                         reject:[self rejectForFlutterResult:result]];
 
 }
 
@@ -150,6 +138,17 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 }
 
 // MARK: - Utility methods
+
+- (Reject)rejectForFlutterResult:(FlutterResult)result {
+    return ^(NSString *code, NSString *message, NSError *error) {
+        NSDictionary* dictionary = [NSJSONSerialization JSONObjectWithData:[message dataUsingEncoding:NSUTF8StringEncoding]
+                                                                   options:NSJSONReadingMutableContainers
+                                                                     error:nil];
+        result([FlutterError errorWithCode:[dictionary objectForKey:@"errorCode"]
+                                   message:[dictionary objectForKey:@"reason"]
+                                   details:message]);
+    };
+}
 
 - (nullable NSString*)validStringOrNil:(id)argument {
     if (argument != nil && (NSNull *)argument != [NSNull null] && [argument isKindOfClass:[NSString class]]) {
