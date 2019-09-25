@@ -12,4 +12,16 @@ NSString * const METHOD_NAME_IS_DEVICE_CONNECTED = @"isDeviceConnected";
 NSString * const METHOD_NAME_OBSERVE_CONNECTION_STATE = @"observeConnectionState";
 NSString * const METHOD_NAME_CANCEL_CONNECTION = @"cancelConnection";
 
+NSString * const METHOD_NAME_DISCOVER_ALL_SERVICES_AND_CHARACTERISTICS = @"discoverAllServicesAndCharacteristics";
+NSString * const METHOD_NAME_GET_SERVICES = @"services";
+NSString * const METHOD_NAME_GET_CHARACTERISTICS = @"characteristics";
+NSString * const METHOD_NAME_GET_CHARACTERISTICS_FOR_SERVICE = @"characteristicsForService";
+
+NSString * const METHOD_NAME_LOG_LEVEL = @"logLevel";
+NSString * const METHOD_NAME_SET_LOG_LEVEL = @"setLogLevel";
+
+NSString * const METHOD_NAME_RSSI = @"rssi";
+
+NSString * const METHOD_NAME_REQUEST_MTU = @"requestMtu";
+
 @end

@@ -12,4 +12,11 @@ extern NSString * const ARGUMENT_KEY_REFRESH_GATT;
 extern NSString * const ARGUMENT_KEY_TIMEOUT_MILLIS;
 extern NSString * const ARGUMENT_KEY_EMIT_CURRENT_VALUE;
 
+extern NSString * const LOG_LEVEL;
+
+extern NSString * const SERVICE_UUID;
+extern NSString * const SERVICE_ID;
+
+extern NSString * const MTU;
+
 @end

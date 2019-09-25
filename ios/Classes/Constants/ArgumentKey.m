@@ -14,4 +14,11 @@ NSString * const ARGUMENT_KEY_REFRESH_GATT = @"refreshGatt";
 NSString * const ARGUMENT_KEY_TIMEOUT_MILLIS = @"timeoutMillis";
 NSString * const ARGUMENT_KEY_EMIT_CURRENT_VALUE = @"emitCurrentValue";
 
+NSString * const LOG_LEVEL = @"logLevel";
+
+NSString * const SERVICE_UUID = @"serviceUuid";
+NSString * const SERVICE_ID = @"serviceId";
+
+NSString * const MTU = @"mtu";
+
 @end
