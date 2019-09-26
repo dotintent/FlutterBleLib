@@ -121,8 +121,9 @@ class DeviceDetailsBloc {
             log("rssi $rssi");
         })
         .then((_) async {
-          await peripheral.requestMtu(74);
+          int negotiatedMtu = await peripheral.requestMtu(79);
           log("MTU requested");
+          log("negotiated MTU $negotiatedMtu");
         })
         .then((_) => log("Test read/write characteristic on device"))
         .then((_) {
