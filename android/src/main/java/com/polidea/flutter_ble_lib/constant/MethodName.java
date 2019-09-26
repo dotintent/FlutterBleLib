@@ -27,14 +27,17 @@ public interface MethodName {
 
     String REQUEST_MTU = "requestMtu";
 
+    String GET_CONNECTED_DEVICES = "getConnectedDevices";
+    String GET_KNOWN_DEVICES = "getKnownDevices";
+
     String READ_CHARACTERISTIC_FOR_IDENTIFIER = "readCharacteristicForIdentifier";
     String READ_CHARACTERISTIC_FOR_DEVICE = "readCharacteristicForDevice";
     String READ_CHARACTERISTIC_FOR_SERVICE = "readCharacteristicForService";
-    
+
     String WRITE_CHARACTERISTIC_FOR_IDENTIFIER = "writeCharacteristicForIdentifier";
     String WRITE_CHARACTERISTIC_FOR_DEVICE = "writeCharacteristicForDevice";
     String WRITE_CHARACTERISTIC_FOR_SERVICE = "writeCharacteristicForService";
-    
+
     String MONITOR_CHARACTERISTIC_FOR_IDENTIFIER = "monitorCharacteristicForIdentifier";
     String MONITOR_CHARACTERISTIC_FOR_DEVICE = "monitorCharacteristicForDevice";
     String MONITOR_CHARACTERISTIC_FOR_SERVICE = "monitorCharacteristicForService";

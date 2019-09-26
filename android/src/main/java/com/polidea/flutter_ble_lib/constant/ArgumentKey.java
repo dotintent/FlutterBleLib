@@ -16,13 +16,16 @@ public interface ArgumentKey {
     String EMIT_CURRENT_VALUE = "emitCurrentValue";
 
     String LOG_LEVEL = "logLevel";
-    
+
     String SERVICE_UUID = "serviceUuid";
     String SERVICE_IDENTIFIER = "serviceId";
     String CHARACTERISTIC_UUID = "characteristicUuid";
     String CHARACTERISTIC_IDENTIFIER = "characteristicIdentifier";
     String BYTES = "bytes";
     String WITH_RESPONSE = "withResponse";
-    
+
     String MTU = "mtu";
+
+    String SERVICE_UUIDS = "serviceUUIDs";
+    String DEVICE_IDENTIFIERS = "deviceIdentifiers";
 }

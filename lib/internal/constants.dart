@@ -37,6 +37,9 @@ abstract class MethodName {
   static const String monitorCharacteristicForIdentifier = "monitorCharacteristicForIdentifier";
   static const String monitorCharacteristicForDevice = "monitorCharacteristicForDevice";
   static const String monitorCharacteristicForService = "monitorCharacteristicForService";
+
+  static const String connectedDevices = "getConnectedDevices";
+  static const String knownDevices = "getKnownDevices";
 }
 
 abstract class ChannelName {
@@ -72,10 +75,13 @@ abstract class ArgumentName {
 
   static const String bytes = "bytes";
   static const String withResponse = "withResponse";
-  
+
   static const String logLevel = "logLevel";
 
   static const String mtu = "mtu";
+
+  static const String serviceUuids = "serviceUUIDs";
+  static const String deviceIdentifiers = "deviceIdentifiers";
 }
 
 abstract class ScanMode {

@@ -1,7 +1,7 @@
 part of internal_bridge_lib;
 
 class InternalBleManager
-    implements
+  implements
         BleManager,
         ManagerForPeripheral,
         ManagerForService,
@@ -113,12 +113,23 @@ class InternalBleManager
       Peripheral peripheral,
       String transactionId,
       ) {
+    print("call channel read RSSI");
     return _bleLib.rssi(peripheral, transactionId);
   }
 
   @override
-  Future<int> requestMtu(Peripheral peripheral, int mtu, String transactionId) {
-   return _bleLib.requestMtu(peripheral, mtu, transactionId);
+  Future<void> requestMtu(Peripheral peripheral, int mtu, String transactionId) {
+    return _bleLib.requestMtu(peripheral, mtu, transactionId);
+  }
+
+  @override
+  Future<List<Peripheral>> knownDevices({List<String> peripheralIdentifiers}) {
+    return _bleLib.knownDevices(peripheralIdentifiers ?? []);
+  }
+
+  @override
+  Future<List<Peripheral>> connectedDevices({List<String> serviceUUIDs}) {
+    return _bleLib.connectedDevices(serviceUUIDs ?? []);
   }
 
   @override
