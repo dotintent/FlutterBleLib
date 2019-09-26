@@ -7,7 +7,10 @@ import 'dart:typed_data';
 import 'dart:math';
 
 import 'package:flutter_ble_lib_example/repository/device_repository.dart';
+import 'package:flutter_ble_lib_example/util/pair.dart';
 import 'package:rxdart/rxdart.dart';
+
+import '../sensor_tag_config.dart';
 
 class DeviceDetailsBloc {
   final BleManager _bleManager;
@@ -74,6 +77,7 @@ class DeviceDetailsBloc {
   }
 
   void _connectTo(BleDevice bleDevice) async {
+    _bleManager.setLogLevel(LogLevel.debug);
     var peripheral = bleDevice.peripheral;
     peripheral
         .observeConnectionState(emitCurrentValue: true)
@@ -112,6 +116,124 @@ class DeviceDetailsBloc {
         })
         .then((characteristics) => characteristics.forEach((characteristic) =>
             log("Found characteristic \n ${characteristic.uuid}")))
+        .then((_) async {
+            int rssi = await peripheral.rssi();
+            log("rssi $rssi");
+        })
+        .then((_) async {
+          await peripheral.requestMtu(74);
+          log("MTU requested");
+        })
+        .then((_) => log("Test read/write characteristic on device"))
+        .then((_) {
+          log("Turn off temperature update");
+          return peripheral.writeCharacteristic(
+              SensorTagTemperatureUuids.temperatureService,
+              SensorTagTemperatureUuids.temperatureConfigCharacteristic,
+              Uint8List.fromList([0]),
+              false);
+        })
+        .then((_) {
+          return peripheral.readCharacteristic(
+              SensorTagTemperatureUuids.temperatureService,
+              SensorTagTemperatureUuids.temperatureDataCharacteristic);
+        })
+        .then((data) {
+          log("Temperature value ${data.value}");
+        })
+        .then((_) {
+          log("Turn on temperature update");
+          return peripheral.writeCharacteristic(
+              SensorTagTemperatureUuids.temperatureService,
+              SensorTagTemperatureUuids.temperatureConfigCharacteristic,
+              Uint8List.fromList([1]),
+              false);
+        })
+        .then((_) => Future.delayed(Duration(seconds: 1)))
+        .then((_) {
+          return peripheral.readCharacteristic(
+              SensorTagTemperatureUuids.temperatureService,
+              SensorTagTemperatureUuids.temperatureDataCharacteristic);
+        })
+        .then((data) {
+          log("Temperature value ${data.value}");
+        })
+        .then((_) => log("Test read/write characteristic on service"))
+        .then((_) async {
+          log("Turn off temperature update");
+          Service service = await peripheral.services().then((services) =>
+              services.firstWhere((service) =>
+                  service.uuid ==
+                  SensorTagTemperatureUuids.temperatureService.toLowerCase()));
+          await service.writeCharacteristic(
+            SensorTagTemperatureUuids.temperatureConfigCharacteristic,
+            Uint8List.fromList([0]),
+            false,
+          );
+          return service;
+        })
+        .then((service) =>
+            Future.delayed(Duration(seconds: 1)).then((_) => service))
+        .then((service) async {
+          CharacteristicWithValue dataCharacteristic =
+              await service.readCharacteristic(
+                  SensorTagTemperatureUuids.temperatureDataCharacteristic);
+          return Pair(service, dataCharacteristic);
+        })
+        .then((serviceAndCharacteristic) {
+          log("Temperature value ${serviceAndCharacteristic.second.value}");
+          return serviceAndCharacteristic.first;
+        })
+        .then((service) async {
+          log("Turn on temperature update");
+          Characteristic configCharacteristic =
+              await service.writeCharacteristic(
+                  SensorTagTemperatureUuids.temperatureConfigCharacteristic,
+                  Uint8List.fromList([1]),
+                  false);
+          return Pair(service, configCharacteristic);
+        })
+        .then((serviceAndConfigCharacteristic) =>
+            Future.delayed(Duration(seconds: 1)).then((_) => serviceAndConfigCharacteristic))
+        .then((serviceAndConfigCharacteristic) async {
+          CharacteristicWithValue dataCharacteristic =
+              await serviceAndConfigCharacteristic.first.readCharacteristic(
+                  SensorTagTemperatureUuids.temperatureDataCharacteristic);
+          return Pair(serviceAndConfigCharacteristic.second, dataCharacteristic);
+        })
+        .then((configAndDataCharacteristics) {
+          log("Temperature value ${configAndDataCharacteristics.second.value}");
+          log("Test read/write characteristic on characteristic");
+          return configAndDataCharacteristics.first;
+        })
+        .then((characteristic) =>
+            Future.delayed(Duration(seconds: 1)).then((_) => characteristic))
+        .then((characteristic) async {
+          log("Turn off temperature update");
+          await characteristic.write(Uint8List.fromList([0]), false);
+          return characteristic;
+        })
+        .then((characteristic) =>
+            Future.delayed(Duration(seconds: 1)).then((_) => characteristic))
+        .then((characteristic) async {
+          Uint8List value = await characteristic.read();
+          return Pair(characteristic, value);
+        })
+        .then((characteristicAndValue) {
+          log("Temperature config value ${characteristicAndValue.second}");
+          return characteristicAndValue.first;
+        })
+        .then((characteristic) async {
+          log("Turn on temperature update");
+          await characteristic.write(Uint8List.fromList([1]), false);
+          return characteristic;
+        })
+        .then((characteristic) =>
+            Future.delayed(Duration(seconds: 1)).then((_) => characteristic))
+        .then((characteristic) => characteristic.read())
+        .then((value) {
+          log("Temperature config value $value");
+        })
         .then((_) {
           log("WAITING 10 SECOND BEFORE DISCONNECTING");
           return Future.delayed(Duration(seconds: 10));

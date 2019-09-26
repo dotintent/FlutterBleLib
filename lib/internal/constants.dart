@@ -3,6 +3,9 @@ abstract class MethodName {
   static const String createClient = "createClient";
   static const String destroyClient = "destroyClient";
 
+  static const String enableRadio = "enableRadio";
+  static const String disableRadio = "disableRadio";
+
   static const String startDeviceScan = "startDeviceScan";
   static const String stopDeviceScan = "stopDeviceScan";
 
@@ -16,8 +19,24 @@ abstract class MethodName {
   static const String services = "services";
   static const String characteristics = "characteristics";
   static const String characteristicsForService = "characteristicsForService";
+
   static const String setLogLevel = "setLogLevel";
   static const String logLevel = "logLevel";
+
+  static const String rssi = "rssi";
+  static const String requestMtu = "requestMtu";
+
+  static const String readCharacteristicForIdentifier = "readCharacteristicForIdentifier";
+  static const String readCharacteristicForDevice = "readCharacteristicForDevice";
+  static const String readCharacteristicForService = "readCharacteristicForService";
+
+  static const String writeCharacteristicForIdentifier = "writeCharacteristicForIdentifier";
+  static const String writeCharacteristicForDevice = "writeCharacteristicForDevice";
+  static const String writeCharacteristicForService = "writeCharacteristicForService";
+
+  static const String monitorCharacteristicForIdentifier = "monitorCharacteristicForIdentifier";
+  static const String monitorCharacteristicForDevice = "monitorCharacteristicForDevice";
+  static const String monitorCharacteristicForService = "monitorCharacteristicForService";
 }
 
 abstract class ChannelName {
@@ -27,6 +46,8 @@ abstract class ChannelName {
   static const String scanningEvents = flutterBleLib + "/scanningEvents";
   static const String connectionStateChangeEvents =
       flutterBleLib + "/connectionStateChangeEvents";
+  static const String monitorCharacteristic = flutterBleLib +
+      "/monitorCharacteristic";
 }
 
 abstract class ArgumentName {
@@ -45,9 +66,16 @@ abstract class ArgumentName {
   static const String emitCurrentValue = "emitCurrentValue";
 
   static const String serviceUuid = "serviceUuid";
-  static const String serviceId = "serviceId";
+  static const String serviceIdentifier = "serviceId";
+  static const String characteristicUuid = "characteristicUuid";
+  static const String characteristicIdentifier = "characteristicIdentifier";
 
+  static const String bytes = "bytes";
+  static const String withResponse = "withResponse";
+  
   static const String logLevel = "logLevel";
+
+  static const String mtu = "mtu";
 }
 
 abstract class ScanMode {

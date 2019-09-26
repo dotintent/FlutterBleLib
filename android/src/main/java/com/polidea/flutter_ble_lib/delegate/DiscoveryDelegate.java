@@ -2,13 +2,13 @@ package com.polidea.flutter_ble_lib.delegate;
 
 import android.support.annotation.NonNull;
 
-import com.polidea.flutter_ble_lib.CharacteristicsResponse;
+import com.polidea.flutter_ble_lib.MultiCharacteristicsResponse;
 import com.polidea.flutter_ble_lib.SafeMainThreadResolver;
 import com.polidea.flutter_ble_lib.constant.ArgumentKey;
 import com.polidea.flutter_ble_lib.constant.MethodName;
 import com.polidea.flutter_ble_lib.converter.BleErrorJsonConverter;
 import com.polidea.flutter_ble_lib.converter.CharacteristicJsonConverter;
-import com.polidea.flutter_ble_lib.converter.CharacteristicsResponseJsonConverter;
+import com.polidea.flutter_ble_lib.converter.MultiCharacteristicsResponseJsonConverter;
 import com.polidea.flutter_ble_lib.converter.ServiceJsonConverter;
 import com.polidea.multiplatformbleadapter.BleAdapter;
 import com.polidea.multiplatformbleadapter.Characteristic;
@@ -18,7 +18,6 @@ import com.polidea.multiplatformbleadapter.OnSuccessCallback;
 import com.polidea.multiplatformbleadapter.Service;
 import com.polidea.multiplatformbleadapter.errors.BleError;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.Arrays;
@@ -31,6 +30,9 @@ import io.flutter.plugin.common.MethodChannel;
 public class DiscoveryDelegate extends CallDelegate {
     private BleAdapter adapter;
     private BleErrorJsonConverter bleErrorJsonConverter = new BleErrorJsonConverter();
+    private CharacteristicJsonConverter characteristicJsonConverter = new CharacteristicJsonConverter();
+    private ServiceJsonConverter serviceJsonConverter = new ServiceJsonConverter();
+    private MultiCharacteristicsResponseJsonConverter multiCharacteristicsResponseJsonConverter = new MultiCharacteristicsResponseJsonConverter();
 
     private static List<String> supportedMethods = Arrays.asList(
             MethodName.DISCOVER_ALL_SERVICES_AND_CHARACTERISTICS,
@@ -67,7 +69,7 @@ public class DiscoveryDelegate extends CallDelegate {
                 );
                 return;
             case MethodName.GET_CHARACTERISTICS_FOR_SERVICE:
-                getCharacteristicsForService(call.<Integer>argument(ArgumentKey.SERVICE_ID), result);
+                getCharacteristicsForService(call.<Integer>argument(ArgumentKey.SERVICE_IDENTIFIER), result);
                 return;
             default:
                 throw new IllegalArgumentException(call.method + " cannot be handled by this delegate");
@@ -104,87 +106,57 @@ public class DiscoveryDelegate extends CallDelegate {
     }
 
     private void getCharacteristics(String deviceId, final String serviceUuid, final MethodChannel.Result result) {
-        final OnErrorCallback errorCallback = new OnErrorCallback() {
-            @Override
-            public void onError(BleError error) {
-                result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
-            }
-        };
-
-        OnSuccessCallback<Service[]> serviceFetchSuccessCallback = new OnSuccessCallback<Service[]>() {
-            @Override
-            public void onSuccess(final Service[] data) {
-                Service foundService = null;
-                for (final Service service : data) {
-                    if (service.getUuid().equals(UUID.fromString(serviceUuid))) {
-                        foundService = service;
-                        break;
-                    }
+        try {
+            Service[] services = adapter.getServicesForDevice(deviceId);
+            Service foundService = null;
+            for (final Service service : services) {
+                if (service.getUuid().equals(UUID.fromString(serviceUuid))) {
+                    foundService = service;
+                    break;
                 }
-
-                if (foundService == null) {
-                    result.error("UnknownServiceException", "Service not found", "Unknown service UUID " + serviceUuid);
-                    return;
-                }
-
-                final Service finalService = foundService;
-
-                adapter.getCharacteristicsForService(foundService.getId(),
-                        new OnSuccessCallback<Characteristic[]>() {
-                            @Override
-                            public void onSuccess(Characteristic[] data) {
-                                CharacteristicsResponse characteristicsResponse = new CharacteristicsResponse(data, finalService);
-                                try {
-                                    String json = new CharacteristicsResponseJsonConverter().toJson(characteristicsResponse);
-                                    result.success(json);
-                                } catch (JSONException e) {
-                                    result.error(e.toString(), e.getMessage(), null);
-                                }
-                            }
-                        },
-                        errorCallback);
             }
-        };
 
-        adapter.getServicesForDevice(deviceId, serviceFetchSuccessCallback, errorCallback);
+            if (foundService == null) {
+                result.error("UnknownServiceException", "Service not found", "Unknown service UUID " + serviceUuid);
+                return;
+            }
+
+            Characteristic[] characteristics = adapter.getCharacteristicsForService(foundService.getId());
+            MultiCharacteristicsResponse characteristicsResponse = new MultiCharacteristicsResponse(characteristics, foundService);
+            String json = multiCharacteristicsResponseJsonConverter.toJson(characteristicsResponse);
+            result.success(json);
+        } catch (BleError error) {
+            error.printStackTrace();
+            result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            result.error(null, e.getMessage(), null);
+        }
     }
 
     private void getServices(String deviceId, final MethodChannel.Result result) {
-        adapter.getServicesForDevice(deviceId,
-                new OnSuccessCallback<Service[]>() {
-                    @Override
-                    public void onSuccess(final Service[] data) {
-                        try {
-                            result.success(new ServiceJsonConverter().toJson(data));
-                        } catch (JSONException e) {
-                            result.error(e.toString(), e.getMessage(), null);
-                        }
-                    }
-                }, new OnErrorCallback() {
-                    @Override
-                    public void onError(BleError error) {
-                        result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
-                    }
-                });
+        try {
+            Service[] services = adapter.getServicesForDevice(deviceId);
+            result.success(serviceJsonConverter.toJson(services));
+        } catch (BleError error) {
+            error.printStackTrace();
+            result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            result.error(null, e.getMessage(), null);
+        }
     }
 
     private void getCharacteristicsForService(Integer serviceId, final MethodChannel.Result result) {
-        adapter.getCharacteristicsForService(serviceId,
-                new OnSuccessCallback<Characteristic[]>() {
-                    @Override
-                    public void onSuccess(Characteristic[] data) {
-                        try {
-                            result.success(new CharacteristicJsonConverter().toJson(data));
-                        } catch (JSONException e) {
-                            result.error(e.toString(), e.getMessage(), null);
-                        }
-                    }
-                },
-                new OnErrorCallback() {
-                    @Override
-                    public void onError(BleError error) {
-                        result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
-                    }
-                });
+        try {
+            Characteristic[] characteristics = adapter.getCharacteristicsForService(serviceId);
+            result.success(characteristicJsonConverter.toJson(characteristics));
+        } catch (BleError error) {
+            error.printStackTrace();
+            result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            result.error(null, e.getMessage(), null);
+        }
     }
 }

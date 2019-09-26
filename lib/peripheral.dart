@@ -45,6 +45,54 @@ class Peripheral {
 
   Future<List<Characteristic>> characteristics(String servicedUuid) =>
       _manager.characteristics(this, servicedUuid);
+
+  Future<int> rssi({String transactionId}) {
+    return _manager.rssi(this, transactionId);
+  }
+
+  Future<void> requestMtu(int mtu, {String transactionId}) {
+    return _manager.requestMtu(this, mtu, transactionId);
+  }
+
+  Future<CharacteristicWithValue> readCharacteristic(
+    String serviceUUID,
+    String characteristicUUID, {
+    String transactionId,
+  }) =>
+      _manager.readCharacteristicForDevice(
+        this,
+        serviceUUID,
+        characteristicUUID,
+        transactionId,
+      );
+
+  Future<Characteristic> writeCharacteristic(
+    String serviceUUID,
+    String characteristicUUID,
+    Uint8List bytes,
+    bool withResponse, {
+    String transactionId,
+  }) =>
+      _manager.writeCharacteristicForDevice(
+        this,
+        serviceUUID,
+        characteristicUUID,
+        bytes,
+        withResponse,
+        transactionId,
+      );
+
+  Stream<CharacteristicWithValue> monitorCharacteristic(
+    String serviceUUID,
+    String characteristicUUID, {
+    String transactionId,
+  }) =>
+      _manager.monitorCharacteristicForDevice(
+        this,
+        serviceUUID,
+        characteristicUUID,
+        transactionId,
+      );
 }
 
 enum PeripheralConnectionState {
