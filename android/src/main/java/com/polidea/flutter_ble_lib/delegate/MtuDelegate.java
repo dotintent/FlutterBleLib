@@ -3,7 +3,6 @@ package com.polidea.flutter_ble_lib.delegate;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.polidea.flutter_ble_lib.SafeMainThreadResolver;
 import com.polidea.flutter_ble_lib.constant.ArgumentKey;
 import com.polidea.flutter_ble_lib.constant.MethodName;
 import com.polidea.flutter_ble_lib.converter.BleErrorJsonConverter;
@@ -49,29 +48,15 @@ public class MtuDelegate extends CallDelegate {
 
     private void requestMtu(String deviceIdentifier, @NonNull int mtu, String transactionId, @NonNull final MethodChannel.Result result) {
         Log.d(TAG, "Request MTU " + mtu);
-        final SafeMainThreadResolver<Integer> resolver = new SafeMainThreadResolver<>(
-                new OnSuccessCallback<Integer>() {
-                    @Override
-                    public void onSuccess(Integer mtu) {
-                        result.success(mtu);
-                    }
-                },
-                new OnErrorCallback() {
-                    @Override
-                    public void onError(BleError error) {
-                        Log.e(TAG, "MTU request error " + error.reason + "  " + error.internalMessage);
-                        result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
-                    }
-                });
         bleAdapter.requestMTUForDevice(deviceIdentifier, mtu, transactionId, new OnSuccessCallback<Device>() {
             @Override
             public void onSuccess(Device device) {
-                resolver.onSuccess(device.getMtu());
+                result.success(device.getMtu());
             }
         }, new OnErrorCallback() {
             @Override
             public void onError(BleError error) {
-                resolver.onError(error);
+                result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
             }
         });
     }
