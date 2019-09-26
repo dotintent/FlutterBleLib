@@ -3,14 +3,10 @@ import 'dart:async';
 import 'package:fimber/fimber.dart';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 import 'package:flutter_ble_lib_example/model/ble_device.dart';
-import 'dart:typed_data';
-
 import 'package:flutter_ble_lib_example/repository/device_repository.dart';
 import 'package:flutter_ble_lib_example/test_scenarios/test_scenarios.dart';
-import 'package:flutter_ble_lib_example/util/pair.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../sensor_tag_config.dart';
 
 class DeviceDetailsBloc {
   final BleManager _bleManager;
@@ -30,8 +26,6 @@ class DeviceDetailsBloc {
   Observable<List<DebugLog>> get logs => _logsController.stream;
 
   StreamSubscription connectionSubscription;
-
-  StreamSubscription monitoringStreamSubscription;
 
   Stream<BleDevice> get disconnectedDevice => _deviceRepository.pickedDevice
       .skipWhile((bleDevice) => bleDevice != null);
@@ -105,30 +99,6 @@ class DeviceDetailsBloc {
     });
 
     SensorTagTestScenario(peripheral).runTestScenario(log, logError);
-  }
-
-  void _setUpTemperatureMonitoring(
-      Stream<Uint8List> characteristicUpdates, Function log) {
-    log("START TEMPERATURE MONITORING");
-    monitoringStreamSubscription?.cancel();
-    monitoringStreamSubscription = characteristicUpdates
-        .map(convertToTemperature)
-        .where((temperature) => temperature != 0)
-        .take(1)
-        .listen(
-      (temperature) {
-        log("Temperature update: ${temperature}C");
-      },
-      onError: (error) {
-        log("Error when trying to modify characteristic value. $error");
-      },
-    );
-  }
-
-  double convertToTemperature(Uint8List rawTemperatureBytes) {
-    const double SCALE_LSB = 0.03125;
-    int rawTemp = rawTemperatureBytes[3] << 8 | rawTemperatureBytes[2];
-    return ((rawTemp) >> 2) * SCALE_LSB;
   }
 }
 

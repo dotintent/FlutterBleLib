@@ -2,6 +2,7 @@ part of test_scenarios;
 
 class SensorTagTestScenario extends TestScenario {
   final Peripheral _peripheral;
+  StreamSubscription monitoringStreamSubscription;
 
   SensorTagTestScenario(this._peripheral);
 
@@ -81,7 +82,17 @@ class SensorTagTestScenario extends TestScenario {
     CharacteristicWithValue readValue = await peripheral.readCharacteristic(
         SensorTagTemperatureUuids.temperatureService,
         SensorTagTemperatureUuids.temperatureDataCharacteristic);
-    log("Reada temperature value ${readValue.value}");
+    log("Read temperature value ${readValue.value}C");
+
+    log("Start monitoring temperature");
+    _startMonitoringTemperature(
+      peripheral
+          .monitorCharacteristic(SensorTagTemperatureUuids.temperatureService,
+              SensorTagTemperatureUuids.temperatureDataCharacteristic,
+              transactionId: "1")
+          .map((characteristic) => characteristic.value),
+      log,
+    );
 
     log("Turning on temperature update");
     await peripheral.writeCharacteristic(
@@ -98,7 +109,7 @@ class SensorTagTestScenario extends TestScenario {
     readValue = await peripheral.readCharacteristic(
         SensorTagTemperatureUuids.temperatureService,
         SensorTagTemperatureUuids.temperatureDataCharacteristic);
-    log("Read temperature value ${readValue.value}");
+    log("Read temperature value ${_convertToTemperature(readValue.value)}C");
 
     return peripheral;
   }
@@ -128,7 +139,17 @@ class SensorTagTestScenario extends TestScenario {
     CharacteristicWithValue dataCharacteristic =
         await service.readCharacteristic(
             SensorTagTemperatureUuids.temperatureDataCharacteristic);
-    log("Read temperature value ${dataCharacteristic.value}");
+    log("Read temperature value ${_convertToTemperature(dataCharacteristic.value)}C");
+
+    log("Start monitoring temperature");
+    _startMonitoringTemperature(
+      service
+          .monitorCharacteristic(
+              SensorTagTemperatureUuids.temperatureDataCharacteristic,
+              transactionId: "2")
+          .map((characteristic) => characteristic.value),
+      log,
+    );
 
     log("Turning on temperature update");
     await service.writeCharacteristic(
@@ -143,7 +164,7 @@ class SensorTagTestScenario extends TestScenario {
     log("Reading temperature value");
     dataCharacteristic = await service.readCharacteristic(
         SensorTagTemperatureUuids.temperatureDataCharacteristic);
-    log("Read temperature value ${dataCharacteristic.value}");
+    log("Read temperature value ${_convertToTemperature(dataCharacteristic.value)}C");
 
     return peripheral;
   }
@@ -163,7 +184,8 @@ class SensorTagTestScenario extends TestScenario {
     Characteristic characteristic = await service.characteristics().then(
         (characteristics) => characteristics.firstWhere((characteristic) =>
             characteristic.uuid ==
-            SensorTagTemperatureUuids.temperatureConfigCharacteristic.toLowerCase()));
+            SensorTagTemperatureUuids.temperatureConfigCharacteristic
+                .toLowerCase()));
 
     log("Turning off temperature update");
     await characteristic.write(Uint8List.fromList([0]), false);
@@ -171,7 +193,13 @@ class SensorTagTestScenario extends TestScenario {
 
     log("Reading characteristic value");
     Uint8List value = await characteristic.read();
-    log("Read temperature config value $value");
+    log("Read temperature config value ${_convertToTemperature(value)}C");
+
+    log("Start monitoring temperature");
+    _startMonitoringTemperature(
+      characteristic.monitor(transactionId: "1"),
+      log,
+    );
 
     log("Turning on temperature update");
     await characteristic.write(Uint8List.fromList([1]), false);
@@ -179,7 +207,7 @@ class SensorTagTestScenario extends TestScenario {
 
     log("Reading characteristic value");
     value = await characteristic.read();
-    log("Read temperature config value $value");
+    log("Read temperature config value ${_convertToTemperature(value)}C");
 
     return peripheral;
   }
@@ -191,5 +219,29 @@ class SensorTagTestScenario extends TestScenario {
     log("DISCONNECTING...");
     await peripheral.disconnectOrCancelConnection();
     log("Disconnected!");
+  }
+
+  void _startMonitoringTemperature(
+      Stream<Uint8List> characteristicUpdates, Function log) {
+    log("START TEMPERATURE MONITORING");
+    monitoringStreamSubscription?.cancel();
+    monitoringStreamSubscription = characteristicUpdates
+        .map(_convertToTemperature)
+        .where((temperature) => temperature != 0)
+        .take(1)
+        .listen(
+      (temperature) {
+        log("Temperature updated: ${temperature}C");
+      },
+      onError: (error) {
+        log("Error when trying to modify characteristic value. $error");
+      },
+    );
+  }
+
+  double _convertToTemperature(Uint8List rawTemperatureBytes) {
+    const double SCALE_LSB = 0.03125;
+    int rawTemp = rawTemperatureBytes[3] << 8 | rawTemperatureBytes[2];
+    return ((rawTemp) >> 2) * SCALE_LSB;
   }
 }
