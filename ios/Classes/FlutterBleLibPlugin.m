@@ -71,6 +71,8 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
         [self cancelDeviceConnection:call result:result];
     } else if ([METHOD_NAME_IS_DEVICE_CONNECTED isEqualToString:call.method]) {
         [self isDeviceConnected:call result:result];
+    } else if ([METHOD_NAME_SET_LOG_LEVEL isEqualToString:call.method]) {
+        [self setLogLevel:call result:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -129,6 +131,13 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
                         resolve:result
                          reject:[self rejectForFlutterResult:result]];
 
+}
+
+// MARK: - MBA Methods - Log Level
+
+- (void)setLogLevel:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager setLogLevel:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_LOG_LEVEL]]];
+    result(nil);
 }
 
 // MARK: - MBA Methods - BleClientManagerDelegate implementation
