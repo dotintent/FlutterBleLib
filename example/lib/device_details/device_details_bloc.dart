@@ -31,6 +31,8 @@ class DeviceDetailsBloc {
 
   StreamSubscription connectionSubscription;
 
+  StreamSubscription monitoringStreamSubscription;
+
   Stream<BleDevice> get disconnectedDevice => _deviceRepository.pickedDevice
       .skipWhile((bleDevice) => bleDevice != null);
 
@@ -117,14 +119,23 @@ class DeviceDetailsBloc {
         .then((characteristics) => characteristics.forEach((characteristic) =>
             log("Found characteristic \n ${characteristic.uuid}")))
         .then((_) async {
-            int rssi = await peripheral.rssi();
-            log("rssi $rssi");
+          int rssi = await peripheral.rssi();
+          log("rssi $rssi");
         })
         .then((_) async {
           await peripheral.requestMtu(74);
           log("MTU requested");
         })
         .then((_) => log("Test read/write characteristic on device"))
+        .then((_) => _setUpTemperatureMonitoring(
+              peripheral
+                  .monitorCharacteristic(
+                      SensorTagTemperatureUuids.temperatureService,
+                      SensorTagTemperatureUuids.temperatureDataCharacteristic,
+                      transactionId: "1")
+                  .map((characteristic) => characteristic.value),
+              log,
+            ))
         .then((_) {
           log("Turn off temperature update");
           return peripheral.writeCharacteristic(
@@ -139,7 +150,7 @@ class DeviceDetailsBloc {
               SensorTagTemperatureUuids.temperatureDataCharacteristic);
         })
         .then((data) {
-          log("Temperature value ${data.value}");
+          log("Temperature value ${convertToTemperature(data.value)}C");
         })
         .then((_) {
           log("Turn on temperature update");
@@ -156,10 +167,10 @@ class DeviceDetailsBloc {
               SensorTagTemperatureUuids.temperatureDataCharacteristic);
         })
         .then((data) {
-          log("Temperature value ${data.value}");
+          log("Temperature read: ${convertToTemperature(data.value)}C");
         })
-        .then((_) => log("Test read/write characteristic on service"))
         .then((_) async {
+          log("Test read/write characteristic on service");
           log("Turn off temperature update");
           Service service = await peripheral.services().then((services) =>
               services.firstWhere((service) =>
@@ -170,6 +181,14 @@ class DeviceDetailsBloc {
             Uint8List.fromList([0]),
             false,
           );
+          _setUpTemperatureMonitoring(
+              service
+                  .monitorCharacteristic(
+                    SensorTagTemperatureUuids.temperatureDataCharacteristic,
+                    transactionId: "2",
+                  )
+                  .map((characteristic) => characteristic.value),
+              log);
           return service;
         })
         .then((service) =>
@@ -181,7 +200,7 @@ class DeviceDetailsBloc {
           return Pair(service, dataCharacteristic);
         })
         .then((serviceAndCharacteristic) {
-          log("Temperature value ${serviceAndCharacteristic.second.value}");
+          log("Temperature value ${convertToTemperature(serviceAndCharacteristic.second.value)}C");
           return serviceAndCharacteristic.first;
         })
         .then((service) async {
@@ -194,15 +213,17 @@ class DeviceDetailsBloc {
           return Pair(service, configCharacteristic);
         })
         .then((serviceAndConfigCharacteristic) =>
-            Future.delayed(Duration(seconds: 1)).then((_) => serviceAndConfigCharacteristic))
+            Future.delayed(Duration(seconds: 1))
+                .then((_) => serviceAndConfigCharacteristic))
         .then((serviceAndConfigCharacteristic) async {
           CharacteristicWithValue dataCharacteristic =
               await serviceAndConfigCharacteristic.first.readCharacteristic(
                   SensorTagTemperatureUuids.temperatureDataCharacteristic);
-          return Pair(serviceAndConfigCharacteristic.second, dataCharacteristic);
+          return Pair(
+              serviceAndConfigCharacteristic.second, dataCharacteristic);
         })
         .then((configAndDataCharacteristics) {
-          log("Temperature value ${configAndDataCharacteristics.second.value}");
+          log("Temperature value ${convertToTemperature(configAndDataCharacteristics.second.value)}");
           log("Test read/write characteristic on characteristic");
           return configAndDataCharacteristics.first;
         })
@@ -211,6 +232,8 @@ class DeviceDetailsBloc {
         .then((characteristic) async {
           log("Turn off temperature update");
           await characteristic.write(Uint8List.fromList([0]), false);
+          _setUpTemperatureMonitoring(
+              characteristic.monitor(transactionId: "3"), log);
           return characteristic;
         })
         .then((characteristic) =>
@@ -245,6 +268,30 @@ class DeviceDetailsBloc {
         .then((_) {
           log("Disconnected!");
         });
+  }
+
+  void _setUpTemperatureMonitoring(
+      Stream<Uint8List> characteristicUpdates, Function log) {
+    log("START TEMPERATURE MONITORING");
+    monitoringStreamSubscription?.cancel();
+    monitoringStreamSubscription = characteristicUpdates
+        .map(convertToTemperature)
+        .where((temperature) => temperature != 0)
+        .take(1)
+        .listen(
+      (temperature) {
+        log("Temperature update: ${temperature}C");
+      },
+      onError: (error) {
+        log("Error when trying to modify characteristic value. $error");
+      },
+    );
+  }
+
+  double convertToTemperature(Uint8List rawTemperatureBytes) {
+    const double SCALE_LSB = 0.03125;
+    int rawTemp = rawTemperatureBytes[3] << 8 | rawTemperatureBytes[2];
+    return ((rawTemp) >> 2) * SCALE_LSB;
   }
 }
 
