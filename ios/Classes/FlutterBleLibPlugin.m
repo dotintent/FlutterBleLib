@@ -7,6 +7,8 @@
 #import "Event/RestoreStateStreamHandler.h"
 #import "Event/ScanningStreamHandler.h"
 #import "Event/ConnectionStateStreamHandler.h"
+#import "Util/ArgumentValidator.h"
+#import "Util/FlutterErrorFactory.h"
 
 typedef void (^Resolve)(id result);
 typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
@@ -75,11 +77,11 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
     }
 }
 
-// MARK: - MBA Methods - Client lifecycle
+// MARK: - MBA Methods - BleClient lifecycle
 
 - (void)createClient:(FlutterMethodCall*)call result:(FlutterResult)result {
     _manager = [[BleClientManager alloc] initWithQueue:dispatch_get_main_queue()
-                                  restoreIdentifierKey:[self validStringOrNil:call.arguments[ARGUMENT_KEY_RESTORE_STATE_IDENTIFIER]]];
+                                  restoreIdentifierKey:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_RESTORE_STATE_IDENTIFIER]]];
     _manager.delegate = self;
     result(nil);
 }
@@ -97,8 +99,8 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 
 - (void)startDeviceScan:(FlutterMethodCall*)call result:(FlutterResult)result {
     NSArray* expectedArguments = [NSArray arrayWithObjects:ARGUMENT_KEY_SCAN_MODE, nil];
-    [_manager startDeviceScan:[self validStringArrayOrNil:call.arguments[ARGUMENT_KEY_UUIDS]]
-                      options:[self validDictionaryOrNil:expectedArguments in:call.arguments]];
+    [_manager startDeviceScan:[ArgumentValidator validStringArrayOrNil:call.arguments[ARGUMENT_KEY_UUIDS]]
+                      options:[ArgumentValidator validDictionaryOrNil:expectedArguments in:call.arguments]];
     result(nil);
 }
 
@@ -111,20 +113,20 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 // MARK: - MBA Methods - Connection
 
 - (void)connectToDevice:(FlutterMethodCall*)call result:(FlutterResult)result {
-    [_manager connectToDevice:[self validStringOrNil:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]]
+    [_manager connectToDevice:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]]
                       options:nil
                       resolve:result
                        reject:[self rejectForFlutterResult:result]];
 }
 
 - (void)cancelDeviceConnection:(FlutterMethodCall*)call result:(FlutterResult)result {
-    [_manager cancelDeviceConnection:[self validStringOrNil:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]]
+    [_manager cancelDeviceConnection:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]]
                              resolve:result
                               reject:[self rejectForFlutterResult:result]];
 }
 
 - (void)isDeviceConnected:(FlutterMethodCall*)call result:(FlutterResult)result {
-    [_manager isDeviceConnected:[self validStringOrNil:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]]
+    [_manager isDeviceConnected:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]]
                         resolve:result
                          reject:[self rejectForFlutterResult:result]];
 
@@ -146,47 +148,8 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 
 - (Reject)rejectForFlutterResult:(FlutterResult)result {
     return ^(NSString *code, NSString *message, NSError *error) {
-        NSDictionary* dictionary = [NSJSONSerialization JSONObjectWithData:[message dataUsingEncoding:NSUTF8StringEncoding]
-                                                                   options:NSJSONReadingMutableContainers
-                                                                     error:nil];
-        result([FlutterError errorWithCode:[dictionary objectForKey:@"errorCode"]
-                                   message:[dictionary objectForKey:@"reason"]
-                                   details:message]);
+        result([FlutterErrorFactory flutterErrorFromJSONString:message]);
     };
-}
-
-- (nullable id)validArgumentOrNil:(id)argument {
-    if (argument != nil && (NSNull *)argument != [NSNull null]) {
-        return argument;
-    } else {
-        return nil;
-    }
-}
-
-- (nullable NSString*)validStringOrNil:(id)argument {
-    if (argument != nil && (NSNull *)argument != [NSNull null] && [argument isKindOfClass:[NSString class]]) {
-        return (NSString*)argument;
-    } else {
-        return nil;
-    }
-}
-
-- (nullable NSArray<NSString*>*)validStringArrayOrNil:(id)argument {
-    if (argument != nil && (NSNull *)argument != [NSNull null] && [argument isKindOfClass:[NSArray<NSString *> class]]) {
-        return (NSArray<NSString*>*)argument;
-    } else {
-        return nil;
-    }
-}
-
-- (nullable NSDictionary<NSString*, id>*)validDictionaryOrNil:(NSArray<NSString*>*)argumentKeys in:(NSDictionary<NSString*, id>*)dictionary {
-    NSMutableDictionary<NSString*, id>* resultDictionary = [NSMutableDictionary new];
-    for (NSString *argumentKey in argumentKeys) {
-        if ([dictionary objectForKey:argumentKey] != nil) {
-            [resultDictionary setValue:[self validArgumentOrNil:[dictionary objectForKey:argumentKey]] forKey:argumentKey];
-        }
-    }
-    return resultDictionary;
 }
 
 @end

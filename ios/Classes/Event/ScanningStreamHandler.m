@@ -1,4 +1,7 @@
 #import "ScanningStreamHandler.h"
+#import "ArgumentValidator.h"
+#import "ScanResultFactory.h"
+#import "FlutterErrorFactory.h"
 
 @implementation ScanningStreamHandler
 {
@@ -20,17 +23,9 @@
         assert(scanResult.count == 2 &&
                (scanResult[0] == [NSNull null] || (scanResult[1] == [NSNull null] && [scanResult[0] isKindOfClass:NSString.class])));
         if (scanResult[0] == [NSNull null]) {
-            NSData* jsonData = [NSJSONSerialization dataWithJSONObject:scanResult[1]
-                                                               options:NSJSONWritingPrettyPrinted
-                                                                 error:nil];
-            scanResultsSink([[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding]);
+            scanResultsSink([ScanResultFactory scanResultFromJSONObject:scanResult[1]]);
         } else {
-            NSDictionary* dictionary = [NSJSONSerialization JSONObjectWithData:[scanResult[0] dataUsingEncoding:NSUTF8StringEncoding]
-                                                                       options:NSJSONReadingMutableContainers
-                                                                         error:nil];
-            scanResultsSink([FlutterError errorWithCode:[dictionary objectForKey:@"errorCode"]
-                                                message:[dictionary objectForKey:@"reason"]
-                                                details:scanResult[0]]);
+            scanResultsSink([FlutterErrorFactory flutterErrorFromJSONString:scanResult[0]]);
             [self onComplete];
         }
     }
