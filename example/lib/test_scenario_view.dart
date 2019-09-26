@@ -113,7 +113,7 @@ class _TestScenarioWidgetState extends State<TestScenarioWidget> {
                     child: Text("Run Sensor Tag test"),
                     onPressed: _isTestInProgress
                         ? null
-                        : () => _startTestScenario(SensorTagTestScenario()),
+                        : () => _startTestScenario(SensorTagTestWithScanAndConnectionScenario()),
                   ),
                   RaisedButton(
                     child: Text("Run Bluetooth Toogle test"),
