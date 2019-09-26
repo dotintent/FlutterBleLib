@@ -9,6 +9,7 @@
 #import "Event/ConnectionStateStreamHandler.h"
 #import "Util/ArgumentValidator.h"
 #import "Util/FlutterErrorFactory.h"
+#import "Util/ResultConverter.h"
 
 typedef void (^Resolve)(id result);
 typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
@@ -75,6 +76,8 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
         [self setLogLevel:call result:result];
     } else if ([METHOD_NAME_LOG_LEVEL isEqualToString:call.method]) {
         [self logLevel:call result:result];
+    } else if ([METHOD_NAME_GET_SERVICES isEqualToString:call.method]) {
+        [self servicesForDevice:call result:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -116,8 +119,9 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 // MARK: - MBA Methods - Connection
 
 - (void)connectToDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSArray* expectedArguments = [NSArray arrayWithObjects:ARGUMENT_KEY_TIMEOUT_MILLIS, nil];
     [_manager connectToDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
-                      options:nil
+                      options:[ArgumentValidator validDictionaryOrNil:expectedArguments in:call.arguments]
                       resolve:result
                        reject:[self rejectForFlutterResult:result]];
 }
@@ -148,6 +152,14 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
                 reject:[self rejectForFlutterResult:result]];
 }
 
+// MARK: - MBA Methods - Service and Characteristic getters
+
+- (void)servicesForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager servicesForDevice:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]]
+                        resolve:[self jsonStringResolveForFlutterResult:result]
+                         reject:[self rejectForFlutterResult:result]];
+}
+
 // MARK: - MBA Methods - BleClientManagerDelegate implementation
 
 - (void)dispatchEvent:(NSString * _Nonnull)name value:(id _Nonnull)value {
@@ -157,10 +169,20 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
         [self.adapterStateStreamHandler onNewAdapterState:value];
     } else if ([BleEvent.scanEvent isEqualToString:name]) {
         [self.scanningStreamHandler onScanResult:(NSArray*)value];
+    } else if ([BleConnectionEvent.connectingEvent isEqualToString:name]) {
+        [self.connectionStateStreamHandler onConnectingEvent:(NSString *)value];
+    } else if ([BleConnectionEvent.connectedEvent isEqualToString:name]) {
+        [self.connectionStateStreamHandler onConnectedEvent:(NSString *)value];
     }
 }
 
 // MARK: - Utility methods
+
+- (Resolve)jsonStringResolveForFlutterResult:(FlutterResult)result {
+    return ^(NSString *jsonString) {
+        result([ResultConverter jsonStringFromJSONObject:jsonString]);
+    };
+}
 
 - (Reject)rejectForFlutterResult:(FlutterResult)result {
     return ^(NSString *code, NSString *message, NSError *error) {

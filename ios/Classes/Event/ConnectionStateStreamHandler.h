@@ -2,6 +2,8 @@
 
 @interface ConnectionStateStreamHandler : NSObject<FlutterStreamHandler>
 
-- (void)onNewConnectionState:(id)connectionState;
+- (void)onConnectingEvent:(NSString *)deviceId;
+
+- (void)onConnectedEvent:(NSString *)deviceId;
 
 @end

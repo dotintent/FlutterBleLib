@@ -7,6 +7,8 @@ NSString * const ARGUMENT_KEY_SCAN_MODE = @"scanMode";
 NSString * const ARGUMENT_KEY_CALLBACK_TYPE = @"callbackType";
 NSString * const ARGUMENT_KEY_UUIDS = @"uuids";
 
+NSString * const ARGUMENT_KEY_TRANSACTION_ID = @"transactionId";
+
 NSString * const ARGUMENT_KEY_DEVICE_IDENTIFIER = @"deviceIdentifier";
 NSString * const ARGUMENT_KEY_IS_AUTO_CONNECT = @"isAutoConnect";
 NSString * const ARGUMENT_KEY_REQUEST_MTU = @"requestMtu";

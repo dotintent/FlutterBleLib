@@ -1,8 +1,8 @@
-#import "ScanResultFactory.h"
+#import "ResultConverter.h"
 
-@implementation ScanResultFactory
+@implementation ResultConverter
 
-+ (NSString *)scanResultFromJSONObject:(id)jsonObject {
++ (NSString *)jsonStringFromJSONObject:(id)jsonObject {
     NSData * jsonData = [NSJSONSerialization dataWithJSONObject:jsonObject
                                                        options:NSJSONWritingPrettyPrinted
                                                          error:nil];
