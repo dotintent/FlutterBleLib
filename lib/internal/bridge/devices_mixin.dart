@@ -4,23 +4,27 @@ mixin DevicesMixin on FlutterBLE {
 
 
   Future<List<Peripheral>> knownDevices(List<String> peripheralIdentifiers) async {
-    String peripheralsJson = await _methodChannel.invokeMethod(MethodName.knownDevices, <String, dynamic>{
+    return _methodChannel.invokeMethod(MethodName.knownDevices, <String, dynamic>{
       ArgumentName.deviceIdentifiers: peripheralIdentifiers,
+    })
+    .then((peripheralsJson) {
+      print("known devices json: $peripheralsJson");
+      return _parsePeripheralsJson(peripheralsJson);
     });
-    print("knownw devices json: $peripheralsJson");
-//    var myThing = peripheralsJson.map((e) => Peripheral.fromJson(e, _manager)).toList();
-    print("known devices json: $peripheralsJson");
-    return <Peripheral>[];
   }
 
   Future<List<Peripheral>> connectedDevices(List<String> serviceUUIDs) async {
-    String peripheralsJson = await _methodChannel.invokeMethod(MethodName.connectedDevices, <String, dynamic>{
+    return _methodChannel.invokeMethod(MethodName.connectedDevices, <String, dynamic>{
       ArgumentName.serviceUuids: serviceUUIDs,
+    })
+    .then((peripheralsJson) {
+      print("connected devices json: $peripheralsJson");
+      return _parsePeripheralsJson(peripheralsJson);
     });
-    print("connected devices json: $peripheralsJson");
-    print("knownw devices json: $peripheralsJson");
-//    var myThing = peripheralsJson.map((e) => Peripheral.fromJson(e, _manager)).toList();
-    print("connected devices json: $peripheralsJson");
-    return <Peripheral>[];
+  }
+
+  List<Peripheral> _parsePeripheralsJson(String peripheralsJson) {
+    List list = json.decode(peripheralsJson).map((peripheral) => Peripheral.fromJson(peripheral, _manager)).toList();
+    return list.cast<Peripheral>();
   }
 }

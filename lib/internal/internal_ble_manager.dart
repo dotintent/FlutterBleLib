@@ -43,7 +43,7 @@ class InternalBleManager
     int callbackType = CallbackType.allMatches,
     List<String> uuids,
   }) =>
-      _bleLib.startDeviceScan(scanMode, callbackType, uuids);
+      _bleLib.startDeviceScan(scanMode, callbackType, uuids ?? []);
 
   @override
   Future<void> stopDeviceScan() => _bleLib.stopDeviceScan();

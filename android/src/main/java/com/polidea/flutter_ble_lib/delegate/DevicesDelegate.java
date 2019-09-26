@@ -57,9 +57,9 @@ public class DevicesDelegate extends CallDelegate {
         Log.d(TAG, "Get known devices");
 
         final SafeMainThreadResolver resolver = new SafeMainThreadResolver<>(
-                new OnSuccessCallback<Integer>() {
+                new OnSuccessCallback<String>() {
                     @Override
-                    public void onSuccess(Integer data) {
+                    public void onSuccess(String data) {
                         result.success(data);
                     }
                 },
