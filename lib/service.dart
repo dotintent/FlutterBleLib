@@ -9,17 +9,46 @@ class Service extends InternalService {
   Peripheral peripheral;
   ManagerForService _manager;
   String uuid;
-  int _id;
 
   Service.fromJson(
     Map<String, dynamic> jsonObject,
     Peripheral peripheral,
     ManagerForService managerForService,
-  )   : peripheral = peripheral,
-        uuid = jsonObject[_ServiceMetadata.uuid],
-        _manager = managerForService,
-        _id = jsonObject[_ServiceMetadata.id];
+  ) : super(jsonObject[_ServiceMetadata.id]) {
+    this.peripheral = peripheral;
+    uuid = jsonObject[_ServiceMetadata.uuid];
+    _manager = managerForService;
+  }
 
   Future<List<Characteristic>> characteristics() =>
       _manager.characteristicsForService(this);
+
+  Future<Characteristic> writeCharacteristic(
+    String characteristicUUID,
+    Uint8List bytes,
+    bool withResponse, {
+    String transactionId,
+  }) =>
+      _manager.writeCharacteristicForService(peripheral, this,
+          characteristicUUID, bytes, withResponse, transactionId);
+
+  Future<CharacteristicWithValue> readCharacteristic(String characteristicUUID,
+          {String transactionId}) =>
+      _manager.readCharacteristicForService(
+        peripheral,
+        this,
+        characteristicUUID,
+        transactionId,
+      );
+
+  Stream<CharacteristicWithValue> monitorCharacteristic(
+    String characteristicUUID, {
+    String transactionId,
+  }) =>
+      _manager.monitorCharacteristicForService(
+        peripheral,
+        this,
+        characteristicUUID,
+        transactionId,
+      );
 }

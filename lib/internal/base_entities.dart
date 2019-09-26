@@ -1,5 +1,7 @@
 part of internal_bridge_lib;
 
-abstract class InternalService {
+class InternalService {
   int _id;
+
+  InternalService(this._id);
 }

@@ -6,8 +6,6 @@ import 'package:flutter_ble_lib_example/devices_list/devices_list_view.dart';
 import 'device_details/device_details_view.dart';
 import 'device_details/devices_details_bloc_provider.dart';
 
-
-
 void main() {
   Fimber.plantTree(DebugTree());
   runApp(MyApp());

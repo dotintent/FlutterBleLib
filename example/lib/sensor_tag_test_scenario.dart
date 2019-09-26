@@ -1,99 +1,78 @@
 import 'dart:async';
-
-import 'package:fimber/fimber.dart';
-import 'package:flutter_ble_lib/flutter_ble_lib.dart';
-import 'package:flutter_ble_lib_example/model/ble_device.dart';
 import 'dart:typed_data';
-import 'dart:math';
 
-import 'package:flutter_ble_lib_example/repository/device_repository.dart';
-import 'package:flutter_ble_lib_example/util/pair.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 
-import '../sensor_tag_config.dart';
+import 'sensor_tag_config.dart';
+import 'util/pair.dart';
 
-class DeviceDetailsBloc {
-  final BleManager _bleManager;
-  final DeviceRepository _deviceRepository;
+typedef Logger = Function(String);
 
-  BehaviorSubject<BleDevice> _deviceController;
+class TestScenario {
+  BleManager bleManager = BleManager.getInstance();
+  bool deviceConnectionAttempted = false;
+  StreamSubscription monitoringStreamSubscription;
 
-  ValueObservable<BleDevice> get device => _deviceController.stream;
+  Future<void> runTestScenario(Logger log, Logger logError) async {
+    log("CREATING CLIENT...");
+    await bleManager.createClient(
+        restoreStateIdentifier: "5",
+        restoreStateAction: (devices) {
+          log("RESTORED DEVICES: $devices");
+        });
 
-  BehaviorSubject<PeripheralConnectionState> _connectionStateController;
+    log("CREATED CLIENT");
+    log("STARTING SCAN...");
+    log("Looking for Sensor Tag...");
+    bleManager.startPeripheralScan().listen((scanResult) async {
+      log("RECEIVED SCAN RESULT: "
+          "\n name: ${scanResult.peripheral.name}"
+          "\n identifier: ${scanResult.peripheral.identifier}"
+          "\n rssi: ${scanResult.rssi}");
 
-  ValueObservable<PeripheralConnectionState> get connectionState =>
-      _connectionStateController.stream;
-
-  Subject<List<DebugLog>> _logsController;
-
-  Observable<List<DebugLog>> get logs => _logsController.stream;
-
-  StreamSubscription connectionSubscription;
-
-  Stream<BleDevice> get disconnectedDevice => _deviceRepository.pickedDevice
-      .skipWhile((bleDevice) => bleDevice != null);
-
-  DeviceDetailsBloc(this._deviceRepository, this._bleManager) {
-    var device = _deviceRepository.pickedDevice.value;
-    _deviceController = BehaviorSubject<BleDevice>.seeded(device);
-
-    _connectionStateController =
-        BehaviorSubject<PeripheralConnectionState>.seeded(device.isConnected
-            ? PeripheralConnectionState.connected
-            : PeripheralConnectionState.disconnected);
-
-    _logsController = PublishSubject<List<DebugLog>>();
-  }
-
-  void init() {
-    Fimber.d("init bloc");
-    _deviceController.stream.listen((bleDevice) {
-      Fimber.d("got bleDevice: $bleDevice");
-      bleDevice.peripheral.isConnected().then((isConnected) {
-        Fimber.d('The device is connected: $isConnected');
-        if (!isConnected) {
-          _connectTo(bleDevice);
-        }
-      }).catchError((error) => Fimber.e("Connection problem", ex: error));
+      if (scanResult.peripheral.name == "SensorTag" &&
+          !deviceConnectionAttempted) {
+        log("Sensor Tag found!");
+        deviceConnectionAttempted = true;
+        log("Stopping device scan...");
+        await bleManager.stopDeviceScan();
+        return _tryToConnect(scanResult.peripheral, log, logError);
+      }
+    }, onError: (error) {
+      logError(error);
     });
   }
 
-  Future<void> disconnect() async {
-    return _deviceController.stream.value.peripheral
-        .disconnectOrCancelConnection()
-        .then((_) {
-      _deviceRepository.pickDevice(null);
-    });
-  }
+  Future<void> _tryToConnect(
+      Peripheral peripheral, Logger log, Logger logError) async {
+    log("OBSERVING connection state \nfor ${peripheral.name},"
+        " ${peripheral.identifier}...");
 
-  void dispose() async {
-    _deviceController.value?.abandon();
-    await _deviceController.drain();
-    _deviceController.close();
-
-    await _connectionStateController.drain();
-    _connectionStateController.close();
-  }
-
-  void _connectTo(BleDevice bleDevice) async {
-    _bleManager.setLogLevel(LogLevel.debug);
-    var peripheral = bleDevice.peripheral;
     peripheral
         .observeConnectionState(emitCurrentValue: true)
         .listen((connectionState) {
-      Fimber.d('Observerd new connection state: $connectionState');
-      _connectionStateController.add(connectionState);
+      log("Current connection state is: \n $connectionState");
+      if (connectionState == PeripheralConnectionState.disconnected) {
+        log("${peripheral.name} has DISCONNECTED");
+      }
     });
-
-    Fimber.d('Try to connecto the device');
+    log("CONNECTING to ${peripheral.name}, ${peripheral.identifier}...");
     await peripheral.connect();
-    Fimber.d("Connected to the device");
-    List<DebugLog> logs = [];
-    Function log = (text) {
-      logs.insert(0, DebugLog(DateTime.now().toString(), text));
-      _logsController.add(logs);
-    };
+    log("CONNECTED to ${peripheral.name}, ${peripheral.identifier}!");
+    deviceConnectionAttempted = false;
+
+    monitoringStreamSubscription?.cancel();
+    monitoringStreamSubscription = peripheral
+        .monitorCharacteristic(SensorTagTemperatureUuids.temperatureService,
+            SensorTagTemperatureUuids.temperatureConfigCharacteristic)
+        .listen(
+      (characteristic) {
+        log("Characteristic ${characteristic.uuid} changed. New value: ${characteristic.value}");
+      },
+      onError: (error) {
+        log("Error when trying to modify characteristic value. $error");
+      },
+    );
 
     peripheral
         .discoverAllServicesAndCharacteristics()
@@ -116,14 +95,6 @@ class DeviceDetailsBloc {
         })
         .then((characteristics) => characteristics.forEach((characteristic) =>
             log("Found characteristic \n ${characteristic.uuid}")))
-        .then((_) async {
-            int rssi = await peripheral.rssi();
-            log("rssi $rssi");
-        })
-        .then((_) async {
-          await peripheral.requestMtu(74);
-          log("MTU requested");
-        })
         .then((_) => log("Test read/write characteristic on device"))
         .then((_) {
           log("Turn off temperature update");
@@ -194,12 +165,14 @@ class DeviceDetailsBloc {
           return Pair(service, configCharacteristic);
         })
         .then((serviceAndConfigCharacteristic) =>
-            Future.delayed(Duration(seconds: 1)).then((_) => serviceAndConfigCharacteristic))
+            Future.delayed(Duration(seconds: 1))
+                .then((_) => serviceAndConfigCharacteristic))
         .then((serviceAndConfigCharacteristic) async {
           CharacteristicWithValue dataCharacteristic =
               await serviceAndConfigCharacteristic.first.readCharacteristic(
                   SensorTagTemperatureUuids.temperatureDataCharacteristic);
-          return Pair(serviceAndConfigCharacteristic.second, dataCharacteristic);
+          return Pair(
+              serviceAndConfigCharacteristic.second, dataCharacteristic);
         })
         .then((configAndDataCharacteristics) {
           log("Temperature value ${configAndDataCharacteristics.second.value}");
@@ -244,13 +217,13 @@ class DeviceDetailsBloc {
         })
         .then((_) {
           log("Disconnected!");
-        });
+          log("WAITING 10 SECOND BEFORE DESTROYING CLIENT");
+          return Future.delayed(Duration(seconds: 10));
+        })
+        .then((_) {
+          log("DESTROYING client...");
+          return bleManager.destroyClient();
+        })
+        .then((_) => log("\BleClient destroyed after a delay"));
   }
-}
-
-class DebugLog {
-  String time;
-  String content;
-
-  DebugLog(this.time, this.content);
 }

@@ -1,11 +1,11 @@
-import 'package:flutter_ble_lib/flutter_ble_lib.dart';
-import 'package:flutter_ble_lib/internal/managers_for_classes.dart';
-import 'package:flutter_ble_lib/internal/constants.dart';
-import 'package:flutter_ble_lib/internal/bridge/internal_bridge_lib.dart';
+part of internal_bridge_lib;
 
 class InternalBleManager
-    implements BleManager, ManagerForPeripheral, ManagerForService {
-
+    implements
+        BleManager,
+        ManagerForPeripheral,
+        ManagerForService,
+        ManagerForCharacteristic {
   FlutterBleLib _bleLib;
 
   InternalBleManager() {
@@ -120,4 +120,127 @@ class InternalBleManager
   Future<void> requestMtu(Peripheral peripheral, int mtu, String transactionId) {
    return _bleLib.requestMtu(peripheral, mtu, transactionId);
   }
+
+  @override
+  Future<Uint8List> readCharacteristicForIdentifier(Peripheral peripheral,
+          int characteristicIdentifier, String transactionId) =>
+      _bleLib
+          .readCharacteristicForIdentifier(
+              peripheral, characteristicIdentifier, transactionId);
+
+  @override
+  Future<CharacteristicWithValue> readCharacteristicForDevice(
+          Peripheral peripheral,
+          String serviceUuid,
+          String characteristicUUID,
+          String transactionId) =>
+      _bleLib.readCharacteristicForDevice(
+        peripheral,
+        serviceUuid,
+        characteristicUUID,
+        transactionId,
+      );
+
+  @override
+  Future<CharacteristicWithValue> readCharacteristicForService(
+          Peripheral peripheral,
+          InternalService service,
+          String characteristicUUID,
+          String transactionId) =>
+      _bleLib.readCharacteristicForService(
+        peripheral,
+        service._id,
+        characteristicUUID,
+        transactionId,
+      );
+
+  @override
+  Future<void> writeCharacteristicForIdentifier(
+          Peripheral peripheral,
+          int characteristicIdentifier,
+          Uint8List bytes,
+          bool withResponse,
+          String transactionId) =>
+      _bleLib.writeCharacteristicForIdentifier(
+        peripheral,
+        characteristicIdentifier,
+        bytes,
+        withResponse,
+        transactionId,
+      );
+
+  @override
+  Future<Characteristic> writeCharacteristicForDevice(
+          Peripheral peripheral,
+          String serviceUUID,
+          String characteristicUUID,
+          Uint8List bytes,
+          bool withResponse,
+          String transactionId) =>
+      _bleLib.writeCharacteristicForDevice(
+        peripheral,
+        serviceUUID,
+        characteristicUUID,
+        bytes,
+        withResponse,
+        transactionId,
+      );
+
+  @override
+  Future<Characteristic> writeCharacteristicForService(
+          Peripheral peripheral,
+          InternalService service,
+          String characteristicUUID,
+          Uint8List bytes,
+          bool withResponse,
+          String transactionId) =>
+      _bleLib.writeCharacteristicForService(
+        peripheral,
+        service._id,
+        characteristicUUID,
+        bytes,
+        withResponse,
+        transactionId,
+      );
+
+  @override
+  Stream<CharacteristicWithValue> monitorCharacteristicForDevice(
+    Peripheral peripheral,
+    String serviceUUID,
+    String characteristicUUID,
+    String transactionId,
+  ) =>
+      _bleLib.monitorCharacteristicForDevice(
+        peripheral,
+        serviceUUID,
+        characteristicUUID,
+        transactionId,
+      );
+
+  @override
+  Stream<CharacteristicWithValue> monitorCharacteristicForService(
+    Peripheral peripheral,
+    InternalService service,
+    String characteristicUUID,
+    String transactionId,
+  ) =>
+      _bleLib.monitorCharacteristicForService(
+        peripheral,
+        service._id,
+        characteristicUUID,
+        transactionId,
+      );
+
+  @override
+  Stream<Uint8List> monitorCharacteristicForIdentifier(
+    Peripheral peripheral,
+    int characteristicIdentifier,
+    String transactionId,
+  ) =>
+      _bleLib
+          .monitorCharacteristicForIdentifier(
+            peripheral,
+            characteristicIdentifier,
+            transactionId,
+          );
 }

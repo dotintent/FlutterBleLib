@@ -7,7 +7,6 @@ import 'dart:typed_data';
 import 'package:flutter_ble_lib/internal/bridge/internal_bridge_lib.dart';
 
 import 'internal/constants.dart';
-import 'internal/internal_ble_manager.dart';
 import 'internal/managers_for_classes.dart';
 
 part 'ble_manager.dart';
