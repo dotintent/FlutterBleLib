@@ -2,7 +2,7 @@
 
 @interface ScanningStreamHandler : NSObject<FlutterStreamHandler>
 
-- (void)onScanResult:(id)scanResult;
+- (void)onScanResult:(NSArray *)scanResult;
 - (void)onComplete;
 
 @end

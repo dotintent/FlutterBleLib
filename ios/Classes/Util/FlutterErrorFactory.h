@@ -2,6 +2,6 @@
 
 @interface FlutterErrorFactory : NSObject
 
-+ (FlutterError*)flutterErrorFromJSONString:(NSString*)jsonString;
++ (FlutterError *)flutterErrorFromJSONString:(NSString *)jsonString;
 
 @end

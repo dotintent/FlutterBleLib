@@ -2,6 +2,6 @@
 
 @interface ScanResultFactory : NSObject
 
-+ (NSString*)scanResultFromJSONObject:(id)jsonObject;
++ (NSString *)scanResultFromJSONObject:(id)jsonObject;
 
 @end

@@ -15,11 +15,11 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 
 @interface FlutterBleLibPlugin () <BleClientManagerDelegate>
 
-@property (nonatomic) BleClientManager* manager;
-@property (nonatomic) AdapterStateStreamHandler* adapterStateStreamHandler;
-@property (nonatomic) RestoreStateStreamHandler* restoreStateStreamHandler;
-@property (nonatomic) ScanningStreamHandler* scanningStreamHandler;
-@property (nonatomic) ConnectionStateStreamHandler* connectionStateStreamHandler;
+@property (nonatomic) BleClientManager *manager;
+@property (nonatomic) AdapterStateStreamHandler *adapterStateStreamHandler;
+@property (nonatomic) RestoreStateStreamHandler *restoreStateStreamHandler;
+@property (nonatomic) ScanningStreamHandler *scanningStreamHandler;
+@property (nonatomic) ConnectionStateStreamHandler *connectionStateStreamHandler;
 
 @end
 
@@ -41,15 +41,15 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 
 // MARK: - FlutterPlugin implementation
 
-+ (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-    FlutterMethodChannel* channel = [FlutterMethodChannel methodChannelWithName:CHANNEL_NAME_FLUTTER_BLE_LIB binaryMessenger:[registrar messenger]];
++ (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+    FlutterMethodChannel *channel = [FlutterMethodChannel methodChannelWithName:CHANNEL_NAME_FLUTTER_BLE_LIB binaryMessenger:[registrar messenger]];
 
-    FlutterEventChannel* adapterStateChannel = [FlutterEventChannel eventChannelWithName:CHANNEL_NAME_ADAPTER_STATE_CHANGES binaryMessenger:[registrar messenger]];
-    FlutterEventChannel* restoreStateChannel = [FlutterEventChannel eventChannelWithName:CHANNEL_NAME_STATE_RESTORE_EVENTS binaryMessenger:[registrar messenger]];
-    FlutterEventChannel* scanningChannel = [FlutterEventChannel eventChannelWithName:CHANNEL_NAME_SCANNING_EVENTS binaryMessenger:[registrar messenger]];
-    FlutterEventChannel* connectionStateChannel = [FlutterEventChannel eventChannelWithName:CHANNEL_NAME_CONNECTION_STATE_CHANGE_EVENTS binaryMessenger:[registrar messenger]];
+    FlutterEventChannel *adapterStateChannel = [FlutterEventChannel eventChannelWithName:CHANNEL_NAME_ADAPTER_STATE_CHANGES binaryMessenger:[registrar messenger]];
+    FlutterEventChannel *restoreStateChannel = [FlutterEventChannel eventChannelWithName:CHANNEL_NAME_STATE_RESTORE_EVENTS binaryMessenger:[registrar messenger]];
+    FlutterEventChannel *scanningChannel = [FlutterEventChannel eventChannelWithName:CHANNEL_NAME_SCANNING_EVENTS binaryMessenger:[registrar messenger]];
+    FlutterEventChannel *connectionStateChannel = [FlutterEventChannel eventChannelWithName:CHANNEL_NAME_CONNECTION_STATE_CHANGE_EVENTS binaryMessenger:[registrar messenger]];
 
-    FlutterBleLibPlugin* instance = [[FlutterBleLibPlugin alloc] init];
+    FlutterBleLibPlugin *instance = [[FlutterBleLibPlugin alloc] init];
     
     [registrar addMethodCallDelegate:instance channel:channel];
 
@@ -59,7 +59,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
     [connectionStateChannel setStreamHandler:instance.connectionStateStreamHandler];
 }
 
-- (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
+- (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
     if ([METHOD_NAME_CREATE_CLIENT isEqualToString:call.method]) {
         [self createClient:call result:result];
     } else if ([METHOD_NAME_START_DEVICE_SCAN isEqualToString:call.method]) {
@@ -79,7 +79,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 
 // MARK: - MBA Methods - BleClient lifecycle
 
-- (void)createClient:(FlutterMethodCall*)call result:(FlutterResult)result {
+- (void)createClient:(FlutterMethodCall *)call result:(FlutterResult)result {
     _manager = [[BleClientManager alloc] initWithQueue:dispatch_get_main_queue()
                                   restoreIdentifierKey:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_RESTORE_STATE_IDENTIFIER]]];
     _manager.delegate = self;
@@ -97,7 +97,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 
 // MARK: - MBA Methods - Scanning
 
-- (void)startDeviceScan:(FlutterMethodCall*)call result:(FlutterResult)result {
+- (void)startDeviceScan:(FlutterMethodCall *)call result:(FlutterResult)result {
     NSArray* expectedArguments = [NSArray arrayWithObjects:ARGUMENT_KEY_SCAN_MODE, nil];
     [_manager startDeviceScan:[ArgumentValidator validStringArrayOrNil:call.arguments[ARGUMENT_KEY_UUIDS]]
                       options:[ArgumentValidator validDictionaryOrNil:expectedArguments in:call.arguments]];
@@ -112,20 +112,20 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 
 // MARK: - MBA Methods - Connection
 
-- (void)connectToDevice:(FlutterMethodCall*)call result:(FlutterResult)result {
+- (void)connectToDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
     [_manager connectToDevice:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]]
                       options:nil
                       resolve:result
                        reject:[self rejectForFlutterResult:result]];
 }
 
-- (void)cancelDeviceConnection:(FlutterMethodCall*)call result:(FlutterResult)result {
+- (void)cancelDeviceConnection:(FlutterMethodCall *)call result:(FlutterResult)result {
     [_manager cancelDeviceConnection:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]]
                              resolve:result
                               reject:[self rejectForFlutterResult:result]];
 }
 
-- (void)isDeviceConnected:(FlutterMethodCall*)call result:(FlutterResult)result {
+- (void)isDeviceConnected:(FlutterMethodCall *)call result:(FlutterResult)result {
     [_manager isDeviceConnected:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]]
                         resolve:result
                          reject:[self rejectForFlutterResult:result]];

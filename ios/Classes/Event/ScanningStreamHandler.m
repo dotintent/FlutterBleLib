@@ -18,7 +18,7 @@
     return nil;
 }
 
-- (void)onScanResult:(NSArray*)scanResult {
+- (void)onScanResult:(NSArray *)scanResult {
     if (scanResultsSink != nil) {
         assert(scanResult.count == 2 &&
                (scanResult[0] == [NSNull null] || (scanResult[1] == [NSNull null] && [scanResult[0] isKindOfClass:NSString.class])));
@@ -37,9 +37,9 @@
     }
 }
 
-- (nullable NSString*)validStringOrNil:(id)argument {
+- (nullable NSString *)validStringOrNil:(id)argument {
     if (argument != nil && (NSNull *)argument != [NSNull null] && [argument isKindOfClass:[NSString class]]) {
-        return (NSString*)argument;
+        return (NSString *)argument;
     } else {
         return nil;
     }
