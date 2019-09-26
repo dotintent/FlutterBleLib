@@ -121,14 +121,6 @@ mixin CharacteristicsMixin on FlutterBLE {
     int characteristicIdentifier,
     String transactionId,
   ) async* {
-    yield* _monitoringChannel
-        .receiveBroadcastStream()
-        .map(
-          (rawJsonValue) =>
-              _parseCharacteristicResponse(peripheral, rawJsonValue),
-        )
-        .map((characteristicWithValue) => characteristicWithValue.value);
-
     _methodChannel.invokeMethod(
       MethodName.monitorCharacteristicForIdentifier,
       <String, dynamic>{
@@ -136,6 +128,13 @@ mixin CharacteristicsMixin on FlutterBLE {
         ArgumentName.transactionId: transactionId,
       },
     );
+    yield* _monitoringChannel
+        .receiveBroadcastStream()
+        .map(
+          (rawJsonValue) =>
+              _parseCharacteristicResponse(peripheral, rawJsonValue),
+        )
+        .map((characteristicWithValue) => characteristicWithValue.value);
   }
 
   Stream<CharacteristicWithValue> monitorCharacteristicForDevice(
@@ -144,10 +143,6 @@ mixin CharacteristicsMixin on FlutterBLE {
     String characteristicUUID,
     String transactionId,
   ) async* {
-    yield* _monitoringChannel.receiveBroadcastStream().map(
-          (rawJsonValue) =>
-              _parseCharacteristicResponse(peripheral, rawJsonValue),
-        );
     _methodChannel.invokeMethod(
       MethodName.monitorCharacteristicForDevice,
       <String, dynamic>{
@@ -157,6 +152,10 @@ mixin CharacteristicsMixin on FlutterBLE {
         ArgumentName.transactionId: transactionId,
       },
     );
+    yield* _monitoringChannel.receiveBroadcastStream().map(
+          (rawJsonValue) =>
+              _parseCharacteristicResponse(peripheral, rawJsonValue),
+        );
   }
 
   Stream<CharacteristicWithValue> monitorCharacteristicForService(
@@ -165,10 +164,6 @@ mixin CharacteristicsMixin on FlutterBLE {
     String characteristicUUID,
     String transactionId,
   ) async* {
-    yield* _monitoringChannel.receiveBroadcastStream().map(
-          (rawJsonValue) =>
-              _parseCharacteristicResponse(peripheral, rawJsonValue),
-        );
     _methodChannel.invokeMethod(
       MethodName.monitorCharacteristicForService,
       <String, dynamic>{
@@ -177,6 +172,10 @@ mixin CharacteristicsMixin on FlutterBLE {
         ArgumentName.transactionId: transactionId,
       },
     );
+    yield* _monitoringChannel.receiveBroadcastStream().map(
+          (rawJsonValue) =>
+              _parseCharacteristicResponse(peripheral, rawJsonValue),
+        );
   }
 
   CharacteristicWithValue _parseCharacteristicResponse(
