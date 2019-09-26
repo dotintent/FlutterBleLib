@@ -13,6 +13,7 @@ import com.polidea.multiplatformbleadapter.OnEventCallback;
 import com.polidea.multiplatformbleadapter.OnSuccessCallback;
 import com.polidea.multiplatformbleadapter.ScanResult;
 import com.polidea.multiplatformbleadapter.Service;
+import com.polidea.multiplatformbleadapter.errors.BleError;
 
 public class SimulatedAdapter implements BleAdapter {
 
@@ -140,25 +141,22 @@ public class SimulatedAdapter implements BleAdapter {
     }
 
     @Override
-    public void getServicesForDevice(String deviceIdentifier,
-                                     OnSuccessCallback<Service[]> onSuccessCallback,
-                                     OnErrorCallback onErrorCallback) {
-        Log.i("BLEMULATOR", "getServicesForDevice");
+    public Service[] getServicesForDevice(String deviceIdentifier) throws BleError {
+        Log.i("BLEMULATOR", "discoverAllServicesAndCharacteristicsForDevice");
+        return new Service[0];
     }
 
     @Override
-    public void getCharacteristicsForDevice(String deviceIdentifier,
-                                            String serviceUUID,
-                                            OnSuccessCallback<Characteristic[]> onSuccessCallback,
-                                            OnErrorCallback onErrorCallback) {
-        Log.i("BLEMULATOR", "getCharacteristicsForDevice");
+    public Characteristic[] getCharacteristicsForDevice(String deviceIdentifier,
+                                                        String serviceUUID) throws BleError {
+        Log.i("BLEMULATOR", "discoverAllServicesAndCharacteristicsForDevice");
+        return new Characteristic[0];
     }
 
     @Override
-    public void getCharacteristicsForService(int serviceIdentifier,
-                                             OnSuccessCallback<Characteristic[]> onSuccessCallback,
-                                             OnErrorCallback onErrorCallback) {
-        Log.i("BLEMULATOR", "getCharacteristicsForService");
+    public Characteristic[] getCharacteristicsForService(int serviceIdentifier) throws BleError {
+        Log.i("BLEMULATOR", "discoverAllServicesAndCharacteristicsForDevice");
+        return new Characteristic[0];
     }
 
     @Override
