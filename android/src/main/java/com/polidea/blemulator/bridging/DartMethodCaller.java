@@ -8,6 +8,4 @@ public class DartMethodCaller {
     public DartMethodCaller(MethodChannel dartMethodChannel) {
         this.dartMethodChannel = dartMethodChannel;
     }
-
-
 }
