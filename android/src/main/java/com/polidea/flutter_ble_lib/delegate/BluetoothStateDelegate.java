@@ -37,6 +37,9 @@ public class BluetoothStateDelegate extends CallDelegate {
             case MethodName.DISABLE_RADIO:
                 disableRadio(methodCall.<String>argument(ArgumentKey.TRANSACTION_ID), result);
                 return;
+            case MethodName.GET_BLUETOOTH_STATE:
+                getState(result);
+                return;
             default:
                 throw new IllegalArgumentException(methodCall.method + " cannot be handle by this delegate");
         }
@@ -70,5 +73,9 @@ public class BluetoothStateDelegate extends CallDelegate {
                         result.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
                     }
                 });
+    }
+
+    private void getState(@NonNull final MethodChannel.Result result) {
+        result.success(bleAdapter.getCurrentState());
     }
 }
