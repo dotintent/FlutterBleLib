@@ -27,18 +27,6 @@ public class DevicesResultJsonConverter implements JsonConverter<Device[]> {
     private interface Metadata {
         String ID = "id";
         String NAME = "name";
-
-        String RSSI = "rssi";
-        String MTU = "mtu";
-
-        String MANUFACTURER_DATA = "manufacturerData";
-        String SERVICE_DATA = "serviceData";
-        String SERVICE_UUIDS = "serviceUUIDs";
-        String LOCAL_NAME = "localName";
-        String TX_POWER_LEVEL = "txPowerLevel";
-        String SOLICITED_SERVICE_UUIDS = "solicitedServiceUUIDs";
-        String IS_CONNECTABLE = "isConnectable";
-        String OVERFLOW_SERVICE_UUIDS = "overflowServiceUUIDs";
     }
 
     @Override
