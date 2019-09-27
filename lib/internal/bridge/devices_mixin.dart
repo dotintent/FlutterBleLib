@@ -15,7 +15,7 @@ mixin DevicesMixin on FlutterBLE {
 
   Future<List<Peripheral>> connectedDevices(List<String> serviceUUIDs) async {
     return _methodChannel.invokeMethod(MethodName.connectedDevices, <String, dynamic>{
-      ArgumentName.serviceUuids: serviceUUIDs,
+      ArgumentName.uuids: serviceUUIDs,
     })
     .then((peripheralsJson) {
       print("connected devices json: $peripheralsJson");

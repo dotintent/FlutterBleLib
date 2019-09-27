@@ -45,11 +45,11 @@ public class DevicesDelegate extends CallDelegate {
                 return;
 
             case MethodName.GET_CONNECTED_DEVICES:
-                getConnectedDevices(methodCall.<List<String>>argument(ArgumentKey.SERVICE_UUIDS),
+                getConnectedDevices(methodCall.<List<String>>argument(ArgumentKey.UUIDS),
                         result);
                 return;
             default:
-                throw new IllegalArgumentException(methodCall.method + " cannot be handled by this delegate");
+                result.notImplemented();
         }
     }
 

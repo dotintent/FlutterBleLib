@@ -123,12 +123,12 @@ class InternalBleManager
   }
 
   @override
-  Future<List<Peripheral>> knownDevices({List<String> peripheralIdentifiers}) {
+  Future<List<Peripheral>> knownDevices(List<String> peripheralIdentifiers) {
     return _bleLib.knownDevices(peripheralIdentifiers ?? []);
   }
 
   @override
-  Future<List<Peripheral>> connectedDevices({List<String> serviceUUIDs}) {
+  Future<List<Peripheral>> connectedDevices(List<String> serviceUUIDs) {
     return _bleLib.connectedDevices(serviceUUIDs ?? []);
   }
 

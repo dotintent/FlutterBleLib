@@ -80,7 +80,6 @@ abstract class ArgumentName {
 
   static const String mtu = "mtu";
 
-  static const String serviceUuids = "serviceUUIDs";
   static const String deviceIdentifiers = "deviceIdentifiers";
 }
 

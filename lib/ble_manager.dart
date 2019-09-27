@@ -38,7 +38,7 @@ abstract class BleManager {
 
   Future<void> disableRadio({String transactionId});
 
-  Future<List<Peripheral>> knownDevices({List<String> peripheralIdentifiers});
+  Future<List<Peripheral>> knownDevices(List<String> peripheralIdentifiers);
 
-  Future<List<Peripheral>> connectedDevices({List<String> serviceUUIDs});
+  Future<List<Peripheral>> connectedDevices(List<String> serviceUUIDs);
 }

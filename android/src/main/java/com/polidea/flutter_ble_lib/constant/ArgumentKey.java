@@ -26,6 +26,5 @@ public interface ArgumentKey {
 
     String MTU = "mtu";
 
-    String SERVICE_UUIDS = "serviceUUIDs";
     String DEVICE_IDENTIFIERS = "deviceIdentifiers";
 }
