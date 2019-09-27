@@ -85,14 +85,23 @@ class DeviceDetailsBloc {
     };
 
     Logger logError = (text) {
-      logs.insert(0, DebugLog(DateTime.now().toString(), text.toUpperCase()));
-      Fimber.d(text.toUpperCase());
+      logs.insert(0,
+          DebugLog(DateTime.now().toString(), "ERROR: ${text.toUpperCase()}"));
+      Fimber.e(text);
       _logsController.add(logs);
     };
+
+    log("Fetching log level");
+    LogLevel logLevel = await _bleManager.logLevel();
+    log("Current log level $logLevel");
 
     log("Setting log level to debug");
     await _bleManager.setLogLevel(LogLevel.debug);
     log("Set log level to debug");
+
+    log("Fetching log level");
+    logLevel = await _bleManager.logLevel();
+    log("Current log level $logLevel");
 
     var peripheral = bleDevice.peripheral;
     peripheral
@@ -102,7 +111,7 @@ class DeviceDetailsBloc {
       _connectionStateController.add(connectionState);
     });
 
-    SensorTagTestScenario(peripheral).runTestScenario(log, logError);
+    SensorTagTestScenario(peripheral, log, logError).runTestScenario();
   }
 }
 
