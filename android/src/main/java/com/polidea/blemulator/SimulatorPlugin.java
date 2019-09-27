@@ -4,8 +4,9 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.polidea.blemulator.bridging.DartMethodCaller;
+import com.polidea.blemulator.bridging.DartValueHandler;
 import com.polidea.blemulator.bridging.constants.ChannelName;
-import com.polidea.blemulator.bridging.constants.MethodName;
+import com.polidea.blemulator.bridging.constants.DownstreamMethodName;
 import com.polidea.multiplatformbleadapter.BleAdapter;
 import com.polidea.multiplatformbleadapter.BleAdapterCreator;
 import com.polidea.multiplatformbleadapter.BleAdapterFactory;
@@ -17,6 +18,7 @@ import io.flutter.plugin.common.PluginRegistry;
 public class SimulatorPlugin implements MethodChannel.MethodCallHandler {
 
     private DartMethodCaller dartMethodCaller;
+    private DartValueHandler dartValueHandler;
 
     public static void registerWith(PluginRegistry.Registrar registrar) {
         MethodChannel downstream = new MethodChannel(registrar.messenger(), ChannelName.TO_JAVA);
@@ -27,16 +29,17 @@ public class SimulatorPlugin implements MethodChannel.MethodCallHandler {
 
     private SimulatorPlugin(MethodChannel upstream) {
         dartMethodCaller = new DartMethodCaller(upstream);
+        dartValueHandler = new DartValueHandler();
     }
 
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
         switch (call.method) {
-            case MethodName.SIMULATE:
+            case DownstreamMethodName.SIMULATE:
                 switchToSimulation(result);
                 return;
             default:
-                result.notImplemented();
+                dartValueHandler.onMethodCall(call, result);
                 return;
         }
     }
@@ -45,7 +48,9 @@ public class SimulatorPlugin implements MethodChannel.MethodCallHandler {
         BleAdapterFactory.setBleAdapterCreator(new BleAdapterCreator() {
             @Override
             public BleAdapter createAdapter(Context context) {
-                return new SimulatedAdapter(dartMethodCaller);
+                SimulatedAdapter adapter = new SimulatedAdapter(dartMethodCaller, dartValueHandler);
+                dartValueHandler.setAdapter(adapter);
+                return adapter;
             }
         });
         result.success(null);

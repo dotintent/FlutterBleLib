@@ -3,6 +3,7 @@ package com.polidea.blemulator;
 import android.util.Log;
 
 import com.polidea.blemulator.bridging.DartMethodCaller;
+import com.polidea.blemulator.bridging.DartValueHandler;
 import com.polidea.multiplatformbleadapter.BleAdapter;
 import com.polidea.multiplatformbleadapter.Characteristic;
 import com.polidea.multiplatformbleadapter.ConnectionOptions;
@@ -18,20 +19,25 @@ import com.polidea.multiplatformbleadapter.errors.BleError;
 public class SimulatedAdapter implements BleAdapter {
 
     private DartMethodCaller dartMethodCaller;
+    private DartValueHandler dartValueHandler;
 
-    SimulatedAdapter(DartMethodCaller dartMethodCaller) {
+    SimulatedAdapter(DartMethodCaller dartMethodCaller, DartValueHandler dartValueHandler) {
         this.dartMethodCaller = dartMethodCaller;
+        this.dartValueHandler = dartValueHandler;
     }
 
     @Override
     public void createClient(String restoreStateIdentifier,
                              OnEventCallback<String> onAdapterStateChangeCallback,
                              OnEventCallback<Integer> onStateRestored) {
+        onStateRestored.onEvent(null);
+        dartMethodCaller.createClient();
         Log.i("BLEMULATOR", "createClient");
     }
 
     @Override
     public void destroyClient() {
+        dartMethodCaller.destroyClient();
         Log.i("BLEMULATOR", "destroyClient");
     }
 
@@ -61,12 +67,16 @@ public class SimulatedAdapter implements BleAdapter {
                                 int callbackType,
                                 OnEventCallback<ScanResult> onEventCallback,
                                 OnErrorCallback onErrorCallback) {
-        Log.w("SIMULATOR", "startDeviceScan");
+        Log.i("BLEMULATOR", "startDeviceScan");
+        dartValueHandler.setScanResultPublisher(onEventCallback);
+        dartValueHandler.setScanResultErrorPublisher(onErrorCallback);
+        dartMethodCaller.startDeviceScan();
     }
 
     @Override
     public void stopDeviceScan() {
         Log.i("BLEMULATOR", "stopDeviceScan");
+        dartMethodCaller.stopDeviceScan();
     }
 
     @Override
@@ -143,20 +153,20 @@ public class SimulatedAdapter implements BleAdapter {
     @Override
     public Service[] getServicesForDevice(String deviceIdentifier) throws BleError {
         Log.i("BLEMULATOR", "discoverAllServicesAndCharacteristicsForDevice");
-        return new Service[0];
+        return null;
     }
 
     @Override
     public Characteristic[] getCharacteristicsForDevice(String deviceIdentifier,
                                                         String serviceUUID) throws BleError {
         Log.i("BLEMULATOR", "discoverAllServicesAndCharacteristicsForDevice");
-        return new Characteristic[0];
+        return null;
     }
 
     @Override
     public Characteristic[] getCharacteristicsForService(int serviceIdentifier) throws BleError {
         Log.i("BLEMULATOR", "discoverAllServicesAndCharacteristicsForDevice");
-        return new Characteristic[0];
+        return null;
     }
 
     @Override
