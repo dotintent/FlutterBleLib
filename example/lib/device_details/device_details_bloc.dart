@@ -111,7 +111,7 @@ class DeviceDetailsBloc {
       _connectionStateController.add(connectionState);
     });
 
-    SensorTagTestScenario(peripheral, log, logError).runTestScenario();
+    SensorTagTestScenario(_bleManager, peripheral, log, logError).runTestScenario();
   }
 }
 
