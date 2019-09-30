@@ -7,7 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_ble_lib/blemulator/blemulator.dart';
 
 part 'bridge/constants.dart';
-part 'bridge/upstream_bridge.dart';
+part 'bridge/dart_to_platform_bridge.dart';
+part 'bridge/platform_to_dart_bridge.dart';
+part 'defaults.dart';
 part 'scan_result.dart';
-part 'bridge/downstream_bridge.dart';
 part 'simulation_manager.dart';

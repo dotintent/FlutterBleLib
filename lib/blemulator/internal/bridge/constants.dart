@@ -11,7 +11,7 @@ abstract class DownstreamMethodName {
 }
 
 abstract class SimulationDownstreamMethodName {
-  static const String addScanResult = "addScanResult";
+  static const String publishScanResult = "publishScanResult";
 }
 
 abstract class UpstreamMethodName {

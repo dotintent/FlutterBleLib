@@ -18,6 +18,8 @@ import com.polidea.multiplatformbleadapter.errors.BleError;
 
 public class SimulatedAdapter implements BleAdapter {
 
+    private static final String TAG = "SimulatedAdapter";
+
     private DartMethodCaller dartMethodCaller;
     private DartValueHandler dartValueHandler;
 
@@ -32,32 +34,32 @@ public class SimulatedAdapter implements BleAdapter {
                              OnEventCallback<Integer> onStateRestored) {
         onStateRestored.onEvent(null);
         dartMethodCaller.createClient();
-        Log.i("BLEMULATOR", "createClient");
+        Log.i(TAG, "createClient");
     }
 
     @Override
     public void destroyClient() {
         dartMethodCaller.destroyClient();
-        Log.i("BLEMULATOR", "destroyClient");
+        Log.i(TAG, "destroyClient");
     }
 
     @Override
     public void enable(String transactionId,
                        OnSuccessCallback<Void> onSuccessCallback,
                        OnErrorCallback onErrorCallback) {
-        Log.i("BLEMULATOR", "enable");
+        Log.i(TAG, "enable");
     }
 
     @Override
     public void disable(String transactionId,
                         OnSuccessCallback<Void> onSuccessCallback,
                         OnErrorCallback onErrorCallback) {
-        Log.i("BLEMULATOR", "disable");
+        Log.i(TAG, "disable");
     }
 
     @Override
     public String getCurrentState() {
-        Log.i("BLEMULATOR", "getCurrentState");
+        Log.i(TAG, "getCurrentState");
         return null;
     }
 
@@ -67,7 +69,7 @@ public class SimulatedAdapter implements BleAdapter {
                                 int callbackType,
                                 OnEventCallback<ScanResult> onEventCallback,
                                 OnErrorCallback onErrorCallback) {
-        Log.i("BLEMULATOR", "startDeviceScan");
+        Log.i(TAG, "startDeviceScan");
         dartValueHandler.setScanResultPublisher(onEventCallback);
         dartValueHandler.setScanResultErrorPublisher(onErrorCallback);
         dartMethodCaller.startDeviceScan();
@@ -75,7 +77,7 @@ public class SimulatedAdapter implements BleAdapter {
 
     @Override
     public void stopDeviceScan() {
-        Log.i("BLEMULATOR", "stopDeviceScan");
+        Log.i(TAG, "stopDeviceScan");
         dartMethodCaller.stopDeviceScan();
     }
 
@@ -85,7 +87,7 @@ public class SimulatedAdapter implements BleAdapter {
                                                    String transactionId,
                                                    OnSuccessCallback<Device> onSuccessCallback,
                                                    OnErrorCallback onErrorCallback) {
-        Log.i("BLEMULATOR", "requestConnectionPriorityForDevice");
+        Log.i(TAG, "requestConnectionPriorityForDevice");
     }
 
     @Override
@@ -93,7 +95,7 @@ public class SimulatedAdapter implements BleAdapter {
                                   String transactionId,
                                   OnSuccessCallback<Device> onSuccessCallback,
                                   OnErrorCallback onErrorCallback) {
-        Log.i("BLEMULATOR", "readRSSIForDevice");
+        Log.i(TAG, "readRSSIForDevice");
     }
 
     @Override
@@ -101,21 +103,21 @@ public class SimulatedAdapter implements BleAdapter {
                                     int mtu, String transactionId,
                                     OnSuccessCallback<Device> onSuccessCallback,
                                     OnErrorCallback onErrorCallback) {
-        Log.i("BLEMULATOR", "requestMTUForDevice");
+        Log.i(TAG, "requestMTUForDevice");
     }
 
     @Override
     public void getKnownDevices(String[] deviceIdentifiers,
                                 OnSuccessCallback<Device[]> onSuccessCallback,
                                 OnErrorCallback onErrorCallback) {
-        Log.i("BLEMULATOR", "getKnownDevices");
+        Log.i(TAG, "getKnownDevices");
     }
 
     @Override
     public void getConnectedDevices(String[] serviceUUIDs,
                                     OnSuccessCallback<Device[]> onSuccessCallback,
                                     OnErrorCallback onErrorCallback) {
-        Log.i("BLEMULATOR", "getConnectedDevices");
+        Log.i(TAG, "getConnectedDevices");
     }
 
     @Override
@@ -124,21 +126,21 @@ public class SimulatedAdapter implements BleAdapter {
                                 OnSuccessCallback<Device> onSuccessCallback,
                                 OnEventCallback<ConnectionState> onConnectionStateChangedCallback,
                                 OnErrorCallback onErrorCallback) {
-        Log.i("BLEMULATOR", "connectToDevice");
+        Log.i(TAG, "connectToDevice");
     }
 
     @Override
     public void cancelDeviceConnection(String deviceIdentifier,
                                        OnSuccessCallback<Device> onSuccessCallback,
                                        OnErrorCallback onErrorCallback) {
-        Log.i("BLEMULATOR", "cancelDeviceConnection");
+        Log.i(TAG, "cancelDeviceConnection");
     }
 
     @Override
     public void isDeviceConnected(String deviceIdentifier,
                                   OnSuccessCallback<Boolean> onSuccessCallback,
                                   OnErrorCallback onErrorCallback) {
-        Log.i("BLEMULATOR", "isDeviceConnected");
+        Log.i(TAG, "isDeviceConnected");
     }
 
     @Override
@@ -147,25 +149,25 @@ public class SimulatedAdapter implements BleAdapter {
             String transactionId,
             OnSuccessCallback<Device> onSuccessCallback,
             OnErrorCallback onErrorCallback) {
-        Log.i("BLEMULATOR", "discoverAllServicesAndCharacteristicsForDevice");
+        Log.i(TAG, "discoverAllServicesAndCharacteristicsForDevice");
     }
 
     @Override
     public Service[] getServicesForDevice(String deviceIdentifier) throws BleError {
-        Log.i("BLEMULATOR", "discoverAllServicesAndCharacteristicsForDevice");
+        Log.i(TAG, "discoverAllServicesAndCharacteristicsForDevice");
         return null;
     }
 
     @Override
     public Characteristic[] getCharacteristicsForDevice(String deviceIdentifier,
                                                         String serviceUUID) throws BleError {
-        Log.i("BLEMULATOR", "discoverAllServicesAndCharacteristicsForDevice");
+        Log.i(TAG, "discoverAllServicesAndCharacteristicsForDevice");
         return null;
     }
 
     @Override
     public Characteristic[] getCharacteristicsForService(int serviceIdentifier) throws BleError {
-        Log.i("BLEMULATOR", "discoverAllServicesAndCharacteristicsForDevice");
+        Log.i(TAG, "discoverAllServicesAndCharacteristicsForDevice");
         return null;
     }
 
@@ -176,7 +178,7 @@ public class SimulatedAdapter implements BleAdapter {
                                             String transactionId,
                                             OnSuccessCallback<Characteristic> onSuccessCallback,
                                             OnErrorCallback onErrorCallback) {
-        Log.i("BLEMULATOR", "readCharacteristicForDevice");
+        Log.i(TAG, "readCharacteristicForDevice");
     }
 
     @Override
@@ -185,7 +187,7 @@ public class SimulatedAdapter implements BleAdapter {
                                              String transactionId,
                                              OnSuccessCallback<Characteristic> onSuccessCallback,
                                              OnErrorCallback onErrorCallback) {
-        Log.i("BLEMULATOR", "readCharacteristicForService");
+        Log.i(TAG, "readCharacteristicForService");
     }
 
     @Override
@@ -193,7 +195,7 @@ public class SimulatedAdapter implements BleAdapter {
                                    String transactionId,
                                    OnSuccessCallback<Characteristic> onSuccessCallback,
                                    OnErrorCallback onErrorCallback) {
-        Log.i("BLEMULATOR", "readCharacteristic");
+        Log.i(TAG, "readCharacteristic");
     }
 
     @Override
@@ -205,7 +207,7 @@ public class SimulatedAdapter implements BleAdapter {
                                              String transactionId,
                                              OnSuccessCallback<Characteristic> onSuccessCallback,
                                              OnErrorCallback onErrorCallback) {
-        Log.i("BLEMULATOR", "writeCharacteristicForDevice");
+        Log.i(TAG, "writeCharacteristicForDevice");
     }
 
     @Override
@@ -216,7 +218,7 @@ public class SimulatedAdapter implements BleAdapter {
                                               String transactionId,
                                               OnSuccessCallback<Characteristic> onSuccessCallback,
                                               OnErrorCallback onErrorCallback) {
-        Log.i("BLEMULATOR", "writeCharacteristicForService");
+        Log.i(TAG, "writeCharacteristicForService");
     }
 
     @Override
@@ -226,7 +228,7 @@ public class SimulatedAdapter implements BleAdapter {
                                     String transactionId,
                                     OnSuccessCallback<Characteristic> onSuccessCallback,
                                     OnErrorCallback onErrorCallback) {
-        Log.i("BLEMULATOR", "writeCharacteristic");
+        Log.i(TAG, "writeCharacteristic");
     }
 
     @Override
@@ -236,7 +238,7 @@ public class SimulatedAdapter implements BleAdapter {
                                                String transactionId,
                                                OnEventCallback<Characteristic> onEventCallback,
                                                OnErrorCallback onErrorCallback) {
-        Log.i("BLEMULATOR", "monitorCharacteristicForDevice");
+        Log.i(TAG, "monitorCharacteristicForDevice");
     }
 
     @Override
@@ -244,7 +246,7 @@ public class SimulatedAdapter implements BleAdapter {
                                                 String characteristicUUID,
                                                 String transactionId, OnEventCallback<Characteristic> onEventCallback,
                                                 OnErrorCallback onErrorCallback) {
-        Log.i("BLEMULATOR", "monitorCharacteristicForService");
+        Log.i(TAG, "monitorCharacteristicForService");
     }
 
     @Override
@@ -252,22 +254,22 @@ public class SimulatedAdapter implements BleAdapter {
                                       String transactionId,
                                       OnEventCallback<Characteristic> onEventCallback,
                                       OnErrorCallback onErrorCallback) {
-        Log.i("BLEMULATOR", "monitorCharacteristic");
+        Log.i(TAG, "monitorCharacteristic");
     }
 
     @Override
     public void cancelTransaction(String transactionId) {
-        Log.i("BLEMULATOR", "cancelTransaction");
+        Log.i(TAG, "cancelTransaction");
     }
 
     @Override
     public void setLogLevel(String logLevel) {
-        Log.i("BLEMULATOR", "setLogLevel");
+        Log.i(TAG, "setLogLevel");
     }
 
     @Override
     public String getLogLevel() {
-        Log.i("BLEMULATOR", "getLogLevel");
+        Log.i(TAG, "getLogLevel");
         return null;
     }
 }

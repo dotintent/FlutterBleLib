@@ -3,7 +3,7 @@ part of internal;
 class SimulationManager {
   List<SimulatedPeripheral> _peripherals = [];
   List<StreamSubscription> _scanSubscriptions = [];
-  DownstreamBridge _bridge;
+  DartToPlatformBridge _bridge;
 
   SimulationManager(this._bridge);
 

@@ -1,9 +1,9 @@
 part of internal;
 
-class DownstreamBridge {
+class DartToPlatformBridge {
   MethodChannel _downstreamChannel;
 
-  DownstreamBridge() {
+  DartToPlatformBridge() {
     _downstreamChannel = new MethodChannel(ChannelName.downstream);
   }
 
@@ -12,7 +12,7 @@ class DownstreamBridge {
 
   Future<void> addScanResult(ScanResult scanResult) =>
       _downstreamChannel.invokeMethod(
-          SimulationDownstreamMethodName.addScanResult, <String, dynamic>{
+          SimulationDownstreamMethodName.publishScanResult, <String, dynamic>{
         ArgumentName.name: scanResult.name,
         ArgumentName.id: scanResult.id,
         ArgumentName.mtu: scanResult.mtu,

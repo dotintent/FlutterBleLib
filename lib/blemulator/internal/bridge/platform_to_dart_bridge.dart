@@ -1,11 +1,11 @@
 part of internal;
 
-class UpstreamBridge {
+class PlatformToDartBridge {
 
   SimulationManager _manager;
   MethodChannel _upstreamChannel;
 
-  UpstreamBridge(this._manager) {
+  PlatformToDartBridge(this._manager) {
     _upstreamChannel = new MethodChannel(ChannelName.upstream);
     _upstreamChannel.setMethodCallHandler(_handleCall);
   }
@@ -26,18 +26,18 @@ class UpstreamBridge {
   }
 
   Future<void> _createClient() async {
-    _manager._createClient();
+    await _manager._createClient();
   }
 
   Future<void> _destroyClient() async {
-    _manager._destroyClient();
+    await _manager._destroyClient();
   }
 
   Future<void> _startDeviceScan() async {
-    _manager._startDeviceScan();
+    await _manager._startDeviceScan();
   }
 
   Future<void> _stopDeviceScan() async {
-    _manager._stopDeviceScan();
+    await _manager._stopDeviceScan();
   }
 }

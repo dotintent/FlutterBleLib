@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 import com.polidea.blemulator.bridging.DartMethodCaller;
 import com.polidea.blemulator.bridging.DartValueHandler;
 import com.polidea.blemulator.bridging.constants.ChannelName;
-import com.polidea.blemulator.bridging.constants.DownstreamMethodName;
+import com.polidea.blemulator.bridging.constants.PlatformMethodName;
 import com.polidea.multiplatformbleadapter.BleAdapter;
 import com.polidea.multiplatformbleadapter.BleAdapterCreator;
 import com.polidea.multiplatformbleadapter.BleAdapterFactory;
@@ -35,7 +35,7 @@ public class SimulatorPlugin implements MethodChannel.MethodCallHandler {
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
         switch (call.method) {
-            case DownstreamMethodName.SIMULATE:
+            case PlatformMethodName.SIMULATE:
                 switchToSimulation(result);
                 return;
             default:

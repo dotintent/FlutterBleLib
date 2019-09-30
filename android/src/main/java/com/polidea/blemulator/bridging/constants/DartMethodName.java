@@ -1,6 +1,6 @@
 package com.polidea.blemulator.bridging.constants;
 
-public interface UpstreamMethodName {
+public interface DartMethodName {
     String CREATE_CLIENT = "createClient";
     String DESTROY_CLIENT = "destroyClient";
 

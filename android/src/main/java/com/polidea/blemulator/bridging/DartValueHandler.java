@@ -5,7 +5,7 @@ import android.util.Log;
 
 import com.polidea.blemulator.SimulatedAdapter;
 import com.polidea.blemulator.bridging.constants.ArgumentName;
-import com.polidea.blemulator.bridging.constants.DownstreamMethodName;
+import com.polidea.blemulator.bridging.constants.PlatformMethodName;
 import com.polidea.multiplatformbleadapter.AdvertisementData;
 import com.polidea.multiplatformbleadapter.OnErrorCallback;
 import com.polidea.multiplatformbleadapter.OnEventCallback;
@@ -21,6 +21,8 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 
 public class DartValueHandler implements MethodChannel.MethodCallHandler {
+
+    private static final String TAG = "DART VALUE HANDLER";
 
     private SimulatedAdapter adapter;
 
@@ -42,16 +44,16 @@ public class DartValueHandler implements MethodChannel.MethodCallHandler {
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
         switch (call.method) {
-            case DownstreamMethodName.ADD_SCAN_RESULT:
-                addScanResult(call, result);
+            case PlatformMethodName.PUBLISH_SCAN_RESULT:
+                publishScanResult(call, result);
                 return;
             default:
                 result.notImplemented();
         }
     }
 
-    private void addScanResult(MethodCall call, MethodChannel.Result result) {
-        Log.d("BLEMULATOR", "new scan result");
+    private void publishScanResult(MethodCall call, MethodChannel.Result result) {
+        Log.d(TAG, "new scan result");
         HashMap<UUID, byte[]> serviceData = null;
         HashMap<String, byte[]> stringServiceData = call.argument(ArgumentName.SERVICE_DATA);
         if (stringServiceData != null) {
