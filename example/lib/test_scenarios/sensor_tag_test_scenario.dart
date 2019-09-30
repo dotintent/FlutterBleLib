@@ -1,36 +1,32 @@
 part of test_scenarios;
 
-class SensorTagTestScenario extends TestScenario {
-  final Peripheral _peripheral;
+class SensorTagTestScenario {
+  final Peripheral peripheral;
+  final Logger log;
+  final Logger logError;
   StreamSubscription monitoringStreamSubscription;
 
-  SensorTagTestScenario(this._peripheral);
+  SensorTagTestScenario(this.peripheral, this.log, this.logError);
 
-  @override
-  Future<void> runTestScenario(Logger log, Logger logError) async {
-    _connect(log, logError, _peripheral)
-        .then((peripheral) => _discovery(log, logError, peripheral))
-        .then((peripheral) => _mtu(log, logError, peripheral))
-        .then((peripheral) => _rssi(log, logError, peripheral))
-        .then((peripheral) =>
-            _readWriteCharacteristicForPeripheral(log, logError, peripheral))
-        .then((peripheral) =>
-            _readWriteCharacteristicForService(log, logError, peripheral))
-        .then(
-            (peripheral) => _readWriteCharacteristic(log, logError, peripheral))
-        .then((peripheral) => _disconnect(log, logError, peripheral));
+  Future<void> runTestScenario() async {
+    _connect()
+        .then((_) => _discovery())
+        .then((_) => _testRequestingMtu())
+        .then((_) => _testReadingRssi())
+        .then((_) => _readWriteCharacteristicForPeripheral())
+        .then((_) => _readWriteCharacteristicForService())
+        .then((_) => _readWriteCharacteristic())
+        .then((_) => _disconnect());
   }
 
-  Future<Peripheral> _connect(
-      Logger log, Logger logError, Peripheral peripheral) async {
-    log("Connecting to ${_peripheral.name}");
-    await _peripheral.connect();
+  Future<void> _connect() async {
+    log("Connecting to ${peripheral.name}");
+    await peripheral.connect();
     log("Connected!");
     return peripheral;
   }
 
-  Future<Peripheral> _discovery(
-      Logger log, Logger logError, Peripheral peripheral) async {
+  Future<void> _discovery() async {
     await peripheral.discoverAllServicesAndCharacteristics();
     List<Service> services = await peripheral.services();
     log("PRINTING SERVICES for ${peripheral.name}");
@@ -45,21 +41,19 @@ class SensorTagTestScenario extends TestScenario {
 
     log("PRINTING CHARACTERISTICS FROM \nPERIPHERAL for the same service");
     List<Characteristic> characteristicFromPeripheral =
-        await _peripheral.characteristics(service.uuid);
+        await peripheral.characteristics(service.uuid);
     characteristicFromPeripheral.forEach((characteristic) =>
         log("Found characteristic \n ${characteristic.uuid}"));
     return peripheral;
   }
 
-  Future<Peripheral> _rssi(
-      Logger log, Logger logError, Peripheral peripheral) async {
+  Future<void> _testReadingRssi() async {
     int rssi = await peripheral.rssi();
     log("rssi $rssi");
     return peripheral;
   }
 
-  Future<Peripheral> _mtu(
-      Logger log, Logger logError, Peripheral peripheral) async {
+  Future<void> _testRequestingMtu() async {
     int requestedMtu = 79;
     log("Requesting MTU = $requestedMtu");
     int negotiatedMtu = await peripheral.requestMtu(requestedMtu);
@@ -67,8 +61,7 @@ class SensorTagTestScenario extends TestScenario {
     return peripheral;
   }
 
-  Future<Peripheral> _readWriteCharacteristicForPeripheral(
-      Logger log, Logger logError, Peripheral peripheral) async {
+  Future<void> _readWriteCharacteristicForPeripheral() async {
     log("Test read/write characteristic on device");
     log("Turning off temperature update");
     await peripheral.writeCharacteristic(
@@ -82,7 +75,7 @@ class SensorTagTestScenario extends TestScenario {
     CharacteristicWithValue readValue = await peripheral.readCharacteristic(
         SensorTagTemperatureUuids.temperatureService,
         SensorTagTemperatureUuids.temperatureDataCharacteristic);
-    log("Read temperature value ${readValue.value}C");
+    log("Read temperature value ${readValue.value}");
 
     log("Start monitoring temperature");
     _startMonitoringTemperature(
@@ -114,8 +107,7 @@ class SensorTagTestScenario extends TestScenario {
     return peripheral;
   }
 
-  Future<Peripheral> _readWriteCharacteristicForService(
-      Logger log, Logger logError, Peripheral peripheral) async {
+  Future<void> _readWriteCharacteristicForService() async {
     log("Test read/write characteristic on service");
     log("Fetching service");
 
@@ -169,8 +161,7 @@ class SensorTagTestScenario extends TestScenario {
     return peripheral;
   }
 
-  Future<Peripheral> _readWriteCharacteristic(
-      Logger log, Logger logError, Peripheral peripheral) async {
+  Future<void> _readWriteCharacteristic() async {
     log("Test read/write characteristic on characteristic");
 
     log("Fetching service");
@@ -212,8 +203,7 @@ class SensorTagTestScenario extends TestScenario {
     return peripheral;
   }
 
-  Future<void> _disconnect(
-      Logger log, Logger logError, Peripheral peripheral) async {
+  Future<void> _disconnect() async {
     log("WAITING 10 SECOND BEFORE DISCONNECTING");
     await Future.delayed(Duration(seconds: 10));
     log("DISCONNECTING...");
