@@ -41,4 +41,8 @@ abstract class BleManager {
   Future<BluetoothState> state();
 
   Stream<BluetoothState> onStateChange({bool emitCurrentValue = true});
+
+  Future<List<Peripheral>> knownDevices(List<String> peripheralIdentifiers);
+
+  Future<List<Peripheral>> connectedDevices(List<String> serviceUUIDs);
 }

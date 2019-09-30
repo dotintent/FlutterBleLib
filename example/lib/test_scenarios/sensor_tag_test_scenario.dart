@@ -4,8 +4,9 @@ class SensorTagTestScenario {
   final Peripheral peripheral;
   final Logger log;
   final Logger logError;
+  final BleManager bleManager;
 
-  SensorTagTestScenario(this.peripheral, this.log, this.logError);
+  SensorTagTestScenario(this.bleManager, this.peripheral, this.log, this.logError);
 
   Future<void> runTestScenario() async {
     _connect()
@@ -15,6 +16,8 @@ class SensorTagTestScenario {
         .then((_) => _readWriteCharacteristicForPeripheral())
         .then((_) => _readWriteCharacteristicForService())
         .then((_) => _readWriteCharacteristic())
+        .then((_) => _fetchConnectedDevice())
+        .then((_) => _fetchKnownDevice())
         .then((_) => _disconnect());
   }
 
@@ -178,5 +181,17 @@ class SensorTagTestScenario {
     log("DISCONNECTING...");
     await peripheral.disconnectOrCancelConnection();
     log("Disconnected!");
+  }
+
+  Future<void> _fetchConnectedDevice() async {
+    log("Fetch connected devices");
+    List<Peripheral> peripherals = await bleManager.connectedDevices([peripheral.identifier]);
+    peripherals.forEach((peripheral) => log("\t${peripheral.toString()}"));
+  }
+
+  Future<void> _fetchKnownDevice() async {
+    log("Fetch known devices");
+    List<Peripheral> peripherals = await bleManager.knownDevices([]);
+    peripherals.forEach((peripheral) => log("\t${peripheral.toString()}"));
   }
 }
