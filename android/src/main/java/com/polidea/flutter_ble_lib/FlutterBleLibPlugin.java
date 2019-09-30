@@ -107,6 +107,9 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
             case MethodName.STOP_DEVICE_SCAN:
                 stopDeviceScan(result);
                 break;
+            case MethodName.CANCEL_TRANSACTION:
+                cancelTransaction(call, result);
+                break;
             default:
                 result.notImplemented();
         }
@@ -160,6 +163,11 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
     private void stopDeviceScan(Result result) {
         bleAdapter.stopDeviceScan();
         scanningStreamHandler.onComplete();
+        result.success(null);
+    }
+
+    private void cancelTransaction(MethodCall call, Result result) {
+        bleAdapter.cancelTransaction(call.<String>argument(ArgumentKey.TRANSACTION_ID));
         result.success(null);
     }
 }

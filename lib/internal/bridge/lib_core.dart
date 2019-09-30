@@ -51,4 +51,10 @@ class FlutterBleLib extends FlutterBLE
     await _methodChannel.invokeMethod(MethodName.destroyClient);
     return;
   }
+
+  Future<void> cancelTransaction(String transactionId) async {
+    await _methodChannel.invokeMethod(MethodName.cancelTransaction,
+        <String, String>{ArgumentName.transactionId: transactionId});
+    return;
+  }
 }
