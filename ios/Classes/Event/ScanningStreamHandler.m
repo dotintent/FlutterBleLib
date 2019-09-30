@@ -3,8 +3,7 @@
 #import "ScanResultFactory.h"
 #import "FlutterErrorFactory.h"
 
-@implementation ScanningStreamHandler
-{
+@implementation ScanningStreamHandler {
     FlutterEventSink scanResultsSink;
 }
 

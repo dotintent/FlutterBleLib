@@ -1,7 +1,6 @@
 #import "RestoreStateStreamHandler.h"
 
-@implementation RestoreStateStreamHandler
-{
+@implementation RestoreStateStreamHandler {
     FlutterEventSink restoreStateSink;
 }
 

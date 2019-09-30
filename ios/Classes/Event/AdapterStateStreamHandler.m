@@ -1,7 +1,6 @@
 #import "AdapterStateStreamHandler.h"
 
-@implementation AdapterStateStreamHandler
-{
+@implementation AdapterStateStreamHandler {
     FlutterEventSink adapterStateSink;
 }
 

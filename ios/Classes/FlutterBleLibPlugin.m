@@ -27,8 +27,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 
 // MARK: - Initializers
 
-- (instancetype)init
-{
+- (instancetype)init {
     self = [super init];
     if (self) {
         self.adapterStateStreamHandler = [AdapterStateStreamHandler new];
@@ -113,20 +112,20 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 // MARK: - MBA Methods - Connection
 
 - (void)connectToDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
-    [_manager connectToDevice:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]]
+    [_manager connectToDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
                       options:nil
                       resolve:result
                        reject:[self rejectForFlutterResult:result]];
 }
 
 - (void)cancelDeviceConnection:(FlutterMethodCall *)call result:(FlutterResult)result {
-    [_manager cancelDeviceConnection:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]]
+    [_manager cancelDeviceConnection:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
                              resolve:result
                               reject:[self rejectForFlutterResult:result]];
 }
 
 - (void)isDeviceConnected:(FlutterMethodCall *)call result:(FlutterResult)result {
-    [_manager isDeviceConnected:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]]
+    [_manager isDeviceConnected:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
                         resolve:result
                          reject:[self rejectForFlutterResult:result]];
 

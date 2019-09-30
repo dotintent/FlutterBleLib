@@ -1,7 +1,6 @@
 #import "ConnectionStateStreamHandler.h"
 
-@implementation ConnectionStateStreamHandler
-{
+@implementation ConnectionStateStreamHandler {
     FlutterEventSink eventSink;
 }
 
