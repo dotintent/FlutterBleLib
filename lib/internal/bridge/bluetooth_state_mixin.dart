@@ -1,6 +1,5 @@
 part of internal_bridge_lib;
 
-
 mixin BluetoothStateMixin on FlutterBLE {
   final EventChannel _adapterStateChanges =
       const EventChannel(ChannelName.adapterStateChanges);
@@ -30,12 +29,18 @@ mixin BluetoothStateMixin on FlutterBLE {
 
   BluetoothState _mapToBluetoothState(dynamic rawValue) {
     switch (rawValue) {
+      case "Unknown":
+        return BluetoothState.UNKNOWN;
+      case "Unsupported":
+        return BluetoothState.UNSUPPORTED;
+      case "Unauthorized":
+        return BluetoothState.UNAUTHORIZED;
+      case "Resetting":
+        return BluetoothState.RESETTING;
       case "PoweredOn":
         return BluetoothState.POWERED_ON;
       case "PoweredOff":
         return BluetoothState.POWERED_OFF;
-      case "Resetting":
-        return BluetoothState.RESETTING;
       default:
         throw "Cannot map $rawValue to known bluetooth state";
     }

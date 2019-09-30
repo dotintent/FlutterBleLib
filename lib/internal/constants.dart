@@ -110,6 +110,9 @@ abstract class NativeConnectionState {
 }
 
 enum BluetoothState {
+  UNKNOWN,
+  UNSUPPORTED,
+  UNAUTHORIZED,
   POWERED_ON,
   POWERED_OFF,
   RESETTING,
