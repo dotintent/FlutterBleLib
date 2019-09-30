@@ -93,6 +93,11 @@ class Peripheral {
         characteristicUUID,
         transactionId,
       );
+
+  @override
+  String toString() {
+    return 'Peripheral{\n\tname: $name, \n\tidentifier: $identifier\n}';
+  }
 }
 
 enum PeripheralConnectionState {

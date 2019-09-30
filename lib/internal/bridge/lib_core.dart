@@ -16,6 +16,7 @@ class FlutterBleLib extends FlutterBLE
         RssiMixin,
         MtuMixin,
         BluetoothStateMixin,
+        DevicesMixin,
         CharacteristicsMixin {
   final EventChannel _restoreStateEventChannel =
       const EventChannel(ChannelName.stateRestoreEvents);

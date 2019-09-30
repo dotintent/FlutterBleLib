@@ -1,5 +1,6 @@
 name: flutter_ble_lib_example
 description: Demonstrates how to use the flutter_ble_lib plugin.
+version: 0.0.1+1
 publish_to: 'none'
 
 environment:

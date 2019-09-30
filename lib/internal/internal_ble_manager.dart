@@ -1,7 +1,7 @@
 part of internal_bridge_lib;
 
 class InternalBleManager
-    implements
+  implements
         BleManager,
         ManagerForPeripheral,
         ManagerForService,
@@ -38,12 +38,19 @@ class InternalBleManager
       _bleLib.disableRadio(transactionId);
 
   @override
+  Future<BluetoothState> state() => _bleLib.state();
+
+  @override
+  Stream<BluetoothState> onStateChange({bool emitCurrentValue = true}) =>
+      _bleLib.onStateChange(emitCurrentValue);
+
+  @override
   Stream<ScanResult> startPeripheralScan({
     int scanMode = ScanMode.lowPower,
     int callbackType = CallbackType.allMatches,
     List<String> uuids,
   }) =>
-      _bleLib.startDeviceScan(scanMode, callbackType, uuids);
+      _bleLib.startDeviceScan(scanMode, callbackType, uuids ?? []);
 
   @override
   Future<void> stopDeviceScan() => _bleLib.stopDeviceScan();
@@ -113,12 +120,23 @@ class InternalBleManager
       Peripheral peripheral,
       String transactionId,
       ) {
+    print("call channel read RSSI");
     return _bleLib.rssi(peripheral, transactionId);
   }
 
   @override
-  Future<int> requestMtu(Peripheral peripheral, int mtu, String transactionId) {
-   return _bleLib.requestMtu(peripheral, mtu, transactionId);
+  Future<void> requestMtu(Peripheral peripheral, int mtu, String transactionId) {
+    return _bleLib.requestMtu(peripheral, mtu, transactionId);
+  }
+
+  @override
+  Future<List<Peripheral>> knownDevices(List<String> peripheralIdentifiers) {
+    return _bleLib.knownDevices(peripheralIdentifiers ?? []);
+  }
+
+  @override
+  Future<List<Peripheral>> connectedDevices(List<String> serviceUUIDs) {
+    return _bleLib.connectedDevices(serviceUUIDs ?? []);
   }
 
   @override
