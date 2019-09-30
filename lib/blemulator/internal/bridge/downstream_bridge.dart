@@ -1,16 +1,10 @@
 part of internal;
 
-class BlemulatorBridge {
-  MethodChannel _upstreamChannel;
+class DownstreamBridge {
   MethodChannel _downstreamChannel;
 
-  BlemulatorBridge() {
-    _upstreamChannel = new MethodChannel(ChannelName.upstream);
+  DownstreamBridge() {
     _downstreamChannel = new MethodChannel(ChannelName.downstream);
-  }
-
-  void setUpstreamMethodCallHandler(SimulatorCallHandler callHandler) {
-    _upstreamChannel.setMethodCallHandler(callHandler.handleCall);
   }
 
   Future<void> simulate() =>

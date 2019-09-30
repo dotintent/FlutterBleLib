@@ -15,26 +15,16 @@ class ScanInfo {
   List<String> overflowUuids;
 
   ScanInfo(
-      {int rssi = -30,
-      int mtu = 23,
-      bool isConnectable = true,
-      int txPowerLevel,
-      Uint8List manufacturerData,
-      Map<String, Uint8List> serviceData,
-      List<String> serviceUuids,
-      String localName,
-      List<String> solicitedServiceUuids,
-      List<String> overflowUuids})
-      : overflowUuids = overflowUuids,
-        serviceUuids = serviceUuids,
-        txPowerLevel = txPowerLevel,
-        isConnectable = isConnectable,
-        rssi = rssi,
-        mtu = mtu,
-        manufacturerData = manufacturerData,
-        serviceData = serviceData,
-        solicitedServiceUuids = solicitedServiceUuids,
-        localName = localName;
+      {this.rssi = -30,
+      this.mtu = 23,
+      this.isConnectable = true,
+      this.txPowerLevel,
+      this.manufacturerData,
+      this.serviceData,
+      this.serviceUuids,
+      this.localName,
+      this.solicitedServiceUuids,
+      this.overflowUuids});
 }
 
 abstract class SimulatedPeripheral {

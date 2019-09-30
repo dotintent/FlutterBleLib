@@ -1,12 +1,16 @@
 part of internal;
 
-class SimulatorCallHandler {
+class UpstreamBridge {
 
   SimulationManager _manager;
+  MethodChannel _upstreamChannel;
 
-  SimulatorCallHandler(this._manager);
+  UpstreamBridge(this._manager) {
+    _upstreamChannel = new MethodChannel(ChannelName.upstream);
+    _upstreamChannel.setMethodCallHandler(_handleCall);
+  }
 
-  Future<dynamic> handleCall(MethodCall call) {
+  Future<dynamic> _handleCall(MethodCall call) {
     switch (call.method) {
       case UpstreamMethodName.createClient:
         return _createClient();

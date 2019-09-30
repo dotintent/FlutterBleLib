@@ -4,16 +4,16 @@ class Blemulator {
 
   static Blemulator _instance = Blemulator._internal();
 
-  BlemulatorBridge _bridge;
+  DownstreamBridge _bridge;
   SimulationManager _simulationManager;
+  UpstreamBridge _upstreamBridge;
 
   factory Blemulator() => _instance;
 
   Blemulator._internal() {
-    _bridge = BlemulatorBridge();
+    _bridge = DownstreamBridge();
     _simulationManager = SimulationManager(_bridge);
-    SimulatorCallHandler callHandler = SimulatorCallHandler(_simulationManager);
-    _bridge.setUpstreamMethodCallHandler(callHandler);
+    _upstreamBridge = UpstreamBridge(_simulationManager);
   }
 
   Future<void> simulate() => _bridge.simulate();
