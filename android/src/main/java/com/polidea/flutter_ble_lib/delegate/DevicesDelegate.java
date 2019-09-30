@@ -82,7 +82,7 @@ public class DevicesDelegate extends CallDelegate {
             @Override
             public void onSuccess(Device[] devices) {
                 Log.d(TAG, "Found known devices: " + devices.length);
-                resolver.onSuccess(devicesResultJsonConverter.toJson(devices));
+                resolver.onSuccess(devices);
             }
         }, new OnErrorCallback() {
             @Override
