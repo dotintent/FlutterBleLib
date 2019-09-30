@@ -13,9 +13,9 @@ class SensorTagTestScenario {
         .then((_) => _discovery())
         .then((_) => _testRequestingMtu())
         .then((_) => _testReadingRssi())
-        .then((_) => _readWriteCharacteristicForPeripheral())
-        .then((_) => _readWriteCharacteristicForService())
-        .then((_) => _readWriteCharacteristic())
+        .then((_) => _readWriteMonitorCharacteristicForPeripheral())
+        .then((_) => _readWriteMonitorCharacteristicForService())
+        .then((_) => _readWriteMonitorCharacteristic())
         .then((_) => _disconnect());
   }
 
@@ -61,8 +61,17 @@ class SensorTagTestScenario {
     return peripheral;
   }
 
-  Future<void> _readWriteCharacteristicForPeripheral() async {
-    log("Test read/write characteristic on device");
+  Future<void> _readWriteMonitorCharacteristicForPeripheral() async {
+    log("Test read/write/monitor characteristic on device");
+    log("Start monitoring temperature");
+    _startMonitoringTemperature(
+      peripheral
+          .monitorCharacteristic(SensorTagTemperatureUuids.temperatureService,
+          SensorTagTemperatureUuids.temperatureDataCharacteristic,
+          transactionId: "1")
+          .map((characteristic) => characteristic.value),
+      log,
+    );
     log("Turning off temperature update");
     await peripheral.writeCharacteristic(
         SensorTagTemperatureUuids.temperatureService,
@@ -75,17 +84,7 @@ class SensorTagTestScenario {
     CharacteristicWithValue readValue = await peripheral.readCharacteristic(
         SensorTagTemperatureUuids.temperatureService,
         SensorTagTemperatureUuids.temperatureDataCharacteristic);
-    log("Read temperature value ${readValue.value}");
-
-    log("Start monitoring temperature");
-    _startMonitoringTemperature(
-      peripheral
-          .monitorCharacteristic(SensorTagTemperatureUuids.temperatureService,
-              SensorTagTemperatureUuids.temperatureDataCharacteristic,
-              transactionId: "1")
-          .map((characteristic) => characteristic.value),
-      log,
-    );
+    log("Read temperature value ${_convertToTemperature(readValue.value)}C");
 
     log("Turning on temperature update");
     await peripheral.writeCharacteristic(
@@ -107,14 +106,24 @@ class SensorTagTestScenario {
     return peripheral;
   }
 
-  Future<void> _readWriteCharacteristicForService() async {
-    log("Test read/write characteristic on service");
+  Future<void> _readWriteMonitorCharacteristicForService() async {
+    log("Test read/write/monitor characteristic on service");
     log("Fetching service");
 
     Service service = await peripheral.services().then((services) =>
         services.firstWhere((service) =>
             service.uuid ==
             SensorTagTemperatureUuids.temperatureService.toLowerCase()));
+
+    log("Start monitoring temperature");
+    _startMonitoringTemperature(
+      service
+          .monitorCharacteristic(
+          SensorTagTemperatureUuids.temperatureDataCharacteristic,
+          transactionId: "2")
+          .map((characteristic) => characteristic.value),
+      log,
+    );
 
     log("Turning off temperature update");
     await service.writeCharacteristic(
@@ -132,16 +141,6 @@ class SensorTagTestScenario {
         await service.readCharacteristic(
             SensorTagTemperatureUuids.temperatureDataCharacteristic);
     log("Read temperature value ${_convertToTemperature(dataCharacteristic.value)}C");
-
-    log("Start monitoring temperature");
-    _startMonitoringTemperature(
-      service
-          .monitorCharacteristic(
-              SensorTagTemperatureUuids.temperatureDataCharacteristic,
-              transactionId: "2")
-          .map((characteristic) => characteristic.value),
-      log,
-    );
 
     log("Turning on temperature update");
     await service.writeCharacteristic(
@@ -161,8 +160,8 @@ class SensorTagTestScenario {
     return peripheral;
   }
 
-  Future<void> _readWriteCharacteristic() async {
-    log("Test read/write characteristic on characteristic");
+  Future<void> _readWriteMonitorCharacteristic() async {
+    log("Test read/write/monitor characteristic on characteristic");
 
     log("Fetching service");
 
@@ -178,6 +177,12 @@ class SensorTagTestScenario {
             SensorTagTemperatureUuids.temperatureConfigCharacteristic
                 .toLowerCase()));
 
+    log("Start monitoring temperature");
+    _startMonitoringTemperature(
+      characteristic.monitor(transactionId: "1"),
+      log,
+    );
+
     log("Turning off temperature update");
     await characteristic.write(Uint8List.fromList([0]), false);
     log("Turned off temperature update");
@@ -185,12 +190,6 @@ class SensorTagTestScenario {
     log("Reading characteristic value");
     Uint8List value = await characteristic.read();
     log("Read temperature config value ${_convertToTemperature(value)}C");
-
-    log("Start monitoring temperature");
-    _startMonitoringTemperature(
-      characteristic.monitor(transactionId: "1"),
-      log,
-    );
 
     log("Turning on temperature update");
     await characteristic.write(Uint8List.fromList([1]), false);
