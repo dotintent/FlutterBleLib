@@ -7,7 +7,6 @@ import 'package:flutter_ble_lib_example/repository/device_repository.dart';
 import 'package:flutter_ble_lib_example/test_scenarios/test_scenarios.dart';
 import 'package:rxdart/rxdart.dart';
 
-
 class DeviceDetailsBloc {
   final BleManager _bleManager;
   final DeviceRepository _deviceRepository;
@@ -56,11 +55,11 @@ class DeviceDetailsBloc {
   }
 
   Future<void> disconnect() async {
-    return _deviceController.stream.value.peripheral
-        .disconnectOrCancelConnection()
-        .then((_) {
-      _deviceRepository.pickDevice(null);
-    });
+    if (await _deviceController.stream.value.peripheral.isConnected()) {
+      await _deviceController.stream.value.peripheral
+          .disconnectOrCancelConnection();
+    }
+    return _deviceRepository.pickDevice(null);
   }
 
   void dispose() async {
@@ -107,7 +106,8 @@ class DeviceDetailsBloc {
       _connectionStateController.add(connectionState);
     });
 
-    SensorTagTestScenario(_bleManager, peripheral, log, logError).runTestScenario();
+    SensorTagTestScenario(_bleManager, peripheral, log, logError)
+        .runTestScenario();
   }
 }
 
