@@ -1,12 +1,15 @@
 part of internal_bridge_lib;
 
 mixin LogLevelMixin on FlutterBLE {
-
   Future<void> setLogLevel(LogLevel logLevel) async {
     print("set log level to ${describeEnum(logLevel)}");
-    return await _methodChannel.invokeMethod(MethodName.setLogLevel, <String, dynamic>{
-      ArgumentName.logLevel: describeEnum(logLevel),
-    });
+    return await _methodChannel.invokeMethod(
+      MethodName.setLogLevel,
+      <String, dynamic>{
+        ArgumentName.logLevel: describeEnum(logLevel),
+      },
+    ).catchError((errorJson) =>
+        Future.error(BleError.fromJson(jsonDecode(errorJson.details))));
   }
 
   Future<LogLevel> logLevel() async {

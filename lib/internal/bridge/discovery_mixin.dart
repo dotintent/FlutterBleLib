@@ -9,7 +9,8 @@ mixin DiscoveryMixin on FlutterBLE {
         ArgumentName.deviceIdentifier: peripheral.identifier,
         ArgumentName.transactionId: transactionId,
       },
-    );
+    ).catchError((errorJson) =>
+        Future.error(BleError.fromJson(jsonDecode(errorJson.details))));
   }
 
   Future<List<Service>> services(Peripheral peripheral) async {
@@ -18,7 +19,8 @@ mixin DiscoveryMixin on FlutterBLE {
       <String, dynamic>{
         ArgumentName.deviceIdentifier: peripheral.identifier,
       },
-    );
+    ).catchError((errorJson) =>
+        Future.error(BleError.fromJson(jsonDecode(errorJson.details))));
 
     List<Map<String, dynamic>> decodedJson =
         (jsonDecode(jsonString) as List<dynamic>).cast();
@@ -37,7 +39,8 @@ mixin DiscoveryMixin on FlutterBLE {
         ArgumentName.deviceIdentifier: peripheral.identifier,
         ArgumentName.serviceUuid: serviceUuid,
       },
-    );
+    ).catchError((errorJson) =>
+        Future.error(BleError.fromJson(jsonDecode(errorJson.details))));
 
     Map<String, dynamic> jsonObject = jsonDecode(jsonString);
     List<Map<String, dynamic>> jsonCharacteristics =
@@ -56,7 +59,8 @@ mixin DiscoveryMixin on FlutterBLE {
       <String, dynamic>{
         ArgumentName.serviceIdentifier: service._id,
       },
-    );
+    ).catchError((errorJson) =>
+        Future.error(BleError.fromJson(jsonDecode(errorJson.details))));
 
     List<Map<String, dynamic>> jsonList =
         (jsonDecode(jsonString) as List<dynamic>).cast();
