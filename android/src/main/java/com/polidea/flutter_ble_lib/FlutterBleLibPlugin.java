@@ -10,6 +10,7 @@ import com.polidea.flutter_ble_lib.delegate.BluetoothStateDelegate;
 import com.polidea.flutter_ble_lib.delegate.CallDelegate;
 import com.polidea.flutter_ble_lib.delegate.CharacteristicsDelegate;
 import com.polidea.flutter_ble_lib.delegate.DeviceConnectionDelegate;
+import com.polidea.flutter_ble_lib.delegate.DevicesDelegate;
 import com.polidea.flutter_ble_lib.delegate.LogLevelDelegate;
 import com.polidea.flutter_ble_lib.delegate.DiscoveryDelegate;
 import com.polidea.flutter_ble_lib.delegate.MtuDelegate;
@@ -81,6 +82,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
         delegates.add(new RssiDelegate(bleAdapter));
         delegates.add(new MtuDelegate(bleAdapter));
         delegates.add(new CharacteristicsDelegate(bleAdapter, characteristicsMonitorStreamHandler));
+        delegates.add(new DevicesDelegate(bleAdapter));
     }
 
     @Override
@@ -137,7 +139,8 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
     }
 
     private void startDeviceScan(@NonNull MethodCall call, Result result) {
-        bleAdapter.startDeviceScan(call.<String[]>argument(ArgumentKey.UUIDS),
+        List<String> uuids = call.<List<String>>argument(ArgumentKey.UUIDS);
+        bleAdapter.startDeviceScan(uuids.toArray(new String[uuids.size()]),
                 call.<Integer>argument(ArgumentKey.SCAN_MODE),
                 call.<Integer>argument(ArgumentKey.CALLBACK_TYPE),
                 new OnEventCallback<ScanResult>() {
