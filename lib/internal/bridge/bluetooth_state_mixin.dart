@@ -5,16 +5,23 @@ mixin BluetoothStateMixin on FlutterBLE {
       const EventChannel(ChannelName.adapterStateChanges);
 
   Future<void> enableRadio(String transactionId) async {
-    await _methodChannel.invokeMethod(MethodName.enableRadio, <String, dynamic>{
-      ArgumentName.transactionId: transactionId,
-    });
+    await _methodChannel.invokeMethod(
+      MethodName.enableRadio,
+      <String, dynamic>{
+        ArgumentName.transactionId: transactionId,
+      },
+    ).catchError((errorJson) =>
+        Future.error(BleError.fromJson(jsonDecode(errorJson.details))));
   }
 
   Future<void> disableRadio(String transactionId) async {
-    await _methodChannel
-        .invokeMethod(MethodName.disableRadio, <String, dynamic>{
-      ArgumentName.transactionId: transactionId,
-    });
+    await _methodChannel.invokeMethod(
+      MethodName.disableRadio,
+      <String, dynamic>{
+        ArgumentName.transactionId: transactionId,
+      },
+    ).catchError((errorJson) =>
+        Future.error(BleError.fromJson(jsonDecode(errorJson.details))));
   }
 
   Future<BluetoothState> state() => _methodChannel

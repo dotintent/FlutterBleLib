@@ -13,7 +13,8 @@ mixin DeviceConnectionMixin on FlutterBLE {
       ArgumentName.requestMtu: requestMtu,
       ArgumentName.refreshGatt: refreshGatt,
       ArgumentName.timeoutMillis: timeout?.inMilliseconds
-    });
+    }).catchError((errorJson) =>
+            Future.error(BleError.fromJson(jsonDecode(errorJson.details))));
   }
 
   Stream<PeripheralConnectionState> observePeripheralConnectionState(
@@ -25,7 +26,8 @@ mixin DeviceConnectionMixin on FlutterBLE {
                 ConnectionStateContainer.fromJson(jsonDecode(jsonString)))
             .where((connectionStateContainer) =>
                 connectionStateContainer.peripheralIdentifier == identifier)
-            .map((connectionStateContainer) => connectionStateContainer.connectionState)
+            .map((connectionStateContainer) =>
+                connectionStateContainer.connectionState)
             .map((connectionStateString) {
       switch (connectionStateString.toLowerCase()) {
         case NativeConnectionState.connected:
@@ -48,14 +50,15 @@ mixin DeviceConnectionMixin on FlutterBLE {
         .invokeMethod(MethodName.observeConnectionState, <String, dynamic>{
       ArgumentName.deviceIdentifier: identifier,
       ArgumentName.emitCurrentValue: emitCurrentValue,
-    });
+    }).catchError((errorJson) => throw BleError.fromJson(jsonDecode(errorJson.details)));
   }
 
   Future<bool> isPeripheralConnected(String peripheralIdentifier) async {
     return await _methodChannel
         .invokeMethod(MethodName.isDeviceConnected, <String, dynamic>{
       ArgumentName.deviceIdentifier: peripheralIdentifier,
-    });
+    }).catchError((errorJson) =>
+            Future.error(BleError.fromJson(jsonDecode(errorJson.details))));
   }
 
   Future<void> disconnectOrCancelPeripheralConnection(
@@ -63,6 +66,7 @@ mixin DeviceConnectionMixin on FlutterBLE {
     return await _methodChannel
         .invokeMethod(MethodName.cancelConnection, <String, dynamic>{
       ArgumentName.deviceIdentifier: peripheralIdentifier,
-    });
+    }).catchError((errorJson) =>
+            Future.error(BleError.fromJson(jsonDecode(errorJson.details))));
   }
 }

@@ -3,14 +3,10 @@ import 'dart:async';
 import 'package:fimber/fimber.dart';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 import 'package:flutter_ble_lib_example/model/ble_device.dart';
-import 'dart:typed_data';
-
 import 'package:flutter_ble_lib_example/repository/device_repository.dart';
 import 'package:flutter_ble_lib_example/test_scenarios/test_scenarios.dart';
-import 'package:flutter_ble_lib_example/util/pair.dart';
 import 'package:rxdart/rxdart.dart';
 
-import '../sensor_tag_config.dart';
 
 class DeviceDetailsBloc {
   final BleManager _bleManager;
