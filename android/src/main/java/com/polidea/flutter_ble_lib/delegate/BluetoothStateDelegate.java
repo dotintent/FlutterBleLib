@@ -18,7 +18,10 @@ import io.flutter.plugin.common.MethodChannel;
 
 public class BluetoothStateDelegate extends CallDelegate {
 
-    private static List<String> supportedMethods = Arrays.asList(MethodName.ENABLE_RADIO, MethodName.DISABLE_RADIO);
+    private static List<String> supportedMethods = Arrays.asList(
+            MethodName.ENABLE_RADIO,
+            MethodName.DISABLE_RADIO,
+            MethodName.GET_STATE);
 
     private BleAdapter bleAdapter;
     private BleErrorJsonConverter bleErrorJsonConverter = new BleErrorJsonConverter();
@@ -37,7 +40,7 @@ public class BluetoothStateDelegate extends CallDelegate {
             case MethodName.DISABLE_RADIO:
                 disableRadio(methodCall.<String>argument(ArgumentKey.TRANSACTION_ID), result);
                 return;
-            case MethodName.GET_BLUETOOTH_STATE:
+            case MethodName.GET_STATE:
                 getState(result);
                 return;
             default:

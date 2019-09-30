@@ -4,7 +4,7 @@ public interface MethodName {
     String CREATE_CLIENT = "createClient";
     String DESTROY_CLIENT = "destroyClient";
 
-    String GET_BLUETOOTH_STATE = "bluetoothState";
+    String GET_STATE = "getState";
 
     String ENABLE_RADIO = "enableRadio";
     String DISABLE_RADIO = "disableRadio";
