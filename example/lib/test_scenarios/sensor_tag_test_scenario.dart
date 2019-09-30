@@ -7,10 +7,12 @@ class SensorTagTestScenario {
   StreamSubscription monitoringStreamSubscription;
   final BleManager bleManager;
 
-  SensorTagTestScenario(this.bleManager, this.peripheral, this.log, this.logError);
+  SensorTagTestScenario(
+      this.bleManager, this.peripheral, this.log, this.logError);
 
   Future<void> runTestScenario() async {
     _connect()
+        .then((_) => _cancelTransaction())
         .then((_) => _discovery())
         .then((_) => _testRequestingMtu())
         .then((_) => _testReadingRssi())
@@ -27,6 +29,14 @@ class SensorTagTestScenario {
     await peripheral.connect();
     log("Connected!");
     return peripheral;
+  }
+
+  Future<void> _cancelTransaction() async {
+    peripheral
+        .discoverAllServicesAndCharacteristics(transactionId: "test")
+        .catchError((error) => logError(error));
+
+    bleManager.cancelTransaction("test");
   }
 
   Future<void> _discovery() async {
@@ -70,8 +80,8 @@ class SensorTagTestScenario {
     _startMonitoringTemperature(
       peripheral
           .monitorCharacteristic(SensorTagTemperatureUuids.temperatureService,
-          SensorTagTemperatureUuids.temperatureDataCharacteristic,
-          transactionId: "1")
+              SensorTagTemperatureUuids.temperatureDataCharacteristic,
+              transactionId: "1")
           .map((characteristic) => characteristic.value),
       log,
     );
@@ -122,8 +132,8 @@ class SensorTagTestScenario {
     _startMonitoringTemperature(
       service
           .monitorCharacteristic(
-          SensorTagTemperatureUuids.temperatureDataCharacteristic,
-          transactionId: "2")
+              SensorTagTemperatureUuids.temperatureDataCharacteristic,
+              transactionId: "2")
           .map((characteristic) => characteristic.value),
       log,
     );
@@ -215,7 +225,8 @@ class SensorTagTestScenario {
 
   Future<void> _fetchConnectedDevice() async {
     log("Fetch connected devices");
-    List<Peripheral> peripherals = await bleManager.connectedDevices([peripheral.identifier]);
+    List<Peripheral> peripherals =
+        await bleManager.connectedDevices([peripheral.identifier]);
     peripherals.forEach((peripheral) => log("\t${peripheral.toString()}"));
   }
 
