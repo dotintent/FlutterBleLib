@@ -40,5 +40,5 @@ abstract class BleManager {
 
   Future<BluetoothState> state();
 
-  Stream<BluetoothState> onStateChange();
+  Stream<BluetoothState> onStateChange({bool emitCurrentValue = true});
 }

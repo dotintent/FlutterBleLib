@@ -41,7 +41,8 @@ class InternalBleManager
   Future<BluetoothState> state() => _bleLib.state();
 
   @override
-  Stream<BluetoothState> onStateChange() => _bleLib.onStateChange();
+  Stream<BluetoothState> onStateChange({bool emitCurrentValue = true}) =>
+      _bleLib.onStateChange(emitCurrentValue);
 
   @override
   Stream<ScanResult> startPeripheralScan({
