@@ -138,7 +138,8 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 // MARK: - MBA Methods - Log Level
 
 - (void)setLogLevel:(FlutterMethodCall *)call result:(FlutterResult)result {
-    [_manager setLogLevel:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_LOG_LEVEL]]];
+    NSString *logLevel = call.arguments[ARGUMENT_KEY_LOG_LEVEL];
+    [_manager setLogLevel:[logLevel capitalizedString]];
     result(nil);
 }
 
