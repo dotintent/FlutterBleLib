@@ -4,6 +4,8 @@ public interface MethodName {
     String CREATE_CLIENT = "createClient";
     String DESTROY_CLIENT = "destroyClient";
 
+    String GET_STATE = "getState";
+
     String ENABLE_RADIO = "enableRadio";
     String DISABLE_RADIO = "disableRadio";
 

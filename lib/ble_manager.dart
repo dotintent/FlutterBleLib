@@ -37,4 +37,8 @@ abstract class BleManager {
   Future<void> enableRadio({String transactionId});
 
   Future<void> disableRadio({String transactionId});
+
+  Future<BluetoothState> state();
+
+  Stream<BluetoothState> onStateChange({bool emitCurrentValue = true});
 }
