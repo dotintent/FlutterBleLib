@@ -31,22 +31,17 @@ public class DevicesResultJsonConverter implements JsonConverter<Device[]> {
 
     @Override
     @Nullable
-    public String toJson(Device[] devices) {
-        try {
-            JSONArray jsonDevicesArray = new JSONArray();
+    public String toJson(Device[] devices) throws JSONException {
+        JSONArray jsonDevicesArray = new JSONArray();
 
-            for (Device device : devices) {
-                Log.d(TAG, "try to parse json " + device.toString());
-                JSONObject jsonDevice = new JSONObject();
-                jsonDevice.put(Metadata.ID, device.getId());
-                jsonDevice.put(Metadata.NAME, device.getName());
-                jsonDevicesArray.put(jsonDevice);
-            }
-
-            return jsonDevicesArray.toString();
-        } catch (JSONException jsonException) {
-            jsonException.printStackTrace();
-            return null;
+        for (Device device : devices) {
+            Log.d(TAG, "try to parse json " + device.toString());
+            JSONObject jsonDevice = new JSONObject();
+            jsonDevice.put(Metadata.ID, device.getId());
+            jsonDevice.put(Metadata.NAME, device.getName());
+            jsonDevicesArray.put(jsonDevice);
         }
+
+        return jsonDevicesArray.toString();
     }
 }

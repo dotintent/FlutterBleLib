@@ -14,6 +14,8 @@ import com.polidea.multiplatformbleadapter.OnErrorCallback;
 import com.polidea.multiplatformbleadapter.OnSuccessCallback;
 import com.polidea.multiplatformbleadapter.errors.BleError;
 
+import org.json.JSONException;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -57,10 +59,15 @@ public class DevicesDelegate extends CallDelegate {
         Log.d(TAG, "Get known devices");
 
         final SafeMainThreadResolver resolver = new SafeMainThreadResolver<>(
-                new OnSuccessCallback<String>() {
+                new OnSuccessCallback<Device[]>() {
                     @Override
-                    public void onSuccess(String data) {
-                        result.success(data);
+                    public void onSuccess(Device[] devices) {
+                        try {
+                            result.success(devicesResultJsonConverter.toJson(devices));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            result.error(null, e.getMessage(), null);
+                        }
                     }
                 },
                 new OnErrorCallback() {
@@ -89,10 +96,15 @@ public class DevicesDelegate extends CallDelegate {
         Log.d(TAG, "Get known devices");
 
         final SafeMainThreadResolver resolver = new SafeMainThreadResolver<>(
-                new OnSuccessCallback<String>() {
+                new OnSuccessCallback<Device[]>() {
                     @Override
-                    public void onSuccess(String data) {
-                        result.success(data);
+                    public void onSuccess(Device[] devices) {
+                        try {
+                            result.success(devicesResultJsonConverter.toJson(devices));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            result.error(null, e.getMessage(), null);
+                        }
                     }
                 },
                 new OnErrorCallback() {
@@ -107,7 +119,7 @@ public class DevicesDelegate extends CallDelegate {
             @Override
             public void onSuccess(Device[] devices) {
                 Log.d(TAG, "Found known devices" + devices.length);
-                resolver.onSuccess(devicesResultJsonConverter.toJson(devices));
+                resolver.onSuccess(devices);
             }
         }, new OnErrorCallback() {
             @Override
