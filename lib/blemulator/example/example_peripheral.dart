@@ -3,11 +3,14 @@ import 'dart:typed_data';
 import 'package:flutter_ble_lib/blemulator/blemulator.dart';
 
 class SensorTag extends SimulatedPeripheral {
-  SensorTag()
+  SensorTag(
+      {String id = "4B:99:4C:34:DE:77",
+      String name = "SensorTag",
+      String localName = "SensorTag"})
       : super(
-            name: "SensorTag",
-            id: "4B:99:4C:34:DE:77",
-            advertisementInterval: Duration(milliseconds: 500),
+            name: name,
+            id: id,
+            advertisementInterval: Duration(milliseconds: 800),
             services: [
               SimulatedService(
                   uuid: "F000AA00-0451-4000-B000-000000000000",
@@ -47,7 +50,7 @@ class SensorTag extends SimulatedPeripheral {
                   ],
                   convenienceName: "Accelerometer Service")
             ]) {
-    scanInfo.localName = "SensorTag";
+    scanInfo.localName = localName;
   }
 
   @override
