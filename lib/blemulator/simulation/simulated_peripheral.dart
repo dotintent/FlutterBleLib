@@ -15,8 +15,8 @@ class ScanInfo {
   List<String> overflowUuids;
 
   ScanInfo(
-      {this.rssi = -30,
-      this.mtu = 23,
+      {this.rssi = defaultRssi,
+      this.mtu = defaultMtu,
       this.isConnectable = true,
       this.txPowerLevel,
       this.manufacturerData,
@@ -38,9 +38,12 @@ abstract class SimulatedPeripheral {
   bool _isConnected = false;
   bool _discoveryDone = false;
 
-  SimulatedPeripheral(this.name, this.id, this.advertisementInterval,
-      List<SimulatedService> services,
-      {this.scanInfo}) {
+  SimulatedPeripheral(
+      {@required this.name,
+      @required this.id,
+      @required this.advertisementInterval,
+      @required List<SimulatedService> services,
+      this.scanInfo}) {
     if (scanInfo == null) {
       this.scanInfo = ScanInfo();
     }

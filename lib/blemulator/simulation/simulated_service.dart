@@ -7,9 +7,11 @@ class SimulatedService {
   final String convenienceName;
   Map<int, SimulatedCharacteristic> _characteristics;
 
-  SimulatedService(this.uuid, this.isAdvertised,
-      List<SimulatedCharacteristic> characteristics,
-      {this.convenienceName})
+  SimulatedService(
+      {@required this.uuid,
+      @required this.isAdvertised,
+      @required List<SimulatedCharacteristic> characteristics,
+      this.convenienceName})
       : _characteristics = Map.fromIterable(characteristics, key: (v) => v.id),
         id = IdGenerator().nextId() {
     _characteristics.values.forEach((v) => v.attachToService(this));

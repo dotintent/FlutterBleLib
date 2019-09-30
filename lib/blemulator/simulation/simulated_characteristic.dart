@@ -9,7 +9,8 @@ class SimulatedCharacteristic {
 
   StreamController<Uint8List> _streamController;
 
-  SimulatedCharacteristic(this.uuid, this.value, {this.convenienceName})
+  SimulatedCharacteristic(
+      {@required this.uuid, @required this.value, this.convenienceName})
       : id = IdGenerator().nextId();
 
   void attachToService(SimulatedService service) => _service = service;
