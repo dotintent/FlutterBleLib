@@ -19,13 +19,17 @@
 
 - (void)onScanResult:(NSArray *)scanResult {
     if (scanResultsSink != nil) {
-        assert(scanResult.count == 2 &&
-               (scanResult[0] == [NSNull null] || (scanResult[1] == [NSNull null] && [scanResult[0] isKindOfClass:NSString.class])));
-        if (scanResult[0] == [NSNull null]) {
-            scanResultsSink([ScanResultFactory scanResultFromJSONObject:scanResult[1]]);
-        } else {
-            scanResultsSink([FlutterErrorFactory flutterErrorFromJSONString:scanResult[0]]);
+        if (!(scanResult.count == 2 &&
+            (scanResult[0] == [NSNull null] || (scanResult[1] == [NSNull null] && [scanResult[0] isKindOfClass:NSString.class])))) {
+            scanResultsSink([FlutterError errorWithCode:@"-1" message:@"Invalid scanResult format." details:nil]);
             [self onComplete];
+        } else {
+            if (scanResult[0] == [NSNull null]) {
+                scanResultsSink([ScanResultFactory scanResultFromJSONObject:scanResult[1]]);
+            } else {
+                scanResultsSink([FlutterErrorFactory flutterErrorFromJSONString:scanResult[0]]);
+                [self onComplete];
+            }
         }
     }
 }
