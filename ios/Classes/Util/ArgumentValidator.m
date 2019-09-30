@@ -11,7 +11,7 @@
 }
 
 + (nullable NSString *)validStringOrNil:(id)argument {
-    if (argument != nil && (NSNull *)argument != [NSNull null] && [argument isKindOfClass:[NSString class]]) {
+    if (argument != nil && [argument isKindOfClass:[NSString class]]) {
         return (NSString*)argument;
     } else {
         return nil;
@@ -19,7 +19,7 @@
 }
 
 + (nullable NSArray<NSString *> *)validStringArrayOrNil:(id)argument {
-    if (argument != nil && (NSNull *)argument != [NSNull null] && [argument isKindOfClass:[NSArray<NSString *> class]]) {
+    if (argument != nil && [argument isKindOfClass:[NSArray<NSString *> class]]) {
         return (NSArray<NSString*>*)argument;
     } else {
         return nil;
