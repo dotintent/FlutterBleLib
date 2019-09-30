@@ -3,7 +3,6 @@ abstract class MethodName {
   static const String destroyClient = "destroyClient";
 
   static const String getState = "getState";
-  static const String observeState = "observeState";
 
   static const String enableRadio = "enableRadio";
   static const String disableRadio = "disableRadio";
