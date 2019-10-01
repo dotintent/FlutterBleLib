@@ -186,12 +186,6 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
                          reject:[self rejectForFlutterResult:result]];
 }
 
-// MARK: - MBA Methods - Characteristics opertions
-
-- (void)readCharacteristicsForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
-//    [_manager ]
-}
-
 // MARK: - MBA Methods - BleClientManagerDelegate implementation
 
 - (void)dispatchEvent:(NSString * _Nonnull)name value:(id _Nonnull)value {
