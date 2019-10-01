@@ -161,14 +161,14 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 // MARK: - MBA Methods - Discovery
 
 - (void)servicesForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
-    [_manager servicesForDevice:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]]
+    [_manager servicesForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
                         resolve:[self resolveForServicesForDevice:result]
                          reject:[self rejectForFlutterResult:result]];
 }
 
 - (void)discoverAllServicesAndCharacteristicsForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
-    [_manager discoverAllServicesAndCharacteristicsForDevice:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]]
-                                               transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+    [_manager discoverAllServicesAndCharacteristicsForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
+                                               transactionId:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]
                                                      resolve:result
                                                       reject:[self rejectForFlutterResult:result]];
 }
@@ -180,7 +180,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 }
 
 - (void)characteristics:(FlutterMethodCall *)call result:(FlutterResult)result {
-    [_manager servicesForDevice:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]]
+    [_manager servicesForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
                         resolve:[self resolveForCharacteristics:result
                                                     serviceUuid:call.arguments[ARGUMENT_KEY_SERVICE_UUID]]
                          reject:[self rejectForFlutterResult:result]];
