@@ -186,6 +186,32 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
                          reject:[self rejectForFlutterResult:result]];
 }
 
+// MARK: - MBA Methods - Characteristics observation
+
+- (void)readCharacteristicForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager readCharacteristicForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
+                              serviceUUID:call.arguments[ARGUMENT_KEY_SERVICE_UUID]
+                       characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
+                            transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                                  resolve:result
+                                   reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)readCharacteristicForService:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager readCharacteristicForService:[call.arguments[ARGUMENT_KEY_SERVICE_ID] doubleValue]
+                        characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
+                             transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                                   resolve:result
+                                    reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)readCharacteristic:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager readCharacteristic:[call.arguments[ARGUMENT_KEY_CHARACTERISTIC_IDENTIFIER] doubleValue]
+                   transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                         resolve:result
+                          reject:[self rejectForFlutterResult:result]];
+}
+
 // MARK: - MBA Methods - BleClientManagerDelegate implementation
 
 - (void)dispatchEvent:(NSString * _Nonnull)name value:(id _Nonnull)value {
