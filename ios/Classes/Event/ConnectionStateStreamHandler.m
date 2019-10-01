@@ -14,10 +14,26 @@
     return nil;
 }
 
-- (void)onNewConnectionState:(id)connectionState {
+- (void)onConnectingEvent:(NSString *)deviceId {
     if (eventSink != nil) {
-        eventSink(connectionState);
+        eventSink([self jsonStringForDeviceId:deviceId connectionState:@"connecting"]);
     }
+}
+
+- (void)onConnectedEvent:(NSString *)deviceId {
+    if (eventSink != nil) {
+        eventSink([self jsonStringForDeviceId:deviceId connectionState:@"connected"]);
+    }
+}
+
+- (NSString *)jsonStringForDeviceId:(NSString *)deviceId connectionState:(NSString *)connectionState {
+    NSMutableDictionary<NSString *, id> *dictionary = [[NSMutableDictionary alloc] init];
+    [dictionary setValue:deviceId forKey:@"peripheralIdentifier"];
+    [dictionary setValue:connectionState forKey:@"connectionState"];
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dictionary
+                                                       options:NSJSONWritingPrettyPrinted
+                                                         error:nil];
+    return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
 }
 
 @end
