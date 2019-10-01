@@ -6,7 +6,7 @@ import 'package:flutter_ble_lib_example/repository/device_repository.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 import 'package:flutter_ble_lib/blemulator/blemulator.dart';
-
+import 'package:flutter_ble_lib/blemulator/example/example_peripheral.dart';
 
 class DevicesBloc {
   final List<BleDevice> bleDevices = <BleDevice>[];
@@ -46,7 +46,10 @@ class DevicesBloc {
   void init() {
     Fimber.d("Init devices bloc");
     bleDevices.clear();
-    _bleManager.createClient()
+    Blemulator().addSimulatedPeripheral(SensorTag());
+    Blemulator().simulate();
+    _bleManager
+        .createClient()
         .then((it) => startScan())
         .catchError((e) => Fimber.d("Couldn't create BLE client", ex: e));
 
