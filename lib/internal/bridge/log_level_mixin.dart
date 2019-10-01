@@ -19,6 +19,6 @@ mixin LogLevelMixin on FlutterBLE {
 
   LogLevel _logLevelFromString(String logLevelName) {
     print("try to get log level from: $logLevelName");
-    return LogLevel.values.firstWhere((e) => e.toString() == 'LogLevel.' + logLevelName);
+    return LogLevel.values.firstWhere((e) => e.toString() == 'LogLevel.' + logLevelName.toLowerCase());
   }
 }
