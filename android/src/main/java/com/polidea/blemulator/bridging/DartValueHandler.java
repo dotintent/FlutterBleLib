@@ -22,7 +22,7 @@ import io.flutter.plugin.common.MethodChannel;
 
 public class DartValueHandler implements MethodChannel.MethodCallHandler {
 
-    private static final String TAG = "DART VALUE HANDLER";
+    private static final String TAG = DartValueHandler.class.getSimpleName();
 
     private SimulatedAdapter adapter;
 

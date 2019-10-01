@@ -6,15 +6,15 @@ abstract class ChannelName {
   static String downstream = "$_base/toJava";
 }
 
-abstract class DownstreamMethodName {
+abstract class PlatformMethodName {
   static String simulate = "simulate";
 }
 
-abstract class SimulationDownstreamMethodName {
+abstract class SimulationPlatformMethodName {
   static const String publishScanResult = "publishScanResult";
 }
 
-abstract class UpstreamMethodName {
+abstract class DartMethodName {
   static const String createClient = "createClient";
   static const String destroyClient = "destroyClient";
 

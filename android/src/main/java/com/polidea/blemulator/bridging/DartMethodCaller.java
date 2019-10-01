@@ -11,7 +11,7 @@ import io.flutter.plugin.common.MethodChannel;
 
 public class DartMethodCaller {
 
-    private static final String TAG = "JavaToDartBridge";
+    private static final String TAG = DartMethodCaller.class.getSimpleName();
     private MethodChannel dartMethodChannel;
 
     public DartMethodCaller(MethodChannel dartMethodChannel) {

@@ -21,14 +21,14 @@ public class SimulatorPlugin implements MethodChannel.MethodCallHandler {
     private DartValueHandler dartValueHandler;
 
     public static void registerWith(PluginRegistry.Registrar registrar) {
-        MethodChannel downstream = new MethodChannel(registrar.messenger(), ChannelName.TO_JAVA);
-        MethodChannel upstream = new MethodChannel(registrar.messenger(), ChannelName.TO_DART);
+        MethodChannel dartToPlatformChannel = new MethodChannel(registrar.messenger(), ChannelName.TO_JAVA);
+        MethodChannel platformToDartChannel = new MethodChannel(registrar.messenger(), ChannelName.TO_DART);
 
-        downstream.setMethodCallHandler(new SimulatorPlugin(upstream));
+        dartToPlatformChannel.setMethodCallHandler(new SimulatorPlugin(platformToDartChannel));
     }
 
-    private SimulatorPlugin(MethodChannel upstream) {
-        dartMethodCaller = new DartMethodCaller(upstream);
+    private SimulatorPlugin(MethodChannel platformToDartChannel) {
+        dartMethodCaller = new DartMethodCaller(platformToDartChannel);
         dartValueHandler = new DartValueHandler();
     }
 

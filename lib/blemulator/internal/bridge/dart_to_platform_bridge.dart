@@ -8,11 +8,11 @@ class DartToPlatformBridge {
   }
 
   Future<void> simulate() =>
-      _downstreamChannel.invokeMethod(DownstreamMethodName.simulate);
+      _downstreamChannel.invokeMethod(PlatformMethodName.simulate);
 
   Future<void> addScanResult(ScanResult scanResult) =>
       _downstreamChannel.invokeMethod(
-          SimulationDownstreamMethodName.publishScanResult, <String, dynamic>{
+          SimulationPlatformMethodName.publishScanResult, <String, dynamic>{
         ArgumentName.name: scanResult.name,
         ArgumentName.id: scanResult.id,
         ArgumentName.mtu: scanResult.mtu,

@@ -12,13 +12,13 @@ class PlatformToDartBridge {
 
   Future<dynamic> _handleCall(MethodCall call) {
     switch (call.method) {
-      case UpstreamMethodName.createClient:
+      case DartMethodName.createClient:
         return _createClient();
-      case UpstreamMethodName.destroyClient:
+      case DartMethodName.destroyClient:
         return _destroyClient();
-      case UpstreamMethodName.startDeviceScan:
+      case DartMethodName.startDeviceScan:
         return _startDeviceScan();
-      case UpstreamMethodName.stopDeviceScan:
+      case DartMethodName.stopDeviceScan:
         return _stopDeviceScan();
       default:
         throw UnimplementedError("${call.method} is not implemented");

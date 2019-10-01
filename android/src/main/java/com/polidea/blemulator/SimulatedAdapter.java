@@ -18,7 +18,7 @@ import com.polidea.multiplatformbleadapter.errors.BleError;
 
 public class SimulatedAdapter implements BleAdapter {
 
-    private static final String TAG = "SimulatedAdapter";
+    private static final String TAG = SimulatedAdapter.class.getSimpleName();
 
     private DartMethodCaller dartMethodCaller;
     private DartValueHandler dartValueHandler;
