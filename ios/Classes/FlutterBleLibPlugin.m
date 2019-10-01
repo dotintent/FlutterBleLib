@@ -168,7 +168,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 
 - (void)discoverAllServicesAndCharacteristicsForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
     [_manager discoverAllServicesAndCharacteristicsForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
-                                               transactionId:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]
+                                               transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
                                                      resolve:result
                                                       reject:[self rejectForFlutterResult:result]];
 }
