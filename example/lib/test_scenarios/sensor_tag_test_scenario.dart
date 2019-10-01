@@ -7,10 +7,12 @@ class SensorTagTestScenario {
   StreamSubscription monitoringStreamSubscription;
   final BleManager bleManager;
 
-  SensorTagTestScenario(this.bleManager, this.peripheral, this.log, this.logError);
+  SensorTagTestScenario(
+      this.bleManager, this.peripheral, this.log, this.logError);
 
   Future<void> runTestScenario() async {
     _connect()
+        .then((_) => _cancelTransaction())
         .then((_) => _discovery())
         .then((_) => _testRequestingMtu())
         .then((_) => _testReadingRssi())
@@ -27,6 +29,24 @@ class SensorTagTestScenario {
     await peripheral.connect();
     log("Connected!");
     return peripheral;
+  }
+
+  Future<void> _cancelTransaction() async {
+    log("Starting operation to cancel...");
+    peripheral
+        .discoverAllServicesAndCharacteristics(transactionId: "test")
+        .catchError((error) {
+      BleError bleError = error as BleError;
+      return logError("Cancelled operation caught an error: "
+          "error code ${bleError.errorCode},"
+          " reason: ${bleError.reason}");
+    });
+    log("Operation to cancel started: discover all"
+        " services and characteristics");
+
+    log("Cancelling operation...");
+    await bleManager.cancelTransaction("test");
+    log("Operation cancelled!");
   }
 
   Future<void> _discovery() async {
@@ -70,8 +90,8 @@ class SensorTagTestScenario {
     _startMonitoringTemperature(
       peripheral
           .monitorCharacteristic(SensorTagTemperatureUuids.temperatureService,
-          SensorTagTemperatureUuids.temperatureDataCharacteristic,
-          transactionId: "1")
+              SensorTagTemperatureUuids.temperatureDataCharacteristic,
+              transactionId: "1")
           .map((characteristic) => characteristic.value),
       log,
     );
@@ -122,8 +142,8 @@ class SensorTagTestScenario {
     _startMonitoringTemperature(
       service
           .monitorCharacteristic(
-          SensorTagTemperatureUuids.temperatureDataCharacteristic,
-          transactionId: "2")
+              SensorTagTemperatureUuids.temperatureDataCharacteristic,
+              transactionId: "2")
           .map((characteristic) => characteristic.value),
       log,
     );
@@ -192,7 +212,7 @@ class SensorTagTestScenario {
 
     log("Reading characteristic value");
     Uint8List value = await characteristic.read();
-    log("Read temperature config value ${_convertToTemperature(value)}C");
+    log("Read temperature config value $value");
 
     log("Turning on temperature update");
     await characteristic.write(Uint8List.fromList([1]), false);
@@ -200,7 +220,7 @@ class SensorTagTestScenario {
 
     log("Reading characteristic value");
     value = await characteristic.read();
-    log("Read temperature config value ${_convertToTemperature(value)}C");
+    log("Read temperature config value $value");
 
     return peripheral;
   }
@@ -215,13 +235,15 @@ class SensorTagTestScenario {
 
   Future<void> _fetchConnectedDevice() async {
     log("Fetch connected devices");
-    List<Peripheral> peripherals = await bleManager.connectedDevices([peripheral.identifier]);
+    List<Peripheral> peripherals = await bleManager
+        .connectedDevices([SensorTagTemperatureUuids.temperatureService]);
     peripherals.forEach((peripheral) => log("\t${peripheral.toString()}"));
   }
 
   Future<void> _fetchKnownDevice() async {
     log("Fetch known devices");
-    List<Peripheral> peripherals = await bleManager.knownDevices([]);
+    List<Peripheral> peripherals =
+        await bleManager.knownDevices([peripheral.identifier]);
     peripherals.forEach((peripheral) => log("\t${peripheral.toString()}"));
   }
 

@@ -1,3 +1,5 @@
+part of flutter_ble_lib;
+
 abstract class _BleErrorMetadata {
   static const String ERROR_CODE = "errorCode";
   static const String ATT_ERROR_CODE = "attErrorCode";

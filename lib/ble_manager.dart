@@ -15,6 +15,8 @@ abstract class BleManager {
     return _instance;
   }
 
+  Future<void> cancelTransaction(String transactionId);
+
   Future<void> createClient({
     String restoreStateIdentifier,
     RestoreStateAction restoreStateAction,

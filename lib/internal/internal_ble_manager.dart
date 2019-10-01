@@ -1,7 +1,7 @@
 part of internal_bridge_lib;
 
 class InternalBleManager
-  implements
+    implements
         BleManager,
         ManagerForPeripheral,
         ManagerForService,
@@ -28,6 +28,10 @@ class InternalBleManager
 
   @override
   Future<void> destroyClient() => _bleLib.destroyClient();
+
+  @override
+  Future<void> cancelTransaction(String transactionId) =>
+      _bleLib.cancelTransaction(transactionId);
 
   @override
   Future<void> enableRadio({String transactionId}) =>
@@ -117,15 +121,16 @@ class InternalBleManager
 
   @override
   Future<int> rssi(
-      Peripheral peripheral,
-      String transactionId,
-      ) {
+    Peripheral peripheral,
+    String transactionId,
+  ) {
     print("call channel read RSSI");
     return _bleLib.rssi(peripheral, transactionId);
   }
 
   @override
-  Future<void> requestMtu(Peripheral peripheral, int mtu, String transactionId) {
+  Future<void> requestMtu(
+      Peripheral peripheral, int mtu, String transactionId) {
     return _bleLib.requestMtu(peripheral, mtu, transactionId);
   }
 
@@ -142,9 +147,8 @@ class InternalBleManager
   @override
   Future<Uint8List> readCharacteristicForIdentifier(Peripheral peripheral,
           int characteristicIdentifier, String transactionId) =>
-      _bleLib
-          .readCharacteristicForIdentifier(
-              peripheral, characteristicIdentifier, transactionId);
+      _bleLib.readCharacteristicForIdentifier(
+          peripheral, characteristicIdentifier, transactionId);
 
   @override
   Future<CharacteristicWithValue> readCharacteristicForDevice(
@@ -255,10 +259,9 @@ class InternalBleManager
     int characteristicIdentifier,
     String transactionId,
   ) =>
-      _bleLib
-          .monitorCharacteristicForIdentifier(
-            peripheral,
-            characteristicIdentifier,
-            transactionId,
-          );
+      _bleLib.monitorCharacteristicForIdentifier(
+        peripheral,
+        characteristicIdentifier,
+        transactionId,
+      );
 }
