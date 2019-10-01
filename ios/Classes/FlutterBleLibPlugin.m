@@ -206,7 +206,8 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 
 - (Resolve)resolveForServicesForDevice:(FlutterResult)result {
     return ^(NSArray *servicesArray) {
-        result([JSONStringifier jsonStringFromJSONObject:[self arrayReplacingKeys:@[@[@"id", @"serviceId"], @[@"uuid", @"serviceUuid"]]
+        result([JSONStringifier jsonStringFromJSONObject:[self arrayReplacingKeys:@[@[@"id", @"serviceId"],
+                                                                                    @[@"uuid", @"serviceUuid"]]
                                                                           inArray:servicesArray]]);
     };
 }
