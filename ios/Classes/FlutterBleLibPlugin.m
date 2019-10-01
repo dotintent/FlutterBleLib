@@ -206,13 +206,15 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 
 - (Resolve)resolveForServicesForDevice:(FlutterResult)result {
     return ^(NSArray *servicesArray) {
-        result([JSONStringifier jsonStringFromJSONObject:[self arrayReplacingKeys:@[@[@"id", @"serviceId"], @[@"uuid", @"serviceUuid"]] inArray:servicesArray]]);
+        result([JSONStringifier jsonStringFromJSONObject:[self arrayReplacingKeys:@[@[@"id", @"serviceId"], @[@"uuid", @"serviceUuid"]]
+                                                                          inArray:servicesArray]]);
     };
 }
 
 - (Resolve)resolveForCharacteristicsForService:(FlutterResult)result {
     return ^(NSArray *characteristicsArray) {
-        result([JSONStringifier jsonStringFromJSONObject:[self arrayReplacingKeys:@[@[@"uuid", @"characteristicUuid"]] inArray:characteristicsArray]]);
+        result([JSONStringifier jsonStringFromJSONObject:[self arrayReplacingKeys:@[@[@"uuid", @"characteristicUuid"]]
+                                                                          inArray:characteristicsArray]]);
     };
 }
 
@@ -220,7 +222,8 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
     return ^(NSArray *servicesArray) {
 
         NSDictionary *matchingService = nil;
-        for (NSDictionary *service in [self arrayReplacingKeys:@[@[@"id", @"serviceId"], @[@"uuid", @"serviceUuid"]] inArray:servicesArray]) {
+        for (NSDictionary *service in [self arrayReplacingKeys:@[@[@"id", @"serviceId"], @[@"uuid", @"serviceUuid"]]
+                                                       inArray:servicesArray]) {
             if ([[service valueForKey:@"serviceUuid"] isEqualToString:serviceUuid]) {
                 matchingService = service;
                 break;
@@ -230,7 +233,8 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
         Resolve resolve = ^(NSArray* characteristicsArray) {
             NSMutableDictionary *resultDictionary = [[NSMutableDictionary alloc] init];
             [resultDictionary addEntriesFromDictionary:matchingService];
-            [resultDictionary setObject:[self arrayReplacingKeys:@[@[@"uuid", @"characteristicUuid"]] inArray:characteristicsArray]
+            [resultDictionary setObject:[self arrayReplacingKeys:@[@[@"uuid", @"characteristicUuid"]]
+                                                         inArray:characteristicsArray]
                                  forKey:@"characteristics"];
             result([JSONStringifier jsonStringFromJSONObject:resultDictionary]);
         };
