@@ -9,6 +9,7 @@
 #import "Event/ConnectionStateStreamHandler.h"
 #import "Util/ArgumentValidator.h"
 #import "Util/FlutterErrorFactory.h"
+#import "Util/JSONStringifier.h"
 
 typedef void (^Resolve)(id result);
 typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
@@ -75,6 +76,14 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
         [self setLogLevel:call result:result];
     } else if ([METHOD_NAME_LOG_LEVEL isEqualToString:call.method]) {
         [self logLevel:call result:result];
+    } else if ([METHOD_NAME_GET_SERVICES isEqualToString:call.method]) {
+        [self servicesForDevice:call result:result];
+    } else if ([METHOD_NAME_DISCOVER_ALL_SERVICES_AND_CHARACTERISTICS isEqualToString:call.method]) {
+        [self discoverAllServicesAndCharacteristicsForDevice:call result:result];
+    } else if ([METHOD_NAME_GET_CHARACTERISTICS_FOR_SERVICE isEqualToString:call.method]) {
+        [self characteristicsForService:call result:result];
+    } else if ([METHOD_NAME_GET_CHARACTERISTICS isEqualToString:call.method]) {
+        [self characteristics:call result:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -116,8 +125,9 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 // MARK: - MBA Methods - Connection
 
 - (void)connectToDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSArray* expectedArguments = [NSArray arrayWithObjects:ARGUMENT_KEY_TIMEOUT_MILLIS, nil];
     [_manager connectToDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
-                      options:nil
+                      options:[ArgumentValidator validDictionaryOrNil:expectedArguments in:call.arguments]
                       resolve:result
                        reject:[self rejectForFlutterResult:result]];
 }
@@ -148,6 +158,34 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
                 reject:[self rejectForFlutterResult:result]];
 }
 
+// MARK: - MBA Methods - Discovery
+
+- (void)servicesForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager servicesForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
+                        resolve:[self resolveForServicesForDevice:result]
+                         reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)discoverAllServicesAndCharacteristicsForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager discoverAllServicesAndCharacteristicsForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
+                                               transactionId:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]
+                                                     resolve:result
+                                                      reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)characteristicsForService:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager characteristicsForService:[call.arguments[ARGUMENT_KEY_SERVICE_ID] doubleValue]
+                                resolve:[self resolveForCharacteristicsForService:result]
+                                 reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)characteristics:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager servicesForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
+                        resolve:[self resolveForCharacteristics:result
+                                                    serviceUuid:call.arguments[ARGUMENT_KEY_SERVICE_UUID]]
+                         reject:[self rejectForFlutterResult:result]];
+}
+
 // MARK: - MBA Methods - BleClientManagerDelegate implementation
 
 - (void)dispatchEvent:(NSString * _Nonnull)name value:(id _Nonnull)value {
@@ -157,15 +195,80 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
         [self.adapterStateStreamHandler onNewAdapterState:value];
     } else if ([BleEvent.scanEvent isEqualToString:name]) {
         [self.scanningStreamHandler onScanResult:(NSArray*)value];
+    } else if ([BleEvent.connectingEvent isEqualToString:name]) {
+        [self.connectionStateStreamHandler onConnectingEvent:(NSString *)value];
+    } else if ([BleEvent.connectedEvent isEqualToString:name]) {
+        [self.connectionStateStreamHandler onConnectedEvent:(NSString *)value];
     }
 }
 
 // MARK: - Utility methods
 
+- (Resolve)resolveForServicesForDevice:(FlutterResult)result {
+    return ^(NSArray *servicesArray) {
+        result([JSONStringifier jsonStringFromJSONObject:[self arrayReplacingKeys:@[@[@"id", @"serviceId"],
+                                                                                    @[@"uuid", @"serviceUuid"]]
+                                                                          inArray:servicesArray]]);
+    };
+}
+
+- (Resolve)resolveForCharacteristicsForService:(FlutterResult)result {
+    return ^(NSArray *characteristicsArray) {
+        result([JSONStringifier jsonStringFromJSONObject:[self arrayReplacingKeys:@[@[@"uuid", @"characteristicUuid"]]
+                                                                          inArray:characteristicsArray]]);
+    };
+}
+
+- (Resolve)resolveForCharacteristics:(FlutterResult)result serviceUuid:(NSString *)serviceUuid {
+    return ^(NSArray *servicesArray) {
+
+        NSDictionary *matchingService = nil;
+        for (NSDictionary *service in [self arrayReplacingKeys:@[@[@"id", @"serviceId"], @[@"uuid", @"serviceUuid"]]
+                                                       inArray:servicesArray]) {
+            if ([[service valueForKey:@"serviceUuid"] isEqualToString:serviceUuid]) {
+                matchingService = service;
+                break;
+            }
+        }
+
+        if (matchingService == nil) {
+            result([FlutterError errorWithCode:@"-1" message:@"Service not found" details:nil]);
+            return;
+        }
+
+        Resolve resolve = ^(NSArray* characteristicsArray) {
+            NSMutableDictionary *resultDictionary = [[NSMutableDictionary alloc] init];
+            [resultDictionary addEntriesFromDictionary:matchingService];
+            [resultDictionary setObject:[self arrayReplacingKeys:@[@[@"uuid", @"characteristicUuid"]]
+                                                         inArray:characteristicsArray]
+                                 forKey:@"characteristics"];
+            result([JSONStringifier jsonStringFromJSONObject:resultDictionary]);
+        };
+
+        [_manager characteristicsForService:[[matchingService valueForKey:@"id"] doubleValue]
+                            resolve:resolve
+                             reject:[self rejectForFlutterResult:result]];
+    };
+}
+
 - (Reject)rejectForFlutterResult:(FlutterResult)result {
     return ^(NSString *code, NSString *message, NSError *error) {
         result([FlutterErrorFactory flutterErrorFromJSONString:message]);
     };
+}
+
+- (NSArray *)arrayReplacingKeys:(NSArray<NSArray<NSString *> *> *)keys inArray:(NSArray *)servicesArray {
+    NSMutableArray *newArray = [[NSMutableArray alloc] init];
+    for (NSDictionary *dictionary in servicesArray) {
+        NSMutableDictionary *newDictionary = [[NSMutableDictionary alloc] init];
+        for (NSArray *keyPair in keys) {
+            [newDictionary addEntriesFromDictionary:dictionary];
+            [newDictionary setObject:[dictionary objectForKey:keyPair[0]] forKey:keyPair[1]];
+            [newDictionary removeObjectForKey:keyPair[0]];
+        }
+        [newArray addObject:newDictionary];
+    }
+    return newArray;
 }
 
 @end

@@ -5,6 +5,8 @@ extern NSString * const ARGUMENT_KEY_SCAN_MODE;
 extern NSString * const ARGUMENT_KEY_CALLBACK_TYPE;
 extern NSString * const ARGUMENT_KEY_UUIDS;
 
+extern NSString * const ARGUMENT_KEY_TRANSACTION_ID;
+
 extern NSString * const ARGUMENT_KEY_DEVICE_IDENTIFIER;
 extern NSString * const ARGUMENT_KEY_IS_AUTO_CONNECT;
 extern NSString * const ARGUMENT_KEY_REQUEST_MTU;
