@@ -1,6 +1,6 @@
 #import <Flutter/Flutter.h>
 
-@interface ResultConverter : NSObject
+@interface JSONStringifier : NSObject
 
 + (NSString *)jsonStringFromJSONObject:(id)jsonObject;
 

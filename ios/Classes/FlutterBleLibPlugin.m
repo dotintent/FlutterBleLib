@@ -9,7 +9,7 @@
 #import "Event/ConnectionStateStreamHandler.h"
 #import "Util/ArgumentValidator.h"
 #import "Util/FlutterErrorFactory.h"
-#import "Util/ResultConverter.h"
+#import "Util/JSONStringifier.h"
 
 typedef void (^Resolve)(id result);
 typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
@@ -180,7 +180,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 
 - (Resolve)jsonStringResolveForFlutterResult:(FlutterResult)result {
     return ^(NSString *jsonString) {
-        result([ResultConverter jsonStringFromJSONObject:jsonString]);
+        result([JSONStringifier jsonStringFromJSONObject:jsonString]);
     };
 }
 

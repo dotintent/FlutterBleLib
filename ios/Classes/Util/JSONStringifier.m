@@ -1,6 +1,6 @@
-#import "ResultConverter.h"
+#import "JSONStringifier.h"
 
-@implementation ResultConverter
+@implementation JSONStringifier
 
 + (NSString *)jsonStringFromJSONObject:(id)jsonObject {
     NSData * jsonData = [NSJSONSerialization dataWithJSONObject:jsonObject

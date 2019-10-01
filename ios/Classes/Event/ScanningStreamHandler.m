@@ -1,6 +1,6 @@
 #import "ScanningStreamHandler.h"
 #import "ArgumentValidator.h"
-#import "ResultConverter.h"
+#import "JSONStringifier.h"
 #import "FlutterErrorFactory.h"
 
 @implementation ScanningStreamHandler {
@@ -25,7 +25,7 @@
             [self onComplete];
         } else {
             if (scanResult[0] == [NSNull null]) {
-                scanResultsSink([ResultConverter jsonStringFromJSONObject:scanResult[1]]);
+                scanResultsSink([JSONStringifier jsonStringFromJSONObject:scanResult[1]]);
             } else {
                 scanResultsSink([FlutterErrorFactory flutterErrorFromJSONString:scanResult[0]]);
                 [self onComplete];
