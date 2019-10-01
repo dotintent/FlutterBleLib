@@ -5,10 +5,13 @@ class SimulatedCharacteristic {
   final int id;
   SimulatedService _service; //TODO is it needed?
   Uint8List value;
+  final String convenienceName;
+
   StreamController<Uint8List> _streamController;
 
-  SimulatedCharacteristic(this.uuid, this.value)
-      : id = 0; //TODO generate unique int id (singleton generator?)
+  SimulatedCharacteristic(
+      {@required this.uuid, @required this.value, this.convenienceName})
+      : id = IdGenerator().nextId();
 
   void attachToService(SimulatedService service) => _service = service;
 

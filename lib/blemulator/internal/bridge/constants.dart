@@ -6,6 +6,33 @@ abstract class ChannelName {
   static String downstream = "$_base/toJava";
 }
 
-abstract class MethodName {
+abstract class PlatformMethodName {
   static String simulate = "simulate";
+}
+
+abstract class SimulationPlatformMethodName {
+  static const String publishScanResult = "publishScanResult";
+}
+
+abstract class DartMethodName {
+  static const String createClient = "createClient";
+  static const String destroyClient = "destroyClient";
+
+  static const String startDeviceScan = "startDeviceScan";
+  static const String stopDeviceScan = "stopDeviceScan";
+}
+
+abstract class ArgumentName {
+  static const String name = "name";
+  static const String id = "id";
+  static const String mtu = "mtu";
+  static const String rssi = "rssi";
+  static const String isConnectable = "isConnectable";
+  static const String txPowerLevel = "txPowerLevel";
+  static const String manufacturerData = "manufacturerData";
+  static const String serviceData = "serviceData";
+  static const String serviceUuids = "serviceUuids";
+  static const String localName = "localName";
+  static const String solicitedServiceUuids = "solicitedServiceUuids";
+  static const String overflowUuids = "overflowUuids";
 }

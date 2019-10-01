@@ -2,21 +2,27 @@ part of blemulator;
 
 class Blemulator {
 
-  BlemulatorBridge _bridge;
-  List<SimulatedPeripheral> _peripherals = [];
+  static Blemulator _instance = Blemulator._internal();
 
-  Blemulator() {
-    _bridge = BlemulatorBridge();
+  DartToPlatformBridge _toPlatformBridge;
+  SimulationManager _simulationManager;
+  PlatformToDartBridge _toDartBridge;
+
+  factory Blemulator() => _instance;
+
+  Blemulator._internal() {
+    _toPlatformBridge = DartToPlatformBridge();
+    _simulationManager = SimulationManager(_toPlatformBridge);
+    _toDartBridge = PlatformToDartBridge(_simulationManager);
   }
 
-  Future<void> simulate() => _bridge.simulate();
+  Future<void> simulate() => _toPlatformBridge.simulate();
 
   void addSimulatedPeripheral(SimulatedPeripheral peripheral) {
-    _peripherals.add(peripheral);
+    _simulationManager.addSimulatedPeripheral(peripheral);
   }
 
   void removeAllSimulatedPeripherals() {
-    _peripherals.clear();
-    //TODO notify bridge?
+    _simulationManager.removeAllSimulatedPeripherals();
   }
 }
