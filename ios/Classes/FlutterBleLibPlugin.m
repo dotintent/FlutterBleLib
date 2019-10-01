@@ -230,6 +230,11 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
             }
         }
 
+        if (matchingService == nil) {
+            result([FlutterError errorWithCode:@"-1" message:@"Service not found" details:nil]);
+            return;
+        }
+
         Resolve resolve = ^(NSArray* characteristicsArray) {
             NSMutableDictionary *resultDictionary = [[NSMutableDictionary alloc] init];
             [resultDictionary addEntriesFromDictionary:matchingService];
