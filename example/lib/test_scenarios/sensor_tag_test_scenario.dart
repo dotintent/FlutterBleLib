@@ -193,33 +193,40 @@ class SensorTagTestScenario {
             service.uuid ==
             SensorTagTemperatureUuids.temperatureService.toLowerCase()));
 
-    log("Fetching characteristic");
-    Characteristic characteristic = await service.characteristics().then(
-        (characteristics) => characteristics.firstWhere((characteristic) =>
+    log("Fetching config characteristic");
+    List<Characteristic> characteristics = await service.characteristics();
+    Characteristic configCharacteristic = characteristics.firstWhere(
+        (characteristic) =>
             characteristic.uuid ==
             SensorTagTemperatureUuids.temperatureConfigCharacteristic
-                .toLowerCase()));
+                .toLowerCase());
+    log("Fetching data characteristic");
+    Characteristic dataCharacteristic = characteristics.firstWhere(
+        (characteristic) =>
+            characteristic.uuid ==
+            SensorTagTemperatureUuids.temperatureDataCharacteristic
+                .toLowerCase());
 
     log("Start monitoring temperature");
     _startMonitoringTemperature(
-      characteristic.monitor(transactionId: "1"),
+      dataCharacteristic.monitor(transactionId: "3"),
       log,
     );
 
     log("Turning off temperature update");
-    await characteristic.write(Uint8List.fromList([0]), false);
+    await configCharacteristic.write(Uint8List.fromList([0]), false);
     log("Turned off temperature update");
 
     log("Reading characteristic value");
-    Uint8List value = await characteristic.read();
+    Uint8List value = await configCharacteristic.read();
     log("Read temperature config value $value");
 
     log("Turning on temperature update");
-    await characteristic.write(Uint8List.fromList([1]), false);
-    log("Turning off temperature update");
+    await configCharacteristic.write(Uint8List.fromList([1]), false);
+    log("Turned on temperature update");
 
     log("Reading characteristic value");
-    value = await characteristic.read();
+    value = await configCharacteristic.read();
     log("Read temperature config value $value");
 
     return peripheral;
@@ -249,7 +256,6 @@ class SensorTagTestScenario {
 
   void _startMonitoringTemperature(
       Stream<Uint8List> characteristicUpdates, Function log) {
-    log("START TEMPERATURE MONITORING");
     monitoringStreamSubscription?.cancel();
     monitoringStreamSubscription = characteristicUpdates
         .map(_convertToTemperature)
