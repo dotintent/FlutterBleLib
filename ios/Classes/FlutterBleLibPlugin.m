@@ -169,9 +169,9 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
         [self.adapterStateStreamHandler onNewAdapterState:value];
     } else if ([BleEvent.scanEvent isEqualToString:name]) {
         [self.scanningStreamHandler onScanResult:(NSArray*)value];
-    } else if ([BleConnectionEvent.connectingEvent isEqualToString:name]) {
+    } else if ([BleEvent.connectingEvent isEqualToString:name]) {
         [self.connectionStateStreamHandler onConnectingEvent:(NSString *)value];
-    } else if ([BleConnectionEvent.connectedEvent isEqualToString:name]) {
+    } else if ([BleEvent.connectedEvent isEqualToString:name]) {
         [self.connectionStateStreamHandler onConnectedEvent:(NSString *)value];
     }
 }
