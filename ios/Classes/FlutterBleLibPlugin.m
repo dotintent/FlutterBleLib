@@ -224,6 +224,25 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
                           reject:[self rejectForFlutterResult:result]];
 }
 
+- (void)writeCharacteristicForService:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager writeCharacteristicForService:[call.arguments[ARGUMENT_KEY_SERVICE_ID] doubleValue]
+                         characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
+                                valueBase64:call.arguments[ARGUMENT_KEY_BYTES]
+                                   response:call.arguments[ARGUMENT_KEY_WITH_RESPONSE]
+                              transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                                    resolve:result
+                                     reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)writeCharacteristic:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager writeCharacteristic:[call.arguments[ARGUMENT_KEY_CHARACTERISTIC_IDENTIFIER] doubleValue]
+                      valueBase64:call.arguments[ARGUMENT_KEY_BYTES]
+                         response:call.arguments[ARGUMENT_KEY_WITH_RESPONSE]
+                    transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                          resolve:result
+                           reject:[self rejectForFlutterResult:result]];
+}
+
 // MARK: - MBA Methods - Known / Connected devices
 
 - (void)devices:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -236,6 +255,15 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
     [_manager connectedDevices:call.arguments[ARGUMENT_KEY_UUIDS]
                        resolve:[self resolveForKnownConnectedDevices:result]
                         reject:[self rejectForFlutterResult:result]];
+- (void)writeCharacteristicForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager writeCharacteristicForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
+                               serviceUUID:call.arguments[ARGUMENT_KEY_SERVICE_UUID]
+                        characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
+                               valueBase64:call.arguments[ARGUMENT_KEY_BYTES]
+                                  response:call.arguments[ARGUMENT_KEY_WITH_RESPONSE]
+                             transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                                   resolve:result
+                                    reject:[self rejectForFlutterResult:result]];
 }
 
 // MARK: - MBA Methods - BleClientManagerDelegate implementation
