@@ -1,17 +1,18 @@
 part of internal;
 
 abstract class ChannelName {
-  static String _base = "com.polidea.blemulator";
-  static String upstream = "$_base/toDart";
-  static String downstream = "$_base/toJava";
+  static const String _base = "com.polidea.blemulator";
+  static const String platformToDart = "$_base/toDart";
+  static const String dartToPlatform = "$_base/toJava";
 }
 
 abstract class PlatformMethodName {
-  static String simulate = "simulate";
+  static const String simulate = "simulate";
 }
 
 abstract class SimulationPlatformMethodName {
   static const String publishScanResult = "publishScanResult";
+  static const String publishConnectionState = "publishConnectionState";
 }
 
 abstract class DartMethodName {
@@ -20,9 +21,13 @@ abstract class DartMethodName {
 
   static const String startDeviceScan = "startDeviceScan";
   static const String stopDeviceScan = "stopDeviceScan";
+
+  static const String connectToPeripheral = "connectToDevice";
+  static const String isPeripheralConnected = "isDeviceConnected";
+  static const String disconnectOrCancelConnectionToPeripheral = "disconnectOrCancelConnection";
 }
 
-abstract class ArgumentName {
+abstract class SimulationArgumentName {
   static const String name = "name";
   static const String id = "id";
   static const String mtu = "mtu";
@@ -35,4 +40,11 @@ abstract class ArgumentName {
   static const String localName = "localName";
   static const String solicitedServiceUuids = "solicitedServiceUuids";
   static const String overflowUuids = "overflowUuids";
+
+  static const String connectionState = "connectionState";
+}
+
+abstract class ArgumentName {
+  static const String id = "id";
+  static const String emitCurrentValue = "emitCurrentValue";
 }

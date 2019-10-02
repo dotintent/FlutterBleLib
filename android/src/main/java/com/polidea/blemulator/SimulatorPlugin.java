@@ -49,7 +49,6 @@ public class SimulatorPlugin implements MethodChannel.MethodCallHandler {
             @Override
             public BleAdapter createAdapter(Context context) {
                 SimulatedAdapter adapter = new SimulatedAdapter(dartMethodCaller, dartValueHandler);
-                dartValueHandler.setAdapter(adapter);
                 return adapter;
             }
         });

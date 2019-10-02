@@ -3,16 +3,16 @@ package com.polidea.blemulator.bridging;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.polidea.blemulator.SimulatedAdapter;
-import com.polidea.blemulator.bridging.constants.ArgumentName;
 import com.polidea.blemulator.bridging.constants.PlatformMethodName;
+import com.polidea.blemulator.bridging.constants.SimulationArgumentName;
 import com.polidea.multiplatformbleadapter.AdvertisementData;
-import com.polidea.multiplatformbleadapter.OnErrorCallback;
+import com.polidea.multiplatformbleadapter.ConnectionState;
 import com.polidea.multiplatformbleadapter.OnEventCallback;
 import com.polidea.multiplatformbleadapter.ScanResult;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -24,21 +24,15 @@ public class DartValueHandler implements MethodChannel.MethodCallHandler {
 
     private static final String TAG = DartValueHandler.class.getSimpleName();
 
-    private SimulatedAdapter adapter;
-
     private OnEventCallback<ScanResult> scanResultPublisher;
-    private OnErrorCallback scanResultErrorPublisher;
-
-    public void setAdapter(SimulatedAdapter adapter) {
-        this.adapter = adapter;
-    }
+    private Map<String, OnEventCallback<ConnectionState>> connectionStatePublishers = new LinkedHashMap<>();
 
     public void setScanResultPublisher(OnEventCallback<ScanResult> scanResultPublisher) {
         this.scanResultPublisher = scanResultPublisher;
     }
 
-    public void setScanResultErrorPublisher(OnErrorCallback scanResultErrorPublisher) {
-        this.scanResultErrorPublisher = scanResultErrorPublisher;
+    public void addConnectionStatePublisher(String identifier, OnEventCallback<ConnectionState> publisher) {
+        connectionStatePublishers.put(identifier, publisher);
     }
 
     @Override
@@ -46,6 +40,9 @@ public class DartValueHandler implements MethodChannel.MethodCallHandler {
         switch (call.method) {
             case PlatformMethodName.PUBLISH_SCAN_RESULT:
                 publishScanResult(call, result);
+                return;
+            case PlatformMethodName.PUBLISH_CONNECTION_STATE:
+                publishConnectionState(call, result);
                 return;
             default:
                 result.notImplemented();
@@ -55,7 +52,7 @@ public class DartValueHandler implements MethodChannel.MethodCallHandler {
     private void publishScanResult(MethodCall call, MethodChannel.Result result) {
         Log.d(TAG, "new scan result");
         HashMap<UUID, byte[]> serviceData = null;
-        HashMap<String, byte[]> stringServiceData = call.argument(ArgumentName.SERVICE_DATA);
+        HashMap<String, byte[]> stringServiceData = call.argument(SimulationArgumentName.SERVICE_DATA);
         if (stringServiceData != null) {
             serviceData = new HashMap<>();
             for (Map.Entry<String, byte[]> entry
@@ -64,9 +61,8 @@ public class DartValueHandler implements MethodChannel.MethodCallHandler {
             }
         }
 
-
         ArrayList<UUID> serviceUuids = null;
-        List<String> stringServiceUuids = call.argument(ArgumentName.SERVICE_UUIDS);
+        List<String> stringServiceUuids = call.argument(SimulationArgumentName.SERVICE_UUIDS);
         if (stringServiceUuids != null) {
             serviceUuids = new ArrayList<>();
             for (String uuid : stringServiceUuids) {
@@ -74,9 +70,8 @@ public class DartValueHandler implements MethodChannel.MethodCallHandler {
             }
         }
 
-
         ArrayList<UUID> solicitedServiceUuids = null;
-        List<String> stringSolicitedServiceUuids = call.argument(ArgumentName.SOLICITED_SERVICE_UUIDS);
+        List<String> stringSolicitedServiceUuids = call.argument(SimulationArgumentName.SOLICITED_SERVICE_UUIDS);
         if (stringSolicitedServiceUuids != null) {
             solicitedServiceUuids = new ArrayList<>();
             for (String uuid : stringSolicitedServiceUuids) {
@@ -84,19 +79,18 @@ public class DartValueHandler implements MethodChannel.MethodCallHandler {
             }
         }
 
-
         AdvertisementData advertisementData = new AdvertisementData(
-                call.<byte[]>argument(ArgumentName.MANUFACTURER_DATA),
+                call.<byte[]>argument(SimulationArgumentName.MANUFACTURER_DATA),
                 serviceData,
                 serviceUuids,
-                call.<String>argument(ArgumentName.LOCAL_NAME),
-                call.<Integer>argument(ArgumentName.TX_POWER_LEVEL),
+                call.<String>argument(SimulationArgumentName.LOCAL_NAME),
+                call.<Integer>argument(SimulationArgumentName.TX_POWER_LEVEL),
                 solicitedServiceUuids
         );
 
         ArrayList<UUID> overflowServiceUuids;
         UUID[] overflowServiceUuidsArray = null;
-        List<String> stringOverflowServiceUuids = call.argument(ArgumentName.OVERFLOW_SERVICE_UUIDS);
+        List<String> stringOverflowServiceUuids = call.argument(SimulationArgumentName.OVERFLOW_SERVICE_UUIDS);
         if (stringOverflowServiceUuids != null) {
             overflowServiceUuids = new ArrayList<>();
             for (String uuid : stringOverflowServiceUuids) {
@@ -106,15 +100,29 @@ public class DartValueHandler implements MethodChannel.MethodCallHandler {
         }
 
         ScanResult scanResult = new ScanResult(
-                call.<String>argument(ArgumentName.DEVICE_ID),
-                call.<String>argument(ArgumentName.DEVICE_NAME),
-                call.<Integer>argument(ArgumentName.RSSI),
-                call.<Integer>argument(ArgumentName.MTU),
-                call.<Boolean>argument(ArgumentName.IS_CONNECTABLE),
+                call.<String>argument(SimulationArgumentName.DEVICE_ID),
+                call.<String>argument(SimulationArgumentName.DEVICE_NAME),
+                call.<Integer>argument(SimulationArgumentName.RSSI),
+                call.<Integer>argument(SimulationArgumentName.MTU),
+                call.<Boolean>argument(SimulationArgumentName.IS_CONNECTABLE),
                 overflowServiceUuidsArray,
                 advertisementData
         );
         scanResultPublisher.onEvent(scanResult);
+        result.success(null);
+    }
+
+    private void publishConnectionState(MethodCall call, MethodChannel.Result result) {
+        String deviceId = call.argument(SimulationArgumentName.DEVICE_ID);
+        ConnectionState state = ConnectionState.valueOf(
+                call.<String>argument(SimulationArgumentName.CONNECTION_STATE));
+
+        connectionStatePublishers.get(deviceId).onEvent(state);
+
+        if (state == ConnectionState.DISCONNECTED) {
+            connectionStatePublishers.remove(deviceId);
+        }
+
         result.success(null);
     }
 }
