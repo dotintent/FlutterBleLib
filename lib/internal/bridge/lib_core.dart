@@ -18,15 +18,14 @@ class FlutterBleLib extends FlutterBLE
         BluetoothStateMixin,
         DevicesMixin,
         CharacteristicsMixin {
-  final EventChannel _restoreStateEventChannel =
-      const EventChannel(ChannelName.stateRestoreEvents);
+  final Stream<dynamic> _restoreStateEvents =
+      const EventChannel(ChannelName.stateRestoreEvents).receiveBroadcastStream();
 
   void registerManager(InternalBleManager manager) {
     _manager = manager;
   }
 
-  Future<List<Peripheral>> restoredState() => _restoreStateEventChannel
-      .receiveBroadcastStream()
+  Future<List<Peripheral>> restoredState() => _restoreStateEvents
       .map(
         (jsonString) {
           if (jsonString == null)

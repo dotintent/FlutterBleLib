@@ -1,8 +1,9 @@
 part of internal_bridge_lib;
 
 mixin CharacteristicsMixin on FlutterBLE {
-  final EventChannel _monitoringChannel =
-      const EventChannel(ChannelName.monitorCharacteristic);
+  final Stream<dynamic> _characteristicsMonitoringEvents =
+      const EventChannel(ChannelName.monitorCharacteristic)
+          .receiveBroadcastStream();
 
   Future<Uint8List> readCharacteristicForIdentifier(
     Peripheral peripheral,
@@ -149,11 +150,13 @@ mixin CharacteristicsMixin on FlutterBLE {
         ArgumentName.transactionId: transactionId,
       },
     );
-    yield* _monitoringChannel
-        .receiveBroadcastStream()
+    yield* _characteristicsMonitoringEvents
         .map(
           (rawJsonValue) =>
               _parseCharacteristicResponse(peripheral, rawJsonValue),
+        )
+        .where(
+          (characteristic) => characteristic._id == characteristicIdentifier,
         )
         .map((characteristicWithValue) => characteristicWithValue.value)
         .handleError((errorJson) =>
@@ -175,11 +178,17 @@ mixin CharacteristicsMixin on FlutterBLE {
         ArgumentName.transactionId: transactionId,
       },
     );
-    yield* _monitoringChannel
-        .receiveBroadcastStream()
+    yield* _characteristicsMonitoringEvents
         .map(
           (rawJsonValue) =>
               _parseCharacteristicResponse(peripheral, rawJsonValue),
+        )
+        .where(
+          (characteristic) =>
+              compareAsciiLowerCase(characteristicUUID, characteristic.uuid) ==
+                  0 &&
+              compareAsciiLowerCase(serviceUuid, characteristic.service.uuid) ==
+                  0,
         )
         .handleError((errorJson) =>
             throw BleError.fromJson(jsonDecode(errorJson.details)));
@@ -199,11 +208,16 @@ mixin CharacteristicsMixin on FlutterBLE {
         ArgumentName.transactionId: transactionId,
       },
     );
-    yield* _monitoringChannel
-        .receiveBroadcastStream()
+    yield* _characteristicsMonitoringEvents
         .map(
           (rawJsonValue) =>
               _parseCharacteristicResponse(peripheral, rawJsonValue),
+        )
+        .where(
+          (characteristic) =>
+              compareAsciiLowerCase(characteristicUUID, characteristic.uuid) ==
+                  0 &&
+              serviceIdentifier == characteristic.service._id,
         )
         .handleError((errorJson) =>
             throw BleError.fromJson(jsonDecode(errorJson.details)));
