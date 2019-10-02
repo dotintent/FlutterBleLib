@@ -31,10 +31,14 @@ class FlutterBleLib extends FlutterBLE
         (jsonString) {
           if (jsonString == null)
             return null;
-          else
-            return [
-              Peripheral.fromJson(jsonDecode(jsonString), _manager)
-            ]; //TODO Add proper mapping from json here (11.09.2019)
+          else {
+            List<Map<String, dynamic>> restoredPeripheralsJson =
+                jsonDecode(jsonString);
+            return restoredPeripheralsJson
+                .map((peripheralJson) =>
+                    Peripheral.fromJson(peripheralJson, _manager))
+                .toList();
+          }
         },
       )
       .take(1)
