@@ -34,6 +34,8 @@ abstract class SimulatedPeripheral {
   ScanInfo scanInfo;
 
   Map<int, SimulatedService> _services;
+  final StreamController<FlutterBLELib.PeripheralConnectionState>
+      _connectionStateStreamController;
 
   bool _isConnected = false;
   bool _discoveryDone = false;
@@ -43,7 +45,8 @@ abstract class SimulatedPeripheral {
       @required this.id,
       @required this.advertisementInterval,
       @required List<SimulatedService> services,
-      this.scanInfo}) {
+      this.scanInfo})
+      : _connectionStateStreamController = StreamController() {
     if (scanInfo == null) {
       this.scanInfo = ScanInfo();
     }
@@ -59,6 +62,10 @@ abstract class SimulatedPeripheral {
     _services = Map.fromIterable(services, key: (service) => service.id);
   }
 
+  Stream<FlutterBLELib.PeripheralConnectionState> get connectionStateStream {
+    return _connectionStateStreamController.stream;
+  }
+
   Stream<ScanResult> onScan({bool allowDuplicates = true}) async* {
     do {
       await Future.delayed(advertisementInterval);
@@ -66,16 +73,24 @@ abstract class SimulatedPeripheral {
     } while (allowDuplicates);
   }
 
-  Future<bool> onConnectRequest();
+  Future<bool> onConnectRequest() async {
+    _connectionStateStreamController
+        .add(FlutterBLELib.PeripheralConnectionState.connecting);
+    return true;
+  }
 
-  Future<void> onDiscoveryRequest();
+  Future<void> onDiscoveryRequest() async {}
 
   void onConnect() {
     _isConnected = true;
+    _connectionStateStreamController
+        .add(FlutterBLELib.PeripheralConnectionState.connected);
   }
 
   void onDisconnect() {
     _isConnected = false;
+    _connectionStateStreamController
+        .add(FlutterBLELib.PeripheralConnectionState.disconnected);
   }
 
   Future<void> onDiscovery() async {

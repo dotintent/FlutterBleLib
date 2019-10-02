@@ -223,17 +223,17 @@ class DeviceDetailsBloc {
   void _connectTo(BleDevice bleDevice) async {
 
 
-    log("Fetching log level");
-    LogLevel logLevel = await _bleManager.logLevel();
-    log("Current log level $logLevel");
-
-    log("Setting log level to debug");
-    await _bleManager.setLogLevel(LogLevel.debug);
-    log("Set log level to debug");
-
-    log("Fetching log level");
-    logLevel = await _bleManager.logLevel();
-    log("Current log level $logLevel");
+//    log("Fetching log level");
+//    LogLevel logLevel = await _bleManager.logLevel();
+//    log("Current log level $logLevel");
+//
+//    log("Setting log level to debug");
+//    await _bleManager.setLogLevel(LogLevel.debug);
+//    log("Set log level to debug");
+//
+//    log("Fetching log level");
+//    logLevel = await _bleManager.logLevel();
+//    log("Current log level $logLevel");
 
     var peripheral = bleDevice.peripheral;
     peripheral
