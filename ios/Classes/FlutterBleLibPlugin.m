@@ -233,7 +233,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 - (void)writeCharacteristicForService:(FlutterMethodCall *)call result:(FlutterResult)result {
     [_manager writeCharacteristicForService:[call.arguments[ARGUMENT_KEY_SERVICE_ID] doubleValue]
                          characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
-                                valueBase64:call.arguments[ARGUMENT_KEY_BYTES]
+                                valueBase64:[self base64encodedStringFromBytes:call.arguments[ARGUMENT_KEY_BYTES]]
                                    response:call.arguments[ARGUMENT_KEY_WITH_RESPONSE]
                               transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
                                     resolve:result
@@ -242,7 +242,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 
 - (void)writeCharacteristic:(FlutterMethodCall *)call result:(FlutterResult)result {
     [_manager writeCharacteristic:[call.arguments[ARGUMENT_KEY_CHARACTERISTIC_IDENTIFIER] doubleValue]
-                      valueBase64:call.arguments[ARGUMENT_KEY_BYTES]
+                      valueBase64:[self base64encodedStringFromBytes:call.arguments[ARGUMENT_KEY_BYTES]]
                          response:call.arguments[ARGUMENT_KEY_WITH_RESPONSE]
                     transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
                           resolve:result
@@ -265,7 +265,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
     [_manager writeCharacteristicForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
                                serviceUUID:call.arguments[ARGUMENT_KEY_SERVICE_UUID]
                         characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
-                               valueBase64:call.arguments[ARGUMENT_KEY_BYTES]
+                               valueBase64:[self base64encodedStringFromBytes:call.arguments[ARGUMENT_KEY_BYTES]]
                                   response:call.arguments[ARGUMENT_KEY_WITH_RESPONSE]
                              transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
                                    resolve:result
@@ -367,6 +367,10 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
         [newArray addObject:newDictionary];
     }
     return newArray;
+}
+
+- (NSString *)base64encodedStringFromBytes:(FlutterStandardTypedData *)bytes {
+    return [bytes.data base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
 }
 
 @end
