@@ -84,6 +84,12 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
         [self characteristicsForService:call result:result];
     } else if ([METHOD_NAME_GET_CHARACTERISTICS isEqualToString:call.method]) {
         [self characteristics:call result:result];
+    } else if ([METHOD_NAME_READ_CHARACTERISTIC_FOR_DEVICE isEqualToString:call.method]) {
+        [self readCharacteristicForDevice:call result:result];
+    } else if ([METHOD_NAME_READ_CHARACTERISTIC_FOR_SERVICE isEqualToString:call.method]) {
+        [self readCharacteristicForService:call result:result];
+    } else if ([METHOD_NAME_READ_CHARACTERISTIC_FOR_IDENTIFIER isEqualToString:call.method]) {
+        [self readCharacteristic:call result:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
