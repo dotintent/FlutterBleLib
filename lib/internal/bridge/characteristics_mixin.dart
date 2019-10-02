@@ -21,7 +21,7 @@ mixin CharacteristicsMixin on FlutterBLE {
           .catchError((errorJson) =>
               Future.error(BleError.fromJson(jsonDecode(errorJson.details))))
           .then((rawJsonValue) =>
-              _parseCharacteristicResponse(peripheral, rawJsonValue).value);
+              _parseCharacteristicResponseWithValue(peripheral, rawJsonValue).value);
 
   Future<CharacteristicWithValue> readCharacteristicForDevice(
     Peripheral peripheral,
@@ -43,7 +43,7 @@ mixin CharacteristicsMixin on FlutterBLE {
               Future.error(BleError.fromJson(jsonDecode(errorJson.details))))
           .then(
             (rawJsonValue) =>
-                _parseCharacteristicResponse(peripheral, rawJsonValue),
+                _parseCharacteristicResponseWithValue(peripheral, rawJsonValue),
           );
 
   Future<CharacteristicWithValue> readCharacteristicForService(
@@ -65,7 +65,7 @@ mixin CharacteristicsMixin on FlutterBLE {
               Future.error(BleError.fromJson(jsonDecode(errorJson.details))))
           .then(
             (rawJsonValue) =>
-                _parseCharacteristicResponse(peripheral, rawJsonValue),
+                _parseCharacteristicResponseWithValue(peripheral, rawJsonValue),
           );
 
   Future<void> writeCharacteristicForIdentifier(
@@ -153,7 +153,7 @@ mixin CharacteristicsMixin on FlutterBLE {
     yield* _characteristicsMonitoringEvents
         .map(
           (rawJsonValue) =>
-              _parseCharacteristicResponse(peripheral, rawJsonValue),
+              _parseCharacteristicResponseWithValue(peripheral, rawJsonValue),
         )
         .where(
           (characteristic) => characteristic._id == characteristicIdentifier,
@@ -180,7 +180,7 @@ mixin CharacteristicsMixin on FlutterBLE {
     );
     yield* _characteristicsMonitoringEvents
         .map((rawJsonValue) =>
-            _parseCharacteristicResponse(peripheral, rawJsonValue))
+            _parseCharacteristicResponseWithValue(peripheral, rawJsonValue))
         .where((characteristic) =>
             equalsIgnoreAsciiCase(characteristicUUID, characteristic.uuid) &&
             equalsIgnoreAsciiCase(serviceUuid, characteristic.service.uuid))
@@ -205,7 +205,7 @@ mixin CharacteristicsMixin on FlutterBLE {
     yield* _characteristicsMonitoringEvents
         .map(
           (rawJsonValue) =>
-              _parseCharacteristicResponse(peripheral, rawJsonValue),
+              _parseCharacteristicResponseWithValue(peripheral, rawJsonValue),
         )
         .where(
           (characteristic) =>
@@ -216,12 +216,22 @@ mixin CharacteristicsMixin on FlutterBLE {
             throw BleError.fromJson(jsonDecode(errorJson.details)));
   }
 
-  CharacteristicWithValue _parseCharacteristicResponse(
-      Peripheral peripheral, rawJsonValue) {
-    Map<String, dynamic> rootObject = jsonDecode(rawJsonValue);
-    Service service = Service.fromJson(rootObject, peripheral, _manager);
+CharacteristicWithValue _parseCharacteristicResponseWithValue(
+    Peripheral peripheral, rawJsonValue) {
+  Map<String, dynamic> rootObject = jsonDecode(rawJsonValue);
+  Service service = Service.fromJson(rootObject, peripheral, _manager);
 
-    return CharacteristicWithValue.fromJson(
-        rootObject["characteristic"], service, _manager);
-  }
+  return CharacteristicWithValue.fromJson(
+      rootObject["characteristic"], service, _manager);
+}
+
+Characteristic _parseCharacteristicResponse(
+    Peripheral peripheral, rawJsonValue) {
+  Map<String, dynamic> rootObject = jsonDecode(rawJsonValue);
+  Service service = Service.fromJson(rootObject, peripheral, _manager);
+
+  return Characteristic.fromJson(
+      rootObject["characteristic"], service, _manager);
+}
+
 }
