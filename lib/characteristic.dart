@@ -25,7 +25,7 @@ class Characteristic extends InternalCharacteristic {
       ManagerForCharacteristic manager)
       : super(jsonObject[_CharacteristicMetadata.id]) {
     _manager = manager;
-    service = service;
+    this.service = service;
     uuid = jsonObject[_CharacteristicMetadata.uuid];
     isReadable = jsonObject[_CharacteristicMetadata.isReadable];
     isWritableWithResponse =
