@@ -199,7 +199,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
                               serviceUUID:call.arguments[ARGUMENT_KEY_SERVICE_UUID]
                        characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
                             transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
-                                  resolve:result
+                                  resolve:[self resolveForReadCharacteristic:result]
                                    reject:[self rejectForFlutterResult:result]];
 }
 
@@ -207,14 +207,14 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
     [_manager readCharacteristicForService:[call.arguments[ARGUMENT_KEY_SERVICE_ID] doubleValue]
                         characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
                              transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
-                                   resolve:result
+                                   resolve:[self resolveForReadCharacteristic:result]
                                     reject:[self rejectForFlutterResult:result]];
 }
 
 - (void)readCharacteristic:(FlutterMethodCall *)call result:(FlutterResult)result {
     [_manager readCharacteristic:[call.arguments[ARGUMENT_KEY_CHARACTERISTIC_IDENTIFIER] doubleValue]
                    transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
-                         resolve:result
+                         resolve:[self resolveForReadCharacteristic:result]
                           reject:[self rejectForFlutterResult:result]];
 }
 
@@ -280,6 +280,14 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
         [_manager characteristicsForService:[[matchingService valueForKey:@"id"] doubleValue]
                             resolve:resolve
                              reject:[self rejectForFlutterResult:result]];
+    };
+}
+
+- (Resolve)resolveForReadCharacteristic:(FlutterResult)result {
+    return ^(NSDictionary *characteristicDictionary) {
+        NSMutableDictionary *resultDictionary = [[NSMutableDictionary alloc] initWithDictionary:characteristicDictionary];
+        [resultDictionary setObject:characteristicDictionary forKey:@"characteristic"];
+        result([JSONStringifier jsonStringFromJSONObject:resultDictionary]);
     };
 }
 
