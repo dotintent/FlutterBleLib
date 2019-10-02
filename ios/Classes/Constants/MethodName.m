@@ -31,4 +31,8 @@ NSString * const METHOD_NAME_READ_CHARACTERISTIC_FOR_IDENTIFIER = @"readCharacte
 NSString * const METHOD_NAME_READ_CHARACTERISTIC_FOR_DEVICE = @"readCharacteristicForDevice";
 NSString * const METHOD_NAME_READ_CHARACTERISTIC_FOR_SERVICE = @"readCharacteristicForService";
 
+NSString * const METHOD_NAME_WRITE_CHARACTERISTIC_FOR_IDENTIFIER = @"writeCharacteristicForIdentifier";
+NSString * const METHOD_NAME_WRITE_CHARACTERISTIC_FOR_DEVICE = @"writeCharacteristicForDevice";
+NSString * const METHOD_NAME_WRITE_CHARACTERISTIC_FOR_SERVICE = @"writeCharacteristicForService";
+
 @end
