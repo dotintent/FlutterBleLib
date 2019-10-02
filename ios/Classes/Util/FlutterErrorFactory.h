@@ -1,7 +1,10 @@
 #import <Flutter/Flutter.h>
+#import "BleError.h"
 
 @interface FlutterErrorFactory : NSObject
 
-+ (FlutterError *)flutterErrorFromJSONString:(NSString *)jsonString;
++ (FlutterError *)flutterErrorForJSONString:(NSString *)jsonString;
+
++ (FlutterError *)flutterErrorForBleError:(BleError *)bleError;
 
 @end

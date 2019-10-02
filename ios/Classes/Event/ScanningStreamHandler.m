@@ -27,7 +27,7 @@
             if (scanResult[0] == [NSNull null]) {
                 scanResultsSink([JSONStringifier jsonStringFromJSONObject:scanResult[1]]);
             } else {
-                scanResultsSink([FlutterErrorFactory flutterErrorFromJSONString:scanResult[0]]);
+                scanResultsSink([FlutterErrorFactory flutterErrorForJSONString:scanResult[0]]);
                 [self onComplete];
             }
         }

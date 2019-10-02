@@ -10,6 +10,7 @@
 #import "Util/ArgumentValidator.h"
 #import "Util/FlutterErrorFactory.h"
 #import "Util/JSONStringifier.h"
+#import "Error/BleError.h"
 
 typedef void (^Resolve)(id result);
 typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
@@ -85,7 +86,9 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
     } else if ([METHOD_NAME_GET_CHARACTERISTICS isEqualToString:call.method]) {
         [self characteristics:call result:result];
     } else {
-        result(FlutterMethodNotImplemented);
+        BleError *methodNotImplementedError = [[BleError alloc] initWithErrorCode:[NSNumber numberWithInt:0]
+                                                                           reason:[NSString stringWithFormat:@"%@ %@", @"Method not implemented: ", call.method]];
+        result([FlutterErrorFactory flutterErrorForBleError:methodNotImplementedError]);
     }
 }
 
@@ -253,7 +256,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 
 - (Reject)rejectForFlutterResult:(FlutterResult)result {
     return ^(NSString *code, NSString *message, NSError *error) {
-        result([FlutterErrorFactory flutterErrorFromJSONString:message]);
+        result([FlutterErrorFactory flutterErrorForJSONString:message]);
     };
 }
 
