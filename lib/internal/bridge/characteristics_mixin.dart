@@ -179,17 +179,11 @@ mixin CharacteristicsMixin on FlutterBLE {
       },
     );
     yield* _characteristicsMonitoringEvents
-        .map(
-          (rawJsonValue) =>
-              _parseCharacteristicResponse(peripheral, rawJsonValue),
-        )
-        .where(
-          (characteristic) =>
-              compareAsciiLowerCase(characteristicUUID, characteristic.uuid) ==
-                  0 &&
-              compareAsciiLowerCase(serviceUuid, characteristic.service.uuid) ==
-                  0,
-        )
+        .map((rawJsonValue) =>
+            _parseCharacteristicResponse(peripheral, rawJsonValue))
+        .where((characteristic) =>
+            equalsIgnoreAsciiCase(characteristicUUID, characteristic.uuid) &&
+            equalsIgnoreAsciiCase(serviceUuid, characteristic.service.uuid))
         .handleError((errorJson) =>
             throw BleError.fromJson(jsonDecode(errorJson.details)));
   }
@@ -215,8 +209,7 @@ mixin CharacteristicsMixin on FlutterBLE {
         )
         .where(
           (characteristic) =>
-              compareAsciiLowerCase(characteristicUUID, characteristic.uuid) ==
-                  0 &&
+              equalsIgnoreAsciiCase(characteristicUUID, characteristic.uuid) &&
               serviceIdentifier == characteristic.service._id,
         )
         .handleError((errorJson) =>
