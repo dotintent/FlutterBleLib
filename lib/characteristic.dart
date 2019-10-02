@@ -11,11 +11,10 @@ abstract class _CharacteristicMetadata {
   static const String value = "value";
 }
 
-class Characteristic {
+class Characteristic extends InternalCharacteristic {
   Service service;
   ManagerForCharacteristic _manager;
   String uuid;
-  int _id;
   bool isReadable;
   bool isWritableWithResponse;
   bool isWritableWithoutResponse;
@@ -24,22 +23,23 @@ class Characteristic {
 
   Characteristic.fromJson(Map<String, dynamic> jsonObject, Service service,
       ManagerForCharacteristic manager)
-      : _manager = manager,
-        service = service,
-        _id = jsonObject[_CharacteristicMetadata.id],
-        uuid = jsonObject[_CharacteristicMetadata.uuid],
-        isReadable = jsonObject[_CharacteristicMetadata.isReadable],
-        isWritableWithResponse =
-            jsonObject[_CharacteristicMetadata.isWritableWithResponse],
-        isWritableWithoutResponse =
-            jsonObject[_CharacteristicMetadata.isWritableWithoutResponse],
-        isNotifiable = jsonObject[_CharacteristicMetadata.isNotifiable],
-        isIndicatable = jsonObject[_CharacteristicMetadata.isIndicatable];
+      : super(jsonObject[_CharacteristicMetadata.id]) {
+    _manager = manager;
+    service = service;
+    uuid = jsonObject[_CharacteristicMetadata.uuid];
+    isReadable = jsonObject[_CharacteristicMetadata.isReadable];
+    isWritableWithResponse =
+        jsonObject[_CharacteristicMetadata.isWritableWithResponse];
+    isWritableWithoutResponse =
+        jsonObject[_CharacteristicMetadata.isWritableWithoutResponse];
+    isNotifiable = jsonObject[_CharacteristicMetadata.isNotifiable];
+    isIndicatable = jsonObject[_CharacteristicMetadata.isIndicatable];
+  }
 
   Future<Uint8List> read({String transactionId}) =>
       _manager.readCharacteristicForIdentifier(
         service.peripheral,
-        _id,
+        this,
         transactionId,
       );
 
@@ -50,7 +50,7 @@ class Characteristic {
   }) =>
       _manager.writeCharacteristicForIdentifier(
         service.peripheral,
-        _id,
+        this,
         bytes,
         withResponse,
         transactionId,
@@ -59,7 +59,7 @@ class Characteristic {
   Stream<Uint8List> monitor({String transactionId}) =>
       _manager.monitorCharacteristicForIdentifier(
         service.peripheral,
-        _id,
+        this,
         transactionId,
       );
 }
