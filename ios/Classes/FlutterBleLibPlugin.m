@@ -293,7 +293,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 - (void)readRSSIForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
     [_manager readRSSIForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
                   transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
-                        resolve:result
+                        resolve:[self resolveForReadRSSIForDevice:result]
                          reject:[self rejectForFlutterResult:result]];
 }
 
@@ -377,6 +377,12 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 - (Resolve)resolveForRequestMTUForDevice:(FlutterResult)result {
     return ^(NSDictionary *peripheral) {
         result([peripheral objectForKey:@"mtu"]);
+    };
+}
+
+- (Resolve)resolveForReadRSSIForDevice:(FlutterResult)result {
+    return ^(NSDictionary *peripheral) {
+        result([peripheral objectForKey:@"rssi"]);
     };
 }
 
