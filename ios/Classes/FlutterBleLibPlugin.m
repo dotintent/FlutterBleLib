@@ -286,6 +286,15 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
                            reject:[self rejectForFlutterResult:result]];
 }
 
+// MARK: - MBA Methods - RSSI
+
+- (void)readRSSIForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager readRSSIForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
+                  transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                        resolve:result
+                         reject:[self rejectForFlutterResult:result]];
+}
+
 // MARK: - MBA Methods - BleClientManagerDelegate implementation
 
 - (void)dispatchEvent:(NSString * _Nonnull)name value:(id _Nonnull)value {
