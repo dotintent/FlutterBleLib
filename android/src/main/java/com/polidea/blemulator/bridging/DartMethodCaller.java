@@ -15,6 +15,7 @@ import com.polidea.multiplatformbleadapter.errors.BleError;
 import com.polidea.multiplatformbleadapter.errors.BleErrorCode;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import io.flutter.plugin.common.MethodChannel;
 
@@ -130,7 +131,7 @@ public class DartMethodCaller {
             @Override
             public void error(String s, @Nullable String s1, @Nullable Object o) {
                 Log.e(TAG, s);
-                onErrorCallback.onError(new BleError(BleErrorCode.DeviceConnectionFailed, "", 0)); //TODO
+                onErrorCallback.onError(objectToBleError(o));
             }
 
             @Override
@@ -155,7 +156,7 @@ public class DartMethodCaller {
             @Override
             public void error(String s, @Nullable String s1, @Nullable Object o) {
                 Log.e(TAG, s);
-                onErrorCallback.onError(new BleError(BleErrorCode.DeviceConnectionFailed, "", 0)); //TODO
+                onErrorCallback.onError(objectToBleError(o));
             }
 
             @Override
@@ -181,7 +182,7 @@ public class DartMethodCaller {
             @Override
             public void error(String s, @Nullable String s1, @Nullable Object o) {
                 Log.e(TAG, s);
-                onErrorCallback.onError(new BleError(BleErrorCode.DeviceConnectionFailed, "", 0)); //TODO
+                onErrorCallback.onError(objectToBleError(o));
             }
 
             @Override
@@ -189,5 +190,17 @@ public class DartMethodCaller {
                 Log.e(TAG, "CONNECT TO DEVICE not implemented");
             }
         });
+    }
+
+    private BleError objectToBleError(Object o) {
+        Map<String, Object> error = (Map<String, Object>) o;
+        if (error.containsKey("errorCode") && error.containsKey("reason")) {
+            for (BleErrorCode errorCode : BleErrorCode.values()) {
+                if (errorCode.code == (Integer) error.get("errorCode")) {
+                    return new BleError(errorCode, (String) error.get("reason"), 0);
+                }
+            }
+        }
+        return new BleError(BleErrorCode.UnknownError, "Wrong format of error from Dart BLEmulator", 0);
     }
 }
