@@ -35,4 +35,8 @@ NSString * const METHOD_NAME_WRITE_CHARACTERISTIC_FOR_IDENTIFIER = @"writeCharac
 NSString * const METHOD_NAME_WRITE_CHARACTERISTIC_FOR_DEVICE = @"writeCharacteristicForDevice";
 NSString * const METHOD_NAME_WRITE_CHARACTERISTIC_FOR_SERVICE = @"writeCharacteristicForService";
 
+NSString * const METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_IDENTIFIER = @"monitorCharacteristicForIdentifier";
+NSString * const METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_DEVICE = @"monitorCharacteristicForDevice";
+NSString * const METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_SERVICE = @"monitorCharacteristicForService";
+
 @end
