@@ -217,6 +217,19 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
                    transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
                          resolve:[self resolveForReadCharacteristic:result]
                           reject:[self rejectForFlutterResult:result]];
+                          
+// MARK: - MBA Methods - Known / Connected devices
+
+- (void)devices:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager devices:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIERS]
+              resolve:result
+               reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)connectedDevices:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager connectedDevices:call.arguments[ARGUMENT_KEY_UUIDS]
+                       resolve:result
+                        reject:[self rejectForFlutterResult:result]];
 }
 
 // MARK: - MBA Methods - BleClientManagerDelegate implementation
