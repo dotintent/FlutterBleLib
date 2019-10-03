@@ -91,6 +91,10 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
         [self readCharacteristicForService:call result:result];
     } else if ([METHOD_NAME_READ_CHARACTERISTIC_FOR_IDENTIFIER isEqualToString:call.method]) {
         [self readCharacteristic:call result:result];
+    } else if ([METHOD_NAME_GET_KNOWN_DEVICES isEqualToString:call.method]) {
+        [self devices:call result:result];
+    } else if ([METHOD_NAME_GET_CONNECTED_DEVICES isEqualToString:call.method]) {
+        [self connectedDevices:call result:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -217,7 +221,8 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
                    transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
                          resolve:[self resolveForReadCharacteristic:result]
                           reject:[self rejectForFlutterResult:result]];
-                          
+}
+
 // MARK: - MBA Methods - Known / Connected devices
 
 - (void)devices:(FlutterMethodCall *)call result:(FlutterResult)result {
