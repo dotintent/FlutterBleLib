@@ -102,6 +102,8 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
         [self devices:call result:result];
     } else if ([METHOD_NAME_GET_CONNECTED_DEVICES isEqualToString:call.method]) {
         [self connectedDevices:call result:result];
+    } else if ([METHOD_NAME_REQUEST_MTU isEqualToString:call.method]) {
+        [self requestMTUForDevice:call result:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
