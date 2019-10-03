@@ -10,6 +10,7 @@
 #import "Util/ArgumentValidator.h"
 #import "Util/FlutterErrorFactory.h"
 #import "Util/JSONStringifier.h"
+#import "ResponseConverter/CharacteristicResponseConverter.h"
 
 typedef void (^Resolve)(id result);
 typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
@@ -84,6 +85,12 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
         [self characteristicsForService:call result:result];
     } else if ([METHOD_NAME_GET_CHARACTERISTICS isEqualToString:call.method]) {
         [self characteristics:call result:result];
+    } else if ([METHOD_NAME_READ_CHARACTERISTIC_FOR_DEVICE isEqualToString:call.method]) {
+        [self readCharacteristicForDevice:call result:result];
+    } else if ([METHOD_NAME_READ_CHARACTERISTIC_FOR_SERVICE isEqualToString:call.method]) {
+        [self readCharacteristicForService:call result:result];
+    } else if ([METHOD_NAME_READ_CHARACTERISTIC_FOR_IDENTIFIER isEqualToString:call.method]) {
+        [self readCharacteristic:call result:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -186,6 +193,32 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
                          reject:[self rejectForFlutterResult:result]];
 }
 
+// MARK: - MBA Methods - Characteristics observation
+
+- (void)readCharacteristicForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager readCharacteristicForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
+                              serviceUUID:call.arguments[ARGUMENT_KEY_SERVICE_UUID]
+                       characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
+                            transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                                  resolve:[self resolveForReadCharacteristic:result]
+                                   reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)readCharacteristicForService:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager readCharacteristicForService:[call.arguments[ARGUMENT_KEY_SERVICE_ID] doubleValue]
+                        characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
+                             transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                                   resolve:[self resolveForReadCharacteristic:result]
+                                    reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)readCharacteristic:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager readCharacteristic:[call.arguments[ARGUMENT_KEY_CHARACTERISTIC_IDENTIFIER] doubleValue]
+                   transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                         resolve:[self resolveForReadCharacteristic:result]
+                          reject:[self rejectForFlutterResult:result]];
+}
+
 // MARK: - MBA Methods - BleClientManagerDelegate implementation
 
 - (void)dispatchEvent:(NSString * _Nonnull)name value:(id _Nonnull)value {
@@ -248,6 +281,12 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
         [_manager characteristicsForService:[[matchingService valueForKey:@"id"] doubleValue]
                             resolve:resolve
                              reject:[self rejectForFlutterResult:result]];
+    };
+}
+
+- (Resolve)resolveForReadCharacteristic:(FlutterResult)result {
+    return ^(NSDictionary *characteristicResponse) {
+        result([CharacteristicResponseConverter jsonStringFromCharacteristicResponse:characteristicResponse]);
     };
 }
 
