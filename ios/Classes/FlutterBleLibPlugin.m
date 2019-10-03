@@ -282,7 +282,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
     [_manager requestMTUForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
                               mtu:[call.arguments[ARGUMENT_KEY_MTU] integerValue]
                     transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
-                          resolve:result
+                          resolve:[self resolveForRequestMTUForDevice:result]
                            reject:[self rejectForFlutterResult:result]];
 }
 
@@ -360,6 +360,12 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 - (Resolve)resolveForKnownConnectedDevices:(FlutterResult)result {
     return ^(NSArray *peripheralsResponse) {
         result([PeripheralResponseConverter jsonStringFromPeripheralResponse:peripheralsResponse]);
+    };
+}
+
+- (Resolve)resolveForRequestMTUForDevice:(FlutterResult)result {
+    return ^(NSDictionary *peripheral) {
+        result([peripheral objectForKey:@"mtu"]);
     };
 }
 
