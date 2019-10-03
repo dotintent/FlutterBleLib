@@ -11,6 +11,7 @@
 #import "Util/FlutterErrorFactory.h"
 #import "Util/JSONStringifier.h"
 #import "ResponseConverter/CharacteristicResponseConverter.h"
+#import "ResponseConverter/PeripheralResponseConverter.h"
 
 typedef void (^Resolve)(id result);
 typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
@@ -309,8 +310,8 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 }
 
 - (Resolve)resolveForKnownConnectedDevices:(FlutterResult)result {
-    return ^(id resultValue) {
-        result([JSONStringifier jsonStringFromJSONObject:resultValue]);
+    return ^(NSArray *peripheralsResponse) {
+        result([PeripheralResponseConverter jsonStringFromPeripheralResponse:peripheralsResponse]);
     };
 }
 
