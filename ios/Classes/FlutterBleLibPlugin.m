@@ -269,6 +269,31 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
                            reject:[self rejectForFlutterResult:result]];
 }
 
+- (void)monitorCharacteristicForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager monitorCharacteristicForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
+                                 serviceUUID:call.arguments[ARGUMENT_KEY_SERVICE_UUID]
+                          characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
+                               transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                                     resolve:result
+                                      reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)monitorCharacteristicForService:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager monitorCharacteristicForService:[call.arguments[ARGUMENT_KEY_SERVICE_ID] doubleValue]
+                           characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
+                                transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                                      resolve:result
+                                       reject:[self rejectForFlutterResult:result]];
+
+}
+
+- (void)monitorCharacteristic:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager monitorCharacteristic:[call.arguments[ARGUMENT_KEY_CHARACTERISTIC_IDENTIFIER] doubleValue]
+                      transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                            resolve:result
+                             reject:[self rejectForFlutterResult:result]];
+}
+
 // MARK: - MBA Methods - Known / Connected devices
 
 - (void)devices:(FlutterMethodCall *)call result:(FlutterResult)result {
