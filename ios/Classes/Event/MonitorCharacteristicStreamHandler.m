@@ -14,4 +14,10 @@
     return nil;
 }
 
+- (void)onReadEvent:(id)value {
+    if (characteristicEventSink != nil) {
+        characteristicEventSink(value);
+    }
+}
+
 @end

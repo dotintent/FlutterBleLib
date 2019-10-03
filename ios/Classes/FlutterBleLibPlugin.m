@@ -315,6 +315,8 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
         [self.connectionStateStreamHandler onConnectingEvent:(NSString *)value];
     } else if ([BleEvent.connectedEvent isEqualToString:name]) {
         [self.connectionStateStreamHandler onConnectedEvent:(NSString *)value];
+    } else if ([BleEvent.readEvent isEqualToString:name]) {
+        [self.monitorCharacteristicStreamHandler onReadEvent:value];
     }
 }
 
