@@ -227,13 +227,13 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 
 - (void)devices:(FlutterMethodCall *)call result:(FlutterResult)result {
     [_manager devices:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIERS]
-              resolve:result
+              resolve:[self resolveForKnownConnectedDevices:result]
                reject:[self rejectForFlutterResult:result]];
 }
 
 - (void)connectedDevices:(FlutterMethodCall *)call result:(FlutterResult)result {
     [_manager connectedDevices:call.arguments[ARGUMENT_KEY_UUIDS]
-                       resolve:result
+                       resolve:[self resolveForKnownConnectedDevices:result]
                         reject:[self rejectForFlutterResult:result]];
 }
 
@@ -267,6 +267,12 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
     return ^(NSArray *characteristicsArray) {
         result([JSONStringifier jsonStringFromJSONObject:[self arrayReplacingKeys:@[@[@"uuid", @"characteristicUuid"]]
                                                                           inArray:characteristicsArray]]);
+    };
+}
+
+- (Resolve)resolveForKnownConnectedDevices:(FlutterResult)result {
+    return ^(id resultValue) {
+        result([JSONStringifier jsonStringFromJSONObject:resultValue]);
     };
 }
 
