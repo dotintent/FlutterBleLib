@@ -270,12 +270,6 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
     };
 }
 
-- (Resolve)resolveForKnownConnectedDevices:(FlutterResult)result {
-    return ^(id resultValue) {
-        result([JSONStringifier jsonStringFromJSONObject:resultValue]);
-    };
-}
-
 - (Resolve)resolveForCharacteristics:(FlutterResult)result serviceUuid:(NSString *)serviceUuid {
     return ^(NSArray *servicesArray) {
 
@@ -311,6 +305,12 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 - (Resolve)resolveForReadCharacteristic:(FlutterResult)result {
     return ^(NSDictionary *characteristicResponse) {
         result([CharacteristicResponseConverter jsonStringFromCharacteristicResponse:characteristicResponse]);
+    };
+}
+
+- (Resolve)resolveForKnownConnectedDevices:(FlutterResult)result {
+    return ^(id resultValue) {
+        result([JSONStringifier jsonStringFromJSONObject:resultValue]);
     };
 }
 
