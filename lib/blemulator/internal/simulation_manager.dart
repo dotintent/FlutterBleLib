@@ -64,9 +64,17 @@ class SimulationManager {
 
       if (canConnect) {
         _peripherals[identifier].onConnect();
+      } else {
+        return Future.error(<String, dynamic>{
+          "errorCode": BleErrorCode.DeviceAlreadyConnected,
+          "reason": "Peripheral $identifier is already connected",
+        });
       }
     } else {
-      return Future.error("Unknown device identifier $identifier");
+      return Future.error(<String, dynamic>{
+        "errorCode": BleErrorCode.DeviceNotFound,
+        "reason": "Unknown peripheral identifier $identifier",
+      });
     }
   }
 
@@ -74,15 +82,27 @@ class SimulationManager {
     if (_peripherals[identifier] != null) {
       return _peripherals[identifier].isConnected();
     } else {
-      return Future.error("Unknown device identifier $identifier");
+      return Future.error(<String, dynamic>{
+        "errorCode": BleErrorCode.DeviceNotFound,
+        "reason": "Unknown peripheral identifier $identifier",
+      });
     }
   }
 
   Future<void> _disconnectOrCancelConnection(String identifier) async {
     if (_peripherals[identifier] != null) {
+      if (!_peripherals[identifier].isConnected()) {
+        return Future.error(<String, dynamic>{
+          "errorCode": BleErrorCode.DeviceDisconnected,
+          "reason": "Peripheral $identifier already disconnected",
+        });
+      }
       return _peripherals[identifier].onDisconnect();
     } else {
-      return Future.error("Unknown device identifier $identifier");
+      return Future.error(<String, dynamic>{
+        "errorCode": BleErrorCode.DeviceNotFound,
+        "reason": "Unknown peripheral identifier $identifier",
+      });
     }
   }
 }
