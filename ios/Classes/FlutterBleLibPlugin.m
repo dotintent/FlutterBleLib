@@ -7,6 +7,7 @@
 #import "Event/RestoreStateStreamHandler.h"
 #import "Event/ScanningStreamHandler.h"
 #import "Event/ConnectionStateStreamHandler.h"
+#import "Event/MonitorCharacteristicStreamHandler.h"
 #import "Util/ArgumentValidator.h"
 #import "Util/FlutterErrorFactory.h"
 #import "Util/JSONStringifier.h"
@@ -23,6 +24,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 @property (nonatomic) RestoreStateStreamHandler *restoreStateStreamHandler;
 @property (nonatomic) ScanningStreamHandler *scanningStreamHandler;
 @property (nonatomic) ConnectionStateStreamHandler *connectionStateStreamHandler;
+@property (nonatomic) MonitorCharacteristicStreamHandler *monitorCharacteristicStreamHandler;
 
 @end
 
@@ -37,6 +39,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
         self.restoreStateStreamHandler = [RestoreStateStreamHandler new];
         self.scanningStreamHandler = [ScanningStreamHandler new];
         self.connectionStateStreamHandler = [ConnectionStateStreamHandler new];
+        self.monitorCharacteristicStreamHandler = [MonitorCharacteristicStreamHandler new];
     }
     return self;
 }
@@ -50,6 +53,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
     FlutterEventChannel *restoreStateChannel = [FlutterEventChannel eventChannelWithName:CHANNEL_NAME_STATE_RESTORE_EVENTS binaryMessenger:[registrar messenger]];
     FlutterEventChannel *scanningChannel = [FlutterEventChannel eventChannelWithName:CHANNEL_NAME_SCANNING_EVENTS binaryMessenger:[registrar messenger]];
     FlutterEventChannel *connectionStateChannel = [FlutterEventChannel eventChannelWithName:CHANNEL_NAME_CONNECTION_STATE_CHANGE_EVENTS binaryMessenger:[registrar messenger]];
+    FlutterEventChannel *monitorCharacteristicChannel = [FlutterEventChannel eventChannelWithName:CHANNEL_NAME_MONITOR_CHARACTERISTIC binaryMessenger:[registrar messenger]];
 
     FlutterBleLibPlugin *instance = [[FlutterBleLibPlugin alloc] init];
     
@@ -59,6 +63,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
     [restoreStateChannel setStreamHandler:instance.restoreStateStreamHandler];
     [scanningChannel setStreamHandler:instance.scanningStreamHandler];
     [connectionStateChannel setStreamHandler:instance.connectionStateStreamHandler];
+    [monitorCharacteristicChannel setStreamHandler:instance.monitorCharacteristicStreamHandler];
 }
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
