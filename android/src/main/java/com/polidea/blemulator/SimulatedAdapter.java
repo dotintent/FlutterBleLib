@@ -15,6 +15,8 @@ import com.polidea.multiplatformbleadapter.OnSuccessCallback;
 import com.polidea.multiplatformbleadapter.ScanResult;
 import com.polidea.multiplatformbleadapter.Service;
 import com.polidea.multiplatformbleadapter.errors.BleError;
+import com.polidea.multiplatformbleadapter.utils.Constants;
+import com.polidea.multiplatformbleadapter.utils.LogLevel;
 
 import java.util.HashMap;
 
@@ -25,6 +27,7 @@ public class SimulatedAdapter implements BleAdapter {
     private HashMap<String, String> knownPeripherals = new HashMap<>();
     private DartMethodCaller dartMethodCaller;
     private DartValueHandler dartValueHandler;
+    private String logLevel = Constants.BluetoothLogLevel.NONE;
 
     SimulatedAdapter(DartMethodCaller dartMethodCaller, DartValueHandler dartValueHandler) {
         this.dartMethodCaller = dartMethodCaller;
@@ -296,11 +299,12 @@ public class SimulatedAdapter implements BleAdapter {
     @Override
     public void setLogLevel(String logLevel) {
         Log.i(TAG, "setLogLevel");
+        this.logLevel = logLevel;
     }
 
     @Override
     public String getLogLevel() {
         Log.i(TAG, "getLogLevel");
-        return null;
+        return logLevel;
     }
 }
