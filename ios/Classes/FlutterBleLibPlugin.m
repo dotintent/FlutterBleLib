@@ -104,6 +104,8 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
         [self connectedDevices:call result:result];
     } else if ([METHOD_NAME_REQUEST_MTU isEqualToString:call.method]) {
         [self requestMTUForDevice:call result:result];
+    } else if ([METHOD_NAME_RSSI isEqualToString:call.method]) {
+        [self readRSSIForDevice:call result:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
