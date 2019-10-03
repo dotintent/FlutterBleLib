@@ -103,6 +103,12 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
         [self writeCharacteristicForService:call result:result];
     } else if ([METHOD_NAME_WRITE_CHARACTERISTIC_FOR_IDENTIFIER isEqualToString:call.method]) {
         [self writeCharacteristic:call result:result];
+    } else if ([METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_DEVICE isEqualToString:call.method]) {
+        [self monitorCharacteristicForDevice:call result:result];
+    } else if ([METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_SERVICE isEqualToString:call.method]) {
+        [self monitorCharacteristicForService:call result:result];
+    } else if ([METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_IDENTIFIER isEqualToString:call.method]) {
+        [self monitorCharacteristic:call result:result];
     } else if ([METHOD_NAME_GET_KNOWN_DEVICES isEqualToString:call.method]) {
         [self devices:call result:result];
     } else if ([METHOD_NAME_GET_CONNECTED_DEVICES isEqualToString:call.method]) {
