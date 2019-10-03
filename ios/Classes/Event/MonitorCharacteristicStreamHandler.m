@@ -1,4 +1,6 @@
 #import "MonitorCharacteristicStreamHandler.h"
+#import "CharacteristicResponseConverter.h"
+#import "FlutterErrorFactory.h"
 
 @implementation MonitorCharacteristicStreamHandler {
     FlutterEventSink characteristicEventSink;
@@ -14,9 +16,13 @@
     return nil;
 }
 
-- (void)onReadEvent:(id)value {
+- (void)onReadEvent:(NSArray *)readResult {
     if (characteristicEventSink != nil) {
-        characteristicEventSink(value);
+        if (readResult[0] == [NSNull null]) {
+            characteristicEventSink([CharacteristicResponseConverter jsonStringFromCharacteristicResponse:readResult[1]]);
+        } else {
+            characteristicEventSink([FlutterErrorFactory flutterErrorFromJSONString:readResult[0]]);
+        }
     }
 }
 

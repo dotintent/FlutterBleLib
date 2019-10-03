@@ -280,7 +280,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
                                  serviceUUID:call.arguments[ARGUMENT_KEY_SERVICE_UUID]
                           characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
                                transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
-                                     resolve:result
+                                     resolve:[self resolveForMonitorCharacteristic:result]
                                       reject:[self rejectForFlutterResult:result]];
 }
 
@@ -288,7 +288,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
     [_manager monitorCharacteristicForService:[call.arguments[ARGUMENT_KEY_SERVICE_ID] doubleValue]
                            characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
                                 transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
-                                      resolve:result
+                                      resolve:[self resolveForMonitorCharacteristic:result]
                                        reject:[self rejectForFlutterResult:result]];
 
 }
@@ -296,7 +296,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 - (void)monitorCharacteristic:(FlutterMethodCall *)call result:(FlutterResult)result {
     [_manager monitorCharacteristic:[call.arguments[ARGUMENT_KEY_CHARACTERISTIC_IDENTIFIER] doubleValue]
                       transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
-                            resolve:result
+                            resolve:[self resolveForMonitorCharacteristic:result]
                              reject:[self rejectForFlutterResult:result]];
 }
 
@@ -403,6 +403,12 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 - (Resolve)resolveForReadWriteCharacteristic:(FlutterResult)result {
     return ^(NSDictionary *characteristicResponse) {
         result([CharacteristicResponseConverter jsonStringFromCharacteristicResponse:characteristicResponse]);
+    };
+}
+
+- (Resolve)resolveForMonitorCharacteristic:(FlutterResult)result {
+    return ^(id response) {
+        result(nil);
     };
 }
 

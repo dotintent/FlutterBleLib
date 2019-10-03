@@ -2,6 +2,6 @@
 
 @interface MonitorCharacteristicStreamHandler : NSObject<FlutterStreamHandler>
 
-- (void)onReadEvent:(id)value;
+- (void)onReadEvent:(NSArray *)readResult;
 
 @end
