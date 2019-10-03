@@ -274,6 +274,16 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
                         reject:[self rejectForFlutterResult:result]];
 }
 
+// MARK: - MBA Methods - MTU
+
+- (void)requestMTUForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager requestMTUForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
+                              mtu:[call.arguments[ARGUMENT_KEY_MTU] integerValue]
+                    transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                          resolve:result
+                           reject:[self rejectForFlutterResult:result]];
+}
+
 // MARK: - MBA Methods - BleClientManagerDelegate implementation
 
 - (void)dispatchEvent:(NSString * _Nonnull)name value:(id _Nonnull)value {
