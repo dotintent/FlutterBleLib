@@ -10,6 +10,7 @@
 #import "Util/ArgumentValidator.h"
 #import "Util/FlutterErrorFactory.h"
 #import "Util/JSONStringifier.h"
+#import "ResponseConverter/CharacteristicResponseConverter.h"
 
 typedef void (^Resolve)(id result);
 typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
@@ -284,10 +285,8 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 }
 
 - (Resolve)resolveForReadCharacteristic:(FlutterResult)result {
-    return ^(NSDictionary *characteristicDictionary) {
-        NSMutableDictionary *resultDictionary = [[NSMutableDictionary alloc] initWithDictionary:characteristicDictionary];
-        [resultDictionary setObject:characteristicDictionary forKey:@"characteristic"];
-        result([JSONStringifier jsonStringFromJSONObject:resultDictionary]);
+    return ^(NSDictionary *characteristicResponse) {
+        result([CharacteristicResponseConverter jsonStringFromCharacteristicResponse:characteristicResponse]);
     };
 }
 
