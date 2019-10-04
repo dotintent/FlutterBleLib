@@ -2,6 +2,12 @@
 
 extern NSString * const METHOD_NAME_CREATE_CLIENT;
 extern NSString * const METHOD_NAME_DESTROY_CLIENT;
+
+extern NSString * const METHOD_NAME_GET_STATE;
+
+extern NSString * const METHOD_NAME_ENABLE_RADIO;
+extern NSString * const METHOD_NAME_DISABLE_RADIO;
+
 extern NSString * const METHOD_NAME_START_DEVICE_SCAN;
 extern NSString * const METHOD_NAME_STOP_DEVICE_SCAN;
 
