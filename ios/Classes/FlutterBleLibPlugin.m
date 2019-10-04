@@ -129,6 +129,25 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
     [self destroyClient];
 }
 
+// MARK: - MBA Methods - BT state monitoring
+
+- (void)enable:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager enable:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]
+             resolve:result
+              reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)disable:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager disable:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]
+              resolve:result
+               reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)state:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager state:result
+             reject:[self rejectForFlutterResult:result]];
+}
+
 // MARK: - MBA Methods - Scanning
 
 - (void)startDeviceScan:(FlutterMethodCall *)call result:(FlutterResult)result {
