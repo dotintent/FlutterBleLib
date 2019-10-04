@@ -27,6 +27,13 @@ class PlatformToDartBridge {
         return _disconnectOrCancelConnection(call);
       case DartMethodName.discoverAllServicesAndCharacteristics:
         return _discoverAllServicesAndCharacteristics(call);
+        return _stopDeviceScan();
+      case DartMethodName.readCharacteristicForDevice:
+        return _readCharacteristicForDevice(call);
+      case DartMethodName.readCharacteristicForService:
+        return _readCharacteristicForService(call);
+      case DartMethodName.readCharacteristicForIdentifier:
+        return _readCharacteristicForIdentifier(call);
       default:
         return Future.error(
           SimulatedBleError(
@@ -86,4 +93,57 @@ class PlatformToDartBridge {
 
     return mapped;
   }
+
+  Future<dynamic> _readCharacteristicForIdentifier(MethodCall call) async {
+    Map<dynamic, dynamic> arguments = call.arguments;
+    return _manager
+        ._readCharacteristicForIdentifier(
+            arguments[SimulationArgumentName.characteristicId])
+        .then((characteristic) => _convertToMap(
+            arguments[SimulationArgumentName.deviceIdentifier],
+            characteristic));
+  }
+
+  Future<dynamic> _readCharacteristicForDevice(MethodCall call) async {
+    Map<dynamic, dynamic> arguments = call.arguments;
+    return _manager
+        ._readCharacteristicForDevice(
+          arguments[SimulationArgumentName.deviceIdentifier],
+          arguments[SimulationArgumentName.serviceUuid],
+          arguments[SimulationArgumentName.characteristicUuid],
+        )
+        .then((characteristic) => _convertToMap(
+            arguments[SimulationArgumentName.deviceIdentifier],
+            characteristic));
+  }
+
+  Future<dynamic> _readCharacteristicForService(MethodCall call) async {
+    Map<dynamic, dynamic> arguments = call.arguments;
+    return _manager
+        ._readCharacteristicForService(
+          arguments[SimulationArgumentName.serviceId],
+          arguments[SimulationArgumentName.characteristicUuid],
+        )
+        .then((characteristic) => _convertToMap(
+            arguments[SimulationArgumentName.deviceIdentifier],
+            characteristic));
+  }
+
+  Map<String, dynamic> _convertToMap(
+          String peripheralId, CharacteristicResponse response) =>
+      <String, dynamic>{
+        Metadata.deviceIdentifier: peripheralId,
+        Metadata.characteristicUuid: response.characteristic.uuid,
+        Metadata.value: response.value,
+        Metadata.serviceUuid: response.characteristic.service.uuid,
+        Metadata.serviceId: response.characteristic.service.id,
+        Metadata.isReadable: response.characteristic.isReadable,
+        Metadata.isWritableWithResponse:
+            response.characteristic.isWritableWithResponse,
+        Metadata.isWritableWithoutResponse:
+            response.characteristic.isWritableWithoutResponse,
+        Metadata.isNotifiable: response.characteristic.isNotifiable,
+        Metadata.isNotifying: response.characteristic.isNotifying,
+        Metadata.isIndicatable: response.characteristic.isIndicatable,
+      };
 }
