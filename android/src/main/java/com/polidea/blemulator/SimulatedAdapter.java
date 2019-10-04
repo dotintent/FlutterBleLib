@@ -15,6 +15,7 @@ import com.polidea.multiplatformbleadapter.OnSuccessCallback;
 import com.polidea.multiplatformbleadapter.ScanResult;
 import com.polidea.multiplatformbleadapter.Service;
 import com.polidea.multiplatformbleadapter.errors.BleError;
+import com.polidea.multiplatformbleadapter.utils.Constants;
 
 public class SimulatedAdapter implements BleAdapter {
 
@@ -179,6 +180,8 @@ public class SimulatedAdapter implements BleAdapter {
                                             OnSuccessCallback<Characteristic> onSuccessCallback,
                                             OnErrorCallback onErrorCallback) {
         Log.i(TAG, "readCharacteristicForDevice");
+        dartMethodCaller.readCharacteristicForDevice(
+                deviceIdentifier, serviceUUID, characteristicUUID, onSuccessCallback, onErrorCallback);
     }
 
     @Override
@@ -188,6 +191,8 @@ public class SimulatedAdapter implements BleAdapter {
                                              OnSuccessCallback<Characteristic> onSuccessCallback,
                                              OnErrorCallback onErrorCallback) {
         Log.i(TAG, "readCharacteristicForService");
+        dartMethodCaller.readCharacteristicForService(
+                serviceIdentifier, characteristicUUID, onSuccessCallback, onErrorCallback);
     }
 
     @Override
@@ -196,6 +201,8 @@ public class SimulatedAdapter implements BleAdapter {
                                    OnSuccessCallback<Characteristic> onSuccessCallback,
                                    OnErrorCallback onErrorCallback) {
         Log.i(TAG, "readCharacteristic");
+        dartMethodCaller.readCharacteristic(
+                characteristicIdentifer, onSuccessCallback, onErrorCallback);
     }
 
     @Override

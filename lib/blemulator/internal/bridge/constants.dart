@@ -20,9 +20,22 @@ abstract class DartMethodName {
 
   static const String startDeviceScan = "startDeviceScan";
   static const String stopDeviceScan = "stopDeviceScan";
+
+  static const String readCharacteristicForIdentifier =
+      "readCharacteristicForIdentifier";
+  static const String readCharacteristicForDevice =
+      "readCharacteristicForDevice";
+  static const String readCharacteristicForService =
+      "readCharacteristicForService";
 }
 
 abstract class ArgumentName {
+  static const String deviceIdentifier = "deviceIdentifier";
+  static const String serviceUuid = "serviceUuid";
+  static const String serviceId = "serviceId";
+  static const String characteristicUuid = "characteristicUuid";
+  static const String characteristicId = "characteristicUuid";
+  static const String bytes = "bytes";
   static const String name = "name";
   static const String id = "id";
   static const String mtu = "mtu";
