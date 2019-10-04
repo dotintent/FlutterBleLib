@@ -29,9 +29,21 @@ abstract class DartMethodName {
 
   static const String discoverAllServicesAndCharacteristics =
       "discoverAllServicesAndCharacteristics";
+
+  static const String readCharacteristicForIdentifier =
+      "readCharacteristicForIdentifier";
+  static const String readCharacteristicForDevice =
+      "readCharacteristicForDevice";
+  static const String readCharacteristicForService =
+      "readCharacteristicForService";
 }
 
 abstract class SimulationArgumentName {
+  static const String deviceIdentifier = "deviceIdentifier";
+  static const String serviceUuid = "serviceUuid";
+  static const String serviceId = "serviceId";
+  static const String characteristicUuid = "characteristicUuid";
+  static const String characteristicId = "characteristicUuid";
   static const String name = "name";
   static const String id = "id";
   static const String mtu = "mtu";
@@ -50,6 +62,22 @@ abstract class SimulationArgumentName {
   static const String serviceUuid = "serviceUuid";
   static const String characteristics = "characteristics";
   static const String uuid = "uuid";
+}
+
+abstract class Metadata {
+  static const String deviceIdentifier = "deviceIdentifier";
+
+  static const String serviceId = "serviceId";
+  static const String serviceUuid = "serviceUuid";
+  static const String characteristicUuid = "characteristicUuid";
+  static const String characteristicId = "characteristicId";
+  static const String isReadable = "isReadable";
+  static const String isWritableWithResponse = "isWritableWithResponse";
+  static const String isWritableWithoutResponse = "isWritableWithoutResponse";
+  static const String isNotifiable = "isNotifiable";
+  static const String isNotifying = "isNotifying";
+  static const String isIndicatable = "isIndicatable";
+  static const String value = "value";
 }
 
 abstract class ArgumentName {
