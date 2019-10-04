@@ -81,13 +81,13 @@ abstract class SimulatedPeripheral {
 
   Future<void> onDiscoveryRequest() async {}
 
-  void onConnect() {
+  Future<void> onConnect() async {
     _isConnected = true;
     _connectionStateStreamController
         .add(FlutterBLELib.PeripheralConnectionState.connected);
   }
 
-  void onDisconnect() {
+  Future<void> onDisconnect() async {
     _isConnected = false;
     _connectionStateStreamController
         .add(FlutterBLELib.PeripheralConnectionState.disconnected);

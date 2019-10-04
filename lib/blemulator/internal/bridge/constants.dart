@@ -95,3 +95,10 @@ abstract class BleErrorCode {
   static const int ScanStartFailed = 600;
   static const int LocationServicesDisabled = 601;
 }
+
+abstract class NativeConnectionState {
+  static const String connecting = "CONNECTING";
+  static const String connected = "CONNECTED";
+  static const String disconnecting = "DISCONNECTING";
+  static const String disconnected = "DISCONNECTED";
+}

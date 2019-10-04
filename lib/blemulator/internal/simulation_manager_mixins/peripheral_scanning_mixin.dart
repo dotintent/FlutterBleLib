@@ -5,10 +5,10 @@ mixin PeripheralScanningMixing on SimulationManagerBase {
 
   Future<void> _startDeviceScan() async {
     _peripherals.values.forEach((peripheral) {
-      _scanSubscriptions
-          .add(peripheral.onScan(allowDuplicates: true).listen((scanResult) {
+      _scanSubscriptions.add(
+          peripheral.onScan(allowDuplicates: true).listen((scanResult) async {
         print(scanResult);
-        return _bridge.publishScanResult(scanResult);
+        await _bridge.publishScanResult(scanResult);
       }));
     });
   }

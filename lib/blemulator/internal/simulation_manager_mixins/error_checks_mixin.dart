@@ -11,7 +11,7 @@ mixin ErrorChecksMixin on SimulationManagerBase {
   }
 
   Future<void> _errorIfNotConnected(String identifier) async {
-    if (_peripherals[identifier] == null) {
+    if (!_peripherals[identifier].isConnected()) {
       return Future.error(<String, dynamic>{
         "errorCode": BleErrorCode.DeviceNotConnected,
         "reason": "Peripheral $identifier is not connected",
@@ -20,7 +20,7 @@ mixin ErrorChecksMixin on SimulationManagerBase {
   }
 
   Future<void> _errorIfUnknown(String identifier) async {
-    if (!_peripherals[identifier].isConnected()) {
+    if (_peripherals[identifier] == null) {
       return Future.error(<String, dynamic>{
         "errorCode": BleErrorCode.DeviceNotFound,
         "reason": "Unknown peripheral identifier $identifier",
