@@ -64,6 +64,12 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
     if ([METHOD_NAME_CREATE_CLIENT isEqualToString:call.method]) {
         [self createClient:call result:result];
+    } else if ([METHOD_NAME_ENABLE_RADIO isEqualToString:call.method]) {
+        [self enable:call result:result];
+    } else if ([METHOD_NAME_DISABLE_RADIO isEqualToString:call.method]) {
+        [self disable:call result:result];
+    } else if ([METHOD_NAME_GET_STATE isEqualToString:call.method]) {
+        [self state:call result:result];
     } else if ([METHOD_NAME_START_DEVICE_SCAN isEqualToString:call.method]) {
         [self startDeviceScan:call result:result];
     } else if ([METHOD_NAME_STOP_DEVICE_SCAN isEqualToString:call.method]) {
