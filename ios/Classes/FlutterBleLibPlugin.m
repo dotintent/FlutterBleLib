@@ -92,10 +92,20 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
         [self readCharacteristicForService:call result:result];
     } else if ([METHOD_NAME_READ_CHARACTERISTIC_FOR_IDENTIFIER isEqualToString:call.method]) {
         [self readCharacteristic:call result:result];
+    } else if ([METHOD_NAME_WRITE_CHARACTERISTIC_FOR_DEVICE isEqualToString:call.method]) {
+        [self writeCharacteristicForDevice:call result:result];
+    } else if ([METHOD_NAME_WRITE_CHARACTERISTIC_FOR_SERVICE isEqualToString:call.method]) {
+        [self writeCharacteristicForService:call result:result];
+    } else if ([METHOD_NAME_WRITE_CHARACTERISTIC_FOR_IDENTIFIER isEqualToString:call.method]) {
+        [self writeCharacteristic:call result:result];
     } else if ([METHOD_NAME_GET_KNOWN_DEVICES isEqualToString:call.method]) {
         [self devices:call result:result];
     } else if ([METHOD_NAME_GET_CONNECTED_DEVICES isEqualToString:call.method]) {
         [self connectedDevices:call result:result];
+    } else if ([METHOD_NAME_REQUEST_MTU isEqualToString:call.method]) {
+        [self requestMTUForDevice:call result:result];
+    } else if ([METHOD_NAME_RSSI isEqualToString:call.method]) {
+        [self readRSSIForDevice:call result:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -205,7 +215,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
                               serviceUUID:call.arguments[ARGUMENT_KEY_SERVICE_UUID]
                        characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
                             transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
-                                  resolve:[self resolveForReadCharacteristic:result]
+                                  resolve:[self resolveForReadWriteCharacteristic:result]
                                    reject:[self rejectForFlutterResult:result]];
 }
 
@@ -213,15 +223,45 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
     [_manager readCharacteristicForService:[call.arguments[ARGUMENT_KEY_SERVICE_ID] doubleValue]
                         characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
                              transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
-                                   resolve:[self resolveForReadCharacteristic:result]
+                                   resolve:[self resolveForReadWriteCharacteristic:result]
                                     reject:[self rejectForFlutterResult:result]];
 }
 
 - (void)readCharacteristic:(FlutterMethodCall *)call result:(FlutterResult)result {
     [_manager readCharacteristic:[call.arguments[ARGUMENT_KEY_CHARACTERISTIC_IDENTIFIER] doubleValue]
                    transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
-                         resolve:[self resolveForReadCharacteristic:result]
+                         resolve:[self resolveForReadWriteCharacteristic:result]
                           reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)writeCharacteristicForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager writeCharacteristicForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
+                               serviceUUID:call.arguments[ARGUMENT_KEY_SERVICE_UUID]
+                        characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
+                               valueBase64:[self base64encodedStringFromBytes:call.arguments[ARGUMENT_KEY_BYTES]]
+                                  response:(BOOL)call.arguments[ARGUMENT_KEY_WITH_RESPONSE]
+                             transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                                   resolve:[self resolveForReadWriteCharacteristic:result]
+                                    reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)writeCharacteristicForService:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager writeCharacteristicForService:[call.arguments[ARGUMENT_KEY_SERVICE_ID] doubleValue]
+                         characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
+                                valueBase64:[self base64encodedStringFromBytes:call.arguments[ARGUMENT_KEY_BYTES]]
+                                   response:(BOOL)call.arguments[ARGUMENT_KEY_WITH_RESPONSE]
+                              transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                                    resolve:[self resolveForReadWriteCharacteristic:result]
+                                     reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)writeCharacteristic:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager writeCharacteristic:[call.arguments[ARGUMENT_KEY_CHARACTERISTIC_IDENTIFIER] doubleValue]
+                      valueBase64:[self base64encodedStringFromBytes:call.arguments[ARGUMENT_KEY_BYTES]]
+                         response:(BOOL)call.arguments[ARGUMENT_KEY_WITH_RESPONSE]
+                    transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                          resolve:[self resolveForReadWriteCharacteristic:result]
+                           reject:[self rejectForFlutterResult:result]];
 }
 
 // MARK: - MBA Methods - Known / Connected devices
@@ -236,6 +276,25 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
     [_manager connectedDevices:call.arguments[ARGUMENT_KEY_UUIDS]
                        resolve:[self resolveForKnownConnectedDevices:result]
                         reject:[self rejectForFlutterResult:result]];
+}
+
+// MARK: - MBA Methods - MTU
+
+- (void)requestMTUForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager requestMTUForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
+                              mtu:[call.arguments[ARGUMENT_KEY_MTU] integerValue]
+                    transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                          resolve:[self resolveForRequestMTUForDevice:result]
+                           reject:[self rejectForFlutterResult:result]];
+}
+
+// MARK: - MBA Methods - RSSI
+
+- (void)readRSSIForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager readRSSIForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
+                  transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                        resolve:[self resolveForReadRSSIForDevice:result]
+                         reject:[self rejectForFlutterResult:result]];
 }
 
 // MARK: - MBA Methods - BleClientManagerDelegate implementation
@@ -303,7 +362,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
     };
 }
 
-- (Resolve)resolveForReadCharacteristic:(FlutterResult)result {
+- (Resolve)resolveForReadWriteCharacteristic:(FlutterResult)result {
     return ^(NSDictionary *characteristicResponse) {
         result([CharacteristicResponseConverter jsonStringFromCharacteristicResponse:characteristicResponse]);
     };
@@ -312,6 +371,18 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 - (Resolve)resolveForKnownConnectedDevices:(FlutterResult)result {
     return ^(NSArray *peripheralsResponse) {
         result([PeripheralResponseConverter jsonStringFromPeripheralResponse:peripheralsResponse]);
+    };
+}
+
+- (Resolve)resolveForRequestMTUForDevice:(FlutterResult)result {
+    return ^(NSDictionary *peripheral) {
+        result([peripheral objectForKey:@"mtu"]);
+    };
+}
+
+- (Resolve)resolveForReadRSSIForDevice:(FlutterResult)result {
+    return ^(NSDictionary *peripheral) {
+        result([peripheral objectForKey:@"rssi"]);
     };
 }
 
@@ -333,6 +404,10 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
         [newArray addObject:newDictionary];
     }
     return newArray;
+}
+
+- (NSString *)base64encodedStringFromBytes:(FlutterStandardTypedData *)bytes {
+    return [bytes.data base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
 }
 
 @end
