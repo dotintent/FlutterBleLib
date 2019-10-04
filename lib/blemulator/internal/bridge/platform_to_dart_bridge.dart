@@ -30,33 +30,33 @@ class PlatformToDartBridge {
     }
   }
 
-  Future<void> _createClient(MethodCall call) async {
-    await _manager._createClient();
+  Future<void> _createClient(MethodCall call) {
+    return _manager._createClient();
   }
 
-  Future<void> _destroyClient(MethodCall call) async {
-    await _manager._destroyClient();
+  Future<void> _destroyClient(MethodCall call) {
+    return _manager._destroyClient();
   }
 
-  Future<void> _startDeviceScan(MethodCall call) async {
-    await _manager._startDeviceScan();
+  Future<void> _startDeviceScan(MethodCall call) {
+    return _manager._startDeviceScan();
   }
 
-  Future<void> _stopDeviceScan(MethodCall call) async {
-    await _manager._stopDeviceScan();
+  Future<void> _stopDeviceScan(MethodCall call) {
+    return _manager._stopDeviceScan();
   }
 
-  Future<void> _connectToDevice(MethodCall call) async {
-    await _manager._connectToDevice(call.arguments[ArgumentName.id] as String);
+  Future<void> _connectToDevice(MethodCall call) {
+    return _manager._connectToDevice(call.arguments[ArgumentName.id] as String);
   }
 
-  Future<bool> _isDeviceConnected(MethodCall call) async {
-    return await _manager
+  Future<bool> _isDeviceConnected(MethodCall call) {
+    return _manager
         ._isDeviceConnected(call.arguments[ArgumentName.id] as String);
   }
 
-  Future<void> _disconnectOrCancelConnection(MethodCall call) async {
-    await _manager._disconnectOrCancelConnection(
+  Future<void> _disconnectOrCancelConnection(MethodCall call) {
+    return _manager._disconnectOrCancelConnection(
         call.arguments[ArgumentName.id] as String);
   }
 }

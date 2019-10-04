@@ -11,7 +11,7 @@ mixin PeripheralConnectionMixin on SimulationManagerBaseWithErrorChecks {
     await _errorIfConnected(identifier);
 
     await _errorIfCannotConnect(identifier);
-    _peripherals[identifier].onConnect();
+    return _peripherals[identifier].onConnect();
   }
 
   void addConnectionStateObserverIfNeeded(String identifier) {

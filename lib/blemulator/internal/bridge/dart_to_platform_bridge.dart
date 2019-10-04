@@ -40,13 +40,13 @@ class DartToPlatformBridge {
   String _connectionStateToString(PeripheralConnectionState state) {
     switch (state) {
       case PeripheralConnectionState.connecting:
-        return "CONNECTING";
+        return NativeConnectionState.connecting;
       case PeripheralConnectionState.connected:
-        return "CONNECTED";
+        return NativeConnectionState.connected;
       case PeripheralConnectionState.disconnecting:
-        return "DISCONNECTING";
+        return NativeConnectionState.disconnecting;
       case PeripheralConnectionState.disconnected:
-        return "DISCONNECTED";
+        return NativeConnectionState.disconnected;
       default:
         return null;
     }

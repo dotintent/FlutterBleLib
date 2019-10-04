@@ -25,7 +25,7 @@ public class DartValueHandler implements MethodChannel.MethodCallHandler {
     private static final String TAG = DartValueHandler.class.getSimpleName();
 
     private OnEventCallback<ScanResult> scanResultPublisher;
-    private Map<String, OnEventCallback<ConnectionState>> connectionStatePublishers = new LinkedHashMap<>();
+    private Map<String, OnEventCallback<ConnectionState>> connectionStatePublishers = new HashMap<>();
 
     public void setScanResultPublisher(OnEventCallback<ScanResult> scanResultPublisher) {
         this.scanResultPublisher = scanResultPublisher;
