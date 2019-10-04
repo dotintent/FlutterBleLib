@@ -100,11 +100,7 @@ abstract class SimulatedPeripheral {
   bool isConnected() => _isConnected;
 
   List<SimulatedService> services() {
-    if (!_discoveryDone) {
       return _services.values.toList();
-    } else {
-      throw Exception(); //TODO
-    }
   }
 
   SimulatedService service(int id) => _services[id];
