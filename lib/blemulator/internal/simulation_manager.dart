@@ -1,12 +1,8 @@
 part of internal;
 
-class SimulationManager {
-  Map<String, SimulatedPeripheral> _peripherals = Map();
-  List<StreamSubscription> _scanSubscriptions = [];
-  Map<String, StreamSubscription> _connectionStateSubscriptions = Map();
-  DartToPlatformBridge _bridge;
-
-  SimulationManager(this._bridge);
+class SimulationManager extends SimulationManagerBaseWithErrorChecks
+    with ClientManagingMixin, ErrorChecksMixin, PeripheralConnectionMixin, PeripheralScanningMixing {
+  SimulationManager(DartToPlatformBridge bridge) : super(bridge);
 
   void addSimulatedPeripheral(SimulatedPeripheral peripheral) {
     SimulatedPeripheral mapEntry =
@@ -21,88 +17,5 @@ class SimulationManager {
   void removeAllSimulatedPeripherals() {
     _peripherals.clear();
     //TODO notify bridge?
-  }
-
-  Future<void> _createClient() async {
-    print("entered create client");
-  }
-
-  Future<void> _destroyClient() async {}
-
-  Future<void> _startDeviceScan() async {
-    _peripherals.values.forEach((peripheral) {
-      _scanSubscriptions
-          .add(peripheral.onScan(allowDuplicates: true).listen((scanResult) {
-        print(scanResult);
-        return _bridge.publishScanResult(scanResult);
-      }));
-    });
-  }
-
-  Future<void> _stopDeviceScan() async {
-    _scanSubscriptions.forEach((subscription) => subscription.cancel());
-    _scanSubscriptions.clear();
-  }
-
-  Future<void> _connectToDevice(String identifier) async {
-    if (_peripherals[identifier] != null) {
-      _connectionStateSubscriptions.putIfAbsent(
-          identifier,
-              () => _peripherals[identifier]
-              .connectionStateStream
-              .listen((connectionState) {
-            _bridge.publishConnectionState(
-                _peripherals[identifier], connectionState);
-
-            if (connectionState == PeripheralConnectionState.disconnected) {
-              _connectionStateSubscriptions[identifier].cancel();
-              _connectionStateSubscriptions.remove(identifier);
-            }
-          }));
-
-      bool canConnect = await _peripherals[identifier].onConnectRequest();
-
-      if (canConnect) {
-        _peripherals[identifier].onConnect();
-      } else {
-        return Future.error(<String, dynamic>{
-          "errorCode": BleErrorCode.DeviceAlreadyConnected,
-          "reason": "Peripheral $identifier is already connected",
-        });
-      }
-    } else {
-      return Future.error(<String, dynamic>{
-        "errorCode": BleErrorCode.DeviceNotFound,
-        "reason": "Unknown peripheral identifier $identifier",
-      });
-    }
-  }
-
-  Future<bool> _isDeviceConnected(String identifier) async {
-    if (_peripherals[identifier] != null) {
-      return _peripherals[identifier].isConnected();
-    } else {
-      return Future.error(<String, dynamic>{
-        "errorCode": BleErrorCode.DeviceNotFound,
-        "reason": "Unknown peripheral identifier $identifier",
-      });
-    }
-  }
-
-  Future<void> _disconnectOrCancelConnection(String identifier) async {
-    if (_peripherals[identifier] != null) {
-      if (!_peripherals[identifier].isConnected()) {
-        return Future.error(<String, dynamic>{
-          "errorCode": BleErrorCode.DeviceDisconnected,
-          "reason": "Peripheral $identifier already disconnected",
-        });
-      }
-      return _peripherals[identifier].onDisconnect();
-    } else {
-      return Future.error(<String, dynamic>{
-        "errorCode": BleErrorCode.DeviceNotFound,
-        "reason": "Unknown peripheral identifier $identifier",
-      });
-    }
   }
 }
