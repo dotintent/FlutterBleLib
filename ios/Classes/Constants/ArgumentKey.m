@@ -25,4 +25,6 @@ NSString * const ARGUMENT_KEY_CHARACTERISTIC_IDENTIFIER = @"characteristicIdenti
 
 NSString * const ARGUMENT_KEY_MTU = @"mtu";
 
+NSString * const ARGUMENT_KEY_DEVICE_IDENTIFIERS = @"deviceIdentifiers";
+
 @end

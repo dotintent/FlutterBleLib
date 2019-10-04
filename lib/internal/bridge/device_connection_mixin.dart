@@ -1,8 +1,9 @@
 part of internal_bridge_lib;
 
 mixin DeviceConnectionMixin on FlutterBLE {
-  final EventChannel _peripheralConnectionStateEventChannel =
-      const EventChannel(ChannelName.connectionStateChangeEvents);
+  final Stream<dynamic> _peripheralConnectionStateChanges =
+      const EventChannel(ChannelName.connectionStateChangeEvents)
+          .receiveBroadcastStream();
 
   Future<void> connectToPeripheral(String deviceIdentifier, bool isAutoConnect,
       int requestMtu, bool refreshGatt, Duration timeout) async {
@@ -19,16 +20,14 @@ mixin DeviceConnectionMixin on FlutterBLE {
 
   Stream<PeripheralConnectionState> observePeripheralConnectionState(
       String identifier, bool emitCurrentValue) async* {
-    Stream<PeripheralConnectionState> peripheralConnectionStateStream =
-        _peripheralConnectionStateEventChannel
-            .receiveBroadcastStream()
-            .map((jsonString) =>
-                ConnectionStateContainer.fromJson(jsonDecode(jsonString)))
-            .where((connectionStateContainer) =>
-                connectionStateContainer.peripheralIdentifier == identifier)
-            .map((connectionStateContainer) =>
-                connectionStateContainer.connectionState)
-            .map((connectionStateString) {
+    yield* _peripheralConnectionStateChanges
+        .map((jsonString) =>
+            ConnectionStateContainer.fromJson(jsonDecode(jsonString)))
+        .where((connectionStateContainer) =>
+            connectionStateContainer.peripheralIdentifier == identifier)
+        .map((connectionStateContainer) =>
+            connectionStateContainer.connectionState)
+        .map((connectionStateString) {
       switch (connectionStateString.toLowerCase()) {
         case NativeConnectionState.connected:
           return PeripheralConnectionState.connected;
@@ -44,13 +43,12 @@ mixin DeviceConnectionMixin on FlutterBLE {
       }
     });
 
-    yield* peripheralConnectionStateStream;
-
-    _methodChannel
-        .invokeMethod(MethodName.observeConnectionState, <String, dynamic>{
+    _methodChannel.invokeMethod(
+        MethodName.observeConnectionState, <String, dynamic>{
       ArgumentName.deviceIdentifier: identifier,
       ArgumentName.emitCurrentValue: emitCurrentValue,
-    }).catchError((errorJson) => throw BleError.fromJson(jsonDecode(errorJson.details)));
+    }).catchError(
+        (errorJson) => throw BleError.fromJson(jsonDecode(errorJson.details)));
   }
 
   Future<bool> isPeripheralConnected(String peripheralIdentifier) async {
