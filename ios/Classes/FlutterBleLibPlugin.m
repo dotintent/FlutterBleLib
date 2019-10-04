@@ -104,6 +104,8 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
         [self connectedDevices:call result:result];
     } else if ([METHOD_NAME_REQUEST_MTU isEqualToString:call.method]) {
         [self requestMTUForDevice:call result:result];
+    } else if ([METHOD_NAME_RSSI isEqualToString:call.method]) {
+        [self readRSSIForDevice:call result:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -286,6 +288,15 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
                            reject:[self rejectForFlutterResult:result]];
 }
 
+// MARK: - MBA Methods - RSSI
+
+- (void)readRSSIForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager readRSSIForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
+                  transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                        resolve:[self resolveForReadRSSIForDevice:result]
+                         reject:[self rejectForFlutterResult:result]];
+}
+
 // MARK: - MBA Methods - BleClientManagerDelegate implementation
 
 - (void)dispatchEvent:(NSString * _Nonnull)name value:(id _Nonnull)value {
@@ -366,6 +377,12 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 - (Resolve)resolveForRequestMTUForDevice:(FlutterResult)result {
     return ^(NSDictionary *peripheral) {
         result([peripheral objectForKey:@"mtu"]);
+    };
+}
+
+- (Resolve)resolveForReadRSSIForDevice:(FlutterResult)result {
+    return ^(NSDictionary *peripheral) {
+        result([peripheral objectForKey:@"rssi"]);
     };
 }
 
