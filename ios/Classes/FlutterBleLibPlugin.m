@@ -102,6 +102,8 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
         [self devices:call result:result];
     } else if ([METHOD_NAME_GET_CONNECTED_DEVICES isEqualToString:call.method]) {
         [self connectedDevices:call result:result];
+    } else if ([METHOD_NAME_REQUEST_MTU isEqualToString:call.method]) {
+        [self requestMTUForDevice:call result:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -274,6 +276,16 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
                         reject:[self rejectForFlutterResult:result]];
 }
 
+// MARK: - MBA Methods - MTU
+
+- (void)requestMTUForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager requestMTUForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
+                              mtu:[call.arguments[ARGUMENT_KEY_MTU] integerValue]
+                    transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                          resolve:[self resolveForRequestMTUForDevice:result]
+                           reject:[self rejectForFlutterResult:result]];
+}
+
 // MARK: - MBA Methods - BleClientManagerDelegate implementation
 
 - (void)dispatchEvent:(NSString * _Nonnull)name value:(id _Nonnull)value {
@@ -348,6 +360,12 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 - (Resolve)resolveForKnownConnectedDevices:(FlutterResult)result {
     return ^(NSArray *peripheralsResponse) {
         result([PeripheralResponseConverter jsonStringFromPeripheralResponse:peripheralsResponse]);
+    };
+}
+
+- (Resolve)resolveForRequestMTUForDevice:(FlutterResult)result {
+    return ^(NSDictionary *peripheral) {
+        result([peripheral objectForKey:@"mtu"]);
     };
 }
 
