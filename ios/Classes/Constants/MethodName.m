@@ -24,6 +24,9 @@ NSString * const METHOD_NAME_RSSI = @"rssi";
 
 NSString * const METHOD_NAME_REQUEST_MTU = @"requestMtu";
 
+NSString * const METHOD_NAME_GET_CONNECTED_DEVICES = @"getConnectedDevices";
+NSString * const METHOD_NAME_GET_KNOWN_DEVICES = @"getKnownDevices";
+
 NSString * const METHOD_NAME_READ_CHARACTERISTIC_FOR_IDENTIFIER = @"readCharacteristicForIdentifier";
 NSString * const METHOD_NAME_READ_CHARACTERISTIC_FOR_DEVICE = @"readCharacteristicForDevice";
 NSString * const METHOD_NAME_READ_CHARACTERISTIC_FOR_SERVICE = @"readCharacteristicForService";

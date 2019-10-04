@@ -11,6 +11,7 @@
 #import "Util/FlutterErrorFactory.h"
 #import "Util/JSONStringifier.h"
 #import "ResponseConverter/CharacteristicResponseConverter.h"
+#import "ResponseConverter/PeripheralResponseConverter.h"
 
 typedef void (^Resolve)(id result);
 typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
@@ -91,6 +92,10 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
         [self readCharacteristicForService:call result:result];
     } else if ([METHOD_NAME_READ_CHARACTERISTIC_FOR_IDENTIFIER isEqualToString:call.method]) {
         [self readCharacteristic:call result:result];
+    } else if ([METHOD_NAME_GET_KNOWN_DEVICES isEqualToString:call.method]) {
+        [self devices:call result:result];
+    } else if ([METHOD_NAME_GET_CONNECTED_DEVICES isEqualToString:call.method]) {
+        [self connectedDevices:call result:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -219,6 +224,20 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
                           reject:[self rejectForFlutterResult:result]];
 }
 
+// MARK: - MBA Methods - Known / Connected devices
+
+- (void)devices:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager devices:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIERS]
+              resolve:[self resolveForKnownConnectedDevices:result]
+               reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)connectedDevices:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager connectedDevices:call.arguments[ARGUMENT_KEY_UUIDS]
+                       resolve:[self resolveForKnownConnectedDevices:result]
+                        reject:[self rejectForFlutterResult:result]];
+}
+
 // MARK: - MBA Methods - BleClientManagerDelegate implementation
 
 - (void)dispatchEvent:(NSString * _Nonnull)name value:(id _Nonnull)value {
@@ -287,6 +306,12 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 - (Resolve)resolveForReadCharacteristic:(FlutterResult)result {
     return ^(NSDictionary *characteristicResponse) {
         result([CharacteristicResponseConverter jsonStringFromCharacteristicResponse:characteristicResponse]);
+    };
+}
+
+- (Resolve)resolveForKnownConnectedDevices:(FlutterResult)result {
+    return ^(NSArray *peripheralsResponse) {
+        result([PeripheralResponseConverter jsonStringFromPeripheralResponse:peripheralsResponse]);
     };
 }
 

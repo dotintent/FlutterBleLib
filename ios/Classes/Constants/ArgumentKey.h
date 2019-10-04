@@ -23,4 +23,6 @@ extern NSString * const ARGUMENT_KEY_CHARACTERISTIC_IDENTIFIER;
 
 extern NSString * const ARGUMENT_KEY_MTU;
 
+extern NSString * const ARGUMENT_KEY_DEVICE_IDENTIFIERS;
+
 @end
