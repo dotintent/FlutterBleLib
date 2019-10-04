@@ -1,21 +1,32 @@
 package com.polidea.blemulator.bridging;
 
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattService;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.polidea.blemulator.DiscoveryResponseParser;
+import com.polidea.blemulator.bridging.constants.ArgumentName;
 import com.polidea.blemulator.bridging.constants.DartMethodName;
 import com.polidea.blemulator.bridging.constants.SimulationArgumentName;
+import com.polidea.multiplatformbleadapter.Characteristic;
 import com.polidea.multiplatformbleadapter.ConnectionOptions;
 import com.polidea.multiplatformbleadapter.ConnectionState;
 import com.polidea.multiplatformbleadapter.Device;
 import com.polidea.multiplatformbleadapter.OnErrorCallback;
 import com.polidea.multiplatformbleadapter.OnEventCallback;
 import com.polidea.multiplatformbleadapter.OnSuccessCallback;
+import com.polidea.multiplatformbleadapter.Service;
 import com.polidea.multiplatformbleadapter.errors.BleError;
 import com.polidea.multiplatformbleadapter.errors.BleErrorCode;
 
+import org.json.JSONArray;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import io.flutter.plugin.common.MethodChannel;
 
@@ -202,5 +213,35 @@ public class DartMethodCaller {
             }
         }
         return new BleError(BleErrorCode.UnknownError, "Wrong format of error from Dart BLEmulator", 0);
+    }
+
+    public void discoverAllServicesAndCharacteristicsForDevice(
+            final String deviceIdentifier,
+            final String name,
+            String transactionId,
+            final DiscoveryResponseParser parser,
+            final OnSuccessCallback<Device> onSuccessCallback,
+            final OnErrorCallback onErrorCallback) {
+        dartMethodChannel.invokeMethod(DartMethodName.DISCOVER_ALL_SERVICES_AND_CHARACTERISTICS, new HashMap<String, Object>() {{
+            put(ArgumentName.IDENTIFIER, deviceIdentifier);
+        }}, new MethodChannel.Result() {
+            @Override
+            public void success(@Nullable Object o) {
+                //TODO parse response
+                parser.parseDiscoveryResponse(deviceIdentifier, o);
+                onSuccessCallback.onSuccess(new Device(deviceIdentifier, name));
+            }
+
+            @Override
+            public void error(String s, @Nullable String s1, @Nullable Object o) {
+                //TODO convert error
+//                onErrorCallback
+            }
+
+            @Override
+            public void notImplemented() {
+                Log.e(TAG, DartMethodName.DISCOVER_ALL_SERVICES_AND_CHARACTERISTICS + " not implemented");
+            }
+        });
     }
 }

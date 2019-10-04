@@ -1,7 +1,12 @@
 part of internal;
 
 class SimulationManager extends SimulationManagerBaseWithErrorChecks
-    with ClientManagingMixin, ErrorChecksMixin, PeripheralConnectionMixin, PeripheralScanningMixing {
+    with
+        ClientManagingMixin,
+        ErrorChecksMixin,
+        PeripheralConnectionMixin,
+        PeripheralScanningMixing,
+        DiscoveryMixin {
   SimulationManager(DartToPlatformBridge bridge) : super(bridge);
 
   void addSimulatedPeripheral(SimulatedPeripheral peripheral) {

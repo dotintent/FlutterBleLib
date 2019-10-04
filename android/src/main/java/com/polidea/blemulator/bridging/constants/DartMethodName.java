@@ -10,4 +10,8 @@ public interface DartMethodName {
     String CONNECT_TO_DEVICE = "connectToDevice";
     String IS_DEVICE_CONNECTED = "isDeviceConnected";
     String DISCONNECT_OR_CANCEL_CONNECTION = "disconnectOrCancelConnection";
+
+    String DISCOVER_ALL_SERVICES_AND_CHARACTERISTICS = "discoverAllServicesAndCharacteristics";
+    String GET_SERVICES = "services";
+    String GET_CHARACTERISTICS = "characteristics";
 }

@@ -1,9 +1,12 @@
 package com.polidea.blemulator;
 
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattService;
 import android.util.Log;
 
 import com.polidea.blemulator.bridging.DartMethodCaller;
 import com.polidea.blemulator.bridging.DartValueHandler;
+import com.polidea.blemulator.bridging.constants.SimulationArgumentName;
 import com.polidea.multiplatformbleadapter.BleAdapter;
 import com.polidea.multiplatformbleadapter.Characteristic;
 import com.polidea.multiplatformbleadapter.ConnectionOptions;
@@ -18,13 +21,17 @@ import com.polidea.multiplatformbleadapter.errors.BleError;
 import com.polidea.multiplatformbleadapter.utils.Constants;
 import com.polidea.multiplatformbleadapter.utils.LogLevel;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-public class SimulatedAdapter implements BleAdapter {
+public class SimulatedAdapter implements BleAdapter, DiscoveryResponseParser {
 
     private static final String TAG = SimulatedAdapter.class.getSimpleName();
 
-    private HashMap<String, String> knownPeripherals = new HashMap<>();
+    private HashMap<String, DeviceContainer> knownPeripherals = new HashMap<>();
     private DartMethodCaller dartMethodCaller;
     private DartValueHandler dartValueHandler;
     private String logLevel = Constants.BluetoothLogLevel.NONE;
@@ -81,7 +88,10 @@ public class SimulatedAdapter implements BleAdapter {
             @Override
             public void onEvent(ScanResult data) {
                 if (!knownPeripherals.containsKey(data.getDeviceId())) {
-                    knownPeripherals.put(data.getDeviceId(), data.getDeviceName());
+                    knownPeripherals.put(
+                            data.getDeviceId(),
+                            new DeviceContainer(data.getDeviceId(), data.getDeviceName())
+                    );
                 }
 
                 onEventCallback.onEvent(data);
@@ -150,7 +160,7 @@ public class SimulatedAdapter implements BleAdapter {
 
         dartMethodCaller.connectToDevice(
                 deviceIdentifier,
-                knownPeripherals.get(deviceIdentifier),
+                knownPeripherals.get(deviceIdentifier).getName(),
                 connectionOptions,
                 onSuccessCallback,
                 onErrorCallback
@@ -164,7 +174,7 @@ public class SimulatedAdapter implements BleAdapter {
         Log.i(TAG, "cancelDeviceConnection");
         dartMethodCaller.disconnectOrCancelConnection(
                 deviceIdentifier,
-                knownPeripherals.get(deviceIdentifier),
+                knownPeripherals.get(deviceIdentifier).getName(),
                 onSuccessCallback,
                 onErrorCallback);
     }
@@ -184,24 +194,52 @@ public class SimulatedAdapter implements BleAdapter {
             OnSuccessCallback<Device> onSuccessCallback,
             OnErrorCallback onErrorCallback) {
         Log.i(TAG, "discoverAllServicesAndCharacteristicsForDevice");
+        dartMethodCaller
+                .discoverAllServicesAndCharacteristicsForDevice(
+                        deviceIdentifier,
+                        knownPeripherals.get(deviceIdentifier).getName(),
+                        transactionId,
+                        this,
+                        onSuccessCallback,
+                        onErrorCallback);
     }
 
     @Override
     public Service[] getServicesForDevice(String deviceIdentifier) throws BleError {
         Log.i(TAG, "discoverAllServicesAndCharacteristicsForDevice");
-        return null;
+        //TODO if (knownPeripherals.get(deviceIdentifier)) throw
+        return knownPeripherals
+                .get(deviceIdentifier)
+                .getServices()
+                .toArray(new Service[0]);
     }
 
     @Override
     public Characteristic[] getCharacteristicsForDevice(String deviceIdentifier,
                                                         String serviceUUID) throws BleError {
         Log.i(TAG, "discoverAllServicesAndCharacteristicsForDevice");
-        return null;
+        //TODO if (knownPeripherals.get(deviceIdentifier)) throw
+        return knownPeripherals
+                .get(deviceIdentifier)
+                .getCharacteristics()
+                .get(serviceUUID)
+                .toArray(new Characteristic[0]);
     }
 
     @Override
     public Characteristic[] getCharacteristicsForService(int serviceIdentifier) throws BleError {
         Log.i(TAG, "discoverAllServicesAndCharacteristicsForDevice");
+        //TODO if (knownPeripherals.get(deviceIdentifier)) throw
+        for (DeviceContainer deviceContainer : knownPeripherals.values()) {
+            for (Service service : deviceContainer.getServices()) {
+                if (service.getId() == serviceIdentifier) {
+                    return deviceContainer
+                            .getCharacteristics()
+                            .get(service.getUuid().toString().toUpperCase())
+                            .toArray(new Characteristic[0]);
+                }
+            }
+        }
         return null;
     }
 
@@ -306,5 +344,47 @@ public class SimulatedAdapter implements BleAdapter {
     public String getLogLevel() {
         Log.i(TAG, "getLogLevel");
         return logLevel;
+    }
+
+    @Override
+    public void parseDiscoveryResponse(String deviceIdentifier, Object responseObject) {
+        List<Map<String, Object>> response = (List<Map<String, Object>>) responseObject;
+        List<Service> services = new ArrayList<>();
+        Map<String, List<Characteristic>> characteristics = new HashMap<>();
+        for (Map<String, Object> mappedService : response) {
+            Service service = new Service(
+                    (Integer) mappedService.get(SimulationArgumentName.ID),
+                    deviceIdentifier,
+                    new BluetoothGattService(
+                            UUID.fromString(
+                                    (String) mappedService.get(SimulationArgumentName.UUID)
+                            ),
+                            BluetoothGattService.SERVICE_TYPE_PRIMARY
+                    )
+            );
+            services.add(service);
+            characteristics.put((String) mappedService.get(SimulationArgumentName.UUID),
+                    parseCharacteristicsForServicesResponse(service,
+                            (List<Map<String, Object>>) mappedService.get(SimulationArgumentName.CHARACTERISTICS)));
+        }
+
+        knownPeripherals.get(deviceIdentifier).setServices(services);
+        knownPeripherals.get(deviceIdentifier).setCharacteristics(characteristics);
+    }
+
+    private List<Characteristic> parseCharacteristicsForServicesResponse(Service service, List<Map<String, Object>> response) {
+        List<Characteristic> characteristics = new ArrayList<>();
+        for (Map<String, Object> mappedCharacteristic : response) {
+            characteristics.add(new Characteristic(
+                    (Integer) mappedCharacteristic.get(SimulationArgumentName.ID),
+                    service,
+                    new BluetoothGattCharacteristic(
+                            UUID.fromString(
+                                    (String) mappedCharacteristic.get(SimulationArgumentName.UUID)
+                            ), 0, 0 //TODO fix properties and permissions
+                    )
+            ));
+        }
+        return characteristics;
     }
 }
