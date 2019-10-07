@@ -9,5 +9,6 @@ NSString * const CHANNEL_NAME_ADAPTER_STATE_CHANGES = (FLUTTER_BLE_LIB @"/stateC
 NSString * const CHANNEL_NAME_STATE_RESTORE_EVENTS = (FLUTTER_BLE_LIB @"/stateRestoreEvents");
 NSString * const CHANNEL_NAME_SCANNING_EVENTS = (FLUTTER_BLE_LIB @"/scanningEvents");
 NSString * const CHANNEL_NAME_CONNECTION_STATE_CHANGE_EVENTS = (FLUTTER_BLE_LIB @"/connectionStateChangeEvents");
+NSString * const CHANNEL_NAME_MONITOR_CHARACTERISTIC = (FLUTTER_BLE_LIB @"/monitorCharacteristic");
 
 @end
