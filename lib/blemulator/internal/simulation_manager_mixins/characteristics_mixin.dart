@@ -1,22 +1,26 @@
 part of internal;
 
 mixin CharacteristicsMixin on SimulationManagerBase {
-
-  Future<CharacteristicResponse> _readCharacteristicForIdentifier(
-      int characteristicIdentifier,
-      ) async {
+  SimulatedCharacteristic getCharacteristic(int characteristicIdentifier) {
     SimulatedCharacteristic targetCharacteristic;
-    peripheralsLoop:
+
     for (SimulatedPeripheral peripheral in _peripherals.values) {
-      for (SimulatedService service in peripheral.services()) {
-        SimulatedCharacteristic characteristic =
-        service.characteristic(characteristicIdentifier);
-        if (characteristic != null) {
-          targetCharacteristic = characteristic;
-          break peripheralsLoop;
-        }
+      SimulatedCharacteristic characteristic =
+          peripheral.getCharacteristicForId(characteristicIdentifier);
+      if (characteristic != null) {
+        targetCharacteristic = characteristic;
+        break;
       }
     }
+
+    return targetCharacteristic;
+  }
+
+  Future<CharacteristicResponse> _readCharacteristicForIdentifier(
+    int characteristicIdentifier,
+  ) async {
+    SimulatedCharacteristic targetCharacteristic =
+        getCharacteristic(characteristicIdentifier);
 
     if (targetCharacteristic == null)
       return Future.error("Characteristic not found");
@@ -26,24 +30,15 @@ mixin CharacteristicsMixin on SimulationManagerBase {
   }
 
   Future<CharacteristicResponse> _readCharacteristicForDevice(
-      String peripheralId,
-      String serviceUuid,
-      String characteristicUUID,
-      ) async {
+    String peripheralId,
+    String serviceUuid,
+    String characteristicUUID,
+  ) async {
     SimulatedPeripheral targetPeripheral = _peripherals.values
         .firstWhere((peripheral) => peripheral.id == peripheralId);
 
     SimulatedCharacteristic targetCharacteristic = targetPeripheral
-        .services()
-        .firstWhere(
-          (service) => service.uuid == serviceUuid,
-      orElse: () => null,
-    )
-        ?.characteristics()
-        ?.firstWhere(
-          (characteristic) => characteristic.uuid == characteristicUUID,
-      orElse: () => null,
-    );
+        .getCharacteristicForService(serviceUuid, characteristicUUID);
 
     if (targetCharacteristic == null)
       return Future.error("Characteristic not found");
@@ -53,17 +48,17 @@ mixin CharacteristicsMixin on SimulationManagerBase {
   }
 
   Future<CharacteristicResponse> _readCharacteristicForService(
-      int serviceIdentifier,
-      String characteristicUUID,
-      ) async {
+    int serviceIdentifier,
+    String characteristicUUID,
+  ) async {
     SimulatedCharacteristic targetCharacteristic;
     peripheralsLoop:
     for (SimulatedPeripheral peripheral in _peripherals.values) {
       SimulatedCharacteristic characteristic =
-      peripheral.service(serviceIdentifier)?.characteristics()?.firstWhere(
-            (characteristic) => characteristic.uuid == characteristicUUID,
-        orElse: () => null,
-      );
+          peripheral.service(serviceIdentifier)?.characteristics()?.firstWhere(
+                (characteristic) => characteristic.uuid == characteristicUUID,
+                orElse: () => null,
+              );
 
       if (characteristic != null) break peripheralsLoop;
     }
