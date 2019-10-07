@@ -117,6 +117,8 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
         [self requestMTUForDevice:call result:result];
     } else if ([METHOD_NAME_RSSI isEqualToString:call.method]) {
         [self readRSSIForDevice:call result:result];
+    } else if ([METHOD_NAME_CANCEL_TRANSACTION isEqualToString:call.method]) {
+        [self cancelTransaction:call result:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -331,6 +333,13 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
                   transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
                         resolve:[self resolveForReadRSSIForDevice:result]
                          reject:[self rejectForFlutterResult:result]];
+}
+
+// MARK: - MBA Methods - Cancel transaction
+
+- (void)cancelTransaction:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager cancelTransaction:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]];
+    result(nil);
 }
 
 // MARK: - MBA Methods - BleClientManagerDelegate implementation
