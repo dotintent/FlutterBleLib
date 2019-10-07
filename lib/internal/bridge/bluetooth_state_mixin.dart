@@ -28,7 +28,7 @@ mixin BluetoothStateMixin on FlutterBLE {
       .invokeMethod(MethodName.getState)
       .then(_mapToBluetoothState);
 
-  Stream<BluetoothState> onStateChange(bool emitCurrentValue) async* {
+  Stream<BluetoothState> observeBluetoothState(bool emitCurrentValue) async* {
     if (emitCurrentValue == true) {
       BluetoothState currentState = await state();
       yield currentState;
