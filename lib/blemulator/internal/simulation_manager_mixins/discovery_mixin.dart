@@ -1,12 +1,13 @@
 part of internal;
 
 mixin DiscoveryMixin on SimulationManagerBaseWithErrorChecks {
-  Future<List<SimulatedService>> discovery(String identifier) async {
-    await _errorIfUnknown(identifier);
-    await _errorIfNotConnected(identifier);
+  Future<List<SimulatedService>> discoverAllServicesAndCharacteristics(
+      String deviceIdentifier) async {
+    await _errorIfUnknown(deviceIdentifier);
+    await _errorIfNotConnected(deviceIdentifier);
 
-    await _peripherals[identifier].onDiscoveryRequest();
-    await _peripherals[identifier].onDiscovery();
-    return _peripherals[identifier].services();
+    await _peripherals[deviceIdentifier].onDiscoveryRequest();
+    await _peripherals[deviceIdentifier].onDiscovery();
+    return _peripherals[deviceIdentifier].services();
   }
 }

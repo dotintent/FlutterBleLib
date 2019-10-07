@@ -65,7 +65,7 @@ class PlatformToDartBridge {
 
   Future<List<dynamic>> _discoverAllServicesAndCharacteristics(MethodCall call) async {
     List<SimulatedService> services =
-        await _manager.discovery(call.arguments[ArgumentName.id] as String);
+        await _manager.discoverAllServicesAndCharacteristics(call.arguments[ArgumentName.id] as String);
     dynamic mapped =  services.map(
       (e) => <String, dynamic>{
         SimulationArgumentName.uuid: e.uuid,
