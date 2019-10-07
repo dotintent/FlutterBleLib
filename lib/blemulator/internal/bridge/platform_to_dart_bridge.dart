@@ -1,43 +1,62 @@
 part of internal;
 
 class PlatformToDartBridge {
-
   SimulationManager _manager;
-  MethodChannel _upstreamChannel;
+  MethodChannel _platformToDartChannel;
 
   PlatformToDartBridge(this._manager) {
-    _upstreamChannel = new MethodChannel(ChannelName.upstream);
-    _upstreamChannel.setMethodCallHandler(_handleCall);
+    _platformToDartChannel = new MethodChannel(ChannelName.platformToDart);
+    _platformToDartChannel.setMethodCallHandler(_handleCall);
   }
 
   Future<dynamic> _handleCall(MethodCall call) {
     switch (call.method) {
       case DartMethodName.createClient:
-        return _createClient();
+        return _createClient(call);
       case DartMethodName.destroyClient:
-        return _destroyClient();
+        return _destroyClient(call);
       case DartMethodName.startDeviceScan:
-        return _startDeviceScan();
+        return _startDeviceScan(call);
       case DartMethodName.stopDeviceScan:
-        return _stopDeviceScan();
+        return _stopDeviceScan(call);
+      case DartMethodName.connectToPeripheral:
+        return _connectToDevice(call);
+      case DartMethodName.isPeripheralConnected:
+        return _isDeviceConnected(call);
+      case DartMethodName.disconnectOrCancelConnectionToPeripheral:
+        return _disconnectOrCancelConnection(call);
       default:
-        throw UnimplementedError("${call.method} is not implemented");
+         return Future.error(UnimplementedError("${call.method} is not implemented"));
     }
   }
 
-  Future<void> _createClient() async {
-    await _manager._createClient();
+  Future<void> _createClient(MethodCall call) {
+    return _manager._createClient();
   }
 
-  Future<void> _destroyClient() async {
-    await _manager._destroyClient();
+  Future<void> _destroyClient(MethodCall call) {
+    return _manager._destroyClient();
   }
 
-  Future<void> _startDeviceScan() async {
-    await _manager._startDeviceScan();
+  Future<void> _startDeviceScan(MethodCall call) {
+    return _manager._startDeviceScan();
   }
 
-  Future<void> _stopDeviceScan() async {
-    await _manager._stopDeviceScan();
+  Future<void> _stopDeviceScan(MethodCall call) {
+    return _manager._stopDeviceScan();
+  }
+
+  Future<void> _connectToDevice(MethodCall call) {
+    return _manager._connectToDevice(call.arguments[ArgumentName.id] as String);
+  }
+
+  Future<bool> _isDeviceConnected(MethodCall call) {
+    return _manager
+        ._isDeviceConnected(call.arguments[ArgumentName.id] as String);
+  }
+
+  Future<void> _disconnectOrCancelConnection(MethodCall call) {
+    return _manager._disconnectOrCancelConnection(
+        call.arguments[ArgumentName.id] as String);
   }
 }
