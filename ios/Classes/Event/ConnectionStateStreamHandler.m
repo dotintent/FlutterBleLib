@@ -1,4 +1,5 @@
 #import "ConnectionStateStreamHandler.h"
+#import "FlutterErrorFactory.h"
 
 @implementation ConnectionStateStreamHandler {
     FlutterEventSink eventSink;
@@ -23,6 +24,18 @@
 - (void)onConnectedEvent:(NSString *)deviceId {
     if (eventSink != nil) {
         eventSink([self jsonStringForDeviceId:deviceId connectionState:@"connected"]);
+    }
+}
+
+- (void)onDisconnectedEvent:(NSArray *)peripheralResponse {
+    if (eventSink != nil) {
+        if (peripheralResponse[0] == [NSNull null]) {
+            NSDictionary *peripheral = peripheralResponse[1];
+            eventSink([self jsonStringForDeviceId:[peripheral objectForKey:@"id"] connectionState:@"disconnected"]);
+        } else {
+            eventSink([FlutterErrorFactory flutterErrorFromJSONString:peripheralResponse[0]]);
+        }
+
     }
 }
 
