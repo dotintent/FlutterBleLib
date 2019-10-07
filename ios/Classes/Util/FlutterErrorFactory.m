@@ -6,8 +6,7 @@
     NSDictionary * dictionary = [NSJSONSerialization JSONObjectWithData:[jsonString dataUsingEncoding:NSUTF8StringEncoding]
                                                                options:NSJSONReadingMutableContainers
                                                                  error:nil];
-    NSLog(@"%@", dictionary);
-    return [FlutterError errorWithCode:[dictionary objectForKey:@"errorCode"]
+    return [FlutterError errorWithCode:[[dictionary objectForKey:@"errorCode"] stringValue]
                                message:[dictionary objectForKey:@"reason"]
                                details:jsonString];
 }
