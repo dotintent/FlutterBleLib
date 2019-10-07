@@ -7,6 +7,7 @@
 #import "Event/RestoreStateStreamHandler.h"
 #import "Event/ScanningStreamHandler.h"
 #import "Event/ConnectionStateStreamHandler.h"
+#import "Event/MonitorCharacteristicStreamHandler.h"
 #import "Util/ArgumentValidator.h"
 #import "Util/FlutterErrorFactory.h"
 #import "Util/JSONStringifier.h"
@@ -23,6 +24,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 @property (nonatomic) RestoreStateStreamHandler *restoreStateStreamHandler;
 @property (nonatomic) ScanningStreamHandler *scanningStreamHandler;
 @property (nonatomic) ConnectionStateStreamHandler *connectionStateStreamHandler;
+@property (nonatomic) MonitorCharacteristicStreamHandler *monitorCharacteristicStreamHandler;
 
 @end
 
@@ -37,6 +39,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
         self.restoreStateStreamHandler = [RestoreStateStreamHandler new];
         self.scanningStreamHandler = [ScanningStreamHandler new];
         self.connectionStateStreamHandler = [ConnectionStateStreamHandler new];
+        self.monitorCharacteristicStreamHandler = [MonitorCharacteristicStreamHandler new];
     }
     return self;
 }
@@ -50,6 +53,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
     FlutterEventChannel *restoreStateChannel = [FlutterEventChannel eventChannelWithName:CHANNEL_NAME_STATE_RESTORE_EVENTS binaryMessenger:[registrar messenger]];
     FlutterEventChannel *scanningChannel = [FlutterEventChannel eventChannelWithName:CHANNEL_NAME_SCANNING_EVENTS binaryMessenger:[registrar messenger]];
     FlutterEventChannel *connectionStateChannel = [FlutterEventChannel eventChannelWithName:CHANNEL_NAME_CONNECTION_STATE_CHANGE_EVENTS binaryMessenger:[registrar messenger]];
+    FlutterEventChannel *monitorCharacteristicChannel = [FlutterEventChannel eventChannelWithName:CHANNEL_NAME_MONITOR_CHARACTERISTIC binaryMessenger:[registrar messenger]];
 
     FlutterBleLibPlugin *instance = [[FlutterBleLibPlugin alloc] init];
     
@@ -59,6 +63,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
     [restoreStateChannel setStreamHandler:instance.restoreStateStreamHandler];
     [scanningChannel setStreamHandler:instance.scanningStreamHandler];
     [connectionStateChannel setStreamHandler:instance.connectionStateStreamHandler];
+    [monitorCharacteristicChannel setStreamHandler:instance.monitorCharacteristicStreamHandler];
 }
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -104,6 +109,12 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
         [self writeCharacteristicForService:call result:result];
     } else if ([METHOD_NAME_WRITE_CHARACTERISTIC_FOR_IDENTIFIER isEqualToString:call.method]) {
         [self writeCharacteristic:call result:result];
+    } else if ([METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_DEVICE isEqualToString:call.method]) {
+        [self monitorCharacteristicForDevice:call result:result];
+    } else if ([METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_SERVICE isEqualToString:call.method]) {
+        [self monitorCharacteristicForService:call result:result];
+    } else if ([METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_IDENTIFIER isEqualToString:call.method]) {
+        [self monitorCharacteristic:call result:result];
     } else if ([METHOD_NAME_GET_KNOWN_DEVICES isEqualToString:call.method]) {
         [self devices:call result:result];
     } else if ([METHOD_NAME_GET_CONNECTED_DEVICES isEqualToString:call.method]) {
@@ -112,6 +123,8 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
         [self requestMTUForDevice:call result:result];
     } else if ([METHOD_NAME_RSSI isEqualToString:call.method]) {
         [self readRSSIForDevice:call result:result];
+    } else if ([METHOD_NAME_CANCEL_TRANSACTION isEqualToString:call.method]) {
+        [self cancelTransaction:call result:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -289,6 +302,31 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
                            reject:[self rejectForFlutterResult:result]];
 }
 
+- (void)monitorCharacteristicForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager monitorCharacteristicForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
+                                 serviceUUID:call.arguments[ARGUMENT_KEY_SERVICE_UUID]
+                          characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
+                               transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                                     resolve:[self resolveForMonitorCharacteristic:result]
+                                      reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)monitorCharacteristicForService:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager monitorCharacteristicForService:[call.arguments[ARGUMENT_KEY_SERVICE_ID] doubleValue]
+                           characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
+                                transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                                      resolve:[self resolveForMonitorCharacteristic:result]
+                                       reject:[self rejectForFlutterResult:result]];
+
+}
+
+- (void)monitorCharacteristic:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager monitorCharacteristic:[call.arguments[ARGUMENT_KEY_CHARACTERISTIC_IDENTIFIER] doubleValue]
+                      transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                            resolve:[self resolveForMonitorCharacteristic:result]
+                             reject:[self rejectForFlutterResult:result]];
+}
+
 // MARK: - MBA Methods - Known / Connected devices
 
 - (void)devices:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -322,6 +360,13 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
                          reject:[self rejectForFlutterResult:result]];
 }
 
+// MARK: - MBA Methods - Cancel transaction
+
+- (void)cancelTransaction:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager cancelTransaction:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]];
+    result(nil);
+}
+
 // MARK: - MBA Methods - BleClientManagerDelegate implementation
 
 - (void)dispatchEvent:(NSString * _Nonnull)name value:(id _Nonnull)value {
@@ -335,6 +380,8 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
         [self.connectionStateStreamHandler onConnectingEvent:(NSString *)value];
     } else if ([BleEvent.connectedEvent isEqualToString:name]) {
         [self.connectionStateStreamHandler onConnectedEvent:(NSString *)value];
+    } else if ([BleEvent.readEvent isEqualToString:name]) {
+        [self.monitorCharacteristicStreamHandler onReadEvent:value];
     }
 }
 
@@ -390,6 +437,12 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 - (Resolve)resolveForReadWriteCharacteristic:(FlutterResult)result {
     return ^(NSDictionary *characteristicResponse) {
         result([CharacteristicResponseConverter jsonStringFromCharacteristicResponse:characteristicResponse]);
+    };
+}
+
+- (Resolve)resolveForMonitorCharacteristic:(FlutterResult)result {
+    return ^(id response) {
+        result(nil);
     };
 }
 

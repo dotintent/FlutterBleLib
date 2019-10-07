@@ -42,11 +42,11 @@ class InternalBleManager
       _bleLib.disableRadio(transactionId);
 
   @override
-  Future<BluetoothState> state() => _bleLib.state();
+  Future<BluetoothState> bluetoothState() => _bleLib.state();
 
   @override
-  Stream<BluetoothState> onStateChange({bool emitCurrentValue = true}) =>
-      _bleLib.onStateChange(emitCurrentValue);
+  Stream<BluetoothState> observeBluetoothState({bool emitCurrentValue = true}) =>
+      _bleLib.observeBluetoothState(emitCurrentValue);
 
   @override
   Stream<ScanResult> startPeripheralScan({

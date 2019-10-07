@@ -1,6 +1,6 @@
 #import "CharacteristicResponseConverter.h"
 #import "CharacteristicResponse.h"
-#import "JsonStringifier.h"
+#import "JSONStringifier.h"
 
 @implementation CharacteristicResponseConverter
 
