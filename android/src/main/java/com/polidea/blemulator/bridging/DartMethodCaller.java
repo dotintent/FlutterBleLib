@@ -5,22 +5,18 @@ import android.bluetooth.BluetoothGattService;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.polidea.blemulator.DiscoveryResponseParser;
+import com.polidea.blemulator.DeviceContainer;
 import com.polidea.blemulator.bridging.constants.ArgumentName;
 import com.polidea.blemulator.bridging.constants.DartMethodName;
 import com.polidea.blemulator.bridging.constants.SimulationArgumentName;
 import com.polidea.multiplatformbleadapter.Characteristic;
 import com.polidea.multiplatformbleadapter.ConnectionOptions;
-import com.polidea.multiplatformbleadapter.ConnectionState;
 import com.polidea.multiplatformbleadapter.Device;
 import com.polidea.multiplatformbleadapter.OnErrorCallback;
-import com.polidea.multiplatformbleadapter.OnEventCallback;
 import com.polidea.multiplatformbleadapter.OnSuccessCallback;
 import com.polidea.multiplatformbleadapter.Service;
 import com.polidea.multiplatformbleadapter.errors.BleError;
 import com.polidea.multiplatformbleadapter.errors.BleErrorCode;
-
-import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -219,17 +215,14 @@ public class DartMethodCaller {
             final String deviceIdentifier,
             final String name,
             String transactionId,
-            final DiscoveryResponseParser parser,
-            final OnSuccessCallback<Device> onSuccessCallback,
+            final OnSuccessCallback<DeviceContainer> onSuccessCallback,
             final OnErrorCallback onErrorCallback) {
         dartMethodChannel.invokeMethod(DartMethodName.DISCOVER_ALL_SERVICES_AND_CHARACTERISTICS, new HashMap<String, Object>() {{
             put(ArgumentName.IDENTIFIER, deviceIdentifier);
         }}, new MethodChannel.Result() {
             @Override
-            public void success(@Nullable Object o) {
-                //TODO parse response
-                parser.parseDiscoveryResponse(deviceIdentifier, o);
-                onSuccessCallback.onSuccess(new Device(deviceIdentifier, name));
+            public void success(@Nullable Object discoveryResponse) {
+                onSuccessCallback.onSuccess(parseDiscoveryResponse(deviceIdentifier, name, discoveryResponse));
             }
 
             @Override
@@ -243,5 +236,45 @@ public class DartMethodCaller {
                 Log.e(TAG, DartMethodName.DISCOVER_ALL_SERVICES_AND_CHARACTERISTICS + " not implemented");
             }
         });
+    }
+
+    public DeviceContainer parseDiscoveryResponse(String deviceIdentifier, String deviceName, Object responseObject) {
+        List<Map<String, Object>> response = (List<Map<String, Object>>) responseObject;
+        List<Service> services = new ArrayList<>();
+        Map<String, List<Characteristic>> characteristics = new HashMap<>();
+        for (Map<String, Object> mappedService : response) {
+            Service service = new Service(
+                    (Integer) mappedService.get(SimulationArgumentName.ID),
+                    deviceIdentifier,
+                    new BluetoothGattService(
+                            UUID.fromString(
+                                    (String) mappedService.get(SimulationArgumentName.UUID)
+                            ),
+                            BluetoothGattService.SERVICE_TYPE_PRIMARY
+                    )
+            );
+            services.add(service);
+            characteristics.put((String) mappedService.get(SimulationArgumentName.UUID),
+                    parseCharacteristicsForServicesResponse(service,
+                            (List<Map<String, Object>>) mappedService.get(SimulationArgumentName.CHARACTERISTICS)));
+        }
+
+        return new DeviceContainer(deviceIdentifier, deviceName, services, characteristics);
+    }
+
+    private List<Characteristic> parseCharacteristicsForServicesResponse(Service service, List<Map<String, Object>> response) {
+        List<Characteristic> characteristics = new ArrayList<>();
+        for (Map<String, Object> mappedCharacteristic : response) {
+            characteristics.add(new Characteristic(
+                    (Integer) mappedCharacteristic.get(SimulationArgumentName.ID),
+                    service,
+                    new BluetoothGattCharacteristic(
+                            UUID.fromString(
+                                    (String) mappedCharacteristic.get(SimulationArgumentName.UUID)
+                            ), 0, 0 //TODO fix properties and permissions
+                    )
+            ));
+        }
+        return characteristics;
     }
 }
