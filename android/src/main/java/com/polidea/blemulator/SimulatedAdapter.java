@@ -16,7 +16,6 @@ import com.polidea.multiplatformbleadapter.ScanResult;
 import com.polidea.multiplatformbleadapter.Service;
 import com.polidea.multiplatformbleadapter.errors.BleError;
 import com.polidea.multiplatformbleadapter.utils.Constants;
-import com.polidea.multiplatformbleadapter.utils.LogLevel;
 
 import java.util.HashMap;
 

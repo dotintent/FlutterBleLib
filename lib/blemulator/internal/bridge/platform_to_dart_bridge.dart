@@ -1,16 +1,6 @@
 part of internal;
 
 //TODO Move to separated mixin along with all operations on characteristics
-abstract class _CharacteristicMetadata {
-  static const String uuid = "characteristicUuid";
-  static const String id = "id";
-  static const String isReadable = "isReadable";
-  static const String isWritableWithResponse = "isWritableWithResponse";
-  static const String isWritableWithoutResponse = "isWritableWithoutResponse";
-  static const String isNotifiable = "isNotifiable";
-  static const String isIndicatable = "isIndicatable";
-  static const String value = "value";
-}
 
 class PlatformToDartBridge {
   SimulationManager _manager;
@@ -112,17 +102,17 @@ class PlatformToDartBridge {
 
   Map<String, dynamic> _convertToMap(String peripheralId, characteristic) =>
       <String, dynamic>{
-        SimulationArgumentName.deviceIdentifier: peripheralId,
-        SimulationArgumentName.characteristicUuid: characteristic.uuid,
-        SimulationArgumentName.bytes: characteristic.value,
-        SimulationArgumentName.serviceUuid: characteristic.service.uuid,
-        SimulationArgumentName.serviceId: characteristic.service.id,
-        _CharacteristicMetadata.isReadable: characteristic.isReadable,
-        _CharacteristicMetadata.isWritableWithResponse:
+        Metadata.deviceIdentifier: peripheralId,
+        Metadata.characteristicUuid: characteristic.uuid,
+        Metadata.value: characteristic.value,
+        Metadata.serviceUuid: characteristic.service.uuid,
+        Metadata.serviceId: characteristic.service.id,
+        Metadata.isReadable: characteristic.isReadable,
+        Metadata.isWritableWithResponse:
             characteristic.isWritableWithResponse,
-        _CharacteristicMetadata.isWritableWithoutResponse:
+        Metadata.isWritableWithoutResponse:
             characteristic.isWritableWithoutResponse,
-        _CharacteristicMetadata.isNotifiable: characteristic.isNotifiable,
-        _CharacteristicMetadata.isIndicatable: characteristic.isIndicatable,
+        Metadata.isNotifiable: characteristic.isNotifiable,
+        Metadata.isIndicatable: characteristic.isIndicatable,
       };
 }

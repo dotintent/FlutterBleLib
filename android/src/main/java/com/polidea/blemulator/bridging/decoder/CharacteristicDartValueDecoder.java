@@ -14,8 +14,11 @@ import java.util.UUID;
 public class CharacteristicDartValueDecoder implements DartValueDecoder<Characteristic> {
 
     private interface Metadata {
+        String DEVICE_IDENTIFIER = "deviceIdentifier";
+        String SERVICE_IDENTIFIER = "serviceId";
+        String SERVICE_UUID = "serviceUuid";
         String UUID = "characteristicUuid";
-        String ID = "id";
+        String ID = "characteristicId";
         String IS_READABLE = "isReadable";
         String IS_WRITABLE_WITH_RESPONSE = "isWritableWithResponse";
         String IS_WRITABLE_WITHOUT_RESPONSE = "isWritableWithoutResponse";
@@ -27,12 +30,12 @@ public class CharacteristicDartValueDecoder implements DartValueDecoder<Characte
     @Override
     public Characteristic decode(Object dartObject) {
         Map<String, Object> values = (Map<String, Object>) dartObject;
-        String deviceId = (String) values.get(ArgumentKey.DEVICE_IDENTIFIER);
+        String deviceId = (String) values.get(Metadata.DEVICE_IDENTIFIER);
         UUID characteristicUuid = UUIDConverter.convert((String) values.get(Metadata.UUID));
 //        int characteristicId = (Integer) values.get(Metadata.ID); TODO Pass this id to Characteristic constructor after merging with discovering feature
-        int serviceId = (int) values.get(ArgumentKey.SERVICE_IDENTIFIER);
-        UUID serviceUuid = UUIDConverter.convert((String) values.get(ArgumentKey.SERVICE_UUID));
-        byte[] value = (byte[]) values.get(ArgumentKey.BYTES);
+        int serviceId = (int) values.get(Metadata.SERVICE_IDENTIFIER);
+        UUID serviceUuid = UUIDConverter.convert((String) values.get(Metadata.SERVICE_UUID));
+        byte[] value = (byte[]) values.get(Metadata.VALUE);
         int properties = calculateProperties(values);
 
         BluetoothGattService bluetoothGattService = new BluetoothGattService(serviceUuid, 0);
