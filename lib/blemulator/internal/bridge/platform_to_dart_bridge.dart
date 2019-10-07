@@ -1,7 +1,5 @@
 part of internal;
 
-//TODO Move to separated mixin along with all operations on characteristics
-
 class PlatformToDartBridge {
   SimulationManager _manager;
   MethodChannel _platformToDartChannel;
@@ -34,7 +32,8 @@ class PlatformToDartBridge {
       case DartMethodName.readCharacteristicForIdentifier:
         return _readCharacteristicForIdentifier(call);
       default:
-         return Future.error(UnimplementedError("${call.method} is not implemented"));
+        return Future.error(
+            UnimplementedError("${call.method} is not implemented"));
     }
   }
 
@@ -74,7 +73,8 @@ class PlatformToDartBridge {
         ._readCharacteristicForIdentifier(
             arguments[SimulationArgumentName.characteristicId])
         .then((characteristic) => _convertToMap(
-            arguments[SimulationArgumentName.deviceIdentifier], characteristic));
+            arguments[SimulationArgumentName.deviceIdentifier],
+            characteristic));
   }
 
   Future<dynamic> _readCharacteristicForDevice(MethodCall call) async {
@@ -86,7 +86,8 @@ class PlatformToDartBridge {
           arguments[SimulationArgumentName.characteristicUuid],
         )
         .then((characteristic) => _convertToMap(
-            arguments[SimulationArgumentName.deviceIdentifier], characteristic));
+            arguments[SimulationArgumentName.deviceIdentifier],
+            characteristic));
   }
 
   Future<dynamic> _readCharacteristicForService(MethodCall call) async {
@@ -97,10 +98,12 @@ class PlatformToDartBridge {
           arguments[SimulationArgumentName.characteristicUuid],
         )
         .then((characteristic) => _convertToMap(
-            arguments[SimulationArgumentName.deviceIdentifier], characteristic));
+            arguments[SimulationArgumentName.deviceIdentifier],
+            characteristic));
   }
 
-  Map<String, dynamic> _convertToMap(String peripheralId, CharacteristicResponse response) =>
+  Map<String, dynamic> _convertToMap(
+          String peripheralId, CharacteristicResponse response) =>
       <String, dynamic>{
         Metadata.deviceIdentifier: peripheralId,
         Metadata.characteristicUuid: response.characteristic.uuid,
