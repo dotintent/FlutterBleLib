@@ -1,7 +1,11 @@
 part of internal;
 
 class SimulationManager extends SimulationManagerBaseWithErrorChecks
-    with ClientManagingMixin, ErrorChecksMixin, PeripheralConnectionMixin, PeripheralScanningMixing {
+    with
+        ClientManagingMixin,
+        ErrorChecksMixin,
+        PeripheralConnectionMixin,
+        PeripheralScanningMixing {
   SimulationManager(DartToPlatformBridge bridge) : super(bridge);
 
   void addSimulatedPeripheral(SimulatedPeripheral peripheral) {
@@ -19,9 +23,9 @@ class SimulationManager extends SimulationManagerBaseWithErrorChecks
     //TODO notify bridge?
   }
 
-  Future<SimulatedCharacteristic> _readCharacteristicForIdentifier(
+  Future<CharacteristicResponse> _readCharacteristicForIdentifier(
     int characteristicIdentifier,
-  ) {
+  ) async {
     SimulatedCharacteristic targetCharacteristic;
     peripheralsLoop:
     for (SimulatedPeripheral peripheral in _peripherals.values) {
@@ -38,18 +42,17 @@ class SimulationManager extends SimulationManagerBaseWithErrorChecks
     if (targetCharacteristic == null)
       return Future.error("Characteristic not found");
 
-    return targetCharacteristic.read().then(
-          (value) => targetCharacteristic..value = value,
-        );
+    Uint8List value = await targetCharacteristic.read();
+    return CharacteristicResponse(targetCharacteristic, value);
   }
 
-  Future<SimulatedCharacteristic> _readCharacteristicForDevice(
+  Future<CharacteristicResponse> _readCharacteristicForDevice(
     String peripheralId,
     String serviceUuid,
     String characteristicUUID,
-  ) {
-    SimulatedPeripheral targetPeripheral =
-        _peripherals.values.firstWhere((peripheral) => peripheral.id == peripheralId);
+  ) async {
+    SimulatedPeripheral targetPeripheral = _peripherals.values
+        .firstWhere((peripheral) => peripheral.id == peripheralId);
 
     SimulatedCharacteristic targetCharacteristic = targetPeripheral
         .services()
@@ -66,15 +69,14 @@ class SimulationManager extends SimulationManagerBaseWithErrorChecks
     if (targetCharacteristic == null)
       return Future.error("Characteristic not found");
 
-    return targetCharacteristic.read().then(
-          (value) => targetCharacteristic..value = value,
-        );
+    Uint8List value = await targetCharacteristic.read();
+    return CharacteristicResponse(targetCharacteristic, value);
   }
 
-  Future<SimulatedCharacteristic> _readCharacteristicForService(
+  Future<CharacteristicResponse> _readCharacteristicForService(
     int serviceIdentifier,
     String characteristicUUID,
-  ) {
+  ) async {
     SimulatedCharacteristic targetCharacteristic;
     peripheralsLoop:
     for (SimulatedPeripheral peripheral in _peripherals.values) {
@@ -90,8 +92,7 @@ class SimulationManager extends SimulationManagerBaseWithErrorChecks
     if (targetCharacteristic == null)
       return Future.error("Characteristic not found");
 
-    return targetCharacteristic.read().then(
-          (value) => targetCharacteristic..value = value,
-        );
+    Uint8List value = await targetCharacteristic.read();
+    return CharacteristicResponse(targetCharacteristic, value);
   }
 }

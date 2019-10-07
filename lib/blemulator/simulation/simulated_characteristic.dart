@@ -4,7 +4,7 @@ class SimulatedCharacteristic {
   final String uuid;
   final int id;
   SimulatedService service;
-  Uint8List value;
+  Uint8List _value;
   final String convenienceName;
   bool isReadable;
   bool isWritableWithResponse;
@@ -17,7 +17,7 @@ class SimulatedCharacteristic {
 
   SimulatedCharacteristic({
     @required this.uuid,
-    @required this.value,
+    @required Uint8List value,
     this.convenienceName,
     this.isReadable = true,
     this.isWritableWithResponse = true,
@@ -25,15 +25,17 @@ class SimulatedCharacteristic {
     this.isNotifiable = false,
     this.isNotifying = false,
     this.isIndicatable = false,
-  }) : id = IdGenerator().nextId();
+  }) : id = IdGenerator().nextId() {
+    _value = value;
+  }
 
   void attachToService(SimulatedService service) => this.service = service;
 
   Future<Uint8List> read() async =>
-      isReadable ? value : Future.error("This characteristic is not readable");
+      isReadable ? _value : Future.error("This characteristic is not readable");
 
   void write(Uint8List value) {
-    this.value = value;
+    this._value = value;
     if (_streamController?.hasListener == true)
       _streamController.sink.add(value);
   }
@@ -47,4 +49,11 @@ class SimulatedCharacteristic {
     }
     return _streamController.stream.asBroadcastStream();
   }
+}
+
+class CharacteristicResponse {
+  SimulatedCharacteristic characteristic;
+  Uint8List value;
+
+  CharacteristicResponse(this.characteristic, this.value);
 }
