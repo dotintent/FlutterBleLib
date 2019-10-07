@@ -1,0 +1,14 @@
+extern NSString * const ARGUMENT_NAME_DEVICE_NAME;
+extern NSString * const ARGUMENT_NAME_DEVICE_ID;
+extern NSString * const ARGUMENT_NAME_RSSI;
+extern NSString * const ARGUMENT_NAME_MTU;
+extern NSString * const ARGUMENT_NAME_IS_CONNECTABLE;
+extern NSString * const ARGUMENT_NAME_TX_POWER_LEVEL;
+extern NSString * const ARGUMENT_NAME_MANUFACTURER_DATA;
+extern NSString * const ARGUMENT_NAME_SERVICE_DATA;
+extern NSString * const ARGUMENT_NAME_SERVICE_UUIDS;
+extern NSString * const ARGUMENT_NAME_LOCAL_NAME;
+extern NSString * const ARGUMENT_NAME_SOLICITED_SERVICE_UUIDS;
+extern NSString * const ARGUMENT_NAME_OVERFLOW_SERVICE_UUIDS;
+
+extern NSString * const ARGUMENT_NAME_CONNECTION_STATE;

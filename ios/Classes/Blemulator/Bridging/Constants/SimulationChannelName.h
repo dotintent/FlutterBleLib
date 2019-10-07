@@ -1,0 +1,2 @@
+extern NSString * const SIMULATION_CHANNEL_NAME_TO_DART;
+extern NSString * const SIMULATION_CHANNEL_NAME_TO_OBJC;
