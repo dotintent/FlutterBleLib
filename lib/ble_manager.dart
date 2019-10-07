@@ -40,9 +40,9 @@ abstract class BleManager {
 
   Future<void> disableRadio({String transactionId});
 
-  Future<BluetoothState> state();
+  Future<BluetoothState> bluetoothState();
 
-  Stream<BluetoothState> onStateChange({bool emitCurrentValue = true});
+  Stream<BluetoothState> observeBluetoothState({bool emitCurrentValue = true});
 
   Future<List<Peripheral>> knownDevices(List<String> peripheralIdentifiers);
 
