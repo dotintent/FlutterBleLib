@@ -24,7 +24,7 @@ class SimulationManager extends SimulationManagerBaseWithErrorChecks
   ) {
     SimulatedCharacteristic targetCharacteristic;
     peripheralsLoop:
-    for (SimulatedPeripheral peripheral in _peripherals) {
+    for (SimulatedPeripheral peripheral in _peripherals.values) {
       for (SimulatedService service in peripheral.services()) {
         SimulatedCharacteristic characteristic =
             service.characteristic(characteristicIdentifier);
@@ -49,7 +49,7 @@ class SimulationManager extends SimulationManagerBaseWithErrorChecks
     String characteristicUUID,
   ) {
     SimulatedPeripheral targetPeripheral =
-        _peripherals.firstWhere((peripheral) => peripheral.id == peripheralId);
+        _peripherals.values.firstWhere((peripheral) => peripheral.id == peripheralId);
 
     SimulatedCharacteristic targetCharacteristic = targetPeripheral
         .services()
@@ -77,7 +77,7 @@ class SimulationManager extends SimulationManagerBaseWithErrorChecks
   ) {
     SimulatedCharacteristic targetCharacteristic;
     peripheralsLoop:
-    for (SimulatedPeripheral peripheral in _peripherals) {
+    for (SimulatedPeripheral peripheral in _peripherals.values) {
       SimulatedCharacteristic characteristic =
           peripheral.service(serviceIdentifier)?.characteristics()?.firstWhere(
                 (characteristic) => characteristic.uuid == characteristicUUID,

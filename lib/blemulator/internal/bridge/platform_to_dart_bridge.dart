@@ -82,45 +82,41 @@ class PlatformToDartBridge {
     Map<dynamic, dynamic> arguments = call.arguments;
     return _manager
         ._readCharacteristicForIdentifier(
-            arguments[ArgumentName.characteristicId])
+            arguments[SimulationArgumentName.characteristicId])
         .then((characteristic) => _convertToMap(
-            arguments[ArgumentName.deviceIdentifier], characteristic));
+            arguments[SimulationArgumentName.deviceIdentifier], characteristic));
   }
 
   Future<dynamic> _readCharacteristicForDevice(MethodCall call) async {
     Map<dynamic, dynamic> arguments = call.arguments;
     return _manager
         ._readCharacteristicForDevice(
-          arguments[ArgumentName.deviceIdentifier],
-          arguments[ArgumentName.serviceUuid],
-          arguments[ArgumentName.characteristicUuid],
+          arguments[SimulationArgumentName.deviceIdentifier],
+          arguments[SimulationArgumentName.serviceUuid],
+          arguments[SimulationArgumentName.characteristicUuid],
         )
         .then((characteristic) => _convertToMap(
-            arguments[ArgumentName.deviceIdentifier], characteristic));
+            arguments[SimulationArgumentName.deviceIdentifier], characteristic));
   }
 
   Future<dynamic> _readCharacteristicForService(MethodCall call) async {
     Map<dynamic, dynamic> arguments = call.arguments;
     return _manager
         ._readCharacteristicForService(
-          arguments[ArgumentName.serviceId],
-          arguments[ArgumentName.characteristicUuid],
+          arguments[SimulationArgumentName.serviceId],
+          arguments[SimulationArgumentName.characteristicUuid],
         )
         .then((characteristic) => _convertToMap(
-            arguments[ArgumentName.deviceIdentifier], characteristic));
+            arguments[SimulationArgumentName.deviceIdentifier], characteristic));
   }
 
   Map<String, dynamic> _convertToMap(String peripheralId, characteristic) =>
       <String, dynamic>{
-        ArgumentName.deviceIdentifier: peripheralId,
-        ArgumentName.characteristicUuid: characteristic.uuid,
-        //TODO Change to SimulationArgumentName after merge with peripheral connection feature
-        ArgumentName.bytes: characteristic.value,
-        //TODO Change to SimulationArgumentName after merge with peripheral connection feature
-        ArgumentName.serviceUuid: characteristic.service.uuid,
-        //TODO Change to SimulationArgumentName after merge with peripheral connection feature
-        ArgumentName.serviceId: characteristic.service.id,
-        //TODO Change to SimulationArgumentName after merge with peripheral connection feature
+        SimulationArgumentName.deviceIdentifier: peripheralId,
+        SimulationArgumentName.characteristicUuid: characteristic.uuid,
+        SimulationArgumentName.bytes: characteristic.value,
+        SimulationArgumentName.serviceUuid: characteristic.service.uuid,
+        SimulationArgumentName.serviceId: characteristic.service.id,
         _CharacteristicMetadata.isReadable: characteristic.isReadable,
         _CharacteristicMetadata.isWritableWithResponse:
             characteristic.isWritableWithResponse,
