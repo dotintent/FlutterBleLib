@@ -43,15 +43,15 @@ class DeviceDetailsBloc {
 
   void init() {
     Fimber.d("init bloc");
-    _deviceController.stream.listen((bleDevice) {
-      Fimber.d("got bleDevice: $bleDevice");
-      bleDevice.peripheral.isConnected().then((isConnected) {
-        Fimber.d('The device is connected: $isConnected');
-        if (!isConnected) {
-          _connectTo(bleDevice);
-        }
-      }).catchError((error) => Fimber.e("Connection problem", ex: error));
-    });
+//    _deviceController.stream.listen((bleDevice) {
+//      Fimber.d("got bleDevice: $bleDevice");
+//      bleDevice.peripheral.isConnected().then((isConnected) {
+//        Fimber.d('The device is connected: $isConnected');
+//        if (!isConnected) {
+//          _connectTo(bleDevice);
+//        }
+//      }).catchError((error) => Fimber.e("Connection problem", ex: error));
+//    });
   }
 
   Future<void> disconnect() async {
@@ -108,6 +108,35 @@ class DeviceDetailsBloc {
 
     SensorTagTestScenario(_bleManager, peripheral, log, logError)
         .runTestScenario();
+  }
+
+  void startAutoTest() {
+    List<DebugLog> logs = [];
+    _logsController.add(logs);
+    Logger log = (text) {
+      logs.insert(0, DebugLog(DateTime.now().toString(), text));
+      Fimber.d(text);
+      _logsController.add(logs);
+    };
+
+    Logger logError = (text) {
+      logs.insert(0,
+          DebugLog(DateTime.now().toString(), "ERROR: ${text.toUpperCase()}"));
+      Fimber.e(text);
+      _logsController.add(logs);
+    };
+
+    _deviceController.stream.listen((bleDevice) {
+      Fimber.d("got bleDevice: $bleDevice");
+      bleDevice.peripheral.isConnected().then((isConnected) {
+        Fimber.d('The device is connected: $isConnected');
+        if (!isConnected) {
+          _connectTo(bleDevice);
+        }
+      }).catchError((error) {
+        logError('Connection problem: ${error.toString()}');
+      });
+    });
   }
 }
 
