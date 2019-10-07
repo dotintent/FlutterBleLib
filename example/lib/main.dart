@@ -2,6 +2,7 @@ import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ble_lib_example/devices_list/devices_bloc_provider.dart';
 import 'package:flutter_ble_lib_example/devices_list/devices_list_view.dart';
+import 'package:flutter_ble_lib_example/test_scenarios/test_scenario_view.dart';
 
 import 'device_details/device_details_view.dart';
 import 'device_details/devices_details_bloc_provider.dart';
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
         ),
         initialRoute: "/",
         routes: <String, WidgetBuilder>{
-          "/": (context) => DevicesBlocProvider(child: DevicesListScreen()),
+          "/": (context) => TestScenarioWidget(),
           "/details": (context) => DeviceDetailsBlocProvider(child: DeviceDetailsView()),
         },
         navigatorObservers: [routeObserver],
