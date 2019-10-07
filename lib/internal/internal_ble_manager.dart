@@ -42,11 +42,11 @@ class InternalBleManager
       _bleLib.disableRadio(transactionId);
 
   @override
-  Future<BluetoothState> state() => _bleLib.state();
+  Future<BluetoothState> bluetoothState() => _bleLib.state();
 
   @override
-  Stream<BluetoothState> onStateChange({bool emitCurrentValue = true}) =>
-      _bleLib.onStateChange(emitCurrentValue);
+  Stream<BluetoothState> observeBluetoothState({bool emitCurrentValue = true}) =>
+      _bleLib.observeBluetoothState(emitCurrentValue);
 
   @override
   Stream<ScanResult> startPeripheralScan({
@@ -145,10 +145,13 @@ class InternalBleManager
   }
 
   @override
-  Future<Uint8List> readCharacteristicForIdentifier(Peripheral peripheral,
-          int characteristicIdentifier, String transactionId) =>
+  Future<Uint8List> readCharacteristicForIdentifier(
+    Peripheral peripheral,
+    InternalCharacteristic characteristic,
+    String transactionId,
+  ) =>
       _bleLib.readCharacteristicForIdentifier(
-          peripheral, characteristicIdentifier, transactionId);
+          peripheral, characteristic._id, transactionId);
 
   @override
   Future<CharacteristicWithValue> readCharacteristicForDevice(
@@ -179,13 +182,13 @@ class InternalBleManager
   @override
   Future<void> writeCharacteristicForIdentifier(
           Peripheral peripheral,
-          int characteristicIdentifier,
+          InternalCharacteristic characteristic,
           Uint8List bytes,
           bool withResponse,
           String transactionId) =>
       _bleLib.writeCharacteristicForIdentifier(
         peripheral,
-        characteristicIdentifier,
+        characteristic._id,
         bytes,
         withResponse,
         transactionId,
@@ -256,12 +259,12 @@ class InternalBleManager
   @override
   Stream<Uint8List> monitorCharacteristicForIdentifier(
     Peripheral peripheral,
-    int characteristicIdentifier,
+    InternalCharacteristic characteristic,
     String transactionId,
   ) =>
       _bleLib.monitorCharacteristicForIdentifier(
         peripheral,
-        characteristicIdentifier,
+        characteristic._id,
         transactionId,
       );
 }

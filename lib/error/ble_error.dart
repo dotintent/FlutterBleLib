@@ -35,4 +35,17 @@ class BleError {
         characteristicUUID = json[_BleErrorMetadata.CHARACTERISTIC_UUID],
         descriptorUUID = json[_BleErrorMetadata.DESCRIPTOR_UUID],
         internalMessage = json[_BleErrorMetadata.INTERNAL_MESSAGE];
+
+  @override
+  String toString() => "BleError ("
+      "Error code: $errorCode, "
+      "ATT error code: $attErrorCode, "
+      "iOS error code: $iosErrorCode, "
+      "Android error code: $androidErrorCode, "
+      "reason: $reason, "
+      "internal message: $internalMessage, "
+      "device ID: $deviceID, "
+      "service UUID: $serviceUUID, "
+      "characteristic UUID: $characteristicUUID, "
+      "descriptor UUID: $descriptorUUID)";
 }

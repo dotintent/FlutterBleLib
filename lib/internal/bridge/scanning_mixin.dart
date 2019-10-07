@@ -1,8 +1,8 @@
 part of internal_bridge_lib;
 
 mixin ScanningMixin on FlutterBLE {
-  final EventChannel _scanEventChannel =
-      const EventChannel(ChannelName.scanningEvents);
+  final Stream<dynamic> _scanEvents =
+      const EventChannel(ChannelName.scanningEvents).receiveBroadcastStream();
 
   Stream<ScanResult> startDeviceScan(
     int scanMode,
@@ -17,7 +17,7 @@ mixin ScanningMixin on FlutterBLE {
         ArgumentName.uuids: uuids
       },
     );
-    yield* _scanEventChannel.receiveBroadcastStream().handleError(
+    yield* _scanEvents.handleError(
       (errorJson) {
         throw BleError.fromJson(jsonDecode(errorJson.details));
       },

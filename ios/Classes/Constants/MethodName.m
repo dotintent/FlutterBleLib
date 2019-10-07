@@ -4,6 +4,9 @@
 
 NSString * const METHOD_NAME_CREATE_CLIENT = @"createClient";
 NSString * const METHOD_NAME_DESTROY_CLIENT = @"destroyClient";
+
+NSString * const METHOD_NAME_CANCEL_TRANSACTION = @"cancelTransaction";
+
 NSString * const METHOD_NAME_START_DEVICE_SCAN = @"startDeviceScan";
 NSString * const METHOD_NAME_STOP_DEVICE_SCAN = @"stopDeviceScan";
 
@@ -23,5 +26,20 @@ NSString * const METHOD_NAME_SET_LOG_LEVEL = @"setLogLevel";
 NSString * const METHOD_NAME_RSSI = @"rssi";
 
 NSString * const METHOD_NAME_REQUEST_MTU = @"requestMtu";
+
+NSString * const METHOD_NAME_GET_CONNECTED_DEVICES = @"getConnectedDevices";
+NSString * const METHOD_NAME_GET_KNOWN_DEVICES = @"getKnownDevices";
+
+NSString * const METHOD_NAME_READ_CHARACTERISTIC_FOR_IDENTIFIER = @"readCharacteristicForIdentifier";
+NSString * const METHOD_NAME_READ_CHARACTERISTIC_FOR_DEVICE = @"readCharacteristicForDevice";
+NSString * const METHOD_NAME_READ_CHARACTERISTIC_FOR_SERVICE = @"readCharacteristicForService";
+
+NSString * const METHOD_NAME_WRITE_CHARACTERISTIC_FOR_IDENTIFIER = @"writeCharacteristicForIdentifier";
+NSString * const METHOD_NAME_WRITE_CHARACTERISTIC_FOR_DEVICE = @"writeCharacteristicForDevice";
+NSString * const METHOD_NAME_WRITE_CHARACTERISTIC_FOR_SERVICE = @"writeCharacteristicForService";
+
+NSString * const METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_IDENTIFIER = @"monitorCharacteristicForIdentifier";
+NSString * const METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_DEVICE = @"monitorCharacteristicForDevice";
+NSString * const METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_SERVICE = @"monitorCharacteristicForService";
 
 @end

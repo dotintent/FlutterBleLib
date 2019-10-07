@@ -80,13 +80,13 @@ abstract class ManagerForService {
 abstract class ManagerForCharacteristic {
   Future<Uint8List> readCharacteristicForIdentifier(
     Peripheral peripheral,
-    int characteristicIdentifier,
+    InternalCharacteristic characteristic,
     String transactionId,
   );
 
   Future<void> writeCharacteristicForIdentifier(
     Peripheral peripheral,
-    int characteristicIdentifier,
+    InternalCharacteristic characteristic,
     Uint8List bytes,
     bool withResponse,
     String transactionId,
@@ -94,7 +94,7 @@ abstract class ManagerForCharacteristic {
 
   Stream<Uint8List> monitorCharacteristicForIdentifier(
     Peripheral peripheral,
-    int characteristicIdentifier,
+    InternalCharacteristic characteristic,
     String transactionId,
   );
 }

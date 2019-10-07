@@ -18,7 +18,7 @@ class BluetoothStateTestScenario implements TestScenario {
     log("Subscribe for radio state changes");
     _observeRadioState(bleManager, log);
 
-    log("Get radio state: ${await bleManager.state()}");
+    log("Get radio state: ${await bleManager.bluetoothState()}");
 
     log("Enabling radio...");
     try {
@@ -29,7 +29,7 @@ class BluetoothStateTestScenario implements TestScenario {
 
     log("Enabled radio!");
 
-    log("Get radio state: ${await bleManager.state()}");
+    log("Get radio state: ${await bleManager.bluetoothState()}");
 
     log("Waiting 10 seconds before disabling radio...");
     await Future.delayed(Duration(seconds: 10));
@@ -46,7 +46,7 @@ class BluetoothStateTestScenario implements TestScenario {
 
   void _observeRadioState(BleManager bleManager, Logger log) async {
     await _radioStateSubscription?.cancel();
-    _radioStateSubscription = bleManager.onStateChange().listen((newState) {
+    _radioStateSubscription = bleManager.observeBluetoothState().listen((newState) {
       log("New radio state: $newState");
     }, onError: (error) {
       log("Error while observing radio state. Error: $error");

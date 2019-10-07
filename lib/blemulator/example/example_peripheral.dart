@@ -50,11 +50,7 @@ class SensorTag extends SimulatedPeripheral {
 
   @override
   Future<bool> onConnectRequest() async {
-    return true;
-  }
-
-  @override
-  Future<void> onDiscoveryRequest() async {
-    return;
+    await Future.delayed(Duration(milliseconds: 200));
+    return super.onConnectRequest();
   }
 }

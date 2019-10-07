@@ -15,13 +15,19 @@ import com.polidea.multiplatformbleadapter.OnSuccessCallback;
 import com.polidea.multiplatformbleadapter.ScanResult;
 import com.polidea.multiplatformbleadapter.Service;
 import com.polidea.multiplatformbleadapter.errors.BleError;
+import com.polidea.multiplatformbleadapter.utils.Constants;
+import com.polidea.multiplatformbleadapter.utils.LogLevel;
+
+import java.util.HashMap;
 
 public class SimulatedAdapter implements BleAdapter {
 
     private static final String TAG = SimulatedAdapter.class.getSimpleName();
 
+    private HashMap<String, String> knownPeripherals = new HashMap<>();
     private DartMethodCaller dartMethodCaller;
     private DartValueHandler dartValueHandler;
+    private String logLevel = Constants.BluetoothLogLevel.NONE;
 
     SimulatedAdapter(DartMethodCaller dartMethodCaller, DartValueHandler dartValueHandler) {
         this.dartMethodCaller = dartMethodCaller;
@@ -67,11 +73,22 @@ public class SimulatedAdapter implements BleAdapter {
     public void startDeviceScan(String[] filteredUUIDs,
                                 int scanMode,
                                 int callbackType,
-                                OnEventCallback<ScanResult> onEventCallback,
+                                final OnEventCallback<ScanResult> onEventCallback,
                                 OnErrorCallback onErrorCallback) {
         Log.i(TAG, "startDeviceScan");
-        dartValueHandler.setScanResultPublisher(onEventCallback);
-        dartValueHandler.setScanResultErrorPublisher(onErrorCallback);
+
+        OnEventCallback<ScanResult> resultCallback = new OnEventCallback<ScanResult>() {
+            @Override
+            public void onEvent(ScanResult data) {
+                if (!knownPeripherals.containsKey(data.getDeviceId())) {
+                    knownPeripherals.put(data.getDeviceId(), data.getDeviceName());
+                }
+
+                onEventCallback.onEvent(data);
+            }
+        };
+
+        dartValueHandler.setScanResultPublisher(resultCallback);
         dartMethodCaller.startDeviceScan();
     }
 
@@ -79,6 +96,7 @@ public class SimulatedAdapter implements BleAdapter {
     public void stopDeviceScan() {
         Log.i(TAG, "stopDeviceScan");
         dartMethodCaller.stopDeviceScan();
+        dartValueHandler.setScanResultPublisher(null);
     }
 
     @Override
@@ -127,6 +145,16 @@ public class SimulatedAdapter implements BleAdapter {
                                 OnEventCallback<ConnectionState> onConnectionStateChangedCallback,
                                 OnErrorCallback onErrorCallback) {
         Log.i(TAG, "connectToDevice");
+
+        dartValueHandler.addConnectionStatePublisher(deviceIdentifier, onConnectionStateChangedCallback);
+
+        dartMethodCaller.connectToDevice(
+                deviceIdentifier,
+                knownPeripherals.get(deviceIdentifier),
+                connectionOptions,
+                onSuccessCallback,
+                onErrorCallback
+        );
     }
 
     @Override
@@ -134,6 +162,11 @@ public class SimulatedAdapter implements BleAdapter {
                                        OnSuccessCallback<Device> onSuccessCallback,
                                        OnErrorCallback onErrorCallback) {
         Log.i(TAG, "cancelDeviceConnection");
+        dartMethodCaller.disconnectOrCancelConnection(
+                deviceIdentifier,
+                knownPeripherals.get(deviceIdentifier),
+                onSuccessCallback,
+                onErrorCallback);
     }
 
     @Override
@@ -141,6 +174,7 @@ public class SimulatedAdapter implements BleAdapter {
                                   OnSuccessCallback<Boolean> onSuccessCallback,
                                   OnErrorCallback onErrorCallback) {
         Log.i(TAG, "isDeviceConnected");
+        dartMethodCaller.isDeviceConnected(deviceIdentifier, onSuccessCallback, onErrorCallback);
     }
 
     @Override
@@ -271,11 +305,12 @@ public class SimulatedAdapter implements BleAdapter {
     @Override
     public void setLogLevel(String logLevel) {
         Log.i(TAG, "setLogLevel");
+        this.logLevel = logLevel;
     }
 
     @Override
     public String getLogLevel() {
         Log.i(TAG, "getLogLevel");
-        return null;
+        return logLevel;
     }
 }

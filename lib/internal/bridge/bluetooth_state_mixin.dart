@@ -1,8 +1,8 @@
 part of internal_bridge_lib;
 
 mixin BluetoothStateMixin on FlutterBLE {
-  final EventChannel _adapterStateChanges =
-      const EventChannel(ChannelName.adapterStateChanges);
+  final Stream<dynamic> _adapterStateChanges =
+      const EventChannel(ChannelName.adapterStateChanges).receiveBroadcastStream();
 
   Future<void> enableRadio(String transactionId) async {
     await _methodChannel.invokeMethod(
@@ -28,14 +28,12 @@ mixin BluetoothStateMixin on FlutterBLE {
       .invokeMethod(MethodName.getState)
       .then(_mapToBluetoothState);
 
-  Stream<BluetoothState> onStateChange(bool emitCurrentValue) async* {
+  Stream<BluetoothState> observeBluetoothState(bool emitCurrentValue) async* {
     if (emitCurrentValue == true) {
       BluetoothState currentState = await state();
       yield currentState;
     }
-    yield* _adapterStateChanges
-        .receiveBroadcastStream()
-        .map(_mapToBluetoothState);
+    yield* _adapterStateChanges.map(_mapToBluetoothState);
   }
 
   BluetoothState _mapToBluetoothState(dynamic rawValue) {

@@ -14,3 +14,9 @@ part 'bridge/platform_to_dart_bridge.dart';
 part 'defaults.dart';
 part 'scan_result.dart';
 part 'simulation_manager.dart';
+
+part 'simulation_manager_mixins/client_managing_mixin.dart';
+part 'simulation_manager_mixins/error_checks_mixin.dart';
+part 'simulation_manager_mixins/peripheral_connection_mixin.dart';
+part 'simulation_manager_mixins/peripheral_scanning_mixin.dart';
+part 'simulation_manager_mixins/simulation_manager_base.dart';
