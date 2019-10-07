@@ -138,13 +138,13 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 // MARK: - MBA Methods - BT state monitoring
 
 - (void)enable:(FlutterMethodCall *)call result:(FlutterResult)result {
-    [_manager enable:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]
+    [_manager enable:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
              resolve:result
               reject:[self rejectForFlutterResult:result]];
 }
 
 - (void)disable:(FlutterMethodCall *)call result:(FlutterResult)result {
-    [_manager disable:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]
+    [_manager disable:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
               resolve:result
                reject:[self rejectForFlutterResult:result]];
 }
