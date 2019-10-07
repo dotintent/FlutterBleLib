@@ -11,7 +11,7 @@ import com.polidea.multiplatformbleadapter.utils.UUIDConverter;
 import java.util.Map;
 import java.util.UUID;
 
-public class CharacteristicDartValueDecoder implements DartValueDecoder<Characteristic> {
+public class CharacteristicDartValueDecoder {
 
     private interface Metadata {
         String DEVICE_IDENTIFIER = "deviceIdentifier";
@@ -27,7 +27,6 @@ public class CharacteristicDartValueDecoder implements DartValueDecoder<Characte
         String VALUE = "value";
     }
 
-    @Override
     public Characteristic decode(Object dartObject) {
         Map<String, Object> values = (Map<String, Object>) dartObject;
         String deviceId = (String) values.get(Metadata.DEVICE_IDENTIFIER);
