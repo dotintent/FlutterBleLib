@@ -194,7 +194,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 
 - (void)cancelDeviceConnection:(FlutterMethodCall *)call result:(FlutterResult)result {
     [_manager cancelDeviceConnection:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
-                             resolve:result
+                             resolve:[self resolveForCancelConnection:result]
                               reject:[self rejectForFlutterResult:result]];
 }
 
@@ -380,12 +380,20 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
         [self.connectionStateStreamHandler onConnectingEvent:(NSString *)value];
     } else if ([BleEvent.connectedEvent isEqualToString:name]) {
         [self.connectionStateStreamHandler onConnectedEvent:(NSString *)value];
+    } else if ([BleEvent.disconnectionEvent isEqualToString:name]) {
+        [self.connectionStateStreamHandler onDisconnectedEvent:(NSString *)value];
     } else if ([BleEvent.readEvent isEqualToString:name]) {
         [self.monitorCharacteristicStreamHandler onReadEvent:value];
     }
 }
 
 // MARK: - Utility methods
+
+- (Resolve)resolveForCancelConnection:(FlutterResult)result {
+    return ^(id response) {
+        result(nil);
+    };
+}
 
 - (Resolve)resolveForServicesForDevice:(FlutterResult)result {
     return ^(NSArray *servicesArray) {
