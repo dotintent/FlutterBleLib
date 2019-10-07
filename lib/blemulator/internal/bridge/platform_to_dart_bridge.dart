@@ -100,7 +100,7 @@ class PlatformToDartBridge {
             arguments[SimulationArgumentName.deviceIdentifier], characteristic));
   }
 
-  Map<String, dynamic> _convertToMap(String peripheralId, characteristic) =>
+  Map<String, dynamic> _convertToMap(String peripheralId, SimulatedCharacteristic characteristic) =>
       <String, dynamic>{
         Metadata.deviceIdentifier: peripheralId,
         Metadata.characteristicUuid: characteristic.uuid,
@@ -113,6 +113,7 @@ class PlatformToDartBridge {
         Metadata.isWritableWithoutResponse:
             characteristic.isWritableWithoutResponse,
         Metadata.isNotifiable: characteristic.isNotifiable,
+        Metadata.isNotifying: characteristic.isNotifying,
         Metadata.isIndicatable: characteristic.isIndicatable,
       };
 }

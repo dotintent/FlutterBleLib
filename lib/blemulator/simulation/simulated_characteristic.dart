@@ -10,6 +10,7 @@ class SimulatedCharacteristic {
   bool isWritableWithResponse;
   bool isWritableWithoutResponse;
   bool isNotifiable;
+  bool isNotifying;
   bool isIndicatable;
 
   StreamController<Uint8List> _streamController;
@@ -22,6 +23,7 @@ class SimulatedCharacteristic {
     this.isWritableWithResponse = true,
     this.isWritableWithoutResponse = true,
     this.isNotifiable = false,
+    this.isNotifying = false,
     this.isIndicatable = false,
   }) : id = IdGenerator().nextId();
 

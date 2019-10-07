@@ -67,6 +67,7 @@ abstract class Metadata {
   static const String isWritableWithResponse = "isWritableWithResponse";
   static const String isWritableWithoutResponse = "isWritableWithoutResponse";
   static const String isNotifiable = "isNotifiable";
+  static const String isNotifying = "isNotifying";
   static const String isIndicatable = "isIndicatable";
   static const String value = "value";
 }
