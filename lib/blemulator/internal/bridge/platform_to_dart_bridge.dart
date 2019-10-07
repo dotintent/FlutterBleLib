@@ -29,7 +29,11 @@ class PlatformToDartBridge {
         return _discoverAllServicesAndCharacteristics(call);
       default:
         return Future.error(
-            UnimplementedError("${call.method} is not implemented"));
+          SimulatedBleError(
+            BleErrorCode.UnknownError,
+            "${call.method} is not implemented",
+          ),
+        );
     }
   }
 
