@@ -19,7 +19,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 
 @interface FlutterBleLibPlugin () <BleClientManagerDelegate>
 
-@property (nonatomic) BleClientManager *manager;
+@property (nonatomic) id <BleAdapter> manager;
 @property (nonatomic) AdapterStateStreamHandler *adapterStateStreamHandler;
 @property (nonatomic) RestoreStateStreamHandler *restoreStateStreamHandler;
 @property (nonatomic) ScanningStreamHandler *scanningStreamHandler;
