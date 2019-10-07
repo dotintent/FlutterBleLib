@@ -15,7 +15,6 @@ import com.polidea.multiplatformbleadapter.OnSuccessCallback;
 import com.polidea.multiplatformbleadapter.ScanResult;
 import com.polidea.multiplatformbleadapter.Service;
 import com.polidea.multiplatformbleadapter.errors.BleError;
-import com.polidea.multiplatformbleadapter.utils.Constants;
 
 public class SimulatedAdapter implements BleAdapter {
 

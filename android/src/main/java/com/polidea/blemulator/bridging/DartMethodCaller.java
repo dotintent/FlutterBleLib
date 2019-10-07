@@ -3,9 +3,7 @@ package com.polidea.blemulator.bridging;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.polidea.blemulator.bridging.constants.ArgumentName;
 import com.polidea.blemulator.bridging.constants.DartMethodName;
-import com.polidea.blemulator.bridging.decoder.BleErrorDartValueDecoder;
 import com.polidea.blemulator.bridging.decoder.CharacteristicDartValueDecoder;
 import com.polidea.flutter_ble_lib.constant.ArgumentKey;
 import com.polidea.multiplatformbleadapter.Characteristic;
