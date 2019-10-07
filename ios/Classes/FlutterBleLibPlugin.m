@@ -69,6 +69,12 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
     if ([METHOD_NAME_CREATE_CLIENT isEqualToString:call.method]) {
         [self createClient:call result:result];
+    } else if ([METHOD_NAME_ENABLE_RADIO isEqualToString:call.method]) {
+        [self enable:call result:result];
+    } else if ([METHOD_NAME_DISABLE_RADIO isEqualToString:call.method]) {
+        [self disable:call result:result];
+    } else if ([METHOD_NAME_GET_STATE isEqualToString:call.method]) {
+        [self state:call result:result];
     } else if ([METHOD_NAME_START_DEVICE_SCAN isEqualToString:call.method]) {
         [self startDeviceScan:call result:result];
     } else if ([METHOD_NAME_STOP_DEVICE_SCAN isEqualToString:call.method]) {
@@ -140,6 +146,25 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 
 - (void)invalidate {
     [self destroyClient];
+}
+
+// MARK: - MBA Methods - BT state monitoring
+
+- (void)enable:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager enable:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+             resolve:result
+              reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)disable:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager disable:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+              resolve:result
+               reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)state:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager state:result
+             reject:[self rejectForFlutterResult:result]];
 }
 
 // MARK: - MBA Methods - Scanning

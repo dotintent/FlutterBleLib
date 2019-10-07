@@ -2,6 +2,6 @@
 
 @interface AdapterStateStreamHandler : NSObject<FlutterStreamHandler>
 
-- (void)onNewAdapterState:(id)bluetoothAdapterState;
+- (void)onNewAdapterState:(NSArray *)bluetoothAdapterState;
 
 @end
