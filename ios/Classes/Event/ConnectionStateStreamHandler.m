@@ -6,36 +6,45 @@
 }
 
 - (FlutterError * _Nullable)onCancelWithArguments:(id _Nullable)arguments {
-    eventSink = nil;
-    return nil;
+    @synchronized (self) {
+        eventSink = nil;
+        return nil;
+    }
 }
 
 - (FlutterError * _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(nonnull FlutterEventSink)events {
-    eventSink = events;
-    return nil;
+    @synchronized (self) {
+        eventSink = events;
+        return nil;
+    }
 }
 
 - (void)onConnectingEvent:(NSString *)deviceId {
-    if (eventSink != nil) {
-        eventSink([self jsonStringForDeviceId:deviceId connectionState:@"connecting"]);
+    @synchronized (self) {
+        if (eventSink != nil) {
+            eventSink([self jsonStringForDeviceId:deviceId connectionState:@"connecting"]);
+        }
     }
 }
 
 - (void)onConnectedEvent:(NSString *)deviceId {
-    if (eventSink != nil) {
-        eventSink([self jsonStringForDeviceId:deviceId connectionState:@"connected"]);
+    @synchronized (self) {
+        if (eventSink != nil) {
+            eventSink([self jsonStringForDeviceId:deviceId connectionState:@"connected"]);
+        }
     }
 }
 
 - (void)onDisconnectedEvent:(NSArray *)peripheralResponse {
-    if (eventSink != nil) {
-        if (peripheralResponse[0] == [NSNull null]) {
-            NSDictionary *peripheral = peripheralResponse[1];
-            eventSink([self jsonStringForDeviceId:[peripheral objectForKey:@"id"] connectionState:@"disconnected"]);
-        } else {
-            eventSink([FlutterErrorFactory flutterErrorFromJSONString:peripheralResponse[0]]);
+    @synchronized (self) {
+        if (eventSink != nil) {
+            if (peripheralResponse[0] == [NSNull null]) {
+                NSDictionary *peripheral = peripheralResponse[1];
+                eventSink([self jsonStringForDeviceId:[peripheral objectForKey:@"id"] connectionState:@"disconnected"]);
+            } else {
+                eventSink([FlutterErrorFactory flutterErrorFromJSONString:peripheralResponse[0]]);
+            }
         }
-
     }
 }
 
