@@ -4,13 +4,13 @@
 
 @implementation CharacteristicResponseConverter
 
-const NSString *keyServiceUUID = @"serviceUUID";
-const NSString *keyServiceID = @"serviceID";
+const NSString *keyServiceUUID = @"serviceUuid";
+const NSString *keyServiceID = @"serviceId";
 const NSString *keyCharacteristic = @"characteristic";
 
-const NSString *keyCharacteristicResponseUUID = @"uuid";
+const NSString *keyCharacteristicResponseUUID = @"characteristicUuid";
 const NSString *keyCharacteristicResponseId = @"id";
-const NSString *keyIsIndicatable = @"isIdicatable";
+const NSString *keyIsIndicatable = @"isIndicatable";
 const NSString *keyIsNotifiable = @"isNotifiable";
 const NSString *keyIsNotifying = @"isNotifying";
 const NSString *keyIsReadable = @"isReadable";
