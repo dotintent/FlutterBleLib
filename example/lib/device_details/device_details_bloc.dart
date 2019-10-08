@@ -78,7 +78,7 @@ class DeviceDetailsBloc {
     log("Disconnected!");
   }
 
-  Future<void> readRssi() async {
+  void readRssi() {
     _clearLogs();
     _deviceController.stream.listen((bleDevice) async {
       PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
@@ -86,7 +86,7 @@ class DeviceDetailsBloc {
     });
   }
 
-  Future<void> discovery() async {
+  void discovery() {
     _clearLogs();
     _deviceController.stream.listen((bleDevice) async {
       PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
@@ -94,7 +94,7 @@ class DeviceDetailsBloc {
     });
   }
 
-  Future<void> fetchConnectedDevices() async {
+  void fetchConnectedDevices() {
     _clearLogs();
     _deviceController.stream.listen((bleDevice) async {
       PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
@@ -102,7 +102,7 @@ class DeviceDetailsBloc {
     });
   }
 
-  Future<void> writeCharacteristicForPeripheral() async {
+  void writeCharacteristicForPeripheral() {
     _clearLogs();
     _deviceController.stream.listen((bleDevice) async {
       PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
@@ -110,7 +110,7 @@ class DeviceDetailsBloc {
     });
   }
 
-  Future<void> readCharacteristicForPeripheral() async {
+  void readCharacteristicForPeripheral() {
     _clearLogs();
     _deviceController.stream.listen((bleDevice) async {
       PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)

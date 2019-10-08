@@ -14,7 +14,6 @@ class PeripheralTestOperations {
     log("Connecting to ${peripheral.name}");
     await peripheral.connect();
     log("Connected!");
-    return peripheral;
   }
 
   Future<void> cancelTransaction() async {
@@ -59,7 +58,6 @@ class PeripheralTestOperations {
   Future<void> testReadingRssi() async {
     int rssi = await peripheral.rssi();
     log("rssi $rssi");
-    return peripheral;
   }
 
   Future<void> testRequestingMtu() async {
@@ -67,7 +65,6 @@ class PeripheralTestOperations {
     log("Requesting MTU = $requestedMtu");
     int negotiatedMtu = await peripheral.requestMtu(requestedMtu);
     log("negotiated MTU $negotiatedMtu");
-    return peripheral;
   }
 
   Future<void> readWriteMonitorCharacteristicForPeripheral() async {
@@ -124,7 +121,6 @@ class PeripheralTestOperations {
         false);
 
     log("Turned on temperature update");
-    return peripheral;
   }
 
   Future<void> readCharacteristicForPeripheral() async {
@@ -133,8 +129,6 @@ class PeripheralTestOperations {
         SensorTagTemperatureUuids.temperatureService,
         SensorTagTemperatureUuids.temperatureDataCharacteristic);
     log("Read temperature value ${_convertToTemperature(readValue.value)}C");
-
-    return peripheral;
   }
 
   Future<void> readWriteMonitorCharacteristicForService() async {
