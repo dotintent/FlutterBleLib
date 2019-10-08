@@ -27,7 +27,6 @@ class PlatformToDartBridge {
         return _disconnectOrCancelConnection(call);
       case DartMethodName.discoverAllServicesAndCharacteristics:
         return _discoverAllServicesAndCharacteristics(call);
-        return _stopDeviceScan();
       case DartMethodName.readCharacteristicForDevice:
         return _readCharacteristicForDevice(call);
       case DartMethodName.readCharacteristicForService:

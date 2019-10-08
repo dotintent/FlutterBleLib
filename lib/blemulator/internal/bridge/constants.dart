@@ -59,7 +59,6 @@ abstract class SimulationArgumentName {
 
   static const String connectionState = "connectionState";
 
-  static const String serviceUuid = "serviceUuid";
   static const String characteristics = "characteristics";
   static const String uuid = "uuid";
 }
