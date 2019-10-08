@@ -170,7 +170,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 // MARK: - MBA Methods - Scanning
 
 - (void)startDeviceScan:(FlutterMethodCall *)call result:(FlutterResult)result {
-    NSArray* expectedArguments = [NSArray arrayWithObjects:ARGUMENT_KEY_SCAN_MODE, nil];
+    NSArray* expectedArguments = [NSArray arrayWithObjects:ARGUMENT_KEY_ALLOW_DUPLICATES, nil];
     [_manager startDeviceScan:[ArgumentValidator validStringArrayOrNil:call.arguments[ARGUMENT_KEY_UUIDS]]
                       options:[ArgumentValidator validDictionaryOrNil:expectedArguments in:call.arguments]];
     result(nil);
