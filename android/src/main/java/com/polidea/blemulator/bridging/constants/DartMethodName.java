@@ -14,4 +14,8 @@ public interface DartMethodName {
     String DISCOVER_ALL_SERVICES_AND_CHARACTERISTICS = "discoverAllServicesAndCharacteristics";
     String GET_SERVICES = "services";
     String GET_CHARACTERISTICS = "characteristics";
+
+    String READ_CHARACTERISTIC_FOR_IDENTIFIER = "readCharacteristicForIdentifier";
+    String READ_CHARACTERISTIC_FOR_DEVICE = "readCharacteristicForDevice";
+    String READ_CHARACTERISTIC_FOR_SERVICE = "readCharacteristicForService";
 }
