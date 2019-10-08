@@ -32,7 +32,7 @@ class SimulationManager extends SimulationManagerBaseWithErrorChecks
   Future<void> _destroyClient() async {}
 
   Future<void> _startDeviceScan() async {
-    _peripherals.forEach((peripheral) {
+    _peripherals.values.forEach((peripheral) {
       _scanSubscriptions
           .add(peripheral.onScan(allowDuplicates: true).listen((scanResult) {
         print(scanResult);
