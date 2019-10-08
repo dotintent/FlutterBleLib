@@ -30,6 +30,7 @@ public class DartMethodCaller {
 
     private static final String TAG = DartMethodCaller.class.getSimpleName();
     private MethodChannel dartMethodChannel;
+    private JSONToBleErrorConverter jsonToBleErrorConverter = new JSONToBleErrorConverter();
 
     public DartMethodCaller(MethodChannel dartMethodChannel) {
         this.dartMethodChannel = dartMethodChannel;
@@ -68,7 +69,7 @@ public class DartMethodCaller {
 
                     @Override
                     public void error(String s, @Nullable String s1, @Nullable Object o) {
-                        Log.e(TAG, s);
+                        Log.e(TAG, s + " "  + s1);
                     }
 
                     @Override
@@ -138,7 +139,7 @@ public class DartMethodCaller {
             @Override
             public void error(String s, @Nullable String s1, @Nullable Object o) {
                 Log.e(TAG, s);
-                onErrorCallback.onError(objectToBleError(o));
+                onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(s1));
             }
 
             @Override
@@ -163,7 +164,7 @@ public class DartMethodCaller {
             @Override
             public void error(String s, @Nullable String s1, @Nullable Object o) {
                 Log.e(TAG, s);
-                onErrorCallback.onError(objectToBleError(o));
+                onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(s1));
             }
 
             @Override
@@ -189,7 +190,7 @@ public class DartMethodCaller {
             @Override
             public void error(String s, @Nullable String s1, @Nullable Object o) {
                 Log.e(TAG, s);
-                onErrorCallback.onError(objectToBleError(o));
+                onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(s1));
             }
 
             @Override
