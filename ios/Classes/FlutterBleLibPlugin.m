@@ -85,6 +85,8 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
         [self cancelDeviceConnection:call result:result];
     } else if ([METHOD_NAME_IS_DEVICE_CONNECTED isEqualToString:call.method]) {
         [self isDeviceConnected:call result:result];
+    } else if ([METHOD_NAME_OBSERVE_CONNECTION_STATE isEqualToString:call.method]) {
+        [self observeConnectionState:call result:result];
     } else if ([METHOD_NAME_SET_LOG_LEVEL isEqualToString:call.method]) {
         [self setLogLevel:call result:result];
     } else if ([METHOD_NAME_LOG_LEVEL isEqualToString:call.method]) {
@@ -202,6 +204,24 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
     [_manager isDeviceConnected:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
                         resolve:result
                          reject:[self rejectForFlutterResult:result]];
+
+}
+
+- (void)observeConnectionState:(FlutterMethodCall *)call result:(FlutterResult)result {
+    BOOL emitCurrentValue = (BOOL)call.arguments[ARGUMENT_KEY_EMIT_CURRENT_VALUE];
+    if (emitCurrentValue == YES) {
+        Resolve resolve = ^(id isConnected) {
+            if ((BOOL)isConnected == YES) {
+                [self.connectionStateStreamHandler onConnectedEvent:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]];
+            } else {
+                [self.connectionStateStreamHandler emitDisconnectedEvent:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]];
+            }
+            result(nil);
+        };
+        [self isDeviceConnected:call result:resolve];
+    } else {
+        result(nil);
+    }
 
 }
 

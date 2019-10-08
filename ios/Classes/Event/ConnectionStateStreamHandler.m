@@ -48,6 +48,14 @@
     }
 }
 
+- (void)emitDisconnectedEvent:(NSString *)deviceId {
+    @synchronized (self) {
+        if (eventSink != nil) {
+            eventSink([self jsonStringForDeviceId:deviceId connectionState:@"disconnected"]);
+        }
+    }
+}
+
 - (NSString *)jsonStringForDeviceId:(NSString *)deviceId connectionState:(NSString *)connectionState {
     NSMutableDictionary<NSString *, id> *dictionary = [[NSMutableDictionary alloc] init];
     [dictionary setValue:deviceId forKey:@"peripheralIdentifier"];
