@@ -13,7 +13,7 @@ class SensorTagTestScenario {
   Future<void> runTestScenario() async {
     _connect()
 //        .then((_) => _cancelTransaction())
-//        .then((_) => _discovery())
+        .then((_) => _discovery())
 //        .then((_) => _testRequestingMtu())
 //        .then((_) => _testReadingRssi())
 //        .then((_) => _readWriteMonitorCharacteristicForPeripheral())

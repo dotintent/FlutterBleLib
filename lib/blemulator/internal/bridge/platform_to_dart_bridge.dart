@@ -25,8 +25,11 @@ class PlatformToDartBridge {
         return _isDeviceConnected(call);
       case DartMethodName.disconnectOrCancelConnectionToPeripheral:
         return _disconnectOrCancelConnection(call);
+      case DartMethodName.discoverAllServicesAndCharacteristics:
+        return _discoverAllServicesAndCharacteristics(call);
       default:
-         return Future.error(UnimplementedError("${call.method} is not implemented"));
+        return Future.error(
+            UnimplementedError("${call.method} is not implemented"));
     }
   }
 
@@ -58,5 +61,25 @@ class PlatformToDartBridge {
   Future<void> _disconnectOrCancelConnection(MethodCall call) {
     return _manager._disconnectOrCancelConnection(
         call.arguments[ArgumentName.id] as String);
+  }
+
+  Future<List<dynamic>> _discoverAllServicesAndCharacteristics(MethodCall call) async {
+    List<SimulatedService> services =
+        await _manager.discoverAllServicesAndCharacteristics(call.arguments[ArgumentName.id] as String);
+    dynamic mapped =  services.map(
+      (e) => <String, dynamic>{
+        SimulationArgumentName.uuid: e.uuid,
+        SimulationArgumentName.id: e.id,
+        SimulationArgumentName.characteristics: e.characteristics().map(
+              (e) => <String, dynamic>{
+                SimulationArgumentName.id: e.id,
+                SimulationArgumentName.uuid: e.uuid,
+                //TODO expand model to send all fields
+              },
+            ).toList(),
+      },
+    ).toList();
+
+    return mapped;
   }
 }
