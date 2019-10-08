@@ -29,6 +29,10 @@ class DeviceDetailsBloc {
   Stream<BleDevice> get disconnectedDevice => _deviceRepository.pickedDevice
       .skipWhile((bleDevice) => bleDevice != null);
 
+  List<DebugLog> _logs = [];
+  Logger log;
+  Logger logError;
+
   DeviceDetailsBloc(this._deviceRepository, this._bleManager) {
     var device = _deviceRepository.pickedDevice.value;
     _deviceController = BehaviorSubject<BleDevice>.seeded(device);
@@ -39,27 +43,81 @@ class DeviceDetailsBloc {
             : PeripheralConnectionState.disconnected);
 
     _logsController = PublishSubject<List<DebugLog>>();
+
+    log = (text) {
+      _logs.insert(0, DebugLog(DateTime.now().toString(), text));
+      Fimber.d(text);
+      _logsController.add(_logs);
+    };
+
+    logError = (text) {
+      _logs.insert(0,
+          DebugLog(DateTime.now().toString(), "ERROR: ${text.toUpperCase()}"));
+      Fimber.e(text);
+      _logsController.add(_logs);
+    };
   }
 
   void init() {
     Fimber.d("init bloc");
-//    _deviceController.stream.listen((bleDevice) {
-//      Fimber.d("got bleDevice: $bleDevice");
-//      bleDevice.peripheral.isConnected().then((isConnected) {
-//        Fimber.d('The device is connected: $isConnected');
-//        if (!isConnected) {
-//          _connectTo(bleDevice);
-//        }
-//      }).catchError((error) => Fimber.e("Connection problem", ex: error));
-//    });
   }
 
   Future<void> disconnect() async {
+    _clearLogs();
+    disconnectManual();
+    return _deviceRepository.pickDevice(null);
+  }
+
+  Future<void> disconnectManual() async {
+    _clearLogs();
     if (await _deviceController.stream.value.peripheral.isConnected()) {
+      log("DISCONNECTING...");
       await _deviceController.stream.value.peripheral
           .disconnectOrCancelConnection();
     }
-    return _deviceRepository.pickDevice(null);
+    log("Disconnected!");
+  }
+
+  Future<void> readRssi() async {
+    _clearLogs();
+    _deviceController.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+          .testReadingRssi();
+    });
+  }
+
+  Future<void> discovery() async {
+    _clearLogs();
+    _deviceController.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+          .discovery();
+    });
+  }
+
+  Future<void> fetchConnectedDevices() async {
+    _clearLogs();
+    _deviceController.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+          .fetchConnectedDevice();
+    });
+  }
+
+  Future<void> connect() async {
+    _clearLogs();
+    _deviceController.stream.listen((bleDevice) async {
+      var peripheral = bleDevice.peripheral;
+      peripheral
+          .observeConnectionState(emitCurrentValue: true)
+          .listen((connectionState) {
+        log('Observed new connection state: $connectionState');
+        _connectionStateController.add(connectionState);
+      });
+
+      log("Connecting to ${peripheral.name}");
+      await peripheral.connect();
+      log("Connected!");
+      return peripheral;
+    });
   }
 
   void dispose() async {
@@ -72,19 +130,7 @@ class DeviceDetailsBloc {
   }
 
   void _connectTo(BleDevice bleDevice) async {
-    List<DebugLog> logs = [];
-    Logger log = (text) {
-      logs.insert(0, DebugLog(DateTime.now().toString(), text));
-      Fimber.d(text);
-      _logsController.add(logs);
-    };
 
-    Logger logError = (text) {
-      logs.insert(0,
-          DebugLog(DateTime.now().toString(), "ERROR: ${text.toUpperCase()}"));
-      Fimber.e(text);
-      _logsController.add(logs);
-    };
 
     log("Fetching log level");
     LogLevel logLevel = await _bleManager.logLevel();
@@ -111,20 +157,7 @@ class DeviceDetailsBloc {
   }
 
   void startAutoTest() {
-    List<DebugLog> logs = [];
-    _logsController.add(logs);
-    Logger log = (text) {
-      logs.insert(0, DebugLog(DateTime.now().toString(), text));
-      Fimber.d(text);
-      _logsController.add(logs);
-    };
-
-    Logger logError = (text) {
-      logs.insert(0,
-          DebugLog(DateTime.now().toString(), "ERROR: ${text.toUpperCase()}"));
-      Fimber.e(text);
-      _logsController.add(logs);
-    };
+    _clearLogs();
 
     _deviceController.stream.listen((bleDevice) {
       Fimber.d("got bleDevice: $bleDevice");
@@ -137,6 +170,11 @@ class DeviceDetailsBloc {
         logError('Connection problem: ${error.toString()}');
       });
     });
+  }
+
+  void _clearLogs() {
+    _logs = [];
+    _logsController.add(_logs);
   }
 }
 

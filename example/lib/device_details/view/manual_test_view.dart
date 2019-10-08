@@ -28,6 +28,26 @@ class ManualTestView extends StatelessWidget {
     );
   }
 
+  void _connect() {
+    _deviceDetailsBloc.connect();
+  }
+
+  void _disconnect() {
+    _deviceDetailsBloc.disconnectManual();
+  }
+
+  void _readRssi() {
+    _deviceDetailsBloc.readRssi();
+  }
+
+  void _discovery() {
+    _deviceDetailsBloc.discovery();
+  }
+
+  void _fetchConnectedDevices() {
+    _deviceDetailsBloc.fetchConnectedDevices();
+  }
+
   Column _createControlPanel() {
     return Column(
       children: <Widget>[
@@ -35,9 +55,9 @@ class ManualTestView extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 2.0),
           child: Row(
             children: <Widget>[
-              ButtonView("Connect"),
-              ButtonView("Disconnect"),
-              ButtonView("Connected devices"),
+              ButtonView("Connect", action: _connect),
+              ButtonView("Disconnect", action: _disconnect),
+              ButtonView("Connected devices", action: _fetchConnectedDevices),
             ],
           ),
         ),
@@ -45,7 +65,7 @@ class ManualTestView extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 2.0),
           child: Row(
             children: <Widget>[
-              ButtonView("Read Rssi"),
+              ButtonView("Read Rssi", action: _readRssi),
               ButtonView("Request MTU"),
               ButtonView("Known devices"),
             ],
@@ -55,9 +75,9 @@ class ManualTestView extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 2.0),
           child: Row(
             children: <Widget>[
-              ButtonView("Read Rssi"),
-              ButtonView("Request MTU"),
-              ButtonView("Known devices"),
+              ButtonView("Discovery", action: _discovery),
+              ButtonView("Idle"),
+              ButtonView("Idle"),
             ],
           ),
         ),
@@ -65,9 +85,9 @@ class ManualTestView extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 2.0),
           child: Row(
             children: <Widget>[
-              ButtonView("Read Rssi"),
-              ButtonView("Request MTU"),
-              ButtonView("Known devices"),
+              ButtonView("Idle"),
+              ButtonView("Idle"),
+              ButtonView("Idle"),
             ],
           ),
         ),
