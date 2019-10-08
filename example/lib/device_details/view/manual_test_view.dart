@@ -1,16 +1,16 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_ble_lib_example/device_details/device_details_bloc.dart';
-import 'package:flutter_ble_lib_example/device_details/view/button_builder.dart';
-import 'package:flutter_ble_lib_example/device_details/view/logs_container_view_builder.dart';
+import 'package:flutter_ble_lib_example/device_details/view/button_view.dart';
+import 'package:flutter_ble_lib_example/device_details/view/logs_container_view.dart';
 
-class ManualTestViewBuilder {
+class ManualTestView extends StatelessWidget {
 
-  DeviceDetailsBloc _deviceDetailsBloc;
+  final DeviceDetailsBloc _deviceDetailsBloc;
 
-  ManualTestViewBuilder(this._deviceDetailsBloc);
+  ManualTestView(this._deviceDetailsBloc);
 
-  Widget build() {
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(children: <Widget>[
@@ -22,7 +22,7 @@ class ManualTestViewBuilder {
         ),
         Expanded(
           flex: 7,
-          child: LogsContainerViewBuilder().build(_deviceDetailsBloc.logs),
+          child: LogsContainerView(_deviceDetailsBloc.logs),
         )
       ]),
     );
@@ -35,9 +35,9 @@ class ManualTestViewBuilder {
           padding: const EdgeInsets.symmetric(vertical: 2.0),
           child: Row(
             children: <Widget>[
-              ButtonBuilder().build("Connect"),
-              ButtonBuilder().build("Disconnect"),
-              ButtonBuilder().build("Connected devices"),
+              ButtonView("Connect"),
+              ButtonView("Disconnect"),
+              ButtonView("Connected devices"),
             ],
           ),
         ),
@@ -45,9 +45,9 @@ class ManualTestViewBuilder {
           padding: const EdgeInsets.symmetric(vertical: 2.0),
           child: Row(
             children: <Widget>[
-              ButtonBuilder().build("Read Rssi"),
-              ButtonBuilder().build("Request MTU"),
-              ButtonBuilder().build("Known devices"),
+              ButtonView("Read Rssi"),
+              ButtonView("Request MTU"),
+              ButtonView("Known devices"),
             ],
           ),
         ),
@@ -55,9 +55,9 @@ class ManualTestViewBuilder {
           padding: const EdgeInsets.symmetric(vertical: 2.0),
           child: Row(
             children: <Widget>[
-              ButtonBuilder().build("Read Rssi"),
-              ButtonBuilder().build("Request MTU"),
-              ButtonBuilder().build("Known devices"),
+              ButtonView("Read Rssi"),
+              ButtonView("Request MTU"),
+              ButtonView("Known devices"),
             ],
           ),
         ),
@@ -65,9 +65,9 @@ class ManualTestViewBuilder {
           padding: const EdgeInsets.symmetric(vertical: 2.0),
           child: Row(
             children: <Widget>[
-              ButtonBuilder().build("Read Rssi"),
-              ButtonBuilder().build("Request MTU"),
-              ButtonBuilder().build("Known devices"),
+              ButtonView("Read Rssi"),
+              ButtonView("Request MTU"),
+              ButtonView("Known devices"),
             ],
           ),
         ),

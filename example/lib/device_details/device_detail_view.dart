@@ -4,16 +4,16 @@ import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ble_lib_example/device_details/device_details_bloc.dart';
 import 'package:flutter_ble_lib_example/device_details/devices_details_bloc_provider.dart';
-import 'package:flutter_ble_lib_example/device_details/view/auto_test_view_builder.dart';
-import 'package:flutter_ble_lib_example/device_details/view/manual_test_view_builder.dart';
+import 'package:flutter_ble_lib_example/device_details/view/auto_test_view.dart';
+import 'package:flutter_ble_lib_example/device_details/view/manual_test_view.dart';
 
-class DeviceDetailsFancy extends StatefulWidget {
+class DeviceDetailsView extends StatefulWidget {
   @override
-  State<DeviceDetailsFancy> createState() => DeviceDetailsFancyState();
+  State<DeviceDetailsView> createState() => DeviceDetailsViewState();
 
 }
 
-class DeviceDetailsFancyState extends State<DeviceDetailsFancy> {
+class DeviceDetailsViewState extends State<DeviceDetailsView> {
   DeviceDetailsBloc _deviceDetailsBloc;
   StreamSubscription _appStateSubscription;
 
@@ -81,8 +81,8 @@ class DeviceDetailsFancyState extends State<DeviceDetailsFancy> {
             ),
             body: TabBarView(
               children: <Widget>[
-                AutoTestViewBuilder(_deviceDetailsBloc).build(),
-                ManualTestViewBuilder(_deviceDetailsBloc).build(),
+                AutoTestView(_deviceDetailsBloc),
+                ManualTestView(_deviceDetailsBloc),
               ],
             )),
       ),

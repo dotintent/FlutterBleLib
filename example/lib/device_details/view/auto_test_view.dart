@@ -1,16 +1,18 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_ble_lib_example/device_details/device_details_bloc.dart';
-import 'package:flutter_ble_lib_example/device_details/view/button_builder.dart';
-import 'package:flutter_ble_lib_example/device_details/view/logs_container_view_builder.dart';
+import 'package:flutter_ble_lib_example/device_details/view/button_view.dart';
+import 'package:flutter_ble_lib_example/device_details/view/logs_container_view.dart';
 
-class AutoTestViewBuilder {
 
-  DeviceDetailsBloc _deviceDetailsBloc;
+class AutoTestView extends StatelessWidget {
 
-  AutoTestViewBuilder(this._deviceDetailsBloc);
+  final DeviceDetailsBloc _deviceDetailsBloc;
 
-  Widget build() {
+  AutoTestView(this._deviceDetailsBloc);
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(children: <Widget>[
@@ -22,7 +24,7 @@ class AutoTestViewBuilder {
         ),
         Expanded(
           flex: 9,
-          child: LogsContainerViewBuilder().build(_deviceDetailsBloc.logs),
+          child: LogsContainerView(_deviceDetailsBloc.logs),
         )
       ]),
     );
@@ -31,7 +33,7 @@ class AutoTestViewBuilder {
   Widget _createAutoTestControlPanel() {
     return Row(
       children: <Widget>[
-        ButtonBuilder().build("Start Auto Test", action: _startAutoTest),
+        ButtonView("Start Auto Test", action: _startAutoTest),
       ],
     );
   }
@@ -39,4 +41,5 @@ class AutoTestViewBuilder {
   void _startAutoTest() {
     _deviceDetailsBloc.startAutoTest();
   }
+
 }

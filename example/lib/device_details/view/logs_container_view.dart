@@ -3,9 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_ble_lib_example/device_details/device_details_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 
-class LogsContainerViewBuilder {
+class LogsContainerView extends StatelessWidget {
 
-  Widget build(Observable<List<DebugLog>> logs) {
+  final Observable<List<DebugLog>> _logs;
+
+  LogsContainerView(this._logs);
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 8.0),
       decoration: BoxDecoration(
@@ -17,7 +22,7 @@ class LogsContainerViewBuilder {
             Flexible(
               child: StreamBuilder<List<DebugLog>>(
                 initialData: [],
-                stream: logs,
+                stream: _logs,
                 builder: (context, snapshot) => _buildLogs(context, snapshot),
               ),
             ),
