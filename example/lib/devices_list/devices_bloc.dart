@@ -55,7 +55,7 @@ class DevicesBloc {
     if (_devicePickerController.isClosed) {
       _devicePickerController = StreamController<BleDevice>();
     }
-    
+
 
     Fimber.d(" listen to _devicePickerController.stream");
     _devicePickerSubscription = _devicePickerController.stream.listen(_handlePickedDevice);
