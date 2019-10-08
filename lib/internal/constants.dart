@@ -70,6 +70,7 @@ abstract class ArgumentName {
   static const String restoreStateIdentifier = "restoreStateIdentifier";
   static const String scanMode = "scanMode";
   static const String callbackType = "callbackType";
+  static const String allowDuplicates = "allowDuplicates";
   static const String uuids = "uuids";
 
   static const String transactionId = "transactionId";

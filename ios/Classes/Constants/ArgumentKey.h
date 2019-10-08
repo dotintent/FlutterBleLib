@@ -2,6 +2,7 @@
 
 extern NSString * const ARGUMENT_KEY_RESTORE_STATE_IDENTIFIER;
 extern NSString * const ARGUMENT_KEY_SCAN_MODE;
+extern NSString * const ARGUMENT_KEY_ALLOW_DUPLICATES;
 extern NSString * const ARGUMENT_KEY_CALLBACK_TYPE;
 extern NSString * const ARGUMENT_KEY_UUIDS;
 
