@@ -7,21 +7,27 @@
 }
 
 - (FlutterError * _Nullable)onCancelWithArguments:(id _Nullable)arguments {
-    characteristicEventSink = nil;
-    return nil;
+    @synchronized (self) {
+        characteristicEventSink = nil;
+        return nil;
+    }
 }
 
 - (FlutterError * _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(nonnull FlutterEventSink)events {
-    characteristicEventSink = events;
-    return nil;
+    @synchronized (self) {
+        characteristicEventSink = events;
+        return nil;
+    }
 }
 
 - (void)onReadEvent:(NSArray *)readResult {
-    if (characteristicEventSink != nil) {
-        if (readResult[0] == [NSNull null]) {
-            characteristicEventSink([CharacteristicResponseConverter jsonStringFromCharacteristicResponse:readResult[1]]);
-        } else {
-            characteristicEventSink([FlutterErrorFactory flutterErrorFromJSONString:readResult[0]]);
+    @synchronized (self) {
+        if (characteristicEventSink != nil) {
+            if (readResult[0] == [NSNull null]) {
+                characteristicEventSink([CharacteristicResponseConverter jsonStringFromCharacteristicResponse:readResult[1]]);
+            } else {
+                characteristicEventSink([FlutterErrorFactory flutterErrorFromJSONString:readResult[0]]);
+            }
         }
     }
 }
