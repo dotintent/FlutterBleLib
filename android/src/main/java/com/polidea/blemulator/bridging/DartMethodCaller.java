@@ -238,7 +238,7 @@ public class DartMethodCaller {
         });
     }
 
-    public DeviceContainer parseDiscoveryResponse(String deviceIdentifier, String deviceName, Object responseObject) {
+    private DeviceContainer parseDiscoveryResponse(String deviceIdentifier, String deviceName, Object responseObject) {
         List<Map<String, Object>> response = (List<Map<String, Object>>) responseObject;
         List<Service> services = new ArrayList<>();
         Map<String, List<Characteristic>> characteristics = new HashMap<>();
