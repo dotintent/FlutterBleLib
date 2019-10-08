@@ -8,13 +8,15 @@ mixin ScanningMixin on FlutterBLE {
     int scanMode,
     int callbackType,
     List<String> uuids,
+    bool allowDuplicates,
   ) async* {
     _methodChannel.invokeMethod(
       MethodName.startDeviceScan,
       <String, dynamic>{
         ArgumentName.scanMode: scanMode,
         ArgumentName.callbackType: callbackType,
-        ArgumentName.uuids: uuids
+        ArgumentName.uuids: uuids,
+        ArgumentName.allowDuplicates: allowDuplicates,
       },
     );
     yield* _scanEvents.handleError(

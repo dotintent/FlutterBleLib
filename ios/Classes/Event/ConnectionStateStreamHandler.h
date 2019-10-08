@@ -6,4 +6,8 @@
 
 - (void)onConnectedEvent:(NSString *)deviceId;
 
+- (void)onDisconnectedEvent:(NSArray *)peripheralResponse;
+
+- (void)emitDisconnectedEvent:(NSString *)deviceId;
+
 @end

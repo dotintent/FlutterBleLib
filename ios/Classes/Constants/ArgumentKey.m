@@ -4,6 +4,7 @@
 
 NSString * const ARGUMENT_KEY_RESTORE_STATE_IDENTIFIER = @"restoreStateIdentifier";
 NSString * const ARGUMENT_KEY_SCAN_MODE = @"scanMode";
+NSString * const ARGUMENT_KEY_ALLOW_DUPLICATES = @"allowDuplicates";
 NSString * const ARGUMENT_KEY_CALLBACK_TYPE = @"callbackType";
 NSString * const ARGUMENT_KEY_UUIDS = @"uuids";
 

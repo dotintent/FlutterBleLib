@@ -1,4 +1,5 @@
 #import "AdapterStateStreamHandler.h"
+#import "FlutterErrorFactory.h"
 
 @implementation AdapterStateStreamHandler {
     FlutterEventSink adapterStateSink;
@@ -14,9 +15,13 @@
     return nil;
 }
 
-- (void)onNewAdapterState:(id)bluetoothAdapterState {
+- (void)onNewAdapterState:(NSArray *)bluetoothAdapterState {
     if (adapterStateSink != nil) {
-        adapterStateSink(bluetoothAdapterState);
+        if (bluetoothAdapterState[0] == [NSNull null]) {
+            adapterStateSink(bluetoothAdapterState[1]);
+        } else {
+            adapterStateSink([FlutterErrorFactory flutterErrorFromJSONString:bluetoothAdapterState[0]]);
+        }
     }
 }
 
