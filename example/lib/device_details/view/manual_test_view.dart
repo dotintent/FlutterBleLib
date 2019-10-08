@@ -48,6 +48,14 @@ class ManualTestView extends StatelessWidget {
     _deviceDetailsBloc.fetchConnectedDevices();
   }
 
+  void _writeCharacteristicForPeripheral() {
+    _deviceDetailsBloc.writeCharacteristicForPeripheral();
+  }
+
+  void _readCharacteristicForPeripheral() {
+    _deviceDetailsBloc.readCharacteristicForPeripheral();
+  }
+
   Column _createControlPanel() {
     return Column(
       children: <Widget>[
@@ -76,8 +84,8 @@ class ManualTestView extends StatelessWidget {
           child: Row(
             children: <Widget>[
               ButtonView("Discovery", action: _discovery),
-              ButtonView("Idle"),
-              ButtonView("Idle"),
+              ButtonView("Turn on temp", action: _writeCharacteristicForPeripheral),
+              ButtonView("Read temp", action: _readCharacteristicForPeripheral),
             ],
           ),
         ),
@@ -85,9 +93,9 @@ class ManualTestView extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 2.0),
           child: Row(
             children: <Widget>[
-              ButtonView("Idle"),
-              ButtonView("Idle"),
-              ButtonView("Idle"),
+              ButtonView("Debug Log Level"),
+              ButtonView("Error Log Level"),
+              ButtonView("Fetch log level"),
             ],
           ),
         ),

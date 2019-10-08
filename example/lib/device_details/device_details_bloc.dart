@@ -102,6 +102,22 @@ class DeviceDetailsBloc {
     });
   }
 
+  Future<void> writeCharacteristicForPeripheral() async {
+    _clearLogs();
+    _deviceController.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+          .writeCharacteristicForPeripheral();
+    });
+  }
+
+  Future<void> readCharacteristicForPeripheral() async {
+    _clearLogs();
+    _deviceController.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+          .readCharacteristicForPeripheral();
+    });
+  }
+
   Future<void> connect() async {
     _clearLogs();
     _deviceController.stream.listen((bleDevice) async {

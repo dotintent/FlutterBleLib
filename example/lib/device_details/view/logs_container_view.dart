@@ -65,7 +65,7 @@ class LogsContainerView extends StatelessWidget {
                 child: Text(logs.data[index].content,
                     overflow: TextOverflow.ellipsis,
                     softWrap: true,
-                    style: TextStyle(fontSize: 9)),
+                    style: TextStyle(fontSize: 13)),
               ),
             ],
           ),

@@ -115,6 +115,28 @@ class PeripheralTestOperations {
     return peripheral;
   }
 
+  Future<void> writeCharacteristicForPeripheral() async {
+    log("Turning on temperature update");
+    await peripheral.writeCharacteristic(
+        SensorTagTemperatureUuids.temperatureService,
+        SensorTagTemperatureUuids.temperatureConfigCharacteristic,
+        Uint8List.fromList([1]),
+        false);
+
+    log("Turned on temperature update");
+    return peripheral;
+  }
+
+  Future<void> readCharacteristicForPeripheral() async {
+    log("Reading temperature");
+    CharacteristicWithValue readValue = await peripheral.readCharacteristic(
+        SensorTagTemperatureUuids.temperatureService,
+        SensorTagTemperatureUuids.temperatureDataCharacteristic);
+    log("Read temperature value ${_convertToTemperature(readValue.value)}C");
+
+    return peripheral;
+  }
+
   Future<void> readWriteMonitorCharacteristicForService() async {
     log("Test read/write/monitor characteristic on service");
     log("Fetching service");
