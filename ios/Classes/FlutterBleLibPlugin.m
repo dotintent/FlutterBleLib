@@ -208,13 +208,13 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 }
 
 - (void)observeConnectionState:(FlutterMethodCall *)call result:(FlutterResult)result {
-    BOOL emitCurrentValue = call.arguments[ARGUMENT_KEY_EMIT_CURRENT_VALUE];
+    BOOL emitCurrentValue = (BOOL)call.arguments[ARGUMENT_KEY_EMIT_CURRENT_VALUE];
     if (emitCurrentValue == YES) {
         Resolve resolve = ^(id isConnected) {
             if ((BOOL)isConnected == YES) {
                 [self.connectionStateStreamHandler onConnectedEvent:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]];
             } else {
-                // call onDisconnectedEvent
+                [self.connectionStateStreamHandler emitDisconnectedEvent:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]];
             }
             result(nil);
         };
