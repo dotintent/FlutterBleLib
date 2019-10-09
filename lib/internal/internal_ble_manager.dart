@@ -53,8 +53,9 @@ class InternalBleManager
     int scanMode = ScanMode.lowPower,
     int callbackType = CallbackType.allMatches,
     List<String> uuids,
+    bool allowDuplicates = false,
   }) =>
-      _bleLib.startDeviceScan(scanMode, callbackType, uuids ?? []);
+      _bleLib.startDeviceScan(scanMode, callbackType, uuids ?? [], allowDuplicates);
 
   @override
   Future<void> stopDeviceScan() => _bleLib.stopDeviceScan();

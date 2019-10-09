@@ -67,6 +67,12 @@
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
     if ([METHOD_NAME_CREATE_CLIENT isEqualToString:call.method]) {
         [self createClient:call result:result];
+    } else if ([METHOD_NAME_ENABLE_RADIO isEqualToString:call.method]) {
+        [self enable:call result:result];
+    } else if ([METHOD_NAME_DISABLE_RADIO isEqualToString:call.method]) {
+        [self disable:call result:result];
+    } else if ([METHOD_NAME_GET_STATE isEqualToString:call.method]) {
+        [self state:call result:result];
     } else if ([METHOD_NAME_START_DEVICE_SCAN isEqualToString:call.method]) {
         [self startDeviceScan:call result:result];
     } else if ([METHOD_NAME_STOP_DEVICE_SCAN isEqualToString:call.method]) {
@@ -77,6 +83,8 @@
         [self cancelDeviceConnection:call result:result];
     } else if ([METHOD_NAME_IS_DEVICE_CONNECTED isEqualToString:call.method]) {
         [self isDeviceConnected:call result:result];
+    } else if ([METHOD_NAME_OBSERVE_CONNECTION_STATE isEqualToString:call.method]) {
+        [self observeConnectionState:call result:result];
     } else if ([METHOD_NAME_SET_LOG_LEVEL isEqualToString:call.method]) {
         [self setLogLevel:call result:result];
     } else if ([METHOD_NAME_LOG_LEVEL isEqualToString:call.method]) {
@@ -140,10 +148,29 @@
     [self destroyClient];
 }
 
+// MARK: - MBA Methods - BT state monitoring
+
+- (void)enable:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager enable:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+             resolve:result
+              reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)disable:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager disable:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+              resolve:result
+               reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)state:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_manager state:result
+             reject:[self rejectForFlutterResult:result]];
+}
+
 // MARK: - MBA Methods - Scanning
 
 - (void)startDeviceScan:(FlutterMethodCall *)call result:(FlutterResult)result {
-    NSArray* expectedArguments = [NSArray arrayWithObjects:ARGUMENT_KEY_SCAN_MODE, nil];
+    NSArray* expectedArguments = [NSArray arrayWithObjects:ARGUMENT_KEY_ALLOW_DUPLICATES, nil];
     [_manager startDeviceScan:[ArgumentValidator validStringArrayOrNil:call.arguments[ARGUMENT_KEY_UUIDS]]
                       options:[ArgumentValidator validDictionaryOrNil:expectedArguments in:call.arguments]];
     result(nil);
@@ -167,7 +194,7 @@
 
 - (void)cancelDeviceConnection:(FlutterMethodCall *)call result:(FlutterResult)result {
     [_manager cancelDeviceConnection:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
-                             resolve:result
+                             resolve:[self resolveForCancelConnection:result]
                               reject:[self rejectForFlutterResult:result]];
 }
 
@@ -175,6 +202,24 @@
     [_manager isDeviceConnected:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
                         resolve:result
                          reject:[self rejectForFlutterResult:result]];
+
+}
+
+- (void)observeConnectionState:(FlutterMethodCall *)call result:(FlutterResult)result {
+    BOOL emitCurrentValue = (BOOL)call.arguments[ARGUMENT_KEY_EMIT_CURRENT_VALUE];
+    if (emitCurrentValue == YES) {
+        Resolve resolve = ^(id isConnected) {
+            if ((BOOL)isConnected == YES) {
+                [self.connectionStateStreamHandler onConnectedEvent:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]];
+            } else {
+                [self.connectionStateStreamHandler emitDisconnectedEvent:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]];
+            }
+            result(nil);
+        };
+        [self isDeviceConnected:call result:resolve];
+    } else {
+        result(nil);
+    }
 
 }
 
@@ -353,12 +398,20 @@
         [self.connectionStateStreamHandler onConnectingEvent:(NSString *)value];
     } else if ([BleEvent.connectedEvent isEqualToString:name]) {
         [self.connectionStateStreamHandler onConnectedEvent:(NSString *)value];
+    } else if ([BleEvent.disconnectionEvent isEqualToString:name]) {
+        [self.connectionStateStreamHandler onDisconnectedEvent:(NSString *)value];
     } else if ([BleEvent.readEvent isEqualToString:name]) {
         [self.monitorCharacteristicStreamHandler onReadEvent:value];
     }
 }
 
 // MARK: - Utility methods
+
+- (Resolve)resolveForCancelConnection:(FlutterResult)result {
+    return ^(id response) {
+        result(nil);
+    };
+}
 
 - (Resolve)resolveForServicesForDevice:(FlutterResult)result {
     return ^(NSArray *servicesArray) {

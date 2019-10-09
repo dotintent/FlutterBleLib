@@ -28,6 +28,7 @@ abstract class BleManager {
     int scanMode = ScanMode.lowPower,
     int callbackType = CallbackType.allMatches,
     List<String> uuids,
+    bool allowDuplicates = false,
   });
 
   Future<void> stopDeviceScan();
