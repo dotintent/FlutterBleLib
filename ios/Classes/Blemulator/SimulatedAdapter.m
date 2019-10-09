@@ -32,6 +32,27 @@
     NSLog(@"stopDeviceScan");
 }
 
+// MARK: - MBA Methods - BT state monitoring
+
+- (void)enable:(NSString * _Nonnull)transactionId
+       resolve:(NS_NOESCAPE Resolve)resolve
+        reject:(NS_NOESCAPE Reject)reject {
+    NSLog(@"enable");
+}
+
+- (void)requestConnectionPriorityForDevice:(NSString * _Nonnull)deviceIdentifier
+                        connectionPriority:(NSInteger)connectionPriority
+                             transactionId:(NSString * _Nonnull)transactionId
+                                   resolve:(Resolve)resolve
+                                    reject:(Reject)reject {
+    NSLog(@"requestConnectionPriorityForDevice");
+}
+
+- (void)state:(NS_NOESCAPE Resolve)resolve
+       reject:(NS_NOESCAPE Reject)reject {
+    NSLog(@"state");
+}
+
 // MARK: - MBA Methods - Connection
 
 - (void)connectToDevice:(NSString * _Nonnull)deviceIdentifier
@@ -212,25 +233,6 @@
         resolve:(NS_NOESCAPE Resolve)resolve
          reject:(NS_NOESCAPE Reject)reject {
     NSLog(@"disable");
-}
-
-- (void)enable:(NSString * _Nonnull)transactionId
-       resolve:(NS_NOESCAPE Resolve)resolve
-        reject:(NS_NOESCAPE Reject)reject {
-    NSLog(@"enable");
-}
-
-- (void)requestConnectionPriorityForDevice:(NSString * _Nonnull)deviceIdentifier
-                        connectionPriority:(NSInteger)connectionPriority
-                             transactionId:(NSString * _Nonnull)transactionId
-                                   resolve:(Resolve)resolve
-                                    reject:(Reject)reject {
-    NSLog(@"requestConnectionPriorityForDevice");
-}
-
-- (void)state:(NS_NOESCAPE Resolve)resolve
-       reject:(NS_NOESCAPE Reject)reject {
-    NSLog(@"state");
 }
 
 @end
