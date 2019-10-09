@@ -38,7 +38,6 @@ abstract class SimulatedPeripheral {
       _connectionStateStreamController;
 
   bool _isConnected = false;
-  bool _discoveryDone = false;
 
   SimulatedPeripheral(
       {@required this.name,
@@ -93,19 +92,47 @@ abstract class SimulatedPeripheral {
         .add(FlutterBLELib.PeripheralConnectionState.disconnected);
   }
 
-  Future<void> onDiscovery() async {
-    _discoveryDone = true;
-  }
+  Future<void> onDiscovery() async {}
 
   bool isConnected() => _isConnected;
 
   List<SimulatedService> services() {
-    if (!_discoveryDone) {
       return _services.values.toList();
-    } else {
-      throw Exception(); //TODO
-    }
   }
 
   SimulatedService service(int id) => _services[id];
+
+  SimulatedCharacteristic getCharacteristicForId(int characteristicIdentifier) {
+    SimulatedCharacteristic targetCharacteristic;
+    servicesLoop:
+    for (SimulatedService service in services()) {
+      SimulatedCharacteristic characteristic =
+          service.characteristic(characteristicIdentifier);
+      if (characteristic != null) {
+        targetCharacteristic = characteristic;
+        break servicesLoop;
+      }
+    }
+    return targetCharacteristic;
+  }
+
+  SimulatedCharacteristic getCharacteristicForService(
+    String serviceUuid,
+    String characteristicUuid,
+  ) {
+    SimulatedCharacteristic targetCharacteristic;
+    servicesLoop:
+    for (SimulatedService service in services()) {
+      SimulatedCharacteristic characteristic = service
+          .characteristics()
+          .firstWhere(
+              (characteristic) => characteristic.uuid == characteristicUuid,
+              orElse: () => null);
+      if (characteristic != null) {
+        targetCharacteristic = characteristic;
+        break servicesLoop;
+      }
+    }
+    return targetCharacteristic;
+  }
 }

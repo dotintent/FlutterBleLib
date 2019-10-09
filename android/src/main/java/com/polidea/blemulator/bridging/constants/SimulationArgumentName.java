@@ -15,4 +15,8 @@ public interface SimulationArgumentName {
     String OVERFLOW_SERVICE_UUIDS = "overflowUuids";
 
     String CONNECTION_STATE = "connectionState";
+
+    String ID = "id";
+    String CHARACTERISTICS = "characteristics";
+    String UUID = "uuid";
 }

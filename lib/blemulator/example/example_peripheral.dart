@@ -17,18 +17,15 @@ class SensorTag extends SimulatedPeripheral {
                   isAdvertised: true,
                   characteristics: [
                     SimulatedCharacteristic(
-                        uuid:
-                            "12:25:00:00:00:00:00:00:00:00:B0:00:40:51:04:01:AA:00:F0",
+                        uuid: "F000AA01-0451-4000-B000-000000000000",
                         value: Uint8List.fromList([0]),
                         convenienceName: "IR Temperature Data"),
                     SimulatedCharacteristic(
-                        uuid:
-                            "0A:29:00:00:00:00:00:00:00:00:B0:00:40:51:04:02:AA:00:F0",
+                        uuid: "F000AA02-0451-4000-B000-000000000000",
                         value: Uint8List.fromList([0]),
                         convenienceName: "IR Temperature Config"),
                     SimulatedCharacteristic(
-                        uuid:
-                            "0A:2C:00:00:00:00:00:00:00:00:B0:00:40:51:04:03:AA:00:F0",
+                        uuid: "F000AA03-0451-4000-B000-000000000000",
                         value: Uint8List.fromList([50]),
                         convenienceName: "IR Temperature Period"),
                   ],
@@ -38,13 +35,11 @@ class SensorTag extends SimulatedPeripheral {
                   isAdvertised: true,
                   characteristics: [
                     SimulatedCharacteristic(
-                        uuid:
-                            "12:30:00:00:00:00:00:00:00:00:B0:00:40:51:04:11:AA:00:F0",
+                        uuid: "F000AA12-0451-4000-B000-000000000000",
                         value: Uint8List.fromList([0, 0]),
                         convenienceName: "Accelerometer Config"),
                     SimulatedCharacteristic(
-                        uuid:
-                            "0A:34:00:00:00:00:00:00:00:00:B0:00:40:51:04:12:AA:00:F0",
+                        uuid: "F000AA13-0451-4000-B000-000000000000",
                         value: Uint8List.fromList([0, 0]),
                         convenienceName: "Accelerometer Period"),
                   ],

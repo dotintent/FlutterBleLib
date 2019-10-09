@@ -16,7 +16,7 @@ import com.polidea.multiplatformbleadapter.ScanResult;
 import com.polidea.multiplatformbleadapter.Service;
 import com.polidea.multiplatformbleadapter.errors.BleError;
 import com.polidea.multiplatformbleadapter.utils.Constants;
-import com.polidea.multiplatformbleadapter.utils.LogLevel;
+import com.polidea.multiplatformbleadapter.errors.BleErrorCode;
 
 import java.util.HashMap;
 
@@ -24,7 +24,7 @@ public class SimulatedAdapter implements BleAdapter {
 
     private static final String TAG = SimulatedAdapter.class.getSimpleName();
 
-    private HashMap<String, String> knownPeripherals = new HashMap<>();
+    private HashMap<String, DeviceContainer> knownPeripherals = new HashMap<>();
     private DartMethodCaller dartMethodCaller;
     private DartValueHandler dartValueHandler;
     private String logLevel = Constants.BluetoothLogLevel.NONE;
@@ -81,7 +81,10 @@ public class SimulatedAdapter implements BleAdapter {
             @Override
             public void onEvent(ScanResult data) {
                 if (!knownPeripherals.containsKey(data.getDeviceId())) {
-                    knownPeripherals.put(data.getDeviceId(), data.getDeviceName());
+                    knownPeripherals.put(
+                            data.getDeviceId(),
+                            new DeviceContainer(data.getDeviceId(), data.getDeviceName(), null, null)
+                    );
                 }
 
                 onEventCallback.onEvent(data);
@@ -139,18 +142,29 @@ public class SimulatedAdapter implements BleAdapter {
     }
 
     @Override
-    public void connectToDevice(String deviceIdentifier,
+    public void connectToDevice(final String deviceIdentifier,
                                 ConnectionOptions connectionOptions,
                                 OnSuccessCallback<Device> onSuccessCallback,
-                                OnEventCallback<ConnectionState> onConnectionStateChangedCallback,
+                                final OnEventCallback<ConnectionState> onConnectionStateChangedCallback,
                                 OnErrorCallback onErrorCallback) {
         Log.i(TAG, "connectToDevice");
 
-        dartValueHandler.addConnectionStatePublisher(deviceIdentifier, onConnectionStateChangedCallback);
+        OnEventCallback<ConnectionState> onEventCallback = new OnEventCallback<ConnectionState>() {
+            @Override
+            public void onEvent(ConnectionState newState) {
+                if (newState == ConnectionState.CONNECTED) {
+                    knownPeripherals.get(deviceIdentifier).setConnected(true);
+                } else {
+                    knownPeripherals.get(deviceIdentifier).setConnected(false);
+                }
+                onConnectionStateChangedCallback.onEvent(newState);
+            }
+        };
+        dartValueHandler.addConnectionStatePublisher(deviceIdentifier, onEventCallback);
 
         dartMethodCaller.connectToDevice(
                 deviceIdentifier,
-                knownPeripherals.get(deviceIdentifier),
+                knownPeripherals.get(deviceIdentifier).getName(),
                 connectionOptions,
                 onSuccessCallback,
                 onErrorCallback
@@ -164,7 +178,7 @@ public class SimulatedAdapter implements BleAdapter {
         Log.i(TAG, "cancelDeviceConnection");
         dartMethodCaller.disconnectOrCancelConnection(
                 deviceIdentifier,
-                knownPeripherals.get(deviceIdentifier),
+                knownPeripherals.get(deviceIdentifier).getName(),
                 onSuccessCallback,
                 onErrorCallback);
     }
@@ -179,30 +193,92 @@ public class SimulatedAdapter implements BleAdapter {
 
     @Override
     public void discoverAllServicesAndCharacteristicsForDevice(
-            String deviceIdentifier,
+            final String deviceIdentifier,
             String transactionId,
-            OnSuccessCallback<Device> onSuccessCallback,
+            final OnSuccessCallback<Device> onSuccessCallback,
             OnErrorCallback onErrorCallback) {
         Log.i(TAG, "discoverAllServicesAndCharacteristicsForDevice");
+        OnSuccessCallback<DeviceContainer> resultCallback = new OnSuccessCallback<DeviceContainer>() {
+            @Override
+            public void onSuccess(DeviceContainer deviceContainer) {
+                DeviceContainer oldContainer = knownPeripherals.get(deviceIdentifier);
+                if (oldContainer != null) {
+                    deviceContainer.setConnected(oldContainer.isConnected());
+                }
+                knownPeripherals.put(deviceContainer.getIdentifier(), deviceContainer);
+                onSuccessCallback.onSuccess(new Device(deviceContainer.getIdentifier(), deviceContainer.getName()));
+            }
+        };
+        dartMethodCaller
+                .discoverAllServicesAndCharacteristicsForDevice(
+                        deviceIdentifier,
+                        knownPeripherals.get(deviceIdentifier).getName(),
+                        transactionId,
+                        resultCallback,
+                        onErrorCallback);
     }
 
     @Override
     public Service[] getServicesForDevice(String deviceIdentifier) throws BleError {
         Log.i(TAG, "discoverAllServicesAndCharacteristicsForDevice");
-        return null;
+        if (knownPeripherals.get(deviceIdentifier) == null) {
+            throw new BleError(BleErrorCode.DeviceNotFound, "Device unknown", 0);
+        }
+
+        if (!knownPeripherals.get(deviceIdentifier).isConnected()) {
+            throw new BleError(BleErrorCode.DeviceNotConnected, "Device not connected", 0);
+        }
+
+        if (knownPeripherals.get(deviceIdentifier).getServices() == null) {
+            throw new BleError(BleErrorCode.ServicesNotDiscovered, "Discovery not done on this device", 0);
+        }
+        return knownPeripherals
+                .get(deviceIdentifier)
+                .getServices()
+                .toArray(new Service[0]);
     }
 
     @Override
     public Characteristic[] getCharacteristicsForDevice(String deviceIdentifier,
                                                         String serviceUUID) throws BleError {
         Log.i(TAG, "discoverAllServicesAndCharacteristicsForDevice");
-        return null;
+
+        if (knownPeripherals.get(deviceIdentifier) == null) {
+            throw new BleError(BleErrorCode.DeviceNotFound, "Device unknown", 0);
+        }
+
+        if (!knownPeripherals.get(deviceIdentifier).isConnected()) {
+            throw new BleError(BleErrorCode.DeviceNotConnected, "Device not connected", 0);
+        }
+
+        if (knownPeripherals.get(deviceIdentifier).getCharacteristics() == null) {
+            throw new BleError(BleErrorCode.CharacteristicsNotDiscovered, "Discovery not done on this device", 0);
+        }
+
+        return knownPeripherals
+                .get(deviceIdentifier)
+                .getCharacteristics()
+                .get(serviceUUID)
+                .toArray(new Characteristic[0]);
     }
 
     @Override
     public Characteristic[] getCharacteristicsForService(int serviceIdentifier) throws BleError {
         Log.i(TAG, "discoverAllServicesAndCharacteristicsForDevice");
-        return null;
+
+
+        for (DeviceContainer deviceContainer : knownPeripherals.values()) {
+            for (Service service : deviceContainer.getServices()) {
+                if (service.getId() == serviceIdentifier) {
+                    return deviceContainer
+                            .getCharacteristics()
+                            .get(service.getUuid().toString().toUpperCase())
+                            .toArray(new Characteristic[0]);
+                }
+            }
+        }
+
+        throw new BleError(BleErrorCode.ServiceNotFound, "Service with id " + serviceIdentifier + " not found", 0);
     }
 
     @Override
@@ -213,6 +289,8 @@ public class SimulatedAdapter implements BleAdapter {
                                             OnSuccessCallback<Characteristic> onSuccessCallback,
                                             OnErrorCallback onErrorCallback) {
         Log.i(TAG, "readCharacteristicForDevice");
+        dartMethodCaller.readCharacteristicForDevice(
+                deviceIdentifier, serviceUUID, characteristicUUID, onSuccessCallback, onErrorCallback);
     }
 
     @Override
@@ -222,6 +300,8 @@ public class SimulatedAdapter implements BleAdapter {
                                              OnSuccessCallback<Characteristic> onSuccessCallback,
                                              OnErrorCallback onErrorCallback) {
         Log.i(TAG, "readCharacteristicForService");
+        dartMethodCaller.readCharacteristicForService(
+                serviceIdentifier, characteristicUUID, onSuccessCallback, onErrorCallback);
     }
 
     @Override
@@ -230,6 +310,8 @@ public class SimulatedAdapter implements BleAdapter {
                                    OnSuccessCallback<Characteristic> onSuccessCallback,
                                    OnErrorCallback onErrorCallback) {
         Log.i(TAG, "readCharacteristic");
+        dartMethodCaller.readCharacteristic(
+                characteristicIdentifer, onSuccessCallback, onErrorCallback);
     }
 
     @Override
