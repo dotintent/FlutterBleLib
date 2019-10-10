@@ -1,7 +1,7 @@
-#import "FlutterMethodCallHandler.h"
+#import <Flutter/Flutter.h>
 
-@interface SimulatorPlugin : NSObject<FlutterMethodCallHandler>
+@interface SimulatorPlugin : NSObject<FlutterPlugin>
 
-+ (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+- (instancetype)initWithPlatformToDartChannel:(FlutterMethodChannel *)platformToDartChannel;
 
 @end

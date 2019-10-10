@@ -3,6 +3,8 @@
 #import "SimulatedAdapter.h"
 #import "DartMethodCaller.h"
 #import "DartValueHandler.h"
+#import "PlatformMethodName.h"
+#import "SimulationChannelName.h"
 
 typedef id<BleAdapter> _Nonnull (^BleAdapterCreator)(dispatch_queue_t _Nonnull queue, NSString * _Nullable restoreIdentifierKey);
 
@@ -18,6 +20,14 @@ typedef id<BleAdapter> _Nonnull (^BleAdapterCreator)(dispatch_queue_t _Nonnull q
 // MARK: - Public methods
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+    FlutterMethodChannel *dartToPlatformChannel = [FlutterMethodChannel methodChannelWithName:SIMULATION_CHANNEL_NAME_TO_JAVA
+                                                                              binaryMessenger:[registrar messenger]];
+    FlutterMethodChannel *platformToDartChannel = [FlutterMethodChannel methodChannelWithName:SIMULATION_CHANNEL_NAME_TO_DART
+                                                                              binaryMessenger:[registrar messenger]];
+
+    SimulatorPlugin *instance = [[SimulatorPlugin alloc] initWithPlatformToDartChannel:platformToDartChannel];
+
+    [registrar addMethodCallDelegate:instance channel:dartToPlatformChannel];
 
 }
 
@@ -35,7 +45,13 @@ typedef id<BleAdapter> _Nonnull (^BleAdapterCreator)(dispatch_queue_t _Nonnull q
 // MARK: - FlutterMethodCallHandler implementation
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
-    
+    if ([PLATFORM_METHOD_NAME_SIMULATE isEqualToString:call.method]) {
+        [self switchToEmulation:result];
+        return;
+    } else {
+        [self.dartValueHandler handleMethodCall:call result:result];
+        return;
+    }
 }
 
 // MARK: - Private methods
@@ -46,6 +62,7 @@ typedef id<BleAdapter> _Nonnull (^BleAdapterCreator)(dispatch_queue_t _Nonnull q
                                                  dartValueHandler:self.dartValueHandler];
     };
     [BleAdapterFactory setBleAdapterCreator:bleAdapterCreator];
+    result(nil);
 }
 
 @end
