@@ -11,9 +11,9 @@
 #import "Util/ArgumentValidator.h"
 #import "Util/FlutterErrorFactory.h"
 #import "Util/JSONStringifier.h"
-#import "Util/CommonTypes.h"
 #import "ResponseConverter/CharacteristicResponseConverter.h"
 #import "ResponseConverter/PeripheralResponseConverter.h"
+#import "Common/CommonTypes.h"
 
 @interface FlutterBleLibPlugin () <BleClientManagerDelegate>
 
