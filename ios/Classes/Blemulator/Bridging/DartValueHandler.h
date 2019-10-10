@@ -2,7 +2,7 @@
 
 @protocol DartValueHandlerScanEventDelegate
 
-- (void)dispatchDartValueHandlerScanEvent:(id)value;
+- (void)dispatchDartValueHandlerScanEvent:(NSDictionary *)value;
 
 @end
 

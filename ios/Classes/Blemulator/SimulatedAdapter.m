@@ -1,11 +1,13 @@
 #import "SimulatedAdapter.h"
 #import <flutter_ble_lib-Swift.h>
 #import "CommonTypes.h"
+#import "DeviceContainer.h"
 
 @interface SimulatedAdapter () <BleAdapter>
 
 @property DartMethodCaller *dartMethodCaller;
 @property DartValueHandler *dartValueHandler;
+@property NSMutableDictionary<NSString *, DeviceContainer *> *knownPeripherals;
 
 @end
 
@@ -17,7 +19,14 @@
 
 // MARK: - DartValueHandlerScanEventDelegate implementation
 
-- (void)dispatchDartValueHandlerScanEvent:(id)value {
+- (void)dispatchDartValueHandlerScanEvent:(NSDictionary *)value {
+    NSString *deviceId = [value objectForKey:@"id"];
+    if (![self.knownPeripherals objectForKey:deviceId]) {
+        NSString *deviceName = [value objectForKey:@"name"];
+        DeviceContainer *device = [[DeviceContainer alloc] initWithIdentifier:deviceId
+                                                                         name:deviceName];
+        [self.knownPeripherals setObject:device forKey:deviceId];
+    }
     [self.delegate dispatchEvent:BleEvent.scanEvent
                            value:[NSArray arrayWithObjects:[NSNull null], value, nil]];
 }
@@ -30,6 +39,7 @@
     if (self) {
         self.dartMethodCaller = dartMethodCaller;
         self.dartValueHandler = dartValueHandler;
+        self.knownPeripherals = [[NSMutableDictionary alloc] init];
 
         [self.dartMethodCaller createClient];
         NSLog(@"SimulatedAdapter.createClient");
