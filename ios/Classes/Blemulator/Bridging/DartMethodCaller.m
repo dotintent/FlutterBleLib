@@ -8,10 +8,6 @@
 
 @implementation DartMethodCaller
 
-// MARK: - Synthesize properties
-
-@synthesize dartMethodChannel;
-
 // MARK: - Initializers
 
 - (instancetype)initWithDartMethodChannel:(FlutterMethodChannel *)dartMethodChannel {

@@ -11,11 +11,6 @@
 
 @implementation SimulatorPlugin
 
-// MARK: - Synthesize properties
-
-@synthesize dartMethodCaller;
-@synthesize dartValueHandler;
-
 // MARK: - Public methods
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
