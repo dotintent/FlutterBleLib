@@ -15,6 +15,12 @@
 
 @synthesize delegate;
 
+// MARK: - DartValueHandlerDelegate implementation
+
+- (void)dispatchDartValueHandlerEvent:(NSString *)bleEvent value:(id)value {
+    [self.delegate dispatchEvent:bleEvent value:value];
+}
+
 // MARK: - Initializer
 
 - (instancetype)initWithDartMethodCaller:(DartMethodCaller *)dartMethodCaller
@@ -23,6 +29,8 @@
     if (self) {
         self.dartMethodCaller = dartMethodCaller;
         self.dartValueHandler = dartValueHandler;
+        self.dartValueHandler.delegate = self;
+
         [self.dartMethodCaller createClient];
         NSLog(@"SimulatedAdapter.createClient");
     }
