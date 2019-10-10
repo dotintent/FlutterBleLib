@@ -7,22 +7,16 @@ import android.util.Log;
 
 import com.polidea.blemulator.DeviceContainer;
 import com.polidea.blemulator.bridging.constants.ArgumentName;
-import com.polidea.blemulator.bridging.constants.ArgumentName;
 import com.polidea.blemulator.bridging.constants.DartMethodName;
 import com.polidea.blemulator.bridging.constants.SimulationArgumentName;
+import com.polidea.blemulator.bridging.decoder.CharacteristicDartValueDecoder;
+import com.polidea.flutter_ble_lib.constant.ArgumentKey;
 import com.polidea.multiplatformbleadapter.Characteristic;
 import com.polidea.multiplatformbleadapter.ConnectionOptions;
 import com.polidea.multiplatformbleadapter.Device;
 import com.polidea.multiplatformbleadapter.OnErrorCallback;
 import com.polidea.multiplatformbleadapter.OnSuccessCallback;
 import com.polidea.multiplatformbleadapter.Service;
-import com.polidea.multiplatformbleadapter.errors.BleError;
-import com.polidea.multiplatformbleadapter.errors.BleErrorCode;
-import com.polidea.blemulator.bridging.decoder.CharacteristicDartValueDecoder;
-import com.polidea.flutter_ble_lib.constant.ArgumentKey;
-import com.polidea.multiplatformbleadapter.Characteristic;
-import com.polidea.multiplatformbleadapter.OnErrorCallback;
-import com.polidea.multiplatformbleadapter.OnSuccessCallback;
 import com.polidea.multiplatformbleadapter.errors.BleError;
 import com.polidea.multiplatformbleadapter.errors.BleErrorCode;
 
@@ -276,6 +270,7 @@ public class DartMethodCaller {
         List<Characteristic> characteristics = new ArrayList<>();
         for (Map<String, Object> mappedCharacteristic : response) {
             characteristics.add(new Characteristic(
+                    (Integer) mappedCharacteristic.get(SimulationArgumentName.ID),
                     service,
                     new BluetoothGattCharacteristic(
                             UUID.fromString(
