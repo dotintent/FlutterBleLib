@@ -44,6 +44,7 @@
 
 - (void)startDeviceScan:(NSArray<NSString *> * _Nullable)filteredUUIDs
                 options:(NSDictionary<NSString *,id> * _Nullable)options {
+    [self.dartMethodCaller startDeviceScan];
     NSLog(@"SimulatedAdapter.startDeviceScan");
 }
 
