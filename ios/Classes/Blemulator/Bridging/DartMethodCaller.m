@@ -18,10 +18,4 @@
     return self;
 }
 
-// MARK: - FlutterMethodCallHandler implementation
-
-- (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
-
-}
-
 @end
