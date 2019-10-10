@@ -1,4 +1,5 @@
 #import "DartMethodCaller.h"
+#import "DartMethodName.h"
 
 typedef void (^InvokeMethodResultHandler)(id _Nullable result);
 
@@ -23,9 +24,9 @@ typedef void (^InvokeMethodResultHandler)(id _Nullable result);
 // MARK: - Methods
 
 - (void)createClient {
-    [self.dartMethodChannel invokeMethod:@"createClient"
+    [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_CREATE_CLIENT
                                arguments:nil
-                                  result:[self simpleInvokeMethodResultHandlerForMethod:@"createClient"]];
+                                  result:[self simpleInvokeMethodResultHandlerForMethod:DART_METHOD_NAME_CREATE_CLIENT]];
 }
 
 // MARK: - Utility methods
