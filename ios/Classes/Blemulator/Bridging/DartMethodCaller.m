@@ -1,5 +1,7 @@
 #import "DartMethodCaller.h"
 
+typedef void (^InvokeMethodResultHandler)(id _Nullable result);
+
 @interface DartMethodCaller ()
 
 @property (nonatomic) FlutterMethodChannel *dartMethodChannel;
@@ -16,6 +18,28 @@
         self.dartMethodChannel = dartMethodChannel;
     }
     return self;
+}
+
+// MARK: - Methods
+
+- (void)createClient {
+    [self.dartMethodChannel invokeMethod:@"createClient"
+                               arguments:nil
+                                  result:[self simpleInvokeMethodResultHandlerForMethod:@"createClient"]];
+}
+
+// MARK: - Utility methods
+
+- (InvokeMethodResultHandler)simpleInvokeMethodResultHandlerForMethod:(NSString *)methodName {
+    return ^(id _Nullable result) {
+        if ([result class] == [FlutterError class]) {
+            NSLog(@"%@%@%@%@", @"DartMethodCaller.", methodName, @": FlutterError: ", [(FlutterError *)result message]);
+        } else if ([result class] == [NSError class]) {
+            NSLog(@"%@%@%@%@", @"DartMethodCaller.", methodName, @": error: ", (NSError *)result);
+        } else {
+            NSLog(@"%@%@%@%@", @"DartMethodCaller.", methodName, @": success: ", result);
+        }
+    };
 }
 
 @end
