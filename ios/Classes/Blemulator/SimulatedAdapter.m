@@ -18,7 +18,8 @@
 // MARK: - DartValueHandlerScanEventDelegate implementation
 
 - (void)dispatchDartValueHandlerScanEvent:(id)value {
-    [self.delegate dispatchEvent:BleEvent.scanEvent value:value];
+    [self.delegate dispatchEvent:BleEvent.scanEvent
+                           value:[NSArray arrayWithObjects:[NSNull null], value, nil]];
 }
 
 // MARK: - Initializer
