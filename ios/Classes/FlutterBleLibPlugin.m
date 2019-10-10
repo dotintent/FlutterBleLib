@@ -14,6 +14,7 @@
 #import "ResponseConverter/CharacteristicResponseConverter.h"
 #import "ResponseConverter/PeripheralResponseConverter.h"
 #import "Common/CommonTypes.h"
+#import "SimulatorPlugin.h"
 
 @interface FlutterBleLibPlugin () <BleClientManagerDelegate>
 
@@ -62,6 +63,9 @@
     [scanningChannel setStreamHandler:instance.scanningStreamHandler];
     [connectionStateChannel setStreamHandler:instance.connectionStateStreamHandler];
     [monitorCharacteristicChannel setStreamHandler:instance.monitorCharacteristicStreamHandler];
+
+    //TEMPORARY
+    [SimulatorPlugin registerWithRegistrar:registrar];
 }
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -133,8 +137,8 @@
 // MARK: - MBA Methods - BleClient lifecycle
 
 - (void)createClient:(FlutterMethodCall *)call result:(FlutterResult)result {
-    _manager = [[BleClientManager alloc] initWithQueue:dispatch_get_main_queue()
-                                  restoreIdentifierKey:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_RESTORE_STATE_IDENTIFIER]]];
+    _manager = [BleAdapterFactory getNewAdapterWithQueue:dispatch_get_main_queue()
+                                    restoreIdentifierKey:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_RESTORE_STATE_IDENTIFIER]]];
     _manager.delegate = self;
     result(nil);
 }

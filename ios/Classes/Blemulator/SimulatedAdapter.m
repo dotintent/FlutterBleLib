@@ -23,6 +23,7 @@
     if (self) {
         self.dartMethodCaller = dartMethodCaller;
         self.dartValueHandler = dartValueHandler;
+        NSLog(@"createClient");
     }
     return self;
 }
