@@ -1,14 +1,13 @@
 #import "FlutterMethodCallHandler.h"
 
-@protocol DartValueHandlerDelegate
+@protocol DartValueHandlerScanEventDelegate
 
-- (void)dispatchDartValueHandlerEvent:(NSString *)bleEvent
-                                value:(id)value;
+- (void)dispatchDartValueHandlerScanEvent:(id)value;
 
 @end
 
 @interface DartValueHandler : NSObject<FlutterMethodCallHandler>
 
-@property id <DartValueHandlerDelegate> delegate;
+@property id <DartValueHandlerScanEventDelegate> scanEventDelegate;
 
 @end
