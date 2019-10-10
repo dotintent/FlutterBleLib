@@ -10,7 +10,7 @@
 
 @synthesize delegate;
 
-// MARK: - MBA Methods - BleClient lifecycle
+// MARK: - Adapter Methods -  BleClient lifecycle
 
 - (nonnull instancetype)initWithQueue:(dispatch_queue_t _Nonnull)queue
                  restoreIdentifierKey:(NSString * _Nullable)restoreIdentifierKey {
@@ -21,7 +21,7 @@
     NSLog(@"invalidate");
 }
 
-// MARK: - MBA Methods - Scanning
+// MARK: - Adapter Methods -  Scanning
 
 - (void)startDeviceScan:(NSArray<NSString *> * _Nullable)filteredUUIDs
                 options:(NSDictionary<NSString *,id> * _Nullable)options {
@@ -32,7 +32,7 @@
     NSLog(@"stopDeviceScan");
 }
 
-// MARK: - MBA Methods - BT state monitoring
+// MARK: - Adapter Methods -  BT state monitoring
 
 - (void)enable:(NSString * _Nonnull)transactionId
        resolve:(NS_NOESCAPE Resolve)resolve
@@ -53,7 +53,7 @@
     NSLog(@"state");
 }
 
-// MARK: - MBA Methods - Connection
+// MARK: - Adapter Methods -  Connection
 
 - (void)connectToDevice:(NSString * _Nonnull)deviceIdentifier
                 options:(NSDictionary<NSString *,id> * _Nullable)options
@@ -73,7 +73,7 @@
     NSLog(@"isDeviceConnected");
 }
 
-// MARK: - MBA Methods - Log Level
+// MARK: - Adapter Methods -  Log Level
 
 - (void)setLogLevel:(NSString * _Nonnull)logLevel {
     NSLog(@"setLogLevel");
@@ -84,7 +84,7 @@
     NSLog(@"logLevel");
 }
 
-// MARK: - MBA Methods - Discovery
+// MARK: - Adapter Methods -  Discovery
 
 - (void)servicesForDevice:(NSString * _Nonnull)deviceIdentifier
                   resolve:(NS_NOESCAPE Resolve)resolve
@@ -117,7 +117,7 @@
     NSLog(@"cancelTransaction");
 }
 
-// MARK: - MBA Methods - Characteristics observation
+// MARK: - Adapter Methods -  Characteristics observation
 
 - (void)readCharacteristicForDevice:(NSString * _Nonnull)deviceIdentifier
                         serviceUUID:(NSString * _Nonnull)serviceUUID
@@ -195,7 +195,7 @@
     NSLog(@"monitorCharacteristic");
 }
 
-// MARK: - MBA Methods - Known / Connected devices
+// MARK: - Adapter Methods -  Known / Connected devices
 
 - (void)devices:(NSArray<NSString *> * _Nonnull)deviceIdentifiers
         resolve:(Resolve)resolve
@@ -209,7 +209,7 @@
     NSLog(@"connectedDevices");
 }
 
-// MARK: - MBA Methods - MTU
+// MARK: - Adapter Methods -  MTU
 
 - (void)requestMTUForDevice:(NSString * _Nonnull)deviceIdentifier mtu:(NSInteger)mtu
               transactionId:(NSString * _Nonnull)transactionId
@@ -218,7 +218,7 @@
     NSLog(@"requestMTUForDevice");
 }
 
-// MARK: - MBA Methods - RSSI
+// MARK: - Adapter Methods -  RSSI
 
 - (void)readRSSIForDevice:(NSString * _Nonnull)deviceIdentifier
             transactionId:(NSString * _Nonnull)transactionId
@@ -227,7 +227,7 @@
     NSLog(@"readRSSIForDevice");
 }
 
-// MARK: - MBA Methods - Cancel transaction
+// MARK: - Adapter Methods -  Cancel transaction
 
 - (void)disable:(NSString * _Nonnull)transactionId
         resolve:(NS_NOESCAPE Resolve)resolve
