@@ -19,6 +19,7 @@ import com.polidea.multiplatformbleadapter.OnSuccessCallback;
 import com.polidea.multiplatformbleadapter.Service;
 import com.polidea.multiplatformbleadapter.errors.BleError;
 import com.polidea.multiplatformbleadapter.errors.BleErrorCode;
+import com.polidea.multiplatformbleadapter.utils.Base64Converter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -365,6 +366,99 @@ public class DartMethodCaller {
                     @Override
                     public void notImplemented() {
                         Log.e(TAG, "readCharacteristic not implemented");
+                    }
+                });
+    }
+
+    public void writeCharacteristicForDevice(
+            final String deviceIdentifier,
+            final String serviceUUID,
+            final String characteristicUUID,
+            final String valueBase64,
+            final OnSuccessCallback<Characteristic> onSuccessCallback,
+            final OnErrorCallback onErrorCallback) {
+        HashMap<String, Object> arguments = new HashMap<String, Object>() {{
+            put(ArgumentKey.DEVICE_IDENTIFIER, deviceIdentifier);
+            put(ArgumentKey.SERVICE_UUID, serviceUUID);
+            put(ArgumentKey.CHARACTERISTIC_UUID, characteristicUUID);
+            put(ArgumentKey.VALUE, Base64Converter.decode(valueBase64));
+        }};
+        dartMethodChannel.invokeMethod(DartMethodName.WRITE_CHARACTERISTIC_FOR_DEVICE,
+                arguments,
+                new MethodChannel.Result() {
+                    @Override
+                    public void success(@Nullable Object characteristicJsonObject) {
+                        onSuccessCallback.onSuccess(characteristicJsonDecoder.decode(characteristicJsonObject));
+                    }
+
+                    @Override
+                    public void error(String errorCode, @Nullable String message, @Nullable Object bleErrorJsonObject) {
+                        onErrorCallback.onError(new BleError(BleErrorCode.UnknownError, message, 0)); //TODO Add proper error parsing here
+                    }
+
+                    @Override
+                    public void notImplemented() {
+                        Log.e(TAG, "writeCharacteristicForDevice not implemented");
+                    }
+                });
+    }
+
+    public void writeCharacteristicForService(
+            final int serviceIdentifier,
+            final String characteristicUUID,
+            final String valueBase64,
+            final OnSuccessCallback<Characteristic> onSuccessCallback,
+            final OnErrorCallback onErrorCallback) {
+        HashMap<String, Object> arguments = new HashMap<String, Object>() {{
+            put(ArgumentKey.SERVICE_IDENTIFIER, serviceIdentifier);
+            put(ArgumentKey.CHARACTERISTIC_UUID, characteristicUUID);
+            put(ArgumentKey.VALUE, Base64Converter.decode(valueBase64));
+        }};
+        dartMethodChannel.invokeMethod(DartMethodName.WRITE_CHARACTERISTIC_FOR_SERVICE,
+                arguments,
+                new MethodChannel.Result() {
+                    @Override
+                    public void success(@Nullable Object characteristicJsonObject) {
+                        onSuccessCallback.onSuccess(characteristicJsonDecoder.decode(characteristicJsonObject));
+                    }
+
+                    @Override
+                    public void error(String errorCode, @Nullable String message, @Nullable Object bleErrorJsonObject) {
+                        onErrorCallback.onError(new BleError(BleErrorCode.UnknownError, message, 0)); //TODO Add proper error parsing here
+                    }
+
+                    @Override
+                    public void notImplemented() {
+                        Log.e(TAG, "writeCharacteristicForService not implemented");
+                    }
+                });
+    }
+
+    public void writeCharacteristic(
+            final int characteristicIdentifier,
+            final String valueBase64,
+            final OnSuccessCallback<Characteristic> onSuccessCallback,
+            final OnErrorCallback onErrorCallback) {
+        HashMap<String, Object> arguments = new HashMap<String, Object>() {{
+            put(ArgumentKey.CHARACTERISTIC_IDENTIFIER, characteristicIdentifier);
+            put(ArgumentKey.VALUE, Base64Converter.decode(valueBase64));
+        }};
+        dartMethodChannel.invokeMethod(DartMethodName.WRITE_CHARACTERISTIC_FOR_IDENTIFIER,
+                arguments,
+                new MethodChannel.Result() {
+                    @Override
+                    public void success(@Nullable Object characteristicJsonObject) {
+                        onSuccessCallback.onSuccess(characteristicJsonDecoder.decode(characteristicJsonObject));
+                    }
+
+                    @Override
+                    public void error(String errorCode, @Nullable String message, @Nullable Object bleErrorJsonObject) {
+                        onErrorCallback.onError(new BleError(BleErrorCode.UnknownError, message, 0)); //TODO Add proper error parsing here
+                    }
+
+                    @Override
+                    public void notImplemented() {
+                        Log.e(TAG, "writeCharacteristic not implemented");
                     }
                 });
     }

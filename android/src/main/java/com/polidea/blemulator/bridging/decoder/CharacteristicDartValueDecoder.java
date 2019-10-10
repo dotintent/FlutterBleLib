@@ -34,7 +34,7 @@ public class CharacteristicDartValueDecoder {
         Map<String, Object> values = (Map<String, Object>) dartObject;
         String deviceId = (String) values.get(Metadata.DEVICE_IDENTIFIER);
         UUID characteristicUuid = UUIDConverter.convert((String) values.get(Metadata.UUID));
-//        int characteristicId = (Integer) values.get(Metadata.ID); TODO Pass this id to Characteristic constructor after merging with discovering feature
+        int characteristicId = (Integer) values.get(Metadata.ID);
         int serviceId = (int) values.get(Metadata.SERVICE_IDENTIFIER);
         UUID serviceUuid = UUIDConverter.convert((String) values.get(Metadata.SERVICE_UUID));
         byte[] value = (byte[]) values.get(Metadata.VALUE);
@@ -44,7 +44,7 @@ public class CharacteristicDartValueDecoder {
         BluetoothGattCharacteristic bluetoothGattCharacteristic = new BluetoothGattCharacteristic(characteristicUuid, properties, 0);
         setNotifyingMode((Boolean) values.get(Metadata.IS_NOTIFYING), bluetoothGattCharacteristic);
         Service service = new Service(serviceId, deviceId, bluetoothGattService);
-        Characteristic characteristic = new Characteristic(service, bluetoothGattCharacteristic);
+        Characteristic characteristic = new Characteristic(characteristicId, service, bluetoothGattCharacteristic);
 
         characteristic.setValue(value);
         return characteristic;
