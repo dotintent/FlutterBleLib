@@ -1,6 +1,10 @@
 #import "SimulatorPlugin.h"
+#import <flutter_ble_lib-Swift.h>
+#import "SimulatedAdapter.h"
 #import "DartMethodCaller.h"
 #import "DartValueHandler.h"
+
+typedef id<BleAdapter> _Nonnull (^BleAdapterCreator)(dispatch_queue_t _Nonnull queue, NSString * _Nullable restoreIdentifierKey);
 
 @interface SimulatorPlugin ()
 
@@ -32,6 +36,16 @@
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
     
+}
+
+// MARK: - Private methods
+
+- (void)switchToEmulation:(FlutterResult)result {
+    BleAdapterCreator bleAdapterCreator = ^(dispatch_queue_t _Nonnull queue, NSString * _Nullable restoreIdentifierKey) {
+        return [[SimulatedAdapter alloc] initWithDartMethodCaller:self.dartMethodCaller
+                                                 dartValueHandler:self.dartValueHandler];
+    };
+    [BleAdapterFactory setBleAdapterCreator:bleAdapterCreator];
 }
 
 @end

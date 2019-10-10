@@ -1,7 +1,5 @@
 #import "SimulatedAdapter.h"
 #import <flutter_ble_lib-Swift.h>
-#import "DartMethodCaller.h"
-#import "DartValueHandler.h"
 #import "CommonTypes.h"
 
 @interface SimulatedAdapter () <BleAdapter>
