@@ -6,7 +6,7 @@
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
     if ([PLATFORM_METHOD_NAME_PUBLISH_SCAN_RESULT isEqualToString:call.method]) {
-        [self.scanEventDelegate dispatchDartValueHandlerScanEvent:[NSArray arrayWithObjects:[NSNull null], call.arguments, nil]];
+        [self.scanEventDelegate dispatchDartValueHandlerScanEvent:call.arguments];
         result(nil);
     } else {
         result(FlutterMethodNotImplemented);
