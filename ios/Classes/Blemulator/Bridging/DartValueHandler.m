@@ -6,9 +6,9 @@
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
     if ([PLATFORM_METHOD_NAME_PUBLISH_SCAN_RESULT isEqualToString:call.method]) {
-        NSLog(@"%@", call.arguments);
         [self.delegate dispatchDartValueHandlerEvent:BleEvent.scanEvent
                                                value:[NSArray arrayWithObjects:[NSNull null], call.arguments, nil]];
+        result(nil);
     } else {
         result(FlutterMethodNotImplemented);
     }
