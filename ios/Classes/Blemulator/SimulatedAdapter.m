@@ -1,14 +1,33 @@
 #import "SimulatedAdapter.h"
 #import <flutter_ble_lib-Swift.h>
+#import "DartMethodCaller.h"
+#import "DartValueHandler.h"
 #import "CommonTypes.h"
 
 @interface SimulatedAdapter () <BleAdapter>
+
+@property DartMethodCaller *dartMethodCaller;
+@property DartValueHandler *dartValueHandler;
 
 @end
 
 @implementation SimulatedAdapter
 
+// MARK: - Synthesize properties
+
 @synthesize delegate;
+
+// MARK: - Initializer
+
+- (instancetype)initWithDartMethodCaller:(DartMethodCaller *)dartMethodCaller
+                        dartValueHandler:(DartValueHandler *)dartValueHandler {
+    self = [super init];
+    if (self) {
+        self.dartMethodCaller = dartMethodCaller;
+        self.dartValueHandler = dartValueHandler;
+    }
+    return self;
+}
 
 // MARK: - Adapter Methods -  BleClient lifecycle
 
