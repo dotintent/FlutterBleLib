@@ -282,4 +282,19 @@ class PeripheralTestOperations {
     int rawTemp = rawTemperatureBytes[3] << 8 | rawTemperatureBytes[2];
     return ((rawTemp) >> 2) * SCALE_LSB;
   }
+
+  Future<void> disableBluetooth() async {
+    log("Disabling radio");
+    await bleManager.disableRadio();
+  }
+
+  Future<void> enableBluetooth() async {
+    log("Enabling radio");
+    await bleManager.enableRadio();
+  }
+
+  Future<void> fetchBluetoothState() async {
+    BluetoothState bluetoothState =await bleManager.bluetoothState();
+    log("Radio state: $bluetoothState");
+  }
 }
