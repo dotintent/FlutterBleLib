@@ -60,7 +60,10 @@ mixin CharacteristicsMixin on SimulationManagerBase {
                 orElse: () => null,
               );
 
-      if (characteristic != null) break peripheralsLoop;
+      if (characteristic != null) {
+        targetCharacteristic = characteristic;
+        break peripheralsLoop;
+      }
     }
 
     if (targetCharacteristic == null)
