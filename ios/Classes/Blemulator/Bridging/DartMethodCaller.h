@@ -8,4 +8,6 @@
 
 - (void)startDeviceScan;
 
+- (void)stopDeviceScan;
+
 @end

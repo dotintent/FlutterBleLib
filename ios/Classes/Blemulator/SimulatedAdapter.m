@@ -57,6 +57,8 @@
 }
 
 - (void)stopDeviceScan {
+    [self.dartMethodCaller stopDeviceScan];
+    self.dartValueHandler.scanEventDelegate = nil;
     NSLog(@"SimulatedAdapter.stopDeviceScan");
 }
 
