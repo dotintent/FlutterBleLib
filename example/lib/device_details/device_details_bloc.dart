@@ -118,6 +118,30 @@ class DeviceDetailsBloc {
     });
   }
 
+  void disableBluetooth() {
+    _clearLogs();
+    _deviceController.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+          .disableBluetooth();
+    });
+  }
+
+  void enableBluetooth() {
+    _clearLogs();
+    _deviceController.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+          .enableBluetooth();
+    });
+  }
+
+  void fetchBluetoothState() {
+    _clearLogs();
+    _deviceController.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+          .fetchBluetoothState();
+    });
+  }
+
   Future<void> connect() async {
     _clearLogs();
     _deviceController.stream.listen((bleDevice) async {

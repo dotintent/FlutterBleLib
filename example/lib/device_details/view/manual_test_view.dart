@@ -56,6 +56,18 @@ class ManualTestView extends StatelessWidget {
     _deviceDetailsBloc.readCharacteristicForPeripheral();
   }
 
+  void _disableBluetooth() {
+    _deviceDetailsBloc.disableBluetooth();
+  }
+
+  void _enableBluetooth() {
+    _deviceDetailsBloc.enableBluetooth();
+  }
+
+  void _fetchBluetoothState() {
+    _deviceDetailsBloc.fetchBluetoothState();
+  }
+
   Column _createControlPanel() {
     return Column(
       children: <Widget>[
@@ -93,9 +105,9 @@ class ManualTestView extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 2.0),
           child: Row(
             children: <Widget>[
-              ButtonView("Debug Log Level"),
-              ButtonView("Error Log Level"),
-              ButtonView("Fetch log level"),
+              ButtonView("Enable bluetooth", action: _enableBluetooth),
+              ButtonView("Disable bluetooth", action: _disableBluetooth),
+              ButtonView("Fetch BT State", action: _fetchBluetoothState),
             ],
           ),
         ),
