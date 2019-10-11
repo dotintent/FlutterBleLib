@@ -264,7 +264,7 @@ class PeripheralTestOperations {
       await bleManager.knownDevices([]);
     peripherals.forEach((peripheral) => log("\t${peripheral.toString()}"));
     log("Device fetched");
-    log("Fetch known devices with one knonw device's ID specified");
+    log("Fetch known devices with one known device's ID specified");
     peripherals =  await bleManager.knownDevices([peripheral.identifier]);
     peripherals.forEach((peripheral) => log("\t${peripheral.toString()}"));
     log("Device fetched");
