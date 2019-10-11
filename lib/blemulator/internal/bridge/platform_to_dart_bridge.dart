@@ -10,6 +10,7 @@ class PlatformToDartBridge {
   }
 
   Future<dynamic> _handleCall(MethodCall call) {
+    print("Observed methad call on Flutter Simulator: ${call.method}");
     switch (call.method) {
       case DartMethodName.createClient:
         return _createClient(call);
@@ -39,6 +40,8 @@ class PlatformToDartBridge {
         return _writeCharacteristicForService(call);
       case DartMethodName.writeCharacteristicForIdentifier:
         return _writeCharacteristicForIdentifier(call);
+      case DartMethodName.readRssi:
+        return _readRssiForDevice(call);
       default:
         return Future.error(
           SimulatedBleError(
@@ -209,4 +212,8 @@ class PlatformToDartBridge {
         Metadata.isNotifying: characteristic.isNotifying,
         Metadata.isIndicatable: characteristic.isIndicatable,
       };
+
+  Future<int> _readRssiForDevice(MethodCall call) {
+    return _manager._readRssiForDevice(call.arguments[ArgumentName.id] as String);
+  }
 }

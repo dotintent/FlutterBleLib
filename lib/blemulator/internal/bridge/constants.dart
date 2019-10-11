@@ -42,6 +42,8 @@ abstract class DartMethodName {
       "writeCharacteristicForDevice";
   static const String writeCharacteristicForService =
       "writeCharacteristicForService";
+
+  static const String readRssi = "rssi";
 }
 
 abstract class SimulationArgumentName {

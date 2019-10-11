@@ -135,4 +135,6 @@ abstract class SimulatedPeripheral {
     }
     return targetCharacteristic;
   }
+
+  int rssi() => scanInfo.rssi;
 }

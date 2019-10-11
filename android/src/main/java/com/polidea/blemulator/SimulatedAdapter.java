@@ -126,6 +126,8 @@ public class SimulatedAdapter implements BleAdapter {
                                   OnSuccessCallback<Device> onSuccessCallback,
                                   OnErrorCallback onErrorCallback) {
         Log.i(TAG, "readRSSIForDevice");
+        dartMethodCaller.readRSSIForDevice(deviceIdentifier, onSuccessCallback, onErrorCallback);
+
     }
 
     @Override
