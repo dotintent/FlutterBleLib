@@ -107,7 +107,7 @@ class ManualTestView extends StatelessWidget {
             children: <Widget>[
               ButtonView("Enable bluetooth", action: _enableBluetooth),
               ButtonView("Disable bluetooth", action: _disableBluetooth),
-              ButtonView("Fetch State", action: _fetchBluetoothState),
+              ButtonView("Fetch BT State", action: _fetchBluetoothState),
             ],
           ),
         ),
