@@ -48,6 +48,10 @@ class ManualTestView extends StatelessWidget {
     _deviceDetailsBloc.fetchConnectedDevices();
   }
 
+  void _fetchKnownDevices() {
+    _deviceDetailsBloc.fetchKnownDevices();
+  }
+
   void _writeCharacteristicForPeripheral() {
     _deviceDetailsBloc.writeCharacteristicForPeripheral();
   }
@@ -87,7 +91,7 @@ class ManualTestView extends StatelessWidget {
             children: <Widget>[
               ButtonView("Read Rssi", action: _readRssi),
               ButtonView("Request MTU"),
-              ButtonView("Known devices"),
+              ButtonView("Known devices", action: _fetchKnownDevices),
             ],
           ),
         ),
