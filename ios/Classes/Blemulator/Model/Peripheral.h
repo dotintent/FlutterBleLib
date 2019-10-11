@@ -1,10 +1,10 @@
 @interface Peripheral : NSObject
 
-@property NSUUID * _Nonnull identifier;
+@property NSString * _Nonnull identifier;
 @property NSString * _Nullable name;
 @property NSInteger mtu;
 
-- (instancetype _Nonnull)initWithIdentifier:(NSUUID * _Nonnull)identifier
+- (instancetype _Nonnull)initWithIdentifier:(NSString * _Nonnull)identifier
                                        name:(NSString * _Nullable)name
                                         mtu:(NSInteger)mtu;
 

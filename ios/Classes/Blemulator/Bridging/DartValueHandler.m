@@ -8,8 +8,7 @@
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
     if ([PLATFORM_METHOD_NAME_PUBLISH_SCAN_RESULT isEqualToString:call.method]) {
-        ScannedPeripheral *scannedPeripheral = [DartCallArgumentsConverter scannedPeripheralFromCallArguments:call.arguments];
-        [self.scanEventDelegate dispatchDartValueHandlerScanEvent:[scannedPeripheral jsonObjectRepresentation]];
+        [self.scanEventDelegate dispatchDartValueHandlerScanEvent:[DartCallArgumentsConverter scannedPeripheralFromCallArguments:call.arguments]];
         result(nil);
     } else {
         result(FlutterMethodNotImplemented);

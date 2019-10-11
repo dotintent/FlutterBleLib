@@ -1,8 +1,9 @@
 #import "FlutterMethodCallHandler.h"
+#import "ScannedPeripheral.h"
 
 @protocol DartValueHandlerScanEventDelegate
 
-- (void)dispatchDartValueHandlerScanEvent:(NSDictionary *)value;
+- (void)dispatchDartValueHandlerScanEvent:(ScannedPeripheral *)scannedPeripheral;
 
 @end
 

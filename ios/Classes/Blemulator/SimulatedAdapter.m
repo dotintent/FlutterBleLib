@@ -19,16 +19,16 @@
 
 // MARK: - DartValueHandlerScanEventDelegate implementation
 
-- (void)dispatchDartValueHandlerScanEvent:(NSDictionary *)value {
-    NSString *deviceId = [value objectForKey:@"id"];
+- (void)dispatchDartValueHandlerScanEvent:(ScannedPeripheral *)scannedPeripheral {
+    NSString *deviceId = scannedPeripheral.peripheral.identifier;
     if (![self.knownPeripherals objectForKey:deviceId]) {
-        NSString *deviceName = [value objectForKey:@"name"];
+        NSString *deviceName = scannedPeripheral.peripheral.name;
         DeviceContainer *device = [[DeviceContainer alloc] initWithIdentifier:deviceId
                                                                          name:deviceName];
         [self.knownPeripherals setObject:device forKey:deviceId];
     }
     [self.delegate dispatchEvent:BleEvent.scanEvent
-                           value:[NSArray arrayWithObjects:[NSNull null], value, nil]];
+                           value:[NSArray arrayWithObjects:[NSNull null], [scannedPeripheral jsonObjectRepresentation], nil]];
 }
 
 // MARK: - Initializer
