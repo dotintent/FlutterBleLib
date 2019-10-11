@@ -10,7 +10,7 @@ class PlatformToDartBridge {
   }
 
   Future<dynamic> _handleCall(MethodCall call) {
-    print("Observed methad call on Flutter Simulator: ${call.method}");
+    print("Observed method call on Flutter Simulator: ${call.method}");
     switch (call.method) {
       case DartMethodName.createClient:
         return _createClient(call);

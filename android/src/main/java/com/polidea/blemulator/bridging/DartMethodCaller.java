@@ -463,7 +463,7 @@ public class DartMethodCaller {
 
             @Override
             public void error(String s, @Nullable String s1, @Nullable Object o) {
-                Log.e(TAG, "Error during reading rssi of simulating peripheral: " + s);
+                Log.e(TAG, "Error during reading rssi of simulating peripheral: " + s1);
                 onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(s1));
             }
 
