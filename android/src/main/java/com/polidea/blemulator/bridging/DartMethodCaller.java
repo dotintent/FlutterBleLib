@@ -10,6 +10,7 @@ import com.polidea.blemulator.bridging.constants.ArgumentName;
 import com.polidea.blemulator.bridging.constants.DartMethodName;
 import com.polidea.blemulator.bridging.constants.SimulationArgumentName;
 import com.polidea.blemulator.bridging.decoder.CharacteristicDartValueDecoder;
+import com.polidea.blemulator.bridging.decoder.ServiceDartValueDecoder;
 import com.polidea.flutter_ble_lib.constant.ArgumentKey;
 import com.polidea.multiplatformbleadapter.Characteristic;
 import com.polidea.multiplatformbleadapter.ConnectionOptions;
@@ -35,6 +36,7 @@ public class DartMethodCaller {
     private MethodChannel dartMethodChannel;
     private JSONToBleErrorConverter jsonToBleErrorConverter = new JSONToBleErrorConverter();
     private CharacteristicDartValueDecoder characteristicJsonDecoder = new CharacteristicDartValueDecoder();
+    private ServiceDartValueDecoder serviceDartValueDecoder = new ServiceDartValueDecoder();
 
     public DartMethodCaller(MethodChannel dartMethodChannel) {
         this.dartMethodChannel = dartMethodChannel;
@@ -73,7 +75,7 @@ public class DartMethodCaller {
 
                     @Override
                     public void error(String s, @Nullable String s1, @Nullable Object o) {
-                        Log.e(TAG, s + " "  + s1);
+                        Log.e(TAG, s + " " + s1);
                     }
 
                     @Override
@@ -248,37 +250,20 @@ public class DartMethodCaller {
         List<Service> services = new ArrayList<>();
         Map<String, List<Characteristic>> characteristics = new HashMap<>();
         for (Map<String, Object> mappedService : response) {
-            Service service = new Service(
-                    (Integer) mappedService.get(SimulationArgumentName.ID),
-                    deviceIdentifier,
-                    new BluetoothGattService(
-                            UUID.fromString(
-                                    (String) mappedService.get(SimulationArgumentName.UUID)
-                            ),
-                            BluetoothGattService.SERVICE_TYPE_PRIMARY
-                    )
-            );
+            Service service = serviceDartValueDecoder.decode(deviceIdentifier, mappedService);
             services.add(service);
-            characteristics.put((String) mappedService.get(SimulationArgumentName.UUID),
-                    parseCharacteristicsForServicesResponse(service,
-                            (List<Map<String, Object>>) mappedService.get(SimulationArgumentName.CHARACTERISTICS)));
+            characteristics.put((String) mappedService.get(SimulationArgumentName.SERVICE_UUID),
+                    parseCharacteristicsForServicesResponse(
+                            (List<Map<String, Object>>) mappedService.get(SimulationArgumentName.CHARACTERISTICS))
+            );
         }
-
         return new DeviceContainer(deviceIdentifier, deviceName, services, characteristics);
     }
 
-    private List<Characteristic> parseCharacteristicsForServicesResponse(Service service, List<Map<String, Object>> response) {
+    private List<Characteristic> parseCharacteristicsForServicesResponse(List<Map<String, Object>> response) {
         List<Characteristic> characteristics = new ArrayList<>();
         for (Map<String, Object> mappedCharacteristic : response) {
-            characteristics.add(new Characteristic(
-                    (Integer) mappedCharacteristic.get(SimulationArgumentName.ID),
-                    service,
-                    new BluetoothGattCharacteristic(
-                            UUID.fromString(
-                                    (String) mappedCharacteristic.get(SimulationArgumentName.UUID)
-                            ), 0, 0 //TODO fix properties and permissions
-                    )
-            ));
+            characteristics.add(characteristicJsonDecoder.decode(mappedCharacteristic));
         }
         return characteristics;
     }
@@ -299,7 +284,7 @@ public class DartMethodCaller {
                 new MethodChannel.Result() {
                     @Override
                     public void success(@Nullable Object characteristicJsonObject) {
-                        onSuccessCallback.onSuccess(characteristicJsonDecoder.decode(characteristicJsonObject));
+                        onSuccessCallback.onSuccess(characteristicJsonDecoder.decode((Map<String, Object>) characteristicJsonObject));
                     }
 
                     @Override
@@ -328,7 +313,7 @@ public class DartMethodCaller {
                 new MethodChannel.Result() {
                     @Override
                     public void success(@Nullable Object characteristicJsonObject) {
-                        onSuccessCallback.onSuccess(characteristicJsonDecoder.decode(characteristicJsonObject));
+                        onSuccessCallback.onSuccess(characteristicJsonDecoder.decode((Map<String, Object>) characteristicJsonObject));
                     }
 
                     @Override
@@ -355,7 +340,7 @@ public class DartMethodCaller {
                 new MethodChannel.Result() {
                     @Override
                     public void success(@Nullable Object characteristicJsonObject) {
-                        onSuccessCallback.onSuccess(characteristicJsonDecoder.decode(characteristicJsonObject));
+                        onSuccessCallback.onSuccess(characteristicJsonDecoder.decode((Map<String, Object>) characteristicJsonObject));
                     }
 
                     @Override
@@ -388,7 +373,7 @@ public class DartMethodCaller {
                 new MethodChannel.Result() {
                     @Override
                     public void success(@Nullable Object characteristicJsonObject) {
-                        onSuccessCallback.onSuccess(characteristicJsonDecoder.decode(characteristicJsonObject));
+                        onSuccessCallback.onSuccess(characteristicJsonDecoder.decode((Map<String, Object>) characteristicJsonObject));
                     }
 
                     @Override
@@ -419,7 +404,7 @@ public class DartMethodCaller {
                 new MethodChannel.Result() {
                     @Override
                     public void success(@Nullable Object characteristicJsonObject) {
-                        onSuccessCallback.onSuccess(characteristicJsonDecoder.decode(characteristicJsonObject));
+                        onSuccessCallback.onSuccess(characteristicJsonDecoder.decode((Map<String, Object>) characteristicJsonObject));
                     }
 
                     @Override
@@ -448,7 +433,7 @@ public class DartMethodCaller {
                 new MethodChannel.Result() {
                     @Override
                     public void success(@Nullable Object characteristicJsonObject) {
-                        onSuccessCallback.onSuccess(characteristicJsonDecoder.decode(characteristicJsonObject));
+                        onSuccessCallback.onSuccess(characteristicJsonDecoder.decode((Map<String, Object>) characteristicJsonObject));
                     }
 
                     @Override

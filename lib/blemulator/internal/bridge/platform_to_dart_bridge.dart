@@ -86,17 +86,13 @@ class PlatformToDartBridge {
             call.arguments[ArgumentName.id] as String);
     dynamic mapped = services
         .map(
-          (e) => <String, dynamic>{
-            SimulationArgumentName.uuid: e.uuid,
-            SimulationArgumentName.id: e.id,
-            SimulationArgumentName.characteristics: e
+          (service) => <String, dynamic>{
+            Metadata.serviceUuid: service.uuid,
+            Metadata.serviceId: service.id,
+            SimulationArgumentName.characteristics: service
                 .characteristics()
                 .map(
-                  (e) => <String, dynamic>{
-                    SimulationArgumentName.id: e.id,
-                    SimulationArgumentName.uuid: e.uuid,
-                    //TODO expand model to send all fields
-                  },
+                  (characteristic) => _convertToMap(call.arguments[ArgumentName.id], characteristic, null),
                 )
                 .toList(),
           },

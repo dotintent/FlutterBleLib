@@ -14,11 +14,10 @@ import java.util.UUID;
 public class CharacteristicDartValueDecoder {
 
     private static UUID CLIENT_CHARACTERISTIC_CONFIG_UUID = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
+    private ServiceDartValueDecoder serviceDartValueDecoder = new ServiceDartValueDecoder();
 
     private interface Metadata {
         String DEVICE_IDENTIFIER = "deviceIdentifier";
-        String SERVICE_IDENTIFIER = "serviceId";
-        String SERVICE_UUID = "serviceUuid";
         String UUID = "characteristicUuid";
         String ID = "characteristicId";
         String IS_READABLE = "isReadable";
@@ -30,20 +29,16 @@ public class CharacteristicDartValueDecoder {
         String VALUE = "value";
     }
 
-    public Characteristic decode(Object dartObject) {
-        Map<String, Object> values = (Map<String, Object>) dartObject;
+    public Characteristic decode(Map<String, Object> values) {
         String deviceId = (String) values.get(Metadata.DEVICE_IDENTIFIER);
         UUID characteristicUuid = UUIDConverter.convert((String) values.get(Metadata.UUID));
         int characteristicId = (Integer) values.get(Metadata.ID);
-        int serviceId = (int) values.get(Metadata.SERVICE_IDENTIFIER);
-        UUID serviceUuid = UUIDConverter.convert((String) values.get(Metadata.SERVICE_UUID));
         byte[] value = (byte[]) values.get(Metadata.VALUE);
         int properties = calculateProperties(values);
 
-        BluetoothGattService bluetoothGattService = new BluetoothGattService(serviceUuid, 0);
         BluetoothGattCharacteristic bluetoothGattCharacteristic = new BluetoothGattCharacteristic(characteristicUuid, properties, 0);
         setNotifyingMode((Boolean) values.get(Metadata.IS_NOTIFYING), bluetoothGattCharacteristic);
-        Service service = new Service(serviceId, deviceId, bluetoothGattService);
+        Service service = serviceDartValueDecoder.decode(deviceId, values);
         Characteristic characteristic = new Characteristic(characteristicId, service, bluetoothGattCharacteristic);
 
         characteristic.setValue(value);
