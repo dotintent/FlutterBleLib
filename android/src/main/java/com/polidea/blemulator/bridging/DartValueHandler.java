@@ -5,7 +5,9 @@ import android.util.Log;
 
 import com.polidea.blemulator.bridging.constants.PlatformMethodName;
 import com.polidea.blemulator.bridging.constants.SimulationArgumentName;
+import com.polidea.blemulator.bridging.decoder.CharacteristicDartValueDecoder;
 import com.polidea.multiplatformbleadapter.AdvertisementData;
+import com.polidea.multiplatformbleadapter.Characteristic;
 import com.polidea.multiplatformbleadapter.ConnectionState;
 import com.polidea.multiplatformbleadapter.OnEventCallback;
 import com.polidea.multiplatformbleadapter.ScanResult;
@@ -24,8 +26,10 @@ public class DartValueHandler implements MethodChannel.MethodCallHandler {
 
     private static final String TAG = DartValueHandler.class.getSimpleName();
 
+    private CharacteristicDartValueDecoder characteristicDartValueDecoder = new CharacteristicDartValueDecoder();
     private OnEventCallback<ScanResult> scanResultPublisher;
     private Map<String, OnEventCallback<ConnectionState>> connectionStatePublishers = new HashMap<>();
+    private OnEventCallback<Characteristic> characteristicsUpdatePublisher;
 
     public void setScanResultPublisher(OnEventCallback<ScanResult> scanResultPublisher) {
         this.scanResultPublisher = scanResultPublisher;
@@ -33,6 +37,10 @@ public class DartValueHandler implements MethodChannel.MethodCallHandler {
 
     public void addConnectionStatePublisher(String identifier, OnEventCallback<ConnectionState> publisher) {
         connectionStatePublishers.put(identifier, publisher);
+    }
+
+    public void addCharacteristicsUpdatePublisher(OnEventCallback<Characteristic> publisher) {
+        characteristicsUpdatePublisher = publisher;
     }
 
     @Override
@@ -43,6 +51,9 @@ public class DartValueHandler implements MethodChannel.MethodCallHandler {
                 return;
             case PlatformMethodName.PUBLISH_CONNECTION_STATE:
                 publishConnectionState(call, result);
+                return;
+            case PlatformMethodName.PUBLISH_CHARACTERISTIC_UPDATE:
+                publishCharacteristicUpdate(call, result);
                 return;
             default:
                 result.notImplemented();
@@ -123,6 +134,12 @@ public class DartValueHandler implements MethodChannel.MethodCallHandler {
             connectionStatePublishers.remove(deviceId);
         }
 
+        result.success(null);
+    }
+
+    private void publishCharacteristicUpdate(MethodCall call, MethodChannel.Result result) {
+        Characteristic characteristic = characteristicDartValueDecoder.decode((Map<String, Object>) call.arguments);
+        characteristicsUpdatePublisher.onEvent(characteristic);
         result.success(null);
     }
 }

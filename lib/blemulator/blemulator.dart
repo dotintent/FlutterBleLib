@@ -9,6 +9,7 @@ import 'package:flutter_ble_lib/blemulator/internal/id_generator.dart';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart' as FlutterBLELib;
 
 import 'internal/internal.dart';
+part 'internal/util/mappers.dart';
 
 part 'simulated_ble_error.dart';
 part 'blemulator_core.dart';

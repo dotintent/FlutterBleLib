@@ -13,7 +13,7 @@ class SimulatedCharacteristic {
   bool isNotifying;
   bool isIndicatable;
 
-  StreamController<Uint8List> _streamController;
+  StreamController<Uint8List> streamController;
 
   SimulatedCharacteristic({
     @required this.uuid,
@@ -39,18 +39,21 @@ class SimulatedCharacteristic {
       return Future.error("This characteristic is not writeable");
     }
     this._value = value;
-    if (_streamController?.hasListener == true)
-      _streamController.sink.add(value);
+    if (streamController?.hasListener == true)
+      streamController.sink.add(value);
   }
 
   Stream<Uint8List> monitor() {
-    if (_streamController == null) {
-      _streamController = StreamController(onCancel: () {
-        _streamController.close();
-        _streamController = null;
+    if (!isNotifiable) {
+      streamController.sink.addError("Characterisitc is not notifiable");
+    }
+    if (streamController == null) {
+      streamController = StreamController(onCancel: () {
+        streamController.close();
+        streamController = null;
       });
     }
-    return _streamController.stream.asBroadcastStream();
+    return streamController.stream.asBroadcastStream();
   }
 }
 

@@ -13,6 +13,7 @@ abstract class PlatformMethodName {
 abstract class SimulationPlatformMethodName {
   static const String publishScanResult = "publishScanResult";
   static const String publishConnectionState = "publishConnectionState";
+  static const String publishCharacteristicUpdate = "publishCharacteristicUpdate";
 }
 
 abstract class DartMethodName {
@@ -42,6 +43,12 @@ abstract class DartMethodName {
       "writeCharacteristicForDevice";
   static const String writeCharacteristicForService =
       "writeCharacteristicForService";
+  static const String monitorCharacteristicForIdentifier =
+      "monitorCharacteristicForIdentifier";
+  static const String monitorCharacteristicForDevice =
+      "monitorCharacteristicForDevice";
+  static const String monitorCharacteristicForService =
+      "monitorCharacteristicForService";
 }
 
 abstract class SimulationArgumentName {

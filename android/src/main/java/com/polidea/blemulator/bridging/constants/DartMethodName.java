@@ -21,4 +21,7 @@ public interface DartMethodName {
     String WRITE_CHARACTERISTIC_FOR_IDENTIFIER = "writeCharacteristicForIdentifier";
     String WRITE_CHARACTERISTIC_FOR_DEVICE = "writeCharacteristicForDevice";
     String WRITE_CHARACTERISTIC_FOR_SERVICE = "writeCharacteristicForService";
+    String MONITOR_CHARACTERISTIC_FOR_IDENTIFIER = "monitorCharacteristicForIdentifier";
+    String MONITOR_CHARACTERISTIC_FOR_DEVICE = "monitorCharacteristicForDevice";
+    String MONITOR_CHARACTERISTIC_FOR_SERVICE = "monitorCharacteristicForService";
 }

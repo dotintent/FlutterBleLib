@@ -34,7 +34,8 @@ class DartToPlatformBridge {
           SimulationPlatformMethodName.publishConnectionState,
           <String, dynamic>{
             SimulationArgumentName.id: peripheral.id,
-            SimulationArgumentName.connectionState: _connectionStateToString(connectionState),
+            SimulationArgumentName.connectionState:
+                _connectionStateToString(connectionState),
           });
 
   String _connectionStateToString(PeripheralConnectionState state) {
@@ -51,4 +52,13 @@ class DartToPlatformBridge {
         return null;
     }
   }
+
+  Future<void> publishCharacteristicUpdate(
+    SimulatedCharacteristic characteristic,
+    Uint8List value,
+  ) =>
+      _dartToPlatformChannel.invokeMethod(
+        SimulationPlatformMethodName.publishCharacteristicUpdate,
+        mapToCharacteristicJson(characteristic.service.peripheralId, characteristic, value),
+      );
 }

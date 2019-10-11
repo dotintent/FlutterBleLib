@@ -1,6 +1,8 @@
 part of internal;
 
 mixin CharacteristicsMixin on SimulationManagerBase {
+  Map<int, StreamSubscription> _monitoringSubscriptions = HashMap();
+
   SimulatedCharacteristic getCharacteristic(int characteristicIdentifier) {
     SimulatedCharacteristic targetCharacteristic;
 
@@ -131,5 +133,74 @@ mixin CharacteristicsMixin on SimulationManagerBase {
 
     await targetCharacteristic.write(value);
     return targetCharacteristic;
+  }
+
+  Future<void> _monitorCharacteristicForIdentifier(
+    int characteristicIdentifier,
+  ) async {
+    SimulatedCharacteristic targetCharacteristic =
+        getCharacteristic(characteristicIdentifier);
+
+    if (targetCharacteristic == null)
+      return Future.error("Characteristic not found");
+
+    _monitoringSubscriptions.putIfAbsent(
+      targetCharacteristic.id,
+      () => targetCharacteristic.monitor().listen((value) {
+        _bridge.publishCharacteristicUpdate(targetCharacteristic, value);
+      }),
+    );
+  }
+
+  Future<void> _monitorCharacteristicForDevice(
+    String peripheralId,
+    String serviceUuid,
+    String characteristicUUID,
+  ) async {
+    SimulatedPeripheral targetPeripheral = _peripherals.values
+        .firstWhere((peripheral) => peripheral.id == peripheralId);
+
+    SimulatedCharacteristic targetCharacteristic = targetPeripheral
+        .getCharacteristicForService(serviceUuid, characteristicUUID);
+
+    if (targetCharacteristic == null)
+      return Future.error("Characteristic not found");
+
+    _monitoringSubscriptions.putIfAbsent(
+      targetCharacteristic.id,
+          () => targetCharacteristic.monitor().listen((value) {
+        _bridge.publishCharacteristicUpdate(targetCharacteristic, value);
+      }),
+    );
+  }
+
+  Future<void> _monitorCharacteristicForService(
+    int serviceIdentifier,
+    String characteristicUUID,
+  ) async {
+    SimulatedCharacteristic targetCharacteristic;
+    peripheralsLoop:
+    for (SimulatedPeripheral peripheral in _peripherals.values) {
+      SimulatedCharacteristic characteristic =
+          peripheral.service(serviceIdentifier)?.characteristics()?.firstWhere(
+                (characteristic) => characteristic.uuid == characteristicUUID,
+                orElse: () => null,
+              );
+
+      if (characteristic != null) {
+        targetCharacteristic = characteristic;
+        break peripheralsLoop;
+      }
+    }
+
+    if (targetCharacteristic == null)
+      return Future.error("Characteristic not found");
+
+    _monitoringSubscriptions.putIfAbsent(
+      targetCharacteristic.id,
+          () => targetCharacteristic.monitor().listen((value) {
+        _bridge.publishCharacteristicUpdate(targetCharacteristic, value);
+      }),
+    );
   }
 }
