@@ -102,6 +102,15 @@ class DeviceDetailsBloc {
     });
   }
 
+  void fetchKnownDevices() {
+    _clearLogs();
+    _deviceController.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+          .fetchKnownDevice();
+    });
+  }
+
+
   void writeCharacteristicForPeripheral() {
     _clearLogs();
     _deviceController.stream.listen((bleDevice) async {
