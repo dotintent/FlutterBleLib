@@ -28,6 +28,7 @@ public class SimulatedAdapter implements BleAdapter {
     private DartMethodCaller dartMethodCaller;
     private DartValueHandler dartValueHandler;
     private String logLevel = Constants.BluetoothLogLevel.NONE;
+    private String bluetoothState = Constants.BluetoothState.POWERED_ON;
 
     SimulatedAdapter(DartMethodCaller dartMethodCaller, DartValueHandler dartValueHandler) {
         this.dartMethodCaller = dartMethodCaller;
@@ -54,6 +55,9 @@ public class SimulatedAdapter implements BleAdapter {
                        OnSuccessCallback<Void> onSuccessCallback,
                        OnErrorCallback onErrorCallback) {
         Log.i(TAG, "enable");
+        bluetoothState = Constants.BluetoothState.POWERED_ON;
+        onSuccessCallback.onSuccess(null);
+
     }
 
     @Override
@@ -61,12 +65,14 @@ public class SimulatedAdapter implements BleAdapter {
                         OnSuccessCallback<Void> onSuccessCallback,
                         OnErrorCallback onErrorCallback) {
         Log.i(TAG, "disable");
+        bluetoothState = Constants.BluetoothState.POWERED_OFF;
+        onSuccessCallback.onSuccess(null);
     }
 
     @Override
     public String getCurrentState() {
         Log.i(TAG, "getCurrentState");
-        return null;
+        return bluetoothState;
     }
 
     @Override
