@@ -20,15 +20,6 @@ rootProject.allprojects {
     }
 }
 
-allprojects {
-    repositories {
-        mavenLocal()
-        jcenter()
-        // ADD IT HERE
-        maven { url "https://jitpack.io" }
-    }
-}
-
 apply plugin: 'com.android.library'
 
 android {
