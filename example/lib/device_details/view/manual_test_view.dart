@@ -76,6 +76,10 @@ class ManualTestView extends StatelessWidget {
     _deviceDetailsBloc.writeCharacteristicDirectly();
   }
 
+  void _monitorCharacteristicForPeripheral() {
+    _deviceDetailsBloc.monitorCharacteristicForPeripheral();
+  }
+
   void _disableBluetooth() {
     _deviceDetailsBloc.disableBluetooth();
   }
@@ -146,6 +150,16 @@ class ManualTestView extends StatelessWidget {
               ButtonView("Write directly", action: _writeCharacteristicDirectly),
               ButtonView("Read directly", action: _readCharacteristicDirectly),
               ButtonView("Monitor directly"),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 2.0),
+          child: Row(
+            children: <Widget>[
+              ButtonView("Monitor temp", action: _monitorCharacteristicForPeripheral),
+              ButtonView("Turn on temp", action: _writeCharacteristicForPeripheral),
+              ButtonView("Read temp", action: _readCharacteristicForPeripheral),
             ],
           ),
         ),

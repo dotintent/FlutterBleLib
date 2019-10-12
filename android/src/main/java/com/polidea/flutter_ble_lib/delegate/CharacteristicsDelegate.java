@@ -134,14 +134,14 @@ public class CharacteristicsDelegate extends CallDelegate {
 
     private void readCharacteristicForIdentifier(
             int characteristicIdentifier,
-            String transactionId,
+            final String transactionId,
             final MethodChannel.Result result) {
         final SafeMainThreadResolver<Characteristic> safeMainThreadResolver = new SafeMainThreadResolver<>(
                 new OnSuccessCallback<Characteristic>() {
                     @Override
                     public void onSuccess(Characteristic data) {
                         try {
-                            result.success(characteristicsResponseJsonConverter.toJson(createCharacteristicResponse(data)));
+                            result.success(characteristicsResponseJsonConverter.toJson(createCharacteristicResponse(data, transactionId)));
                         } catch (JSONException e) {
                             e.printStackTrace();
                             result.error(null, e.getMessage(), null);
@@ -173,7 +173,7 @@ public class CharacteristicsDelegate extends CallDelegate {
             String deviceIdentifier,
             String serviceUuid,
             String characteristicUuid,
-            String transactionId,
+            final String transactionId,
             final MethodChannel.Result result) {
 
         final SafeMainThreadResolver<Characteristic> safeMainThreadResolver = new SafeMainThreadResolver<>(
@@ -181,7 +181,7 @@ public class CharacteristicsDelegate extends CallDelegate {
                     @Override
                     public void onSuccess(Characteristic data) {
                         try {
-                            result.success(characteristicsResponseJsonConverter.toJson(createCharacteristicResponse(data)));
+                            result.success(characteristicsResponseJsonConverter.toJson(createCharacteristicResponse(data, transactionId)));
                         } catch (JSONException e) {
                             e.printStackTrace();
                             result.error(null, e.getMessage(), null);
@@ -209,13 +209,13 @@ public class CharacteristicsDelegate extends CallDelegate {
                 });
     }
 
-    private void readCharacteristicForService(int serviceIdentifier, String characteristicUuid, String transactionId, final MethodChannel.Result result) {
+    private void readCharacteristicForService(int serviceIdentifier, String characteristicUuid, final String transactionId, final MethodChannel.Result result) {
         final SafeMainThreadResolver<Characteristic> safeMainThreadResolver = new SafeMainThreadResolver<>(
                 new OnSuccessCallback<Characteristic>() {
                     @Override
                     public void onSuccess(Characteristic data) {
                         try {
-                            result.success(characteristicsResponseJsonConverter.toJson(createCharacteristicResponse(data)));
+                            result.success(characteristicsResponseJsonConverter.toJson(createCharacteristicResponse(data, transactionId)));
                         } catch (JSONException e) {
                             e.printStackTrace();
                             result.error(null, e.getMessage(), null);
@@ -250,14 +250,14 @@ public class CharacteristicsDelegate extends CallDelegate {
     private void writeCharacteristicForIdentifier(int characteristicIdentifier,
                                                   byte[] bytesToWrite,
                                                   boolean withResponse,
-                                                  String transactionId,
+                                                  final String transactionId,
                                                   final MethodChannel.Result result) {
         final SafeMainThreadResolver<Characteristic> safeMainThreadResolver = new SafeMainThreadResolver<>(
                 new OnSuccessCallback<Characteristic>() {
                     @Override
                     public void onSuccess(Characteristic data) {
                         try {
-                            result.success(characteristicsResponseJsonConverter.toJson(createCharacteristicResponse(data)));
+                            result.success(characteristicsResponseJsonConverter.toJson(createCharacteristicResponse(data, transactionId)));
                         } catch (JSONException e) {
                             e.printStackTrace();
                             result.error(null, e.getMessage(), null);
@@ -294,14 +294,14 @@ public class CharacteristicsDelegate extends CallDelegate {
                                               String characteristicUuid,
                                               byte[] bytesToWrite,
                                               boolean withResponse,
-                                              String transactionId,
+                                              final String transactionId,
                                               final MethodChannel.Result result) {
         final SafeMainThreadResolver<Characteristic> safeMainThreadResolver = new SafeMainThreadResolver<>(
                 new OnSuccessCallback<Characteristic>() {
                     @Override
                     public void onSuccess(Characteristic data) {
                         try {
-                            result.success(characteristicsResponseJsonConverter.toJson(createCharacteristicResponse(data)));
+                            result.success(characteristicsResponseJsonConverter.toJson(createCharacteristicResponse(data, transactionId)));
                         } catch (JSONException e) {
                             e.printStackTrace();
                             result.error(null, e.getMessage(), null);
@@ -339,14 +339,14 @@ public class CharacteristicsDelegate extends CallDelegate {
                                                String characteristicUuid,
                                                byte[] bytesToWrite,
                                                boolean withResponse,
-                                               String transactionId,
+                                               final String transactionId,
                                                final MethodChannel.Result result) {
         final SafeMainThreadResolver<Characteristic> safeMainThreadResolver = new SafeMainThreadResolver<>(
                 new OnSuccessCallback<Characteristic>() {
                     @Override
                     public void onSuccess(Characteristic data) {
                         try {
-                            result.success(characteristicsResponseJsonConverter.toJson(createCharacteristicResponse(data)));
+                            result.success(characteristicsResponseJsonConverter.toJson(createCharacteristicResponse(data, transactionId)));
                         } catch (JSONException e) {
                             e.printStackTrace();
                             result.error(null, e.getMessage(), null);
@@ -380,7 +380,7 @@ public class CharacteristicsDelegate extends CallDelegate {
     }
 
     private void monitorCharacteristicForIdentifier(final int characteristicIdentifier,
-                                                    String transactionId,
+                                                    final String transactionId,
                                                     final MethodChannel.Result result) {
         bleAdapter.monitorCharacteristic(
                 characteristicIdentifier,
@@ -392,7 +392,7 @@ public class CharacteristicsDelegate extends CallDelegate {
                             public void run() {
                                 try {
                                     characteristicsMonitorStreamHandler.onCharacteristicsUpdate(
-                                            createCharacteristicResponse(data)
+                                            createCharacteristicResponse(data, transactionId)
                                     );
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -418,7 +418,7 @@ public class CharacteristicsDelegate extends CallDelegate {
     private void monitorCharacteristicForDevice(String deviceIdentifier,
                                                 String serviceUuid,
                                                 String characteristicUuid,
-                                                String transactionId,
+                                                final String transactionId,
                                                 final MethodChannel.Result result) {
         bleAdapter.monitorCharacteristicForDevice(
                 deviceIdentifier,
@@ -433,7 +433,7 @@ public class CharacteristicsDelegate extends CallDelegate {
                             public void run() {
                                 try {
                                     characteristicsMonitorStreamHandler.onCharacteristicsUpdate(
-                                            createCharacteristicResponse(data)
+                                            createCharacteristicResponse(data, transactionId)
                                     );
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -458,7 +458,7 @@ public class CharacteristicsDelegate extends CallDelegate {
 
     private void monitorCharacteristicForService(int serviceIdentifier,
                                                  String characteristicUuid,
-                                                 String transactionId,
+                                                 final String transactionId,
                                                  final MethodChannel.Result result) {
         bleAdapter.monitorCharacteristicForService(
                 serviceIdentifier,
@@ -472,7 +472,7 @@ public class CharacteristicsDelegate extends CallDelegate {
                             public void run() {
                                 try {
                                     characteristicsMonitorStreamHandler.onCharacteristicsUpdate(
-                                            createCharacteristicResponse(data)
+                                            createCharacteristicResponse(data, transactionId)
                                     );
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -495,10 +495,11 @@ public class CharacteristicsDelegate extends CallDelegate {
         result.success(null);
     }
 
-    private SingleCharacteristicResponse createCharacteristicResponse(Characteristic characteristic) {
+    private SingleCharacteristicResponse createCharacteristicResponse(Characteristic characteristic, String transactionId) {
         return new SingleCharacteristicResponse(
                 characteristic,
                 characteristic.getServiceID(),
-                characteristic.getServiceUUID());
+                characteristic.getServiceUUID(),
+                transactionId);
     }
 }

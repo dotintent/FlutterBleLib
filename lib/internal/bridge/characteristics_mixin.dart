@@ -181,9 +181,15 @@ mixin CharacteristicsMixin on FlutterBLE {
     yield* _characteristicsMonitoringEvents
         .map((rawJsonValue) =>
             _parseCharacteristicWithValueResponse(peripheral, rawJsonValue))
+        .map((characteristic)  {
+          print("flutter TransactionId [${transactionId}], native id [${characteristic.transactionId}]");
+          return characteristic;
+        })
         .where((characteristic) =>
             equalsIgnoreAsciiCase(characteristicUUID, characteristic.uuid) &&
-            equalsIgnoreAsciiCase(serviceUuid, characteristic.service.uuid))
+            equalsIgnoreAsciiCase(serviceUuid, characteristic.service.uuid) &&
+            equalsIgnoreAsciiCase(transactionId ?? "", characteristic.transactionId ?? ""
+            ))
         .handleError((errorJson) =>
             throw BleError.fromJson(jsonDecode(errorJson.details)));
   }
@@ -221,8 +227,11 @@ CharacteristicWithValue _parseCharacteristicWithValueResponse(
   Map<String, dynamic> rootObject = jsonDecode(rawJsonValue);
   Service service = Service.fromJson(rootObject, peripheral, _manager);
 
+  var transactionId = rootObject["transactionId"];
+  print("---------------- $transactionId");
   return CharacteristicWithValue.fromJson(
-      rootObject["characteristic"], service, _manager);
+      rootObject["characteristic"], service, _manager)
+  .setTransactionId(transactionId);
 }
 
 Characteristic _parseCharacteristicResponse(

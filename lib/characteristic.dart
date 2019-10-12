@@ -66,6 +66,7 @@ class Characteristic extends InternalCharacteristic {
 
 mixin WithValue on Characteristic {
   Uint8List value;
+  String transactionId;
 }
 
 class CharacteristicWithValue extends Characteristic with WithValue {
@@ -76,4 +77,11 @@ class CharacteristicWithValue extends Characteristic with WithValue {
   ) : super.fromJson(jsonObject, service, manager) {
     value = base64Decode(jsonObject[_CharacteristicMetadata.value]);
   }
+
+  CharacteristicWithValue setTransactionId(String transactionId) {
+    this.transactionId = transactionId;
+    return this;
+  }
+
+
 }
