@@ -1,4 +1,4 @@
 rootProject.name = 'flutter_ble_lib'
 
-include ':multiplatformbleadapter'
-project(':multiplatformbleadapter').projectDir = new File(settingsDir, '../../MultiPlatformBleAdapter/android/library')
+//include ':multiplatformbleadapter'
+//project(':multiplatformbleadapter').projectDir = new File(settingsDir, '../../MultiPlatformBleAdapter/android/library')
