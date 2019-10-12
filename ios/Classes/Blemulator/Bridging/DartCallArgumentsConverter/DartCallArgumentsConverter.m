@@ -4,7 +4,6 @@
 @implementation DartCallArgumentsConverter
 
 + (ScannedPeripheral *)scannedPeripheralFromCallArguments:(NSDictionary<NSString *,id> *)callArguments {
-    NSLog(@"%@", [[NSUUID alloc] initWithUUIDString:[callArguments objectForKey:DART_CALL_ARGUMENT_PERIPHERAL_ID]]);
     Peripheral *peripheral = [[Peripheral alloc] initWithIdentifier:[[NSUUID alloc] initWithUUIDString:[callArguments objectForKey:DART_CALL_ARGUMENT_PERIPHERAL_ID]]
                                                                name:[callArguments objectForKey:DART_CALL_ARGUMENT_NAME]
                                                                 mtu:(NSInteger)[callArguments objectForKey:DART_CALL_ARGUMENT_MTU]];
@@ -31,13 +30,6 @@
             [overflowServiceUUIDs addObject:[CBUUID UUIDWithString:serviceUUIDString]];
         }
     }
-
-    NSLog(@"%@", serviceUUIDs);
-    NSLog(@"%@", [serviceUUIDs class]);
-    NSLog(@"%@", solicitedServiceUUIDs);
-    NSLog(@"%@", [solicitedServiceUUIDs class]);
-    NSLog(@"%@", overflowServiceUUIDs);
-    NSLog(@"%@", [overflowServiceUUIDs class]);
 
     AdvertisementData *advertisementData =
     [[AdvertisementData alloc] initWithManufacturerData:[callArguments objectForKey:DART_CALL_ARGUMENT_MANUFACTURER_DATA]

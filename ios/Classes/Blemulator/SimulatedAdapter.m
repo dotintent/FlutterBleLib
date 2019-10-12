@@ -23,7 +23,6 @@
     // TODO: - [scannedPeripheral.peripheral.identifier UUIDString] produces null now
     //          because macaddress is being passed from flutter as identifier
     //          (should add different behavior for iOS simulation)
-    NSLog(@"%@", [scannedPeripheral.peripheral.identifier UUIDString]);
     NSString *deviceId = [scannedPeripheral.peripheral.identifier UUIDString];
     if (![self.knownPeripherals objectForKey:deviceId]) {
         NSString *deviceName = scannedPeripheral.peripheral.name;
