@@ -2,6 +2,7 @@
 #import <flutter_ble_lib-Swift.h>
 #import "CommonTypes.h"
 #import "DeviceContainer.h"
+#import "StringUtilities.h"
 
 @interface SimulatedAdapter () <BleAdapter>
 
@@ -23,7 +24,7 @@
     // TODO: - [scannedPeripheral.peripheral.identifier UUIDString] produces null now
     //          because macaddress is being passed from flutter as identifier
     //          (should add different behavior for iOS simulation)
-    NSString *deviceId = [scannedPeripheral.peripheral.identifier UUIDString];
+    NSString *deviceId = [StringUtilitites stringFromNSUUID:scannedPeripheral.peripheral.identifier];
     if (![self.knownPeripherals objectForKey:deviceId]) {
         NSString *deviceName = scannedPeripheral.peripheral.name;
         DeviceContainer *device = [[DeviceContainer alloc] initWithIdentifier:deviceId

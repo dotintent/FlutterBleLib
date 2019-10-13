@@ -1,11 +1,12 @@
 #import "DartCallArgumentsConverter.h"
 #import "DartCallArgumentKeys.h"
 #import "ArrayUtilities.h"
+#import "StringUtilities.h"
 
 @implementation DartCallArgumentsConverter
 
 + (ScannedPeripheral *)scannedPeripheralFromCallArguments:(NSDictionary<NSString *,id> *)callArguments {
-    Peripheral *peripheral = [[Peripheral alloc] initWithIdentifier:[[NSUUID alloc] initWithUUIDString:[callArguments objectForKey:DART_CALL_ARGUMENT_PERIPHERAL_ID]]
+    Peripheral *peripheral = [[Peripheral alloc] initWithIdentifier:[StringUtilitites nsuuidFromString:[callArguments objectForKey:DART_CALL_ARGUMENT_PERIPHERAL_ID]]
                                                                name:[callArguments objectForKey:DART_CALL_ARGUMENT_NAME]
                                                                 mtu:(NSInteger)[callArguments objectForKey:DART_CALL_ARGUMENT_MTU]];
 
