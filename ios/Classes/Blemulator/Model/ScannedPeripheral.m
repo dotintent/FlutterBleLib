@@ -1,6 +1,7 @@
 #import "ScannedPeripheral.h"
 #import "PeripheralResponse.h"
 #import "Base64Coder.h"
+#import "ArrayUtilities.h"
 
 @implementation ScannedPeripheral
 
@@ -26,22 +27,13 @@
         manufacturerData = [Base64Coder base64StringFromData:_advertisementData.manufacturerData];
     }
     if (![_advertisementData.serviceUUIDs isKindOfClass: NSNull.class]) {
-        serviceUUIDs = [[NSMutableArray alloc] init];
-        for (CBUUID *serviceUUID in _advertisementData.serviceUUIDs) {
-            [serviceUUIDs addObject:[serviceUUID UUIDString]];
-        }
+        serviceUUIDs = [ArrayUtilities stringArrayFromCBUUIDArray:_advertisementData.serviceUUIDs];
     }
     if (![_advertisementData.solicitedServiceUUIDs isKindOfClass: NSNull.class]) {
-        solicitedServiceUUIDs = [[NSMutableArray alloc] init];
-        for (CBUUID *solicitedDerviceUUID in _advertisementData.serviceUUIDs) {
-            [solicitedServiceUUIDs addObject:[solicitedDerviceUUID UUIDString]];
-        }
+        solicitedServiceUUIDs = [ArrayUtilities stringArrayFromCBUUIDArray:_advertisementData.solicitedServiceUUIDs];
     }
     if (![_advertisementData.overflowServiceUUIDs isKindOfClass: NSNull.class]) {
-        overflowServiceUUIDs = [[NSMutableArray alloc] init];
-        for (CBUUID *overflowServiceUUID in _advertisementData.serviceUUIDs) {
-            [overflowServiceUUIDs addObject:[overflowServiceUUID UUIDString]];
-        }
+        overflowServiceUUIDs = [ArrayUtilities stringArrayFromCBUUIDArray:_advertisementData.overflowServiceUUIDs];
     }
 
     return [NSDictionary dictionaryWithObjectsAndKeys:

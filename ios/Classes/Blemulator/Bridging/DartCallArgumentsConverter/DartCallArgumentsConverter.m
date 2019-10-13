@@ -1,5 +1,6 @@
 #import "DartCallArgumentsConverter.h"
 #import "DartCallArgumentKeys.h"
+#import "ArrayUtilities.h"
 
 @implementation DartCallArgumentsConverter
 
@@ -13,22 +14,13 @@
     id overflowServiceUUIDs = [NSNull null];
 
     if ([callArguments objectForKey:DART_CALL_ARGUMENT_SERVICE_UUIDS] != [NSNull null]) {
-        serviceUUIDs = [[NSMutableArray alloc] init];
-        for (NSString * serviceUUIDString in [callArguments objectForKey:DART_CALL_ARGUMENT_SERVICE_UUIDS]) {
-            [serviceUUIDs addObject:[CBUUID UUIDWithString:serviceUUIDString]];
-        }
+        serviceUUIDs = [ArrayUtilities cbuuidArrayFromStringArray:[callArguments objectForKey:DART_CALL_ARGUMENT_SERVICE_UUIDS]];
     }
     if ([callArguments objectForKey:DART_CALL_ARGUMENT_SOLICITED_SERVICE_UUIDS] != [NSNull null]) {
-        solicitedServiceUUIDs = [[NSMutableArray alloc] init];
-        for (NSString * serviceUUIDString in [callArguments objectForKey:DART_CALL_ARGUMENT_SOLICITED_SERVICE_UUIDS]) {
-            [solicitedServiceUUIDs addObject:[CBUUID UUIDWithString:serviceUUIDString]];
-        }
+        solicitedServiceUUIDs = [ArrayUtilities cbuuidArrayFromStringArray:[callArguments objectForKey:DART_CALL_ARGUMENT_SOLICITED_SERVICE_UUIDS]];
     }
     if ([callArguments objectForKey:DART_CALL_ARGUMENT_OVERFLOW_UUIDS] != [NSNull null]) {
-        overflowServiceUUIDs = [[NSMutableArray alloc] init];
-        for (NSString * serviceUUIDString in [callArguments objectForKey:DART_CALL_ARGUMENT_OVERFLOW_UUIDS]) {
-            [overflowServiceUUIDs addObject:[CBUUID UUIDWithString:serviceUUIDString]];
-        }
+        overflowServiceUUIDs = [ArrayUtilities cbuuidArrayFromStringArray:[callArguments objectForKey:DART_CALL_ARGUMENT_OVERFLOW_UUIDS]];
     }
 
     AdvertisementData *advertisementData =
