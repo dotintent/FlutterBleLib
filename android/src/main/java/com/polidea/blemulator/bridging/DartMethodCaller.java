@@ -147,7 +147,7 @@ public class DartMethodCaller {
 
             @Override
             public void error(String s, @Nullable String s1, @Nullable Object o) {
-                Log.e(TAG, s);
+                Log.e(TAG, "connectToDevice error "+ s1);
                 onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(s1));
             }
 
