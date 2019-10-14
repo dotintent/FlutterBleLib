@@ -1,7 +1,7 @@
 part of internal;
 
 mixin CharacteristicsMixin on SimulationManagerBase {
-  Map<int, StreamSubscription> _monitoringSubscriptions = HashMap();
+  Map<String, StreamSubscription> _monitoringSubscriptions = HashMap();
 
   SimulatedCharacteristic getCharacteristic(int characteristicIdentifier) {
     SimulatedCharacteristic targetCharacteristic;
@@ -137,6 +137,7 @@ mixin CharacteristicsMixin on SimulationManagerBase {
 
   Future<void> _monitorCharacteristicForIdentifier(
     int characteristicIdentifier,
+    String transactionId,
   ) async {
     SimulatedCharacteristic targetCharacteristic =
         getCharacteristic(characteristicIdentifier);
@@ -145,7 +146,7 @@ mixin CharacteristicsMixin on SimulationManagerBase {
       return Future.error("Characteristic not found");
 
     _monitoringSubscriptions.putIfAbsent(
-      targetCharacteristic.id,
+      transactionId,
       () => targetCharacteristic.monitor().listen((value) {
         _bridge.publishCharacteristicUpdate(targetCharacteristic, value);
       }),
@@ -156,6 +157,7 @@ mixin CharacteristicsMixin on SimulationManagerBase {
     String peripheralId,
     String serviceUuid,
     String characteristicUUID,
+    String transactionId,
   ) async {
     SimulatedPeripheral targetPeripheral = _peripherals.values
         .firstWhere((peripheral) => peripheral.id == peripheralId);
@@ -167,8 +169,8 @@ mixin CharacteristicsMixin on SimulationManagerBase {
       return Future.error("Characteristic not found");
 
     _monitoringSubscriptions.putIfAbsent(
-      targetCharacteristic.id,
-          () => targetCharacteristic.monitor().listen((value) {
+      transactionId,
+      () => targetCharacteristic.monitor().listen((value) {
         _bridge.publishCharacteristicUpdate(targetCharacteristic, value);
       }),
     );
@@ -177,6 +179,7 @@ mixin CharacteristicsMixin on SimulationManagerBase {
   Future<void> _monitorCharacteristicForService(
     int serviceIdentifier,
     String characteristicUUID,
+    String transactionId,
   ) async {
     SimulatedCharacteristic targetCharacteristic;
     peripheralsLoop:
@@ -197,10 +200,14 @@ mixin CharacteristicsMixin on SimulationManagerBase {
       return Future.error("Characteristic not found");
 
     _monitoringSubscriptions.putIfAbsent(
-      targetCharacteristic.id,
-          () => targetCharacteristic.monitor().listen((value) {
+      transactionId,
+      () => targetCharacteristic.monitor().listen((value) {
         _bridge.publishCharacteristicUpdate(targetCharacteristic, value);
       }),
     );
+  }
+
+  _cancelMonitoringTransactionIfExists(String transactionId) async {
+    _monitoringSubscriptions.remove(transactionId)?.cancel();
   }
 }

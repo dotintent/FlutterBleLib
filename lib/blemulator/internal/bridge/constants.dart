@@ -49,6 +49,8 @@ abstract class DartMethodName {
       "monitorCharacteristicForDevice";
   static const String monitorCharacteristicForService =
       "monitorCharacteristicForService";
+  static const String cancelTransaction =
+      "cancelTransaction";
 }
 
 abstract class SimulationArgumentName {
@@ -75,6 +77,7 @@ abstract class SimulationArgumentName {
 
   static const String characteristics = "characteristics";
   static const String uuid = "uuid";
+  static const String transactionId = "transactionId";
 }
 
 abstract class Metadata {

@@ -29,4 +29,6 @@ public interface SimulationArgumentName {
     String IS_NOTIFYING = "isNotifying";
     String IS_INDICATABLE = "isIndicatable";
     String VALUE = "value";
+
+    String TRANSACTION_ID = "transactionId";
 }

@@ -389,6 +389,7 @@ public class SimulatedAdapter implements BleAdapter {
     @Override
     public void cancelTransaction(String transactionId) {
         Log.i(TAG, "cancelTransaction");
+        dartMethodCaller.cancelTransaction(transactionId);
     }
 
     @Override

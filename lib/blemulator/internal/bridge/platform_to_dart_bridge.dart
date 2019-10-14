@@ -45,6 +45,8 @@ class PlatformToDartBridge {
         return _monitorCharacteristicForService(call);
       case DartMethodName.monitorCharacteristicForIdentifier:
         return _monitorCharacteristicForIdentifier(call);
+      case DartMethodName.cancelTransaction:
+        return _cancelTransaction(call);
       default:
         return Future.error(
           SimulatedBleError(
@@ -98,7 +100,8 @@ class PlatformToDartBridge {
             SimulationArgumentName.characteristics: service
                 .characteristics()
                 .map(
-                  (characteristic) => mapToCharacteristicJson(call.arguments[ArgumentName.id], characteristic, null),
+                  (characteristic) => mapToCharacteristicJson(
+                      call.arguments[ArgumentName.id], characteristic, null),
                 )
                 .toList(),
           },
@@ -196,18 +199,27 @@ class PlatformToDartBridge {
 
   Future<dynamic> _monitorCharacteristicForIdentifier(MethodCall call) =>
       _manager._monitorCharacteristicForIdentifier(
-          call.arguments[SimulationArgumentName.characteristicIdentifier]);
+          call.arguments[SimulationArgumentName.characteristicIdentifier],
+          call.arguments[SimulationArgumentName.transactionId]);
 
   Future<dynamic> _monitorCharacteristicForDevice(MethodCall call) =>
       _manager._monitorCharacteristicForDevice(
         call.arguments[SimulationArgumentName.deviceIdentifier],
         call.arguments[SimulationArgumentName.serviceUuid],
         call.arguments[SimulationArgumentName.characteristicUuid],
+        call.arguments[SimulationArgumentName.transactionId],
       );
 
   Future<dynamic> _monitorCharacteristicForService(MethodCall call) =>
       _manager._monitorCharacteristicForService(
         call.arguments[SimulationArgumentName.serviceId],
         call.arguments[SimulationArgumentName.characteristicUuid],
+        call.arguments[SimulationArgumentName.transactionId],
       );
+
+  Future<void> _cancelTransaction(MethodCall call) async {
+    _manager.cancelTransaction(
+      call.arguments[SimulationArgumentName.transactionId],
+    );
+  }
 }
