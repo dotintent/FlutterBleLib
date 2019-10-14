@@ -17,7 +17,7 @@
 
 - (NSDictionary<NSString *,id> *)jsonObjectRepresentation {
     return [NSDictionary dictionaryWithObjectsAndKeys:
-            [_identifier UUIDString], PERIPHERAL_RESPONSE_ID,
+            _identifier, PERIPHERAL_RESPONSE_ID,
             _name, PERIPHERAL_RESPONSE_NAME,
             [NSNull null], PERIPHERAL_RESPONSE_RSSI,
             [NSNumber numberWithInt:_mtu], PERIPHERAL_RESPONSE_MTU,
