@@ -102,6 +102,15 @@ class DeviceDetailsBloc {
     });
   }
 
+  void fetchKnownDevices() {
+    _clearLogs();
+    _deviceController.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+          .fetchKnownDevice();
+    });
+  }
+
+
   void writeCharacteristicForPeripheral() {
     _clearLogs();
     _deviceController.stream.listen((bleDevice) async {
@@ -115,6 +124,30 @@ class DeviceDetailsBloc {
     _deviceController.stream.listen((bleDevice) async {
       PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
           .readCharacteristicForPeripheral();
+    });
+  }
+
+  void disableBluetooth() {
+    _clearLogs();
+    _deviceController.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+          .disableBluetooth();
+    });
+  }
+
+  void enableBluetooth() {
+    _clearLogs();
+    _deviceController.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+          .enableBluetooth();
+    });
+  }
+
+  void fetchBluetoothState() {
+    _clearLogs();
+    _deviceController.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+          .fetchBluetoothState();
     });
   }
 
