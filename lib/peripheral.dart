@@ -30,8 +30,10 @@ class Peripheral {
           timeout: timeout);
 
   Stream<PeripheralConnectionState> observeConnectionState(
-          {bool emitCurrentValue = false}) =>
-      _manager.observePeripheralConnectionState(identifier, emitCurrentValue);
+          {bool emitCurrentValue = false,
+          bool completeOnDisconnect = false}) =>
+      _manager.observePeripheralConnectionState(identifier, emitCurrentValue, completeOnDisconnect);
+
 
   Future<bool> isConnected() => _manager.isPeripheralConnected(identifier);
 
