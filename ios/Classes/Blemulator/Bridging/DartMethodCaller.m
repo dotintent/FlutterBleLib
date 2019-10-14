@@ -21,13 +21,15 @@ typedef void (^InvokeMethodResultHandler)(id _Nullable result);
     return self;
 }
 
-// MARK: - Methods
+// MARK: - Methods - Lifecycle
 
 - (void)createClient {
     [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_CREATE_CLIENT
                                arguments:nil
                                   result:[self simpleInvokeMethodResultHandlerForMethod:DART_METHOD_NAME_CREATE_CLIENT]];
 }
+
+// MARK: - Methods - Scanning
 
 - (void)startDeviceScan {
     [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_START_DEVICE_SCAN
@@ -39,6 +41,12 @@ typedef void (^InvokeMethodResultHandler)(id _Nullable result);
     [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_STOP_DEVICE_SCAN
                                arguments:nil
                                   result:[self simpleInvokeMethodResultHandlerForMethod:DART_METHOD_NAME_STOP_DEVICE_SCAN]];
+}
+
+// MARK: - Methods - Connection
+
+- (void)connectToDevice {
+    
 }
 
 // MARK: - Utility methods
