@@ -58,7 +58,7 @@ typedef void (^ErrorHandler)(id error);
                                                deviceIdentifier, SIMULATION_ARGUMENT_NAME_DEVICE_ID,
                                                nil];
     SuccessHandler successHandler = ^(id _Nullable result) {
-        resolve([[[Peripheral alloc] initWithIdentifier:[[NSUUID alloc] initWithUUIDString:deviceIdentifier]
+        resolve([[[Peripheral alloc] initWithIdentifier:deviceIdentifier
                                                    name:name
                                                     mtu:23] jsonObjectRepresentation]);
     };
