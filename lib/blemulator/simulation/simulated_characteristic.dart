@@ -34,7 +34,7 @@ class SimulatedCharacteristic {
   Future<Uint8List> read() async =>
       isReadable ? _value : Future.error("This characteristic is not readable");
 
-  void write(Uint8List value) {
+  Future<void> write(Uint8List value) async {
     this._value = value;
     if (_streamController?.hasListener == true)
       _streamController.sink.add(value);

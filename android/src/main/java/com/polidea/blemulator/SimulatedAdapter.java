@@ -371,6 +371,8 @@ public class SimulatedAdapter implements BleAdapter {
                                              OnSuccessCallback<Characteristic> onSuccessCallback,
                                              OnErrorCallback onErrorCallback) {
         Log.i(TAG, "writeCharacteristicForDevice");
+        dartMethodCaller.writeCharacteristicForDevice(deviceIdentifier, serviceUUID, characteristicUUID,
+                valueBase64, onSuccessCallback, onErrorCallback);
     }
 
     @Override
@@ -382,6 +384,8 @@ public class SimulatedAdapter implements BleAdapter {
                                               OnSuccessCallback<Characteristic> onSuccessCallback,
                                               OnErrorCallback onErrorCallback) {
         Log.i(TAG, "writeCharacteristicForService");
+        dartMethodCaller.writeCharacteristicForService(serviceIdentifier, characteristicUUID,
+                valueBase64, onSuccessCallback, onErrorCallback);
     }
 
     @Override
@@ -392,6 +396,8 @@ public class SimulatedAdapter implements BleAdapter {
                                     OnSuccessCallback<Characteristic> onSuccessCallback,
                                     OnErrorCallback onErrorCallback) {
         Log.i(TAG, "writeCharacteristic");
+        dartMethodCaller.writeCharacteristic(characteristicIdentifier, valueBase64,
+                onSuccessCallback, onErrorCallback);
     }
 
     @Override
