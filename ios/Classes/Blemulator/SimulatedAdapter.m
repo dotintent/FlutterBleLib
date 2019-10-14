@@ -137,6 +137,9 @@
 - (void)isDeviceConnected:(NSString * _Nonnull)deviceIdentifier
                   resolve:(NS_NOESCAPE Resolve)resolve
                    reject:(NS_NOESCAPE Reject)reject {
+    [self.dartMethodCaller isDeviceConnected:deviceIdentifier
+                                     resolve:resolve
+                                      reject:reject];
     NSLog(@"SimulatedAdapter.isDeviceConnected");
 }
 
