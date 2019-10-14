@@ -194,9 +194,8 @@ public class DartMethodCaller {
             }
 
             @Override
-            public void error(String s, @Nullable String s1, @Nullable Object o) {
-                Log.e(TAG, s);
-                onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(s1));
+            public void error(String errorCode, @Nullable String jsonBody, @Nullable Object irrelevant) {
+                onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(jsonBody));
             }
 
             @Override
@@ -233,9 +232,8 @@ public class DartMethodCaller {
             }
 
             @Override
-            public void error(String s, @Nullable String s1, @Nullable Object o) {
-                //TODO convert error
-//                onErrorCallback
+            public void error(String errorCode, @Nullable String jsonBody, @Nullable Object irrelevant) {
+                onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(jsonBody));
             }
 
             @Override
@@ -288,8 +286,8 @@ public class DartMethodCaller {
                     }
 
                     @Override
-                    public void error(String errorCode, @Nullable String message, @Nullable Object bleErrorJsonObject) {
-                        onErrorCallback.onError(new BleError(BleErrorCode.UnknownError, message, 0)); //TODO Add proper error parsing here
+                    public void error(String errorCode, @Nullable String jsonBody, @Nullable Object irrelevant) {
+                        onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(jsonBody));
                     }
 
                     @Override
@@ -317,8 +315,8 @@ public class DartMethodCaller {
                     }
 
                     @Override
-                    public void error(String errorCode, @Nullable String message, @Nullable Object bleErrorJsonObject) {
-                        onErrorCallback.onError(new BleError(BleErrorCode.UnknownError, message, 0)); //TODO Add proper error parsing here
+                    public void error(String errorCode, @Nullable String jsonBody, @Nullable Object irrelevant) {
+                        onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(jsonBody));
                     }
 
                     @Override
@@ -344,8 +342,8 @@ public class DartMethodCaller {
                     }
 
                     @Override
-                    public void error(String errorCode, @Nullable String message, @Nullable Object bleErrorJsonObject) {
-                        onErrorCallback.onError(new BleError(BleErrorCode.UnknownError, message, 0)); //TODO Add proper error parsing here
+                    public void error(String errorCode, @Nullable String jsonBody, @Nullable Object irrelevant) {
+                        onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(jsonBody));
                     }
 
                     @Override
@@ -377,8 +375,8 @@ public class DartMethodCaller {
                     }
 
                     @Override
-                    public void error(String errorCode, @Nullable String message, @Nullable Object bleErrorJsonObject) {
-                        onErrorCallback.onError(new BleError(BleErrorCode.UnknownError, message, 0)); //TODO Add proper error parsing here
+                    public void error(String errorCode, @Nullable String jsonBody, @Nullable Object irrelevant) {
+                        onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(jsonBody));
                     }
 
                     @Override
@@ -408,8 +406,8 @@ public class DartMethodCaller {
                     }
 
                     @Override
-                    public void error(String errorCode, @Nullable String message, @Nullable Object bleErrorJsonObject) {
-                        onErrorCallback.onError(new BleError(BleErrorCode.UnknownError, message, 0)); //TODO Add proper error parsing here
+                    public void error(String errorCode, @Nullable String jsonBody, @Nullable Object irrelevant) {
+                        onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(jsonBody));
                     }
 
                     @Override
@@ -437,8 +435,8 @@ public class DartMethodCaller {
                     }
 
                     @Override
-                    public void error(String errorCode, @Nullable String message, @Nullable Object bleErrorJsonObject) {
-                        onErrorCallback.onError(new BleError(BleErrorCode.UnknownError, message, 0)); //TODO Add proper error parsing here
+                    public void error(String errorCode, @Nullable String jsonBody, @Nullable Object irrelevant) {
+                        onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(jsonBody));
                     }
 
                     @Override
