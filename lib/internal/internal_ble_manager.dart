@@ -75,7 +75,7 @@ class InternalBleManager
   Stream<PeripheralConnectionState> observePeripheralConnectionState(
     String peripheralIdentifier,
     bool emitCurrentValue,
-    bool unsubscribeOnCancel
+    bool completeOnDisconnect
   ) {
 
     var streamTransformer = StreamTransformer<PeripheralConnectionState, PeripheralConnectionState>.fromHandlers(
@@ -92,7 +92,7 @@ class InternalBleManager
 
     var stream =  _bleLib.observePeripheralConnectionState(
         peripheralIdentifier, emitCurrentValue);
-    if (unsubscribeOnCancel) {
+    if (completeOnDisconnect) {
       return stream.transform(streamTransformer);
     } else {
       return stream;

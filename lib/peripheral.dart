@@ -31,8 +31,8 @@ class Peripheral {
 
   Stream<PeripheralConnectionState> observeConnectionState(
           {bool emitCurrentValue = false,
-          bool unsubscribeOnCancel = false}) =>
-      _manager.observePeripheralConnectionState(identifier, emitCurrentValue, unsubscribeOnCancel);
+          bool completeOnDisconnect = false}) =>
+      _manager.observePeripheralConnectionState(identifier, emitCurrentValue, completeOnDisconnect);
 
 
   Future<bool> isConnected() => _manager.isPeripheralConnected(identifier);

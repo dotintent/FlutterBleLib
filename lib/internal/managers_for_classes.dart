@@ -13,7 +13,7 @@ abstract class ManagerForPeripheral {
       String peripheralIdentifier);
 
   Stream<PeripheralConnectionState> observePeripheralConnectionState(
-      String peripheralIdentifier, bool emitCurrentValue, bool unsubscribeOnCancel);
+      String peripheralIdentifier, bool emitCurrentValue, bool completeOnDisconnect);
 
   Future<void> discoverAllServicesAndCharacteristics(
       Peripheral peripheral, String transactionId);

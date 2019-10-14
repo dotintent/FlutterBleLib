@@ -157,7 +157,7 @@ class DeviceDetailsBloc {
       var peripheral = bleDevice.peripheral;
 
       peripheral
-          .observeConnectionState(emitCurrentValue: true, unsubscribeOnCancel: true)
+          .observeConnectionState(emitCurrentValue: true, completeOnDisconnect: true)
           .listen((connectionState) {
         log('Observed new connection state: $connectionState');
         _connectionStateController.add(connectionState);
