@@ -76,14 +76,14 @@ class PeripheralTestOperations {
   }
 
   Future<void> writeCharacteristicForPeripheral() async {
-    log("Write to characteristic via peripheral");
+    log("Turning on temperature update");
     await peripheral.writeCharacteristic(
         SensorTagTemperatureUuids.temperatureService,
         SensorTagTemperatureUuids.temperatureConfigCharacteristic,
         Uint8List.fromList([1]),
         false);
 
-    log("Written to characteristic");
+    log("Turned on temperature update");
   }
 
   Future<void> readWriteMonitorCharacteristicForPeripheral() async {
