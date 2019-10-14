@@ -102,7 +102,12 @@
 
 - (void)connectToDevice:(NSString * _Nonnull)deviceIdentifier
                 options:(NSDictionary<NSString *,id> * _Nullable)options
-                resolve:(Resolve)resolve reject:(Reject)reject {
+                resolve:(Resolve)resolve
+                 reject:(Reject)reject {
+    [self.dartMethodCaller connectToDevice:deviceIdentifier
+                                   options:options
+                                   resolve:resolve
+                                    reject:reject];
     NSLog(@"SimulatedAdapter.connectToDevice");
 }
 

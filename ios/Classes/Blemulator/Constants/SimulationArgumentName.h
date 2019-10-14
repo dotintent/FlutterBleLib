@@ -1,0 +1,1 @@
+extern NSString * const SIMULATION_ARGUMENT_NAME_DEVICE_ID;
