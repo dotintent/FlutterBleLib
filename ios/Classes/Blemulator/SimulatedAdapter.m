@@ -105,7 +105,7 @@
                 resolve:(Resolve)resolve
                  reject:(Reject)reject {
     [self.dartMethodCaller connectToDevice:deviceIdentifier
-                                      name:@""
+                                      name:[self.knownPeripherals objectForKey:deviceIdentifier].name
                                    options:options
                                    resolve:resolve
                                     reject:reject];
