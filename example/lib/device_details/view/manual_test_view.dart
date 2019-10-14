@@ -121,7 +121,7 @@ class ManualTestView extends StatelessWidget {
             children: <Widget>[
               ButtonView("Write via peripheral", action: _writeCharacteristicForPeripheral),
               ButtonView("Read via peripheral", action: _readCharacteristicForPeripheral),
-              ButtonView("Monitor via peripheral", action: null),
+              ButtonView("Monitor via peripheral"),
             ],
           ),
         ),
@@ -131,7 +131,7 @@ class ManualTestView extends StatelessWidget {
             children: <Widget>[
               ButtonView("Write via service", action: _writeCharacteristicForService),
               ButtonView("Read via service", action: _readCharacteristicForService),
-              ButtonView("Monitor via service", action: null),
+              ButtonView("Monitor via service"),
             ],
           ),
         ),
@@ -141,7 +141,7 @@ class ManualTestView extends StatelessWidget {
             children: <Widget>[
               ButtonView("Write directly", action: _writeCharacteristicDirectly),
               ButtonView("Read directly", action: _readCharacteristicDirectly),
-              ButtonView("Monitor directly", action: null),
+              ButtonView("Monitor directly"),
             ],
           ),
         ),
