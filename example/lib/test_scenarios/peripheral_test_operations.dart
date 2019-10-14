@@ -246,18 +246,28 @@ class PeripheralTestOperations {
   }
 
   Future<void> fetchConnectedDevice() async {
-    log("Fetch connected devices with temperature service");
+    log("Fetch connected devices with no service specified");
     List<Peripheral> peripherals = await bleManager
+        .connectedDevices([]);
+    peripherals.forEach((peripheral) => log("\t${peripheral.toString()}"));
+    log("Device fetched");
+    log("Fetch connected devices with temperature service");
+    peripherals = await bleManager
         .connectedDevices([SensorTagTemperatureUuids.temperatureService]);
     peripherals.forEach((peripheral) => log("\t${peripheral.toString()}"));
     log("Device fetched");
   }
 
   Future<void> fetchKnownDevice() async {
-    log("Fetch known devices");
+    log("Fetch known devices with no IDs specified");
     List<Peripheral> peripherals =
-    await bleManager.knownDevices([peripheral.identifier]);
+      await bleManager.knownDevices([]);
     peripherals.forEach((peripheral) => log("\t${peripheral.toString()}"));
+    log("Device fetched");
+    log("Fetch known devices with one known device's ID specified");
+    peripherals =  await bleManager.knownDevices([peripheral.identifier]);
+    peripherals.forEach((peripheral) => log("\t${peripheral.toString()}"));
+    log("Device fetched");
   }
 
   void _startMonitoringTemperature(
@@ -281,5 +291,20 @@ class PeripheralTestOperations {
     const double SCALE_LSB = 0.03125;
     int rawTemp = rawTemperatureBytes[3] << 8 | rawTemperatureBytes[2];
     return ((rawTemp) >> 2) * SCALE_LSB;
+  }
+
+  Future<void> disableBluetooth() async {
+    log("Disabling radio");
+    await bleManager.disableRadio();
+  }
+
+  Future<void> enableBluetooth() async {
+    log("Enabling radio");
+    await bleManager.enableRadio();
+  }
+
+  Future<void> fetchBluetoothState() async {
+    BluetoothState bluetoothState =await bleManager.bluetoothState();
+    log("Radio state: $bluetoothState");
   }
 }

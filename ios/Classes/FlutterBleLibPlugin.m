@@ -399,7 +399,7 @@
     } else if ([BleEvent.connectedEvent isEqualToString:name]) {
         [self.connectionStateStreamHandler onConnectedEvent:(NSString *)value];
     } else if ([BleEvent.disconnectionEvent isEqualToString:name]) {
-        [self.connectionStateStreamHandler onDisconnectedEvent:(NSString *)value];
+        [self.connectionStateStreamHandler onDisconnectedEvent:(NSArray *)value];
     } else if ([BleEvent.readEvent isEqualToString:name]) {
         [self.monitorCharacteristicStreamHandler onReadEvent:value];
     }

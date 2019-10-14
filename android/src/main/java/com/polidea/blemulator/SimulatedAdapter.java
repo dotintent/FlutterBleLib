@@ -18,7 +18,10 @@ import com.polidea.multiplatformbleadapter.errors.BleError;
 import com.polidea.multiplatformbleadapter.utils.Constants;
 import com.polidea.multiplatformbleadapter.errors.BleErrorCode;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SimulatedAdapter implements BleAdapter {
 
@@ -28,6 +31,7 @@ public class SimulatedAdapter implements BleAdapter {
     private DartMethodCaller dartMethodCaller;
     private DartValueHandler dartValueHandler;
     private String logLevel = Constants.BluetoothLogLevel.NONE;
+    private String bluetoothState = Constants.BluetoothState.POWERED_ON;
 
     SimulatedAdapter(DartMethodCaller dartMethodCaller, DartValueHandler dartValueHandler) {
         this.dartMethodCaller = dartMethodCaller;
@@ -54,6 +58,9 @@ public class SimulatedAdapter implements BleAdapter {
                        OnSuccessCallback<Void> onSuccessCallback,
                        OnErrorCallback onErrorCallback) {
         Log.i(TAG, "enable");
+        bluetoothState = Constants.BluetoothState.POWERED_ON;
+        onSuccessCallback.onSuccess(null);
+
     }
 
     @Override
@@ -61,12 +68,14 @@ public class SimulatedAdapter implements BleAdapter {
                         OnSuccessCallback<Void> onSuccessCallback,
                         OnErrorCallback onErrorCallback) {
         Log.i(TAG, "disable");
+        bluetoothState = Constants.BluetoothState.POWERED_OFF;
+        onSuccessCallback.onSuccess(null);
     }
 
     @Override
     public String getCurrentState() {
         Log.i(TAG, "getCurrentState");
-        return null;
+        return bluetoothState;
     }
 
     @Override
@@ -132,6 +141,21 @@ public class SimulatedAdapter implements BleAdapter {
                                 OnSuccessCallback<Device[]> onSuccessCallback,
                                 OnErrorCallback onErrorCallback) {
         Log.i(TAG, "getKnownDevices");
+        if (deviceIdentifiers.length == 0) {
+            Log.d(TAG, "There is no deviceIdentifiers, return empty list");
+            onSuccessCallback.onSuccess(new Device[0]);
+            return;
+        }
+        List<Device> filteredDevices = new ArrayList<>();
+        for (String deviceId : deviceIdentifiers) {
+            if (knownPeripherals.containsKey(deviceId)) {
+                DeviceContainer deviceContainer = knownPeripherals.get(deviceId);
+                Device device = new Device(deviceContainer.getIdentifier(), deviceContainer.getName());
+                device.setServices(deviceContainer.getServices());
+                filteredDevices.add(device);
+            }
+        }
+        onSuccessCallback.onSuccess(filteredDevices.toArray(new Device[filteredDevices.size()]));
     }
 
     @Override
@@ -139,6 +163,29 @@ public class SimulatedAdapter implements BleAdapter {
                                     OnSuccessCallback<Device[]> onSuccessCallback,
                                     OnErrorCallback onErrorCallback) {
         Log.i(TAG, "getConnectedDevices");
+        if (serviceUUIDs.length == 0) {
+            Log.d(TAG, "There is no servicesUUID, return empty list");
+            onSuccessCallback.onSuccess(new Device[0]);
+            return;
+        }
+
+        List<Device> filteredDevices = new ArrayList<>();
+        for (String serviceUuid : serviceUUIDs) {
+            for (Map.Entry<String, DeviceContainer> entry : knownPeripherals.entrySet()) {
+                DeviceContainer deviceContainer = entry.getValue();
+                if (!deviceContainer.isConnected() || deviceContainer.getServices() == null) {
+                    continue;
+                }
+                for (Service service : deviceContainer.getServices()) {
+                    if (serviceUuid.equalsIgnoreCase(service.getUuid().toString())) {
+                        Device device = new Device(deviceContainer.getIdentifier(), deviceContainer.getName());
+                        device.setServices(deviceContainer.getServices());
+                        filteredDevices.add(device);
+                    }
+                }
+            }
+        }
+        onSuccessCallback.onSuccess(filteredDevices.toArray(new Device[filteredDevices.size()]));
     }
 
     @Override
