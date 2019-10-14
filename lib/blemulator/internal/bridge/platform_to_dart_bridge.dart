@@ -217,9 +217,8 @@ class PlatformToDartBridge {
         call.arguments[SimulationArgumentName.transactionId],
       );
 
-  Future<void> _cancelTransaction(MethodCall call) async {
-    _manager.cancelTransaction(
-      call.arguments[SimulationArgumentName.transactionId],
-    );
-  }
+  Future<void> _cancelTransaction(MethodCall call) =>
+      _manager.cancelTransaction(
+        call.arguments[SimulationArgumentName.transactionId],
+      );
 }

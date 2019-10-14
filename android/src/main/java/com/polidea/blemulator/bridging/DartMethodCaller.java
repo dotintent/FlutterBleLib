@@ -439,11 +439,13 @@ public class DartMethodCaller {
             final String deviceIdentifier,
             final String serviceUUID,
             final String characteristicUUID,
+            final String transactionId,
             final OnErrorCallback onErrorCallback) {
         HashMap<String, Object> arguments = new HashMap<String, Object>() {{
             put(ArgumentKey.DEVICE_IDENTIFIER, deviceIdentifier);
             put(ArgumentKey.SERVICE_UUID, serviceUUID);
             put(ArgumentKey.CHARACTERISTIC_UUID, characteristicUUID);
+            put(ArgumentKey.TRANSACTION_ID, transactionId);
         }};
         dartMethodChannel.invokeMethod(DartMethodName.MONITOR_CHARACTERISTIC_FOR_DEVICE,
                 arguments,
@@ -468,10 +470,12 @@ public class DartMethodCaller {
     public void monitorCharacteristicForService(
             final int serviceIdentifier,
             final String characteristicUUID,
+            final String transactionId,
             final OnErrorCallback onErrorCallback) {
         HashMap<String, Object> arguments = new HashMap<String, Object>() {{
             put(ArgumentKey.SERVICE_IDENTIFIER, serviceIdentifier);
             put(ArgumentKey.CHARACTERISTIC_UUID, characteristicUUID);
+            put(ArgumentKey.TRANSACTION_ID, transactionId);
         }};
         dartMethodChannel.invokeMethod(DartMethodName.MONITOR_CHARACTERISTIC_FOR_SERVICE,
                 arguments,
@@ -494,9 +498,11 @@ public class DartMethodCaller {
 
     public void monitorCharacteristic(
             final int characteristicIdentifier,
+            final String transactionId,
             final OnErrorCallback onErrorCallback) {
         HashMap<String, Object> arguments = new HashMap<String, Object>() {{
             put(ArgumentKey.CHARACTERISTIC_IDENTIFIER, characteristicIdentifier);
+            put(ArgumentKey.TRANSACTION_ID, transactionId);
         }};
         dartMethodChannel.invokeMethod(DartMethodName.MONITOR_CHARACTERISTIC_FOR_IDENTIFIER,
                 arguments,

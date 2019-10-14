@@ -219,7 +219,7 @@ mixin CharacteristicsMixin on SimulationManagerBase {
     );
   }
 
-  _cancelMonitoringTransactionIfExists(String transactionId) async {
-    _monitoringSubscriptions.remove(transactionId)?.cancel();
+  Future<void> _cancelMonitoringTransactionIfExists(String transactionId) async {
+    await _monitoringSubscriptions.remove(transactionId)?.cancel();
   }
 }

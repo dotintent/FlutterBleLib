@@ -47,6 +47,6 @@ class SimulationManager extends SimulationManagerBaseWithErrorChecks
   }
 
   Future<void> cancelTransaction(String transactionId) async {
-    _cancelMonitoringTransactionIfExists(transactionId);
+    await _cancelMonitoringTransactionIfExists(transactionId);
   }
 }
