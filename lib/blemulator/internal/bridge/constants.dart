@@ -36,6 +36,12 @@ abstract class DartMethodName {
       "readCharacteristicForDevice";
   static const String readCharacteristicForService =
       "readCharacteristicForService";
+  static const String writeCharacteristicForIdentifier =
+      "writeCharacteristicForIdentifier";
+  static const String writeCharacteristicForDevice =
+      "writeCharacteristicForDevice";
+  static const String writeCharacteristicForService =
+      "writeCharacteristicForService";
 }
 
 abstract class SimulationArgumentName {
@@ -43,7 +49,7 @@ abstract class SimulationArgumentName {
   static const String serviceUuid = "serviceUuid";
   static const String serviceId = "serviceId";
   static const String characteristicUuid = "characteristicUuid";
-  static const String characteristicId = "characteristicUuid";
+  static const String characteristicIdentifier = "characteristicIdentifier";
   static const String name = "name";
   static const String id = "id";
   static const String mtu = "mtu";
@@ -56,6 +62,7 @@ abstract class SimulationArgumentName {
   static const String localName = "localName";
   static const String solicitedServiceUuids = "solicitedServiceUuids";
   static const String overflowUuids = "overflowUuids";
+  static const String value = "value";
 
   static const String connectionState = "connectionState";
 

@@ -316,7 +316,11 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 }
 
 - (void)writeCharacteristic:(FlutterMethodCall *)call result:(FlutterResult)result {
+<<<<<<< HEAD
     [_adapter writeCharacteristic:[call.arguments[ARGUMENT_KEY_CHARACTERISTIC_IDENTIFIER] doubleValue]
+=======
+    [_manager writeCharacteristic:[call.arguments[ARGUMENT_KEY_CHARACTERISTIC_IDENTIFIER] doubleValue]
+>>>>>>> cb75b9c... Simulated writing to characteristics (#206)
                       valueBase64:[self base64encodedStringFromBytes:call.arguments[ARGUMENT_KEY_VALUE]]
                          response:(BOOL)call.arguments[ARGUMENT_KEY_WITH_RESPONSE]
                     transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
