@@ -80,6 +80,7 @@ mixin CharacteristicsMixin on SimulationManagerBase {
     if (targetCharacteristic == null)
       return Future.error("Characteristic not found");
 
+    _throwErrorIfNotWritable(targetCharacteristic);
     await targetCharacteristic.write(value);
     return targetCharacteristic;
   }
@@ -99,6 +100,7 @@ mixin CharacteristicsMixin on SimulationManagerBase {
     if (targetCharacteristic == null)
       return Future.error("Characteristic not found");
 
+    _throwErrorIfNotWritable(targetCharacteristic);
     await targetCharacteristic.write(value);
     return targetCharacteristic;
   }
@@ -126,7 +128,17 @@ mixin CharacteristicsMixin on SimulationManagerBase {
     if (targetCharacteristic == null)
       return Future.error("Characteristic not found");
 
+    _throwErrorIfNotWritable(targetCharacteristic);
     await targetCharacteristic.write(value);
     return targetCharacteristic;
+  }
+
+  _throwErrorIfNotWritable(SimulatedCharacteristic characteristic) {
+    if (!characteristic.isWritableWithResponse ||
+        !characteristic.isWritableWithoutResponse) {
+      throw Future.error(SimulatedBleError(
+          BleErrorCode.CharacteristicWriteFailed,
+          "Characteristic ${characteristic.uuid} is not writeable"));
+    }
   }
 }

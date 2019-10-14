@@ -92,7 +92,8 @@ class PlatformToDartBridge {
             SimulationArgumentName.characteristics: service
                 .characteristics()
                 .map(
-                  (characteristic) => _convertToMap(call.arguments[ArgumentName.id], characteristic, null),
+                  (characteristic) => _convertToMap(
+                      call.arguments[ArgumentName.id], characteristic, null),
                 )
                 .toList(),
           },
