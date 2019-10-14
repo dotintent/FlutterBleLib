@@ -18,6 +18,7 @@
 // MARK: - Methods - Connection
 
 - (void)connectToDevice:(NSString *)deviceIdentifier
+                   name:(NSString *)name
                 options:(NSDictionary<NSString *,id> *)options
                 resolve:(Resolve)resolve
                  reject:(Reject)reject;

@@ -2,9 +2,10 @@
 #import "DartMethodName.h"
 #import "SimulationArgumentName.h"
 #import "Peripheral.h"
-#import "JSONStringifier.h"
 
 typedef void (^InvokeMethodResultHandler)(id _Nullable result);
+typedef void (^SuccessHandler)(id _Nullable result);
+typedef void (^ErrorHandler)(id error);
 
 @interface DartMethodCaller ()
 
@@ -49,17 +50,26 @@ typedef void (^InvokeMethodResultHandler)(id _Nullable result);
 // MARK: - Methods - Connection
 
 - (void)connectToDevice:(NSString *)deviceIdentifier
+                   name:(NSString *)name
                 options:(NSDictionary<NSString *,id> *)options
                 resolve:(Resolve)resolve
                  reject:(Reject)reject {
     NSDictionary<NSString *,id> *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
                                                deviceIdentifier, SIMULATION_ARGUMENT_NAME_DEVICE_ID,
                                                nil];
-    [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_CONNECT_TO_DEVICE
-                               arguments:[JSONStringifier jsonStringFromJSONObject:arguments]
+    SuccessHandler successHandler = ^(id _Nullable result) {
+        resolve([[[Peripheral alloc] initWithIdentifier:[[NSUUID alloc] initWithUUIDString:deviceIdentifier]
+                                                   name:name
+                                                    mtu:23] jsonObjectRepresentation]);
+    };
+    ErrorHandler errorHandler = ^(id error) {
+        // TODO: - Send error here
+        // reject();
+    };
+    [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_CONNECT_TO_DEVICE arguments:arguments
                                   result:[self invokeMethodResultHandlerForMethod:DART_METHOD_NAME_CONNECT_TO_DEVICE
-                                                                          resolve:resolve
-                                                                           reject:reject]];
+                                                                          onSuccess:successHandler
+                                                                           onError:errorHandler]];
 }
 
 // MARK: - Utility methods
@@ -77,20 +87,18 @@ typedef void (^InvokeMethodResultHandler)(id _Nullable result);
 }
 
 - (InvokeMethodResultHandler)invokeMethodResultHandlerForMethod:(NSString *)methodName
-                                                        resolve:(Resolve)resolve
-                                                         reject:(Reject)reject {
+                                                        onSuccess:(SuccessHandler)successHandler
+                                                         onError:(ErrorHandler)errorHandler {
     return ^(id _Nullable result) {
         if ([result class] == [FlutterError class]) {
             NSLog(@"%@%@%@%@", @"DartMethodCaller.", methodName, @": FlutterError: ", [(FlutterError *)result message]);
-            reject;
+            errorHandler((FlutterError *)result);
         } else if ([result class] == [NSError class]) {
             NSLog(@"%@%@%@%@", @"DartMethodCaller.", methodName, @": error: ", (NSError *)result);
-            reject;
+            errorHandler((NSError *)result);
         } else {
             NSLog(@"%@%@%@%@", @"DartMethodCaller.", methodName, @": success: ", result);
-            resolve([[Peripheral alloc] initWithIdentifier:[[NSUUID alloc] initWithUUIDString:@"F000AA00-0451-4000-B000-000000000000"]
-                                                      name:@"SensorTag"
-                                                       mtu:23]);
+            successHandler(result);
         }
     };
 }
