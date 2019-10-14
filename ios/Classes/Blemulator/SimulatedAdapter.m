@@ -35,6 +35,25 @@
                            value:[NSArray arrayWithObjects:[NSNull null], [scannedPeripheral jsonObjectRepresentation], nil]];
 }
 
+// MARK: - DartValueHandlerConnectionsEventDelegate implementation
+
+- (void)dispatchDartValueHandlerConnectionStateEvent:(ConnectionStateEvent *)connectionStateEvent {
+    NSString *deviceId = connectionStateEvent.deviceId;
+    NSString *connectionState = connectionStateEvent.connectionState;
+    if ([connectionState isEqualToString:@"CONNECTING"]) {
+        [self.knownPeripherals objectForKey:deviceId].isConnected = true;
+        [self.delegate dispatchEvent:BleEvent.connectingEvent value:deviceId];
+    } else if ([connectionState isEqualToString:@"CONNECTED"]) {
+        [self.knownPeripherals objectForKey:deviceId].isConnected = false;
+        [self.delegate dispatchEvent:BleEvent.connectedEvent value:deviceId];
+    } else if ([connectionState isEqualToString:@"DISCONNECTED"]) {
+        [self.knownPeripherals objectForKey:deviceId].isConnected = false;
+        [self.delegate dispatchEvent:BleEvent.disconnectionEvent value:[NSArray arrayWithObjects: [NSNull null],
+                                                                        [connectionStateEvent jsonObjectRepresentation],
+                                                                        nil]];
+    }
+}
+
 // MARK: - Initializer
 
 - (instancetype)initWithDartMethodCaller:(DartMethodCaller *)dartMethodCaller
@@ -104,6 +123,7 @@
                 options:(NSDictionary<NSString *,id> * _Nullable)options
                 resolve:(Resolve)resolve
                  reject:(Reject)reject {
+    self.dartValueHandler.connectionEventDelegate = self;
     [self.dartMethodCaller connectToDevice:deviceIdentifier
                                       name:[self.knownPeripherals objectForKey:deviceIdentifier].name
                                    options:options

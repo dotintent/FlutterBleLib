@@ -10,3 +10,5 @@ NSString * const DART_CALL_ARGUMENT_SERVICE_DATA = @"serviceData";
 NSString * const DART_CALL_ARGUMENT_SERVICE_UUIDS = @"serviceUuids";
 NSString * const DART_CALL_ARGUMENT_SOLICITED_SERVICE_UUIDS = @"solicitedServiceUuids";
 NSString * const DART_CALL_ARGUMENT_TX_POWER_LEVEL = @"txPowerLevel";
+
+NSString * const DART_CALL_CONNECTION_STATE = @"connectionState";

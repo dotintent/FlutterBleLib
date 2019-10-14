@@ -29,7 +29,7 @@
             [NSNull null], PERIPHERAL_RESPONSE_SOLICITED_SERVICE_UUIDS,
             [NSNull null], PERIPHERAL_RESPONSE_IS_CONNECTABLE,
             [NSNull null], PERIPHERAL_RESPONSE_OVERFLOW_SERVICE_UUIDS,
-            nil];;
+            nil];
 }
 
 @end

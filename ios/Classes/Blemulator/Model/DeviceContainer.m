@@ -14,6 +14,7 @@
     if (self) {
         self.identifier = identifier;
         self.name = name;
+        self.isConnected = false;
     }
     return self;
 }

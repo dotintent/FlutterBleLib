@@ -39,4 +39,9 @@
                                                     rssi:[callArguments objectForKey:DART_CALL_ARGUMENT_RSSI]];
 }
 
++ (ConnectionStateEvent *)connectionStateEventFromCallArguments:(NSDictionary<NSString *,id> *)callArguments {
+    return [[ConnectionStateEvent alloc] initWith:[callArguments objectForKey:DART_CALL_ARGUMENT_PERIPHERAL_ID]
+                                  connectionState:[callArguments objectForKey:DART_CALL_CONNECTION_STATE]];
+}
+
 @end
