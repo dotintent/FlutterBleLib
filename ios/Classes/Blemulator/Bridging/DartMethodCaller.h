@@ -23,6 +23,11 @@
                 resolve:(Resolve)resolve
                  reject:(Reject)reject;
 
+- (void)cancelDeviceConnection:(NSString *)deviceIdentifier
+                          name:(NSString *)name
+                       resolve:(Resolve)resolve
+                        reject:(Reject)reject;
+
 - (void)isDeviceConnected:(NSString *)deviceIdentifier
                   resolve:(Resolve)resolve
                    reject:(Reject)reject;
