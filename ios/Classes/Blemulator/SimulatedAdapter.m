@@ -10,7 +10,7 @@
 
 @synthesize delegate;
 
-// MARK: - Adapter Methods -  BleClient lifecycle
+// MARK: - Adapter Methods - BleClient lifecycle
 
 - (nonnull instancetype)initWithQueue:(dispatch_queue_t _Nonnull)queue
                  restoreIdentifierKey:(NSString * _Nullable)restoreIdentifierKey {
@@ -21,7 +21,7 @@
     NSLog(@"invalidate");
 }
 
-// MARK: - Adapter Methods -  Scanning
+// MARK: - Adapter Methods - Scanning
 
 - (void)startDeviceScan:(NSArray<NSString *> * _Nullable)filteredUUIDs
                 options:(NSDictionary<NSString *,id> * _Nullable)options {
@@ -32,7 +32,7 @@
     NSLog(@"stopDeviceScan");
 }
 
-// MARK: - Adapter Methods -  BT state monitoring
+// MARK: - Adapter Methods - BT state monitoring
 
 - (void)enable:(NSString * _Nonnull)transactionId
        resolve:(NS_NOESCAPE Resolve)resolve
@@ -40,12 +40,10 @@
     NSLog(@"enable");
 }
 
-- (void)requestConnectionPriorityForDevice:(NSString * _Nonnull)deviceIdentifier
-                        connectionPriority:(NSInteger)connectionPriority
-                             transactionId:(NSString * _Nonnull)transactionId
-                                   resolve:(Resolve)resolve
-                                    reject:(Reject)reject {
-    NSLog(@"requestConnectionPriorityForDevice");
+- (void)disable:(NSString * _Nonnull)transactionId
+        resolve:(NS_NOESCAPE Resolve)resolve
+         reject:(NS_NOESCAPE Reject)reject {
+    NSLog(@"disable");
 }
 
 - (void)state:(NS_NOESCAPE Resolve)resolve
@@ -53,7 +51,7 @@
     NSLog(@"state");
 }
 
-// MARK: - Adapter Methods -  Connection
+// MARK: - Adapter Methods - Connection
 
 - (void)connectToDevice:(NSString * _Nonnull)deviceIdentifier
                 options:(NSDictionary<NSString *,id> * _Nullable)options
@@ -73,7 +71,15 @@
     NSLog(@"isDeviceConnected");
 }
 
-// MARK: - Adapter Methods -  Log Level
+- (void)requestConnectionPriorityForDevice:(NSString * _Nonnull)deviceIdentifier
+                        connectionPriority:(NSInteger)connectionPriority
+                             transactionId:(NSString * _Nonnull)transactionId
+                                   resolve:(Resolve)resolve
+                                    reject:(Reject)reject {
+    NSLog(@"requestConnectionPriorityForDevice");
+}
+
+// MARK: - Adapter Methods - Log Level
 
 - (void)setLogLevel:(NSString * _Nonnull)logLevel {
     NSLog(@"setLogLevel");
@@ -84,7 +90,7 @@
     NSLog(@"logLevel");
 }
 
-// MARK: - Adapter Methods -  Discovery
+// MARK: - Adapter Methods - Discovery
 
 - (void)servicesForDevice:(NSString * _Nonnull)deviceIdentifier
                   resolve:(NS_NOESCAPE Resolve)resolve
@@ -113,11 +119,7 @@
     NSLog(@"characteristicsForService");
 }
 
-- (void)cancelTransaction:(NSString * _Nonnull)transactionId {
-    NSLog(@"cancelTransaction");
-}
-
-// MARK: - Adapter Methods -  Characteristics observation
+// MARK: - Adapter Methods - Characteristics observation
 
 - (void)readCharacteristicForDevice:(NSString * _Nonnull)deviceIdentifier
                         serviceUUID:(NSString * _Nonnull)serviceUUID
@@ -195,7 +197,7 @@
     NSLog(@"monitorCharacteristic");
 }
 
-// MARK: - Adapter Methods -  Known / Connected devices
+// MARK: - Adapter Methods - Known / Connected devices
 
 - (void)devices:(NSArray<NSString *> * _Nonnull)deviceIdentifiers
         resolve:(Resolve)resolve
@@ -209,7 +211,7 @@
     NSLog(@"connectedDevices");
 }
 
-// MARK: - Adapter Methods -  MTU
+// MARK: - Adapter Methods - MTU
 
 - (void)requestMTUForDevice:(NSString * _Nonnull)deviceIdentifier mtu:(NSInteger)mtu
               transactionId:(NSString * _Nonnull)transactionId
@@ -218,7 +220,7 @@
     NSLog(@"requestMTUForDevice");
 }
 
-// MARK: - Adapter Methods -  RSSI
+// MARK: - Adapter Methods - RSSI
 
 - (void)readRSSIForDevice:(NSString * _Nonnull)deviceIdentifier
             transactionId:(NSString * _Nonnull)transactionId
@@ -227,12 +229,10 @@
     NSLog(@"readRSSIForDevice");
 }
 
-// MARK: - Adapter Methods -  Cancel transaction
+// MARK: - Adapter Methods - Cancel transaction
 
-- (void)disable:(NSString * _Nonnull)transactionId
-        resolve:(NS_NOESCAPE Resolve)resolve
-         reject:(NS_NOESCAPE Reject)reject {
-    NSLog(@"disable");
+- (void)cancelTransaction:(NSString * _Nonnull)transactionId {
+    NSLog(@"cancelTransaction");
 }
 
 @end
