@@ -75,9 +75,29 @@ class InternalBleManager
   Stream<PeripheralConnectionState> observePeripheralConnectionState(
     String peripheralIdentifier,
     bool emitCurrentValue,
-  ) =>
-      _bleLib.observePeripheralConnectionState(
-          peripheralIdentifier, emitCurrentValue);
+    bool unsubscribeOnCancel
+  ) {
+
+    var streamTransformer = StreamTransformer<PeripheralConnectionState, PeripheralConnectionState>.fromHandlers(
+        handleData: (PeripheralConnectionState data, EventSink sink) {
+          sink.add(data);
+          if (data == PeripheralConnectionState.disconnected) {
+            sink.close();
+          }
+        },
+        handleError: (Object error, StackTrace stacktrace, EventSink sink) {
+          sink.addError(error);
+        },
+        handleDone: (EventSink sink) => sink.close());
+
+    var stream =  _bleLib.observePeripheralConnectionState(
+        peripheralIdentifier, emitCurrentValue);
+    if (unsubscribeOnCancel) {
+      return stream.transform(streamTransformer);
+    } else {
+      return stream;
+    }
+  }
 
   @override
   Future<void> disconnectOrCancelPeripheralConnection(
