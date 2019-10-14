@@ -79,8 +79,8 @@ class PeripheralTestOperations {
     log("Write to characteristic via peripheral");
     await peripheral.writeCharacteristic(
         SensorTagTemperatureUuids.temperatureService,
-        SensorTagTemperatureUuids.temperatureDataCharacteristic,
-        Uint8List.fromList([0, 200, 40, 0]),
+        SensorTagTemperatureUuids.temperatureConfigCharacteristic,
+        Uint8List.fromList([1]),
         false);
 
     log("Written to characteristic");
