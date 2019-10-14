@@ -1,7 +1,6 @@
 package com.polidea.flutter_ble_lib.delegate;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.polidea.flutter_ble_lib.ConnectionStateChange;
 import com.polidea.flutter_ble_lib.SafeMainThreadResolver;
