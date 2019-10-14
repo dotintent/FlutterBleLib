@@ -37,7 +37,7 @@
     }
 
     return [NSDictionary dictionaryWithObjectsAndKeys:
-            [_peripheral.identifier UUIDString], PERIPHERAL_RESPONSE_ID,
+            _peripheral.identifier, PERIPHERAL_RESPONSE_ID,
             _peripheral.name, PERIPHERAL_RESPONSE_NAME,
             _rssi, PERIPHERAL_RESPONSE_RSSI,
             _peripheral.mtu, PERIPHERAL_RESPONSE_MTU,

@@ -2,7 +2,7 @@
 
 @implementation Peripheral
 
-- (instancetype)initWithIdentifier:(NSUUID *)identifier
+- (instancetype)initWithIdentifier:(NSString *)identifier
                               name:(NSString *)name
                                mtu:(NSInteger)mtu {
     self = [super init];
