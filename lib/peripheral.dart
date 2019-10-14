@@ -30,8 +30,30 @@ class Peripheral {
           timeout: timeout);
 
   Stream<PeripheralConnectionState> observeConnectionState(
-          {bool emitCurrentValue = false}) =>
-      _manager.observePeripheralConnectionState(identifier, emitCurrentValue);
+          {bool emitCurrentValue = false,
+          bool unsubscribeOnCancel = false}) {
+
+        var streamTransformer = StreamTransformer<PeripheralConnectionState, PeripheralConnectionState>.fromHandlers(
+            handleData: (PeripheralConnectionState data, EventSink sink) {
+              sink.add(data);
+              if (data == PeripheralConnectionState.disconnected) {
+                print('observe disconnect in transformer: $data');
+                sink.close();
+              }
+           },
+        handleError: (Object error, StackTrace stacktrace, EventSink sink) {
+          sink.addError(error);
+        },
+        handleDone: (EventSink sink) => sink.close());
+
+
+       var stream = _manager.observePeripheralConnectionState(identifier, emitCurrentValue);
+        if (unsubscribeOnCancel) {
+          return stream.transform(streamTransformer);
+        } else {
+          return stream;
+        }
+      }
 
   Future<bool> isConnected() => _manager.isPeripheralConnected(identifier);
 
