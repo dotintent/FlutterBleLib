@@ -10,6 +10,9 @@
     if ([PLATFORM_METHOD_NAME_PUBLISH_SCAN_RESULT isEqualToString:call.method]) {
         [self.scanEventDelegate dispatchDartValueHandlerScanEvent:[DartCallArgumentsConverter scannedPeripheralFromCallArguments:call.arguments]];
         result(nil);
+    } else if ([PLATFORM_METHOD_NAME_PUBLISH_CONNECTION_STATE isEqualToString:call.method]) {
+        [self.connectionEventDelegate dispatchDartValueHandlerConnectionStateEvent:[DartCallArgumentsConverter connectionStateEventFromCallArguments:call.arguments]];
+        result(nil);
     } else {
         result(FlutterMethodNotImplemented);
     }

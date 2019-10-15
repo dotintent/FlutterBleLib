@@ -2,8 +2,8 @@
 
 @interface DeviceContainer ()
 
-@property NSString *identifier;
-@property NSString *name;
+@property (readwrite) NSString *identifier;
+@property (readwrite) NSString *name;
 
 @end
 
@@ -14,6 +14,7 @@
     if (self) {
         self.identifier = identifier;
         self.name = name;
+        self.isConnected = false;
     }
     return self;
 }
