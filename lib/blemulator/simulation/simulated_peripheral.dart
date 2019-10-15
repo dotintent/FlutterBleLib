@@ -45,7 +45,7 @@ abstract class SimulatedPeripheral {
       @required this.advertisementInterval,
       @required List<SimulatedService> services,
       this.scanInfo})
-      : _connectionStateStreamController = StreamController() {
+      : _connectionStateStreamController = StreamController.broadcast() {
     if (scanInfo == null) {
       this.scanInfo = ScanInfo();
     }

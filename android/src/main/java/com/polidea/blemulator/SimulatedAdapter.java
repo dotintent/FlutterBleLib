@@ -208,6 +208,7 @@ public class SimulatedAdapter implements BleAdapter {
                 onConnectionStateChangedCallback.onEvent(newState);
             }
         };
+
         dartValueHandler.addConnectionStatePublisher(deviceIdentifier, onEventCallback);
 
         dartMethodCaller.connectToDevice(
