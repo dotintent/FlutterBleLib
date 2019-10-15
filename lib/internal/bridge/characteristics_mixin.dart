@@ -79,7 +79,7 @@ mixin CharacteristicsMixin on FlutterBLE {
         MethodName.writeCharacteristicForIdentifier,
         <String, dynamic>{
           ArgumentName.characteristicIdentifier: characteristicIdentifier,
-          ArgumentName.bytes: bytes,
+          ArgumentName.value: bytes,
           ArgumentName.withResponse: withResponse,
           ArgumentName.transactionId: transactionId,
         },
@@ -100,7 +100,7 @@ mixin CharacteristicsMixin on FlutterBLE {
               ArgumentName.deviceIdentifier: peripheral.identifier,
               ArgumentName.serviceUuid: serviceUUID,
               ArgumentName.characteristicUuid: characteristicUUID,
-              ArgumentName.bytes: bytes,
+              ArgumentName.value: bytes,
               ArgumentName.withResponse: withResponse,
               ArgumentName.transactionId: transactionId,
             },
@@ -126,7 +126,7 @@ mixin CharacteristicsMixin on FlutterBLE {
             <String, dynamic>{
               ArgumentName.serviceIdentifier: serviceIdentifier,
               ArgumentName.characteristicUuid: characteristicUUID,
-              ArgumentName.bytes: bytes,
+              ArgumentName.value: bytes,
               ArgumentName.withResponse: withResponse,
               ArgumentName.transactionId: transactionId,
             },
