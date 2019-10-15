@@ -1,5 +1,8 @@
 #import "ConnectionStateEvent.h"
 
+NSString * const JSON_KEY_ID = @"id";
+NSString * const JSON_KEY_CONNECTION_STATE = @"connectionState";
+
 @implementation ConnectionStateEvent
 
 - (instancetype)initWith:(NSString *)deviceId connectionState:(NSString *)connectionState {
@@ -13,8 +16,8 @@
 
 - (NSDictionary<NSString *,id> *)jsonObjectRepresentation {
     return [NSDictionary dictionaryWithObjectsAndKeys:
-            _deviceId, @"id",
-            _connectionState, @"connectionState",
+            _deviceId, JSON_KEY_ID,
+            _connectionState, JSON_KEY_CONNECTION_STATE,
             nil];
 }
 
