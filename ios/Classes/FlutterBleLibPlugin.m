@@ -11,15 +11,13 @@
 #import "Util/ArgumentValidator.h"
 #import "Util/FlutterErrorFactory.h"
 #import "Util/JSONStringifier.h"
+#import "Util/CommonTypes.h"
 #import "ResponseConverter/CharacteristicResponseConverter.h"
 #import "ResponseConverter/PeripheralResponseConverter.h"
 
-typedef void (^Resolve)(id result);
-typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
-
 @interface FlutterBleLibPlugin () <BleClientManagerDelegate>
 
-@property (nonatomic) BleClientManager *manager;
+@property (nonatomic) id <BleAdapter> manager;
 @property (nonatomic) AdapterStateStreamHandler *adapterStateStreamHandler;
 @property (nonatomic) RestoreStateStreamHandler *restoreStateStreamHandler;
 @property (nonatomic) ScanningStreamHandler *scanningStreamHandler;

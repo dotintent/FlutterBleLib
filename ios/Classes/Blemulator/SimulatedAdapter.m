@@ -1,0 +1,240 @@
+#import "SimulatedAdapter.h"
+#import <flutter_ble_lib-Swift.h>
+#import "CommonTypes.h"
+
+@interface SimulatedAdapter () <BleAdapter>
+
+@end
+
+@implementation SimulatedAdapter
+
+@synthesize delegate;
+
+// MARK: - Adapter Methods - BleClient lifecycle
+
+- (nonnull instancetype)initWithQueue:(dispatch_queue_t _Nonnull)queue
+                 restoreIdentifierKey:(NSString * _Nullable)restoreIdentifierKey {
+    return [SimulatedAdapter new];
+}
+
+- (void)invalidate {
+    NSLog(@"invalidate");
+}
+
+// MARK: - Adapter Methods - Scanning
+
+- (void)startDeviceScan:(NSArray<NSString *> * _Nullable)filteredUUIDs
+                options:(NSDictionary<NSString *,id> * _Nullable)options {
+    NSLog(@"startDeviceScan");
+}
+
+- (void)stopDeviceScan {
+    NSLog(@"stopDeviceScan");
+}
+
+// MARK: - Adapter Methods - BT state monitoring
+
+- (void)enable:(NSString * _Nonnull)transactionId
+       resolve:(NS_NOESCAPE Resolve)resolve
+        reject:(NS_NOESCAPE Reject)reject {
+    NSLog(@"enable");
+}
+
+- (void)disable:(NSString * _Nonnull)transactionId
+        resolve:(NS_NOESCAPE Resolve)resolve
+         reject:(NS_NOESCAPE Reject)reject {
+    NSLog(@"disable");
+}
+
+- (void)state:(NS_NOESCAPE Resolve)resolve
+       reject:(NS_NOESCAPE Reject)reject {
+    NSLog(@"state");
+}
+
+// MARK: - Adapter Methods - Connection
+
+- (void)connectToDevice:(NSString * _Nonnull)deviceIdentifier
+                options:(NSDictionary<NSString *,id> * _Nullable)options
+                resolve:(Resolve)resolve reject:(Reject)reject {
+    NSLog(@"connectToDevice");
+}
+
+- (void)cancelDeviceConnection:(NSString * _Nonnull)deviceIdentifier
+                       resolve:(Resolve)resolve
+                        reject:(Reject)reject {
+    NSLog(@"cancelDeviceConnection");
+}
+
+- (void)isDeviceConnected:(NSString * _Nonnull)deviceIdentifier
+                  resolve:(NS_NOESCAPE Resolve)resolve
+                   reject:(NS_NOESCAPE Reject)reject {
+    NSLog(@"isDeviceConnected");
+}
+
+- (void)requestConnectionPriorityForDevice:(NSString * _Nonnull)deviceIdentifier
+                        connectionPriority:(NSInteger)connectionPriority
+                             transactionId:(NSString * _Nonnull)transactionId
+                                   resolve:(Resolve)resolve
+                                    reject:(Reject)reject {
+    NSLog(@"requestConnectionPriorityForDevice");
+}
+
+// MARK: - Adapter Methods - Log Level
+
+- (void)setLogLevel:(NSString * _Nonnull)logLevel {
+    NSLog(@"setLogLevel");
+}
+
+- (void)logLevel:(NS_NOESCAPE Resolve)resolve
+          reject:(NS_NOESCAPE Reject)reject {
+    NSLog(@"logLevel");
+}
+
+// MARK: - Adapter Methods - Discovery
+
+- (void)servicesForDevice:(NSString * _Nonnull)deviceIdentifier
+                  resolve:(NS_NOESCAPE Resolve)resolve
+                   reject:(NS_NOESCAPE Reject)reject {
+    NSLog(@"servicesForDevice");
+}
+
+- (void)discoverAllServicesAndCharacteristicsForDevice:(NSString * _Nonnull)deviceIdentifier
+                                         transactionId:(NSString * _Nonnull)transactionId
+                                               resolve:(Resolve)resolve
+                                                reject:(Reject)reject {
+    NSLog(@"discoverAllServicesAndCharacteristicsForDevice");
+}
+
+// UNUSED
+- (void)characteristicsForDevice:(NSString * _Nonnull)deviceIdentifier
+                     serviceUUID:(NSString * _Nonnull)serviceUUID
+                         resolve:(NS_NOESCAPE Resolve)resolve
+                          reject:(NS_NOESCAPE Reject)reject {
+    NSLog(@"characteristicsForDevice");
+}
+
+- (void)characteristicsForService:(double)serviceIdentifier
+                          resolve:(NS_NOESCAPE Resolve)resolve
+                           reject:(NS_NOESCAPE Reject)reject {
+    NSLog(@"characteristicsForService");
+}
+
+// MARK: - Adapter Methods - Characteristics observation
+
+- (void)readCharacteristicForDevice:(NSString * _Nonnull)deviceIdentifier
+                        serviceUUID:(NSString * _Nonnull)serviceUUID
+                 characteristicUUID:(NSString * _Nonnull)characteristicUUID
+                      transactionId:(NSString * _Nonnull)transactionId
+                            resolve:(Resolve)resolve
+                             reject:(Reject)reject {
+    NSLog(@"readCharacteristicForDevice");
+}
+
+- (void)readCharacteristicForService:(double)serviceIdentifier
+                  characteristicUUID:(NSString * _Nonnull)characteristicUUID
+                       transactionId:(NSString * _Nonnull)transactionId
+                             resolve:(Resolve)resolve
+                              reject:(Reject)reject {
+    NSLog(@"readCharacteristicForService");
+}
+
+- (void)readCharacteristic:(double)characteristicIdentifier
+             transactionId:(NSString * _Nonnull)transactionId
+                   resolve:(Resolve)resolve
+                    reject:(Reject)reject {
+    NSLog(@"readCharacteristic");
+}
+
+- (void)writeCharacteristicForDevice:(NSString * _Nonnull)deviceIdentifier
+                         serviceUUID:(NSString * _Nonnull)serviceUUID
+                  characteristicUUID:(NSString * _Nonnull)characteristicUUID valueBase64:(NSString * _Nonnull)valueBase64
+                            response:(BOOL)response
+                       transactionId:(NSString * _Nonnull)transactionId
+                             resolve:(Resolve)resolve
+                              reject:(Reject)reject {
+    NSLog(@"writeCharacteristicForDevice");
+}
+
+- (void)writeCharacteristicForService:(double)serviceIdentifier
+                   characteristicUUID:(NSString * _Nonnull)characteristicUUID
+                          valueBase64:(NSString * _Nonnull)valueBase64
+                             response:(BOOL)response
+                        transactionId:(NSString * _Nonnull)transactionId
+                              resolve:(Resolve)resolve
+                               reject:(Reject)reject {
+    NSLog(@"writeCharacteristicForService");
+}
+
+- (void)writeCharacteristic:(double)characteristicIdentifier
+                valueBase64:(NSString * _Nonnull)valueBase64
+                   response:(BOOL)response
+              transactionId:(NSString * _Nonnull)transactionId
+                    resolve:(Resolve)resolve reject:(Reject)reject {
+    NSLog(@"writeCharacteristic");
+}
+
+- (void)monitorCharacteristicForDevice:(NSString * _Nonnull)deviceIdentifier
+                           serviceUUID:(NSString * _Nonnull)serviceUUID
+                    characteristicUUID:(NSString * _Nonnull)characteristicUUID
+                         transactionId:(NSString * _Nonnull)transactionId
+                               resolve:(Resolve)resolve
+                                reject:(Reject)reject {
+    NSLog(@"monitorCharacteristicForDevice");
+}
+
+- (void)monitorCharacteristicForService:(double)serviceIdentifier
+                     characteristicUUID:(NSString * _Nonnull)characteristicUUID
+                          transactionId:(NSString * _Nonnull)transactionId
+                                resolve:(Resolve)resolve
+                                 reject:(Reject)reject {
+    NSLog(@"monitorCharacteristicForService");
+}
+
+- (void)monitorCharacteristic:(double)characteristicIdentifier
+                transactionId:(NSString * _Nonnull)transactionId
+                      resolve:(Resolve)resolve
+                       reject:(Reject)reject {
+    NSLog(@"monitorCharacteristic");
+}
+
+// MARK: - Adapter Methods - Known / Connected devices
+
+- (void)devices:(NSArray<NSString *> * _Nonnull)deviceIdentifiers
+        resolve:(Resolve)resolve
+         reject:(Reject)reject {
+    NSLog(@"devices");
+}
+
+- (void)connectedDevices:(NSArray<NSString *> * _Nonnull)serviceUUIDs
+                 resolve:(Resolve)resolve
+                  reject:(Reject)reject {
+    NSLog(@"connectedDevices");
+}
+
+// MARK: - Adapter Methods - MTU
+
+- (void)requestMTUForDevice:(NSString * _Nonnull)deviceIdentifier mtu:(NSInteger)mtu
+              transactionId:(NSString * _Nonnull)transactionId
+                    resolve:(Resolve)resolve
+                     reject:(Reject)reject {
+    NSLog(@"requestMTUForDevice");
+}
+
+// MARK: - Adapter Methods - RSSI
+
+- (void)readRSSIForDevice:(NSString * _Nonnull)deviceIdentifier
+            transactionId:(NSString * _Nonnull)transactionId
+                  resolve:(Resolve)resolve
+                   reject:(Reject)reject {
+    NSLog(@"readRSSIForDevice");
+}
+
+// MARK: - Adapter Methods - Cancel transaction
+
+- (void)cancelTransaction:(NSString * _Nonnull)transactionId {
+    NSLog(@"cancelTransaction");
+}
+
+@end
+
+

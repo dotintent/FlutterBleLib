@@ -1,0 +1,3 @@
+@interface SimulatedAdapter : NSObject
+
+@end
