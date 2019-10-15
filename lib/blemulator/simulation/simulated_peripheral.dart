@@ -136,5 +136,5 @@ abstract class SimulatedPeripheral {
     return targetCharacteristic;
   }
 
-  int rssi() => scanInfo.rssi;
+  Future<int> rssi() async => scanInfo.rssi;
 }
