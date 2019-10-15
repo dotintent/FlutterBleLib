@@ -23,7 +23,8 @@
     if (self) {
         self.dartMethodCaller = dartMethodCaller;
         self.dartValueHandler = dartValueHandler;
-        NSLog(@"createClient");
+        [self.dartMethodCaller createClient];
+        NSLog(@"SimulatedAdapter.createClient");
     }
     return self;
 }
@@ -36,18 +37,18 @@
 }
 
 - (void)invalidate {
-    NSLog(@"invalidate");
+    NSLog(@"SimulatedAdapter.invalidate");
 }
 
 // MARK: - Adapter Methods - Scanning
 
 - (void)startDeviceScan:(NSArray<NSString *> * _Nullable)filteredUUIDs
                 options:(NSDictionary<NSString *,id> * _Nullable)options {
-    NSLog(@"startDeviceScan");
+    NSLog(@"SimulatedAdapter.startDeviceScan");
 }
 
 - (void)stopDeviceScan {
-    NSLog(@"stopDeviceScan");
+    NSLog(@"SimulatedAdapter.stopDeviceScan");
 }
 
 // MARK: - Adapter Methods - BT state monitoring
@@ -55,18 +56,18 @@
 - (void)enable:(NSString * _Nonnull)transactionId
        resolve:(NS_NOESCAPE Resolve)resolve
         reject:(NS_NOESCAPE Reject)reject {
-    NSLog(@"enable");
+    NSLog(@"SimulatedAdapter.enable");
 }
 
 - (void)disable:(NSString * _Nonnull)transactionId
         resolve:(NS_NOESCAPE Resolve)resolve
          reject:(NS_NOESCAPE Reject)reject {
-    NSLog(@"disable");
+    NSLog(@"SimulatedAdapter.disable");
 }
 
 - (void)state:(NS_NOESCAPE Resolve)resolve
        reject:(NS_NOESCAPE Reject)reject {
-    NSLog(@"state");
+    NSLog(@"SimulatedAdapter.state");
 }
 
 // MARK: - Adapter Methods - Connection
@@ -74,19 +75,19 @@
 - (void)connectToDevice:(NSString * _Nonnull)deviceIdentifier
                 options:(NSDictionary<NSString *,id> * _Nullable)options
                 resolve:(Resolve)resolve reject:(Reject)reject {
-    NSLog(@"connectToDevice");
+    NSLog(@"SimulatedAdapter.connectToDevice");
 }
 
 - (void)cancelDeviceConnection:(NSString * _Nonnull)deviceIdentifier
                        resolve:(Resolve)resolve
                         reject:(Reject)reject {
-    NSLog(@"cancelDeviceConnection");
+    NSLog(@"SimulatedAdapter.cancelDeviceConnection");
 }
 
 - (void)isDeviceConnected:(NSString * _Nonnull)deviceIdentifier
                   resolve:(NS_NOESCAPE Resolve)resolve
                    reject:(NS_NOESCAPE Reject)reject {
-    NSLog(@"isDeviceConnected");
+    NSLog(@"SimulatedAdapter.isDeviceConnected");
 }
 
 - (void)requestConnectionPriorityForDevice:(NSString * _Nonnull)deviceIdentifier
@@ -94,7 +95,7 @@
                              transactionId:(NSString * _Nonnull)transactionId
                                    resolve:(Resolve)resolve
                                     reject:(Reject)reject {
-    NSLog(@"requestConnectionPriorityForDevice");
+    NSLog(@"SimulatedAdapter.requestConnectionPriorityForDevice");
 }
 
 // MARK: - Adapter Methods - Log Level
@@ -105,7 +106,7 @@
 
 - (void)logLevel:(NS_NOESCAPE Resolve)resolve
           reject:(NS_NOESCAPE Reject)reject {
-    NSLog(@"logLevel");
+    NSLog(@"SimulatedAdapter.logLevel");
 }
 
 // MARK: - Adapter Methods - Discovery
@@ -113,14 +114,14 @@
 - (void)servicesForDevice:(NSString * _Nonnull)deviceIdentifier
                   resolve:(NS_NOESCAPE Resolve)resolve
                    reject:(NS_NOESCAPE Reject)reject {
-    NSLog(@"servicesForDevice");
+    NSLog(@"SimulatedAdapter.servicesForDevice");
 }
 
 - (void)discoverAllServicesAndCharacteristicsForDevice:(NSString * _Nonnull)deviceIdentifier
                                          transactionId:(NSString * _Nonnull)transactionId
                                                resolve:(Resolve)resolve
                                                 reject:(Reject)reject {
-    NSLog(@"discoverAllServicesAndCharacteristicsForDevice");
+    NSLog(@"SimulatedAdapter.discoverAllServicesAndCharacteristicsForDevice");
 }
 
 // UNUSED
@@ -128,13 +129,17 @@
                      serviceUUID:(NSString * _Nonnull)serviceUUID
                          resolve:(NS_NOESCAPE Resolve)resolve
                           reject:(NS_NOESCAPE Reject)reject {
-    NSLog(@"characteristicsForDevice");
+    NSLog(@"SimulatedAdapter.characteristicsForDevice");
 }
 
 - (void)characteristicsForService:(double)serviceIdentifier
                           resolve:(NS_NOESCAPE Resolve)resolve
                            reject:(NS_NOESCAPE Reject)reject {
-    NSLog(@"characteristicsForService");
+    NSLog(@"SimulatedAdapter.characteristicsForService");
+}
+
+- (void)cancelTransaction:(NSString * _Nonnull)transactionId {
+    NSLog(@"SimulatedAdapter.cancelTransaction");
 }
 
 // MARK: - Adapter Methods - Characteristics observation
@@ -145,7 +150,7 @@
                       transactionId:(NSString * _Nonnull)transactionId
                             resolve:(Resolve)resolve
                              reject:(Reject)reject {
-    NSLog(@"readCharacteristicForDevice");
+    NSLog(@"SimulatedAdapter.readCharacteristicForDevice");
 }
 
 - (void)readCharacteristicForService:(double)serviceIdentifier
@@ -153,14 +158,14 @@
                        transactionId:(NSString * _Nonnull)transactionId
                              resolve:(Resolve)resolve
                               reject:(Reject)reject {
-    NSLog(@"readCharacteristicForService");
+    NSLog(@"SimulatedAdapter.readCharacteristicForService");
 }
 
 - (void)readCharacteristic:(double)characteristicIdentifier
              transactionId:(NSString * _Nonnull)transactionId
                    resolve:(Resolve)resolve
                     reject:(Reject)reject {
-    NSLog(@"readCharacteristic");
+    NSLog(@"SimulatedAdapter.readCharacteristic");
 }
 
 - (void)writeCharacteristicForDevice:(NSString * _Nonnull)deviceIdentifier
@@ -170,7 +175,7 @@
                        transactionId:(NSString * _Nonnull)transactionId
                              resolve:(Resolve)resolve
                               reject:(Reject)reject {
-    NSLog(@"writeCharacteristicForDevice");
+    NSLog(@"SimulatedAdapter.writeCharacteristicForDevice");
 }
 
 - (void)writeCharacteristicForService:(double)serviceIdentifier
@@ -180,7 +185,7 @@
                         transactionId:(NSString * _Nonnull)transactionId
                               resolve:(Resolve)resolve
                                reject:(Reject)reject {
-    NSLog(@"writeCharacteristicForService");
+    NSLog(@"SimulatedAdapter.writeCharacteristicForService");
 }
 
 - (void)writeCharacteristic:(double)characteristicIdentifier
@@ -188,7 +193,7 @@
                    response:(BOOL)response
               transactionId:(NSString * _Nonnull)transactionId
                     resolve:(Resolve)resolve reject:(Reject)reject {
-    NSLog(@"writeCharacteristic");
+    NSLog(@"SimulatedAdapter.writeCharacteristic");
 }
 
 - (void)monitorCharacteristicForDevice:(NSString * _Nonnull)deviceIdentifier
@@ -197,7 +202,7 @@
                          transactionId:(NSString * _Nonnull)transactionId
                                resolve:(Resolve)resolve
                                 reject:(Reject)reject {
-    NSLog(@"monitorCharacteristicForDevice");
+    NSLog(@"SimulatedAdapter.monitorCharacteristicForDevice");
 }
 
 - (void)monitorCharacteristicForService:(double)serviceIdentifier
@@ -205,14 +210,14 @@
                           transactionId:(NSString * _Nonnull)transactionId
                                 resolve:(Resolve)resolve
                                  reject:(Reject)reject {
-    NSLog(@"monitorCharacteristicForService");
+    NSLog(@"SimulatedAdapter.monitorCharacteristicForService");
 }
 
 - (void)monitorCharacteristic:(double)characteristicIdentifier
                 transactionId:(NSString * _Nonnull)transactionId
                       resolve:(Resolve)resolve
                        reject:(Reject)reject {
-    NSLog(@"monitorCharacteristic");
+    NSLog(@"SimulatedAdapter.monitorCharacteristic");
 }
 
 // MARK: - Adapter Methods - Known / Connected devices
@@ -220,13 +225,13 @@
 - (void)devices:(NSArray<NSString *> * _Nonnull)deviceIdentifiers
         resolve:(Resolve)resolve
          reject:(Reject)reject {
-    NSLog(@"devices");
+    NSLog(@"SimulatedAdapter.devices");
 }
 
 - (void)connectedDevices:(NSArray<NSString *> * _Nonnull)serviceUUIDs
                  resolve:(Resolve)resolve
                   reject:(Reject)reject {
-    NSLog(@"connectedDevices");
+    NSLog(@"SimulatedAdapter.connectedDevices");
 }
 
 // MARK: - Adapter Methods - MTU
@@ -235,7 +240,7 @@
               transactionId:(NSString * _Nonnull)transactionId
                     resolve:(Resolve)resolve
                      reject:(Reject)reject {
-    NSLog(@"requestMTUForDevice");
+    NSLog(@"SimulatedAdapter.requestMTUForDevice");
 }
 
 // MARK: - Adapter Methods - RSSI
@@ -244,13 +249,13 @@
             transactionId:(NSString * _Nonnull)transactionId
                   resolve:(Resolve)resolve
                    reject:(Reject)reject {
-    NSLog(@"readRSSIForDevice");
+    NSLog(@"SimulatedAdapter.readRSSIForDevice");
 }
 
 // MARK: - Adapter Methods - Cancel transaction
 
 - (void)cancelTransaction:(NSString * _Nonnull)transactionId {
-    NSLog(@"cancelTransaction");
+    NSLog(@"SimulatedAdapter.cancelTransaction");
 }
 
 @end

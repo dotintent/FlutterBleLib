@@ -4,4 +4,6 @@
 
 - (instancetype)initWithDartMethodChannel:(FlutterMethodChannel *)dartMethodChannel;
 
+- (void)createClient;
+
 @end
