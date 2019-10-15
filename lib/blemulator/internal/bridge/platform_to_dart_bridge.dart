@@ -33,6 +33,12 @@ class PlatformToDartBridge {
         return _readCharacteristicForService(call);
       case DartMethodName.readCharacteristicForIdentifier:
         return _readCharacteristicForIdentifier(call);
+      case DartMethodName.writeCharacteristicForDevice:
+        return _writeCharacteristicForDevice(call);
+      case DartMethodName.writeCharacteristicForService:
+        return _writeCharacteristicForService(call);
+      case DartMethodName.writeCharacteristicForIdentifier:
+        return _writeCharacteristicForIdentifier(call);
       default:
         return Future.error(
           SimulatedBleError(
@@ -73,22 +79,26 @@ class PlatformToDartBridge {
         call.arguments[ArgumentName.id] as String);
   }
 
-  Future<List<dynamic>> _discoverAllServicesAndCharacteristics(MethodCall call) async {
+  Future<List<dynamic>> _discoverAllServicesAndCharacteristics(
+      MethodCall call) async {
     List<SimulatedService> services =
-        await _manager.discoverAllServicesAndCharacteristics(call.arguments[ArgumentName.id] as String);
-    dynamic mapped =  services.map(
-      (e) => <String, dynamic>{
-        SimulationArgumentName.uuid: e.uuid,
-        SimulationArgumentName.id: e.id,
-        SimulationArgumentName.characteristics: e.characteristics().map(
-              (e) => <String, dynamic>{
-                SimulationArgumentName.id: e.id,
-                SimulationArgumentName.uuid: e.uuid,
-                //TODO expand model to send all fields
-              },
-            ).toList(),
-      },
-    ).toList();
+        await _manager.discoverAllServicesAndCharacteristics(
+            call.arguments[ArgumentName.id] as String);
+    dynamic mapped = services
+        .map(
+          (service) => <String, dynamic>{
+            Metadata.serviceUuid: service.uuid,
+            Metadata.serviceId: service.id,
+            SimulationArgumentName.characteristics: service
+                .characteristics()
+                .map(
+                  (characteristic) => _convertToMap(
+                      call.arguments[ArgumentName.id], characteristic, null),
+                )
+                .toList(),
+          },
+        )
+        .toList();
 
     return mapped;
   }
@@ -97,10 +107,12 @@ class PlatformToDartBridge {
     Map<dynamic, dynamic> arguments = call.arguments;
     return _manager
         ._readCharacteristicForIdentifier(
-            arguments[SimulationArgumentName.characteristicId])
+            arguments[SimulationArgumentName.characteristicIdentifier])
         .then((characteristic) => _convertToMap(
-            arguments[SimulationArgumentName.deviceIdentifier],
-            characteristic));
+              arguments[SimulationArgumentName.deviceIdentifier],
+              characteristic.characteristic,
+              characteristic.value,
+            ));
   }
 
   Future<dynamic> _readCharacteristicForDevice(MethodCall call) async {
@@ -112,8 +124,10 @@ class PlatformToDartBridge {
           arguments[SimulationArgumentName.characteristicUuid],
         )
         .then((characteristic) => _convertToMap(
-            arguments[SimulationArgumentName.deviceIdentifier],
-            characteristic));
+              arguments[SimulationArgumentName.deviceIdentifier],
+              characteristic.characteristic,
+              characteristic.value,
+            ));
   }
 
   Future<dynamic> _readCharacteristicForService(MethodCall call) async {
@@ -123,26 +137,76 @@ class PlatformToDartBridge {
           arguments[SimulationArgumentName.serviceId],
           arguments[SimulationArgumentName.characteristicUuid],
         )
+        .then((characteristicResponse) => _convertToMap(
+              arguments[SimulationArgumentName.deviceIdentifier],
+              characteristicResponse.characteristic,
+              characteristicResponse.value,
+            ));
+  }
+
+  Future<dynamic> _writeCharacteristicForIdentifier(MethodCall call) async {
+    Map<dynamic, dynamic> arguments = call.arguments;
+    return _manager
+        ._writeCharacteristicForIdentifier(
+          call.arguments[SimulationArgumentName.characteristicIdentifier],
+          call.arguments[SimulationArgumentName.value],
+        )
+        .then((characteristicResponse) => _convertToMap(
+              arguments[SimulationArgumentName.deviceIdentifier],
+              characteristicResponse,
+              arguments[SimulationArgumentName.value],
+            ));
+  }
+
+  Future<dynamic> _writeCharacteristicForDevice(MethodCall call) async {
+    Map<dynamic, dynamic> arguments = call.arguments;
+    return _manager
+        ._writeCharacteristicForDevice(
+          arguments[SimulationArgumentName.deviceIdentifier],
+          arguments[SimulationArgumentName.serviceUuid],
+          arguments[SimulationArgumentName.characteristicUuid],
+          arguments[SimulationArgumentName.value],
+        )
         .then((characteristic) => _convertToMap(
-            arguments[SimulationArgumentName.deviceIdentifier],
-            characteristic));
+              arguments[SimulationArgumentName.deviceIdentifier],
+              characteristic,
+              arguments[SimulationArgumentName.value],
+            ));
+  }
+
+  Future<dynamic> _writeCharacteristicForService(MethodCall call) async {
+    Map<dynamic, dynamic> arguments = call.arguments;
+    return _manager
+        ._writeCharacteristicForService(
+          arguments[SimulationArgumentName.serviceId],
+          arguments[SimulationArgumentName.characteristicUuid],
+          arguments[SimulationArgumentName.value],
+        )
+        .then((characteristic) => _convertToMap(
+              arguments[SimulationArgumentName.deviceIdentifier],
+              characteristic,
+              arguments[SimulationArgumentName.value],
+            ));
   }
 
   Map<String, dynamic> _convertToMap(
-          String peripheralId, CharacteristicResponse response) =>
+    String peripheralId,
+    SimulatedCharacteristic characteristic,
+    Uint8List value,
+  ) =>
       <String, dynamic>{
         Metadata.deviceIdentifier: peripheralId,
-        Metadata.characteristicUuid: response.characteristic.uuid,
-        Metadata.value: response.value,
-        Metadata.serviceUuid: response.characteristic.service.uuid,
-        Metadata.serviceId: response.characteristic.service.id,
-        Metadata.isReadable: response.characteristic.isReadable,
-        Metadata.isWritableWithResponse:
-            response.characteristic.isWritableWithResponse,
+        Metadata.characteristicId: characteristic.id,
+        Metadata.characteristicUuid: characteristic.uuid,
+        Metadata.value: value,
+        Metadata.serviceUuid: characteristic.service.uuid,
+        Metadata.serviceId: characteristic.service.id,
+        Metadata.isReadable: characteristic.isReadable,
+        Metadata.isWritableWithResponse: characteristic.isWritableWithResponse,
         Metadata.isWritableWithoutResponse:
-            response.characteristic.isWritableWithoutResponse,
-        Metadata.isNotifiable: response.characteristic.isNotifiable,
-        Metadata.isNotifying: response.characteristic.isNotifying,
-        Metadata.isIndicatable: response.characteristic.isIndicatable,
+            characteristic.isWritableWithoutResponse,
+        Metadata.isNotifiable: characteristic.isNotifiable,
+        Metadata.isNotifying: characteristic.isNotifying,
+        Metadata.isIndicatable: characteristic.isIndicatable,
       };
 }
