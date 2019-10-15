@@ -2,6 +2,7 @@
 #import "DartMethodName.h"
 #import "SimulationArgumentName.h"
 #import "Peripheral.h"
+#import "DartResultConverter.h"
 
 typedef void (^InvokeMethodResultHandler)(id _Nullable result);
 typedef void (^SuccessHandler)(id _Nullable result);
@@ -105,6 +106,33 @@ typedef void (^ErrorHandler)(id error);
                                arguments:arguments
                                   result:[self invokeMethodResultHandlerForMethod:DART_METHOD_NAME_IS_DEVICE_CONNECTED
                                                                         onSuccess:resolve
+                                                                          onError:errorHandler]];
+}
+
+// MARK: - Discovery
+
+- (void)discoverAllServicesAndCharacteristics:(NSString *)deviceIdentifier
+                                         name:(NSString *)name
+                                transactionId:(NSString *)transactionId
+                                      resolve:(Resolve)resolve
+                                       reject:(Reject)reject {
+    NSDictionary<NSString *,id> *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
+                                              deviceIdentifier, SIMULATION_ARGUMENT_NAME_DEVICE_ID,
+                                              nil];
+    SuccessHandler successHandler = ^(id result) {
+        resolve([DartResultConverter deviceContainerFromDartResult:result
+                                                        peripheral:[[Peripheral alloc] initWithIdentifier:deviceIdentifier
+                                                                                                     name:name
+                                                                                                      mtu:23]]);
+    };
+    ErrorHandler errorHandler = ^(id error) {
+        // TODO: - Send error here
+        // reject();
+    };
+    [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_DISCOVER_ALL_SERVICES_AND_CHARACTERISTICS
+                               arguments:arguments
+                                  result:[self invokeMethodResultHandlerForMethod:DART_METHOD_NAME_DISCOVER_ALL_SERVICES_AND_CHARACTERISTICS
+                                                                        onSuccess:successHandler
                                                                           onError:errorHandler]];
 }
 

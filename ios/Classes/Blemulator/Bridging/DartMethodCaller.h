@@ -32,4 +32,12 @@
                   resolve:(Resolve)resolve
                    reject:(Reject)reject;
 
+// MARK: - Discovery
+
+- (void)discoverAllServicesAndCharacteristics:(NSString *)deviceIdentifier
+                                         name:(NSString *)name
+                                transactionId:(NSString *)transactionId
+                                      resolve:(Resolve)resolve
+                                       reject:(Reject)reject;
+
 @end

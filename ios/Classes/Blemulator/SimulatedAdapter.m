@@ -169,6 +169,8 @@
 - (void)servicesForDevice:(NSString * _Nonnull)deviceIdentifier
                   resolve:(NS_NOESCAPE Resolve)resolve
                    reject:(NS_NOESCAPE Reject)reject {
+    // TODO: - Error handling
+    resolve([[self.knownPeripherals objectForKey:deviceIdentifier] servicesJsonRepresentation]);
     NSLog(@"SimulatedAdapter.servicesForDevice");
 }
 
@@ -176,6 +178,21 @@
                                          transactionId:(NSString * _Nonnull)transactionId
                                                resolve:(Resolve)resolve
                                                 reject:(Reject)reject {
+    Resolve callbackResolve = ^(DeviceContainer *container) {
+        DeviceContainer *oldContainer = [self.knownPeripherals objectForKey:container.identifier];
+        if (oldContainer != nil) {
+            container.isConnected = oldContainer.isConnected;
+        }
+        [self.knownPeripherals setObject:container forKey:container.identifier];
+        resolve([[[Peripheral alloc] initWithIdentifier:container.identifier
+                                                   name:container.name
+                                                    mtu:23] jsonObjectRepresentation]);
+    };
+    [self.dartMethodCaller discoverAllServicesAndCharacteristics:deviceIdentifier
+                                                            name:[self.knownPeripherals objectForKey:deviceIdentifier].name
+                                                   transactionId:transactionId
+                                                         resolve:callbackResolve
+                                                          reject:reject];
     NSLog(@"SimulatedAdapter.discoverAllServicesAndCharacteristicsForDevice");
 }
 

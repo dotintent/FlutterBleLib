@@ -6,3 +6,5 @@ NSString * const DART_METHOD_NAME_STOP_DEVICE_SCAN = @"stopDeviceScan";
 NSString * const DART_METHOD_NAME_CONNECT_TO_DEVICE = @"connectToDevice";
 NSString * const DART_METHOD_NAME_DISCONNECT_OR_CANCEL_CONNECTION = @"disconnectOrCancelConnection";
 NSString * const DART_METHOD_NAME_IS_DEVICE_CONNECTED = @"isDeviceConnected";
+
+NSString * const DART_METHOD_NAME_DISCOVER_ALL_SERVICES_AND_CHARACTERISTICS = @"discoverAllServicesAndCharacteristics";
