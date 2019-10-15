@@ -73,6 +73,24 @@ typedef void (^ErrorHandler)(id error);
                                                                            onError:errorHandler]];
 }
 
+- (void)cancelDeviceConnection:(NSString *)deviceIdentifier
+                          name:(NSString *)name
+                       resolve:(Resolve)resolve
+                        reject:(Reject)reject {
+    NSDictionary<NSString *,id> *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
+                                              deviceIdentifier, SIMULATION_ARGUMENT_NAME_DEVICE_ID,
+                                              nil];
+    ErrorHandler errorHandler = ^(id error) {
+        // TODO: - Send error here
+        // reject();
+    };
+    [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_DISCONNECT_OR_CANCEL_CONNECTION
+                               arguments:arguments
+                                  result:[self invokeMethodResultHandlerForMethod:DART_METHOD_NAME_DISCONNECT_OR_CANCEL_CONNECTION
+                                                                        onSuccess:resolve
+                                                                          onError:errorHandler]];
+}
+
 - (void)isDeviceConnected:(NSString *)deviceIdentifier
                   resolve:(Resolve)resolve
                    reject:(Reject)reject {

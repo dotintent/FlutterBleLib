@@ -129,6 +129,10 @@
 - (void)cancelDeviceConnection:(NSString * _Nonnull)deviceIdentifier
                        resolve:(Resolve)resolve
                         reject:(Reject)reject {
+    [self.dartMethodCaller cancelDeviceConnection:deviceIdentifier
+                                             name:[self.knownPeripherals objectForKey:deviceIdentifier].name
+                                          resolve:resolve
+                                           reject:reject];
     NSLog(@"SimulatedAdapter.cancelDeviceConnection");
 }
 
