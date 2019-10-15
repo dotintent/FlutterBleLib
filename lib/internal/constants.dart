@@ -87,7 +87,7 @@ abstract class ArgumentName {
   static const String characteristicUuid = "characteristicUuid";
   static const String characteristicIdentifier = "characteristicIdentifier";
 
-  static const String bytes = "bytes";
+  static const String value = "value";
   static const String withResponse = "withResponse";
 
   static const String logLevel = "logLevel";
