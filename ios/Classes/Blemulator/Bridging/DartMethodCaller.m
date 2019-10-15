@@ -66,10 +66,28 @@ typedef void (^ErrorHandler)(id error);
         // TODO: - Send error here
         // reject();
     };
-    [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_CONNECT_TO_DEVICE arguments:arguments
+    [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_CONNECT_TO_DEVICE
+                               arguments:arguments
                                   result:[self invokeMethodResultHandlerForMethod:DART_METHOD_NAME_CONNECT_TO_DEVICE
                                                                           onSuccess:successHandler
                                                                            onError:errorHandler]];
+}
+
+- (void)isDeviceConnected:(NSString *)deviceIdentifier
+                  resolve:(Resolve)resolve
+                   reject:(Reject)reject {
+    NSDictionary<NSString *,id> *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
+                                              deviceIdentifier, SIMULATION_ARGUMENT_NAME_DEVICE_ID,
+                                              nil];
+    ErrorHandler errorHandler = ^(id error) {
+        // TODO: - Send error here
+        // reject();
+    };
+    [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_IS_DEVICE_CONNECTED
+                               arguments:arguments
+                                  result:[self invokeMethodResultHandlerForMethod:DART_METHOD_NAME_IS_DEVICE_CONNECTED
+                                                                        onSuccess:resolve
+                                                                          onError:errorHandler]];
 }
 
 // MARK: - Utility methods
