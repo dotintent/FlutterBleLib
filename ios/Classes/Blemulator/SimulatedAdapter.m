@@ -150,10 +150,6 @@
     NSLog(@"SimulatedAdapter.characteristicsForService");
 }
 
-- (void)cancelTransaction:(NSString * _Nonnull)transactionId {
-    NSLog(@"SimulatedAdapter.cancelTransaction");
-}
-
 // MARK: - Adapter Methods - Characteristics observation
 
 - (void)readCharacteristicForDevice:(NSString * _Nonnull)deviceIdentifier
