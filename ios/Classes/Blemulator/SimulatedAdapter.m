@@ -4,11 +4,29 @@
 
 @interface SimulatedAdapter () <BleAdapter>
 
+@property DartMethodCaller *dartMethodCaller;
+@property DartValueHandler *dartValueHandler;
+
 @end
 
 @implementation SimulatedAdapter
 
+// MARK: - Synthesize properties
+
 @synthesize delegate;
+
+// MARK: - Initializer
+
+- (instancetype)initWithDartMethodCaller:(DartMethodCaller *)dartMethodCaller
+                        dartValueHandler:(DartValueHandler *)dartValueHandler {
+    self = [super init];
+    if (self) {
+        self.dartMethodCaller = dartMethodCaller;
+        self.dartValueHandler = dartValueHandler;
+        NSLog(@"createClient");
+    }
+    return self;
+}
 
 // MARK: - Adapter Methods - BleClient lifecycle
 
