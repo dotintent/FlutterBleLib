@@ -20,7 +20,7 @@ typedef id<BleAdapter> _Nonnull (^BleAdapterCreator)(dispatch_queue_t _Nonnull q
 // MARK: - Public methods
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-    FlutterMethodChannel *dartToPlatformChannel = [FlutterMethodChannel methodChannelWithName:SIMULATION_CHANNEL_NAME_TO_JAVA
+    FlutterMethodChannel *dartToPlatformChannel = [FlutterMethodChannel methodChannelWithName:SIMULATION_CHANNEL_NAME_TO_PLATFORM
                                                                               binaryMessenger:[registrar messenger]];
     FlutterMethodChannel *platformToDartChannel = [FlutterMethodChannel methodChannelWithName:SIMULATION_CHANNEL_NAME_TO_DART
                                                                               binaryMessenger:[registrar messenger]];
