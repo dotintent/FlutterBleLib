@@ -13,6 +13,3 @@ plugins.each { name, path ->
     include ":$name"
     project(":$name").projectDir = pluginDirectory
 }
-
-include ':multiplatformbleadapter'
-project(':multiplatformbleadapter').projectDir = new File(settingsDir, '../../MultiPlatformBleAdapter/android/library')
