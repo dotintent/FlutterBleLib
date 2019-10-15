@@ -68,7 +68,7 @@ class PeripheralTestOperations {
   }
 
   Future<void> readCharacteristicForPeripheral() async {
-    log("Reading temperature");
+    log("Reading temperature config");
     CharacteristicWithValue readValue = await peripheral.readCharacteristic(
         SensorTagTemperatureUuids.temperatureService,
         SensorTagTemperatureUuids.temperatureConfigCharacteristic);
@@ -76,7 +76,7 @@ class PeripheralTestOperations {
   }
 
   Future<void> readCharacteristicForService() async {
-    log("Reading temperature");
+    log("Reading temperature config");
     Service service = await peripheral.services().then((services) =>
         services.firstWhere((service) =>
             service.uuid ==
@@ -87,7 +87,7 @@ class PeripheralTestOperations {
   }
 
   Future<void> readCharacteristic() async {
-    log("Reading temperature");
+    log("Reading temperature config");
     Service service = await peripheral.services().then((services) =>
         services.firstWhere((service) =>
             service.uuid ==
@@ -105,7 +105,7 @@ class PeripheralTestOperations {
   }
 
   Future<void> writeCharacteristicForPeripheral() async {
-    log("Turning on temperature update");
+    log("Turning on temperature update via peripheral");
     int valueToSave = Random().nextInt(2);
     await peripheral.writeCharacteristic(
         SensorTagTemperatureUuids.temperatureService,
@@ -117,7 +117,7 @@ class PeripheralTestOperations {
   }
 
   Future<void> writeCharacteristicForService() async {
-    log("Write to characteristic via service");
+    log("Turning on temperature update via service");
     int valueToSave = Random().nextInt(2);
     Service service = await peripheral.services().then((services) =>
         services.firstWhere((service) =>
@@ -133,7 +133,7 @@ class PeripheralTestOperations {
   }
 
   Future<void> writeCharacteristic() async {
-    log("Write to characteristic directly");
+    log("Turning on temperature update via characteristic");
     int valueToSave = Random().nextInt(2);
 
     Service service = await peripheral.services().then((services) =>
