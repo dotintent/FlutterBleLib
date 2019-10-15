@@ -19,4 +19,5 @@ public interface SimulationArgumentName {
     String CHARACTERISTICS = "characteristics";
     String SERVICE_ID = "serviceId";
     String SERVICE_UUID = "serviceUuid";
+    String TRANSACTION_ID = "transactionId";
 }
