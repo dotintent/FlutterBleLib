@@ -16,7 +16,7 @@ public interface SimulationArgumentName {
 
     String CONNECTION_STATE = "connectionState";
 
-    String ID = "id";
     String CHARACTERISTICS = "characteristics";
-    String UUID = "uuid";
+    String SERVICE_ID = "serviceId";
+    String SERVICE_UUID = "serviceUuid";
 }
