@@ -15,6 +15,13 @@
 
 @synthesize delegate;
 
+// MARK: - DartValueHandlerScanEventDelegate implementation
+
+- (void)dispatchDartValueHandlerScanEvent:(id)value {
+    [self.delegate dispatchEvent:BleEvent.scanEvent
+                           value:[NSArray arrayWithObjects:[NSNull null], value, nil]];
+}
+
 // MARK: - Initializer
 
 - (instancetype)initWithDartMethodCaller:(DartMethodCaller *)dartMethodCaller
@@ -44,6 +51,8 @@
 
 - (void)startDeviceScan:(NSArray<NSString *> * _Nullable)filteredUUIDs
                 options:(NSDictionary<NSString *,id> * _Nullable)options {
+    self.dartValueHandler.scanEventDelegate = self;
+    [self.dartMethodCaller startDeviceScan];
     NSLog(@"SimulatedAdapter.startDeviceScan");
 }
 

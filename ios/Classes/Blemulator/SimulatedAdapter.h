@@ -3,7 +3,7 @@
 
 @protocol BleAdapter;
 
-@interface SimulatedAdapter : NSObject<BleAdapter>
+@interface SimulatedAdapter : NSObject<BleAdapter, DartValueHandlerScanEventDelegate>
 
 - (instancetype)initWithDartMethodCaller:(DartMethodCaller *)dartMethodCaller
                         dartValueHandler:(DartValueHandler *)dartValueHandler;

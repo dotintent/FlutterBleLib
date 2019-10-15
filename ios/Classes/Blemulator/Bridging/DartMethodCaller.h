@@ -6,4 +6,6 @@
 
 - (void)createClient;
 
+- (void)startDeviceScan;
+
 @end

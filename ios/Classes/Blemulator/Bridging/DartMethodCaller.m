@@ -29,6 +29,11 @@ typedef void (^InvokeMethodResultHandler)(id _Nullable result);
                                   result:[self simpleInvokeMethodResultHandlerForMethod:DART_METHOD_NAME_CREATE_CLIENT]];
 }
 
+- (void)startDeviceScan {
+    [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_START_DEVICE_SCAN
+                               arguments:nil result:[self simpleInvokeMethodResultHandlerForMethod:DART_METHOD_NAME_START_DEVICE_SCAN]];
+}
+
 // MARK: - Utility methods
 
 - (InvokeMethodResultHandler)simpleInvokeMethodResultHandlerForMethod:(NSString *)methodName {
