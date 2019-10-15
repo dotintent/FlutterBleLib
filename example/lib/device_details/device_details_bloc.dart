@@ -102,6 +102,15 @@ class DeviceDetailsBloc {
     });
   }
 
+  void fetchKnownDevices() {
+    _clearLogs();
+    _deviceController.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+          .fetchKnownDevice();
+    });
+  }
+
+
   void readCharacteristicForPeripheral() {
     _clearLogs();
     _deviceController.stream.listen((bleDevice) async {
@@ -178,8 +187,9 @@ class DeviceDetailsBloc {
     _clearLogs();
     _deviceController.stream.listen((bleDevice) async {
       var peripheral = bleDevice.peripheral;
+
       peripheral
-          .observeConnectionState(emitCurrentValue: true)
+          .observeConnectionState(emitCurrentValue: true, completeOnDisconnect: true)
           .listen((connectionState) {
         log('Observed new connection state: $connectionState');
         _connectionStateController.add(connectionState);
