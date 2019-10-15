@@ -1,6 +1,5 @@
 #import "FlutterMethodCallHandler.h"
 
-<<<<<<< HEAD
 @protocol DartValueHandlerScanEventDelegate
 
 - (void)dispatchDartValueHandlerScanEvent:(id)value;
@@ -11,8 +10,4 @@
 
 @property id <DartValueHandlerScanEventDelegate> scanEventDelegate;
 
-=======
-@interface DartValueHandler : NSObject<FlutterMethodCallHandler>
-
->>>>>>> blemulator/temp-develop
 @end

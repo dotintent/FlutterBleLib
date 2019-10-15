@@ -1,6 +1,4 @@
 extern NSString * const DART_METHOD_NAME_CREATE_CLIENT;
-<<<<<<< HEAD
 
 extern NSString * const DART_METHOD_NAME_START_DEVICE_SCAN;
-=======
->>>>>>> blemulator/temp-develop
+extern NSString * const DART_METHOD_NAME_STOP_DEVICE_SCAN;

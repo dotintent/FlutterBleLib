@@ -30,6 +30,7 @@
     if (self) {
         self.dartMethodCaller = dartMethodCaller;
         self.dartValueHandler = dartValueHandler;
+        
         [self.dartMethodCaller createClient];
         NSLog(@"SimulatedAdapter.createClient");
     }
@@ -57,10 +58,12 @@
 }
 
 - (void)stopDeviceScan {
+    [self.dartMethodCaller stopDeviceScan];
+    self.dartValueHandler.scanEventDelegate = nil;
     NSLog(@"SimulatedAdapter.stopDeviceScan");
 }
 
-// MARK: - Adapter Methods - BT state monitoring
+// MARK: - Adapter Methods -  BT state monitoring
 
 - (void)enable:(NSString * _Nonnull)transactionId
        resolve:(NS_NOESCAPE Resolve)resolve
