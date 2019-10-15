@@ -18,8 +18,6 @@ import com.polidea.multiplatformbleadapter.OnErrorCallback;
 import com.polidea.multiplatformbleadapter.OnEventCallback;
 import com.polidea.multiplatformbleadapter.OnSuccessCallback;
 import com.polidea.multiplatformbleadapter.errors.BleError;
-import com.polidea.multiplatformbleadapter.errors.BleErrorCode;
-import com.polidea.multiplatformbleadapter.errors.ErrorConverter;
 import com.polidea.multiplatformbleadapter.utils.Base64Converter;
 
 import org.json.JSONException;
@@ -84,7 +82,7 @@ public class CharacteristicsDelegate extends CallDelegate {
             case MethodName.WRITE_CHARACTERISTIC_FOR_IDENTIFIER:
                 writeCharacteristicForIdentifier(
                         call.<Integer>argument(ArgumentKey.CHARACTERISTIC_IDENTIFIER),
-                        call.<byte[]>argument(ArgumentKey.BYTES),
+                        call.<byte[]>argument(ArgumentKey.VALUE),
                         call.<Boolean>argument(ArgumentKey.WITH_RESPONSE),
                         call.<String>argument(ArgumentKey.TRANSACTION_ID),
                         result);
@@ -94,7 +92,7 @@ public class CharacteristicsDelegate extends CallDelegate {
                         call.<String>argument(ArgumentKey.DEVICE_IDENTIFIER),
                         call.<String>argument(ArgumentKey.SERVICE_UUID),
                         call.<String>argument(ArgumentKey.CHARACTERISTIC_UUID),
-                        call.<byte[]>argument(ArgumentKey.BYTES),
+                        call.<byte[]>argument(ArgumentKey.VALUE),
                         call.<Boolean>argument(ArgumentKey.WITH_RESPONSE),
                         call.<String>argument(ArgumentKey.TRANSACTION_ID),
                         result);
@@ -103,7 +101,7 @@ public class CharacteristicsDelegate extends CallDelegate {
                 writeCharacteristicForService(
                         call.<Integer>argument(ArgumentKey.SERVICE_IDENTIFIER),
                         call.<String>argument(ArgumentKey.CHARACTERISTIC_UUID),
-                        call.<byte[]>argument(ArgumentKey.BYTES),
+                        call.<byte[]>argument(ArgumentKey.VALUE),
                         call.<Boolean>argument(ArgumentKey.WITH_RESPONSE),
                         call.<String>argument(ArgumentKey.TRANSACTION_ID),
                         result);
