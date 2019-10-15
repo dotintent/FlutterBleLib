@@ -11,15 +11,15 @@
 #import "Util/ArgumentValidator.h"
 #import "Util/FlutterErrorFactory.h"
 #import "Util/JSONStringifier.h"
+#import "Util/CommonTypes.h"
 #import "ResponseConverter/CharacteristicResponseConverter.h"
 #import "ResponseConverter/PeripheralResponseConverter.h"
-
-typedef void (^Resolve)(id result);
-typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
+#import "Common/CommonTypes.h"
+#import "SimulatorPlugin.h"
 
 @interface FlutterBleLibPlugin () <BleClientManagerDelegate>
 
-@property (nonatomic) BleClientManager *manager;
+@property (nonatomic) id <BleAdapter> manager;
 @property (nonatomic) AdapterStateStreamHandler *adapterStateStreamHandler;
 @property (nonatomic) RestoreStateStreamHandler *restoreStateStreamHandler;
 @property (nonatomic) ScanningStreamHandler *scanningStreamHandler;
@@ -64,6 +64,9 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
     [scanningChannel setStreamHandler:instance.scanningStreamHandler];
     [connectionStateChannel setStreamHandler:instance.connectionStateStreamHandler];
     [monitorCharacteristicChannel setStreamHandler:instance.monitorCharacteristicStreamHandler];
+
+    //TEMPORARY
+    [SimulatorPlugin registerWithRegistrar:registrar];
 }
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -135,8 +138,8 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 // MARK: - MBA Methods - BleClient lifecycle
 
 - (void)createClient:(FlutterMethodCall *)call result:(FlutterResult)result {
-    _manager = [[BleClientManager alloc] initWithQueue:dispatch_get_main_queue()
-                                  restoreIdentifierKey:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_RESTORE_STATE_IDENTIFIER]]];
+    _manager = [BleAdapterFactory getNewAdapterWithQueue:dispatch_get_main_queue()
+                                    restoreIdentifierKey:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_RESTORE_STATE_IDENTIFIER]]];
     _manager.delegate = self;
     result(nil);
 }
