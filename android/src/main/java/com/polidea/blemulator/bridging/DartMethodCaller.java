@@ -7,9 +7,11 @@ import android.util.Log;
 
 import com.polidea.blemulator.DeviceContainer;
 import com.polidea.blemulator.bridging.constants.ArgumentName;
-import com.polidea.blemulator.bridging.constants.ArgumentName;
 import com.polidea.blemulator.bridging.constants.DartMethodName;
 import com.polidea.blemulator.bridging.constants.SimulationArgumentName;
+import com.polidea.blemulator.bridging.decoder.CharacteristicDartValueDecoder;
+import com.polidea.blemulator.bridging.decoder.ServiceDartValueDecoder;
+import com.polidea.flutter_ble_lib.constant.ArgumentKey;
 import com.polidea.multiplatformbleadapter.Characteristic;
 import com.polidea.multiplatformbleadapter.ConnectionOptions;
 import com.polidea.multiplatformbleadapter.Device;
@@ -18,13 +20,7 @@ import com.polidea.multiplatformbleadapter.OnSuccessCallback;
 import com.polidea.multiplatformbleadapter.Service;
 import com.polidea.multiplatformbleadapter.errors.BleError;
 import com.polidea.multiplatformbleadapter.errors.BleErrorCode;
-import com.polidea.blemulator.bridging.decoder.CharacteristicDartValueDecoder;
-import com.polidea.flutter_ble_lib.constant.ArgumentKey;
-import com.polidea.multiplatformbleadapter.Characteristic;
-import com.polidea.multiplatformbleadapter.OnErrorCallback;
-import com.polidea.multiplatformbleadapter.OnSuccessCallback;
-import com.polidea.multiplatformbleadapter.errors.BleError;
-import com.polidea.multiplatformbleadapter.errors.BleErrorCode;
+import com.polidea.multiplatformbleadapter.utils.Base64Converter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,6 +36,7 @@ public class DartMethodCaller {
     private MethodChannel dartMethodChannel;
     private JSONToBleErrorConverter jsonToBleErrorConverter = new JSONToBleErrorConverter();
     private CharacteristicDartValueDecoder characteristicJsonDecoder = new CharacteristicDartValueDecoder();
+    private ServiceDartValueDecoder serviceDartValueDecoder = new ServiceDartValueDecoder();
 
     public DartMethodCaller(MethodChannel dartMethodChannel) {
         this.dartMethodChannel = dartMethodChannel;
@@ -78,7 +75,7 @@ public class DartMethodCaller {
 
                     @Override
                     public void error(String s, @Nullable String s1, @Nullable Object o) {
-                        Log.e(TAG, s + " "  + s1);
+                        Log.e(TAG, s + " " + s1);
                     }
 
                     @Override
@@ -197,9 +194,8 @@ public class DartMethodCaller {
             }
 
             @Override
-            public void error(String s, @Nullable String s1, @Nullable Object o) {
-                Log.e(TAG, s);
-                onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(s1));
+            public void error(String errorCode, @Nullable String jsonBody, @Nullable Object irrelevant) {
+                onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(jsonBody));
             }
 
             @Override
@@ -236,9 +232,8 @@ public class DartMethodCaller {
             }
 
             @Override
-            public void error(String s, @Nullable String s1, @Nullable Object o) {
-                //TODO convert error
-//                onErrorCallback
+            public void error(String errorCode, @Nullable String jsonBody, @Nullable Object irrelevant) {
+                onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(jsonBody));
             }
 
             @Override
@@ -253,36 +248,20 @@ public class DartMethodCaller {
         List<Service> services = new ArrayList<>();
         Map<String, List<Characteristic>> characteristics = new HashMap<>();
         for (Map<String, Object> mappedService : response) {
-            Service service = new Service(
-                    (Integer) mappedService.get(SimulationArgumentName.ID),
-                    deviceIdentifier,
-                    new BluetoothGattService(
-                            UUID.fromString(
-                                    (String) mappedService.get(SimulationArgumentName.UUID)
-                            ),
-                            BluetoothGattService.SERVICE_TYPE_PRIMARY
-                    )
-            );
+            Service service = serviceDartValueDecoder.decode(deviceIdentifier, mappedService);
             services.add(service);
-            characteristics.put((String) mappedService.get(SimulationArgumentName.UUID),
-                    parseCharacteristicsForServicesResponse(service,
-                            (List<Map<String, Object>>) mappedService.get(SimulationArgumentName.CHARACTERISTICS)));
+            characteristics.put((String) mappedService.get(SimulationArgumentName.SERVICE_UUID),
+                    parseCharacteristicsForServicesResponse(
+                            (List<Map<String, Object>>) mappedService.get(SimulationArgumentName.CHARACTERISTICS))
+            );
         }
-
         return new DeviceContainer(deviceIdentifier, deviceName, services, characteristics);
     }
 
-    private List<Characteristic> parseCharacteristicsForServicesResponse(Service service, List<Map<String, Object>> response) {
+    private List<Characteristic> parseCharacteristicsForServicesResponse(List<Map<String, Object>> response) {
         List<Characteristic> characteristics = new ArrayList<>();
         for (Map<String, Object> mappedCharacteristic : response) {
-            characteristics.add(new Characteristic(
-                    service,
-                    new BluetoothGattCharacteristic(
-                            UUID.fromString(
-                                    (String) mappedCharacteristic.get(SimulationArgumentName.UUID)
-                            ), 0, 0 //TODO fix properties and permissions
-                    )
-            ));
+            characteristics.add(characteristicJsonDecoder.decode(mappedCharacteristic));
         }
         return characteristics;
     }
@@ -303,12 +282,12 @@ public class DartMethodCaller {
                 new MethodChannel.Result() {
                     @Override
                     public void success(@Nullable Object characteristicJsonObject) {
-                        onSuccessCallback.onSuccess(characteristicJsonDecoder.decode(characteristicJsonObject));
+                        onSuccessCallback.onSuccess(characteristicJsonDecoder.decode((Map<String, Object>) characteristicJsonObject));
                     }
 
                     @Override
-                    public void error(String errorCode, @Nullable String message, @Nullable Object bleErrorJsonObject) {
-                        onErrorCallback.onError(new BleError(BleErrorCode.UnknownError, message, 0)); //TODO Add proper error parsing here
+                    public void error(String errorCode, @Nullable String jsonBody, @Nullable Object irrelevant) {
+                        onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(jsonBody));
                     }
 
                     @Override
@@ -332,12 +311,12 @@ public class DartMethodCaller {
                 new MethodChannel.Result() {
                     @Override
                     public void success(@Nullable Object characteristicJsonObject) {
-                        onSuccessCallback.onSuccess(characteristicJsonDecoder.decode(characteristicJsonObject));
+                        onSuccessCallback.onSuccess(characteristicJsonDecoder.decode((Map<String, Object>) characteristicJsonObject));
                     }
 
                     @Override
-                    public void error(String errorCode, @Nullable String message, @Nullable Object bleErrorJsonObject) {
-                        onErrorCallback.onError(new BleError(BleErrorCode.UnknownError, message, 0)); //TODO Add proper error parsing here
+                    public void error(String errorCode, @Nullable String jsonBody, @Nullable Object irrelevant) {
+                        onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(jsonBody));
                     }
 
                     @Override
@@ -359,17 +338,110 @@ public class DartMethodCaller {
                 new MethodChannel.Result() {
                     @Override
                     public void success(@Nullable Object characteristicJsonObject) {
-                        onSuccessCallback.onSuccess(characteristicJsonDecoder.decode(characteristicJsonObject));
+                        onSuccessCallback.onSuccess(characteristicJsonDecoder.decode((Map<String, Object>) characteristicJsonObject));
                     }
 
                     @Override
-                    public void error(String errorCode, @Nullable String message, @Nullable Object bleErrorJsonObject) {
-                        onErrorCallback.onError(new BleError(BleErrorCode.UnknownError, message, 0)); //TODO Add proper error parsing here
+                    public void error(String errorCode, @Nullable String jsonBody, @Nullable Object irrelevant) {
+                        onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(jsonBody));
                     }
 
                     @Override
                     public void notImplemented() {
                         Log.e(TAG, "readCharacteristic not implemented");
+                    }
+                });
+    }
+
+    public void writeCharacteristicForDevice(
+            final String deviceIdentifier,
+            final String serviceUUID,
+            final String characteristicUUID,
+            final String valueBase64,
+            final OnSuccessCallback<Characteristic> onSuccessCallback,
+            final OnErrorCallback onErrorCallback) {
+        HashMap<String, Object> arguments = new HashMap<String, Object>() {{
+            put(ArgumentKey.DEVICE_IDENTIFIER, deviceIdentifier);
+            put(ArgumentKey.SERVICE_UUID, serviceUUID);
+            put(ArgumentKey.CHARACTERISTIC_UUID, characteristicUUID);
+            put(ArgumentKey.VALUE, Base64Converter.decode(valueBase64));
+        }};
+        dartMethodChannel.invokeMethod(DartMethodName.WRITE_CHARACTERISTIC_FOR_DEVICE,
+                arguments,
+                new MethodChannel.Result() {
+                    @Override
+                    public void success(@Nullable Object characteristicJsonObject) {
+                        onSuccessCallback.onSuccess(characteristicJsonDecoder.decode((Map<String, Object>) characteristicJsonObject));
+                    }
+
+                    @Override
+                    public void error(String errorCode, @Nullable String jsonBody, @Nullable Object irrelevant) {
+                        onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(jsonBody));
+                    }
+
+                    @Override
+                    public void notImplemented() {
+                        Log.e(TAG, "writeCharacteristicForDevice not implemented");
+                    }
+                });
+    }
+
+    public void writeCharacteristicForService(
+            final int serviceIdentifier,
+            final String characteristicUUID,
+            final String valueBase64,
+            final OnSuccessCallback<Characteristic> onSuccessCallback,
+            final OnErrorCallback onErrorCallback) {
+        HashMap<String, Object> arguments = new HashMap<String, Object>() {{
+            put(ArgumentKey.SERVICE_IDENTIFIER, serviceIdentifier);
+            put(ArgumentKey.CHARACTERISTIC_UUID, characteristicUUID);
+            put(ArgumentKey.VALUE, Base64Converter.decode(valueBase64));
+        }};
+        dartMethodChannel.invokeMethod(DartMethodName.WRITE_CHARACTERISTIC_FOR_SERVICE,
+                arguments,
+                new MethodChannel.Result() {
+                    @Override
+                    public void success(@Nullable Object characteristicJsonObject) {
+                        onSuccessCallback.onSuccess(characteristicJsonDecoder.decode((Map<String, Object>) characteristicJsonObject));
+                    }
+
+                    @Override
+                    public void error(String errorCode, @Nullable String jsonBody, @Nullable Object irrelevant) {
+                        onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(jsonBody));
+                    }
+
+                    @Override
+                    public void notImplemented() {
+                        Log.e(TAG, "writeCharacteristicForService not implemented");
+                    }
+                });
+    }
+
+    public void writeCharacteristic(
+            final int characteristicIdentifier,
+            final String valueBase64,
+            final OnSuccessCallback<Characteristic> onSuccessCallback,
+            final OnErrorCallback onErrorCallback) {
+        HashMap<String, Object> arguments = new HashMap<String, Object>() {{
+            put(ArgumentKey.CHARACTERISTIC_IDENTIFIER, characteristicIdentifier);
+            put(ArgumentKey.VALUE, Base64Converter.decode(valueBase64));
+        }};
+        dartMethodChannel.invokeMethod(DartMethodName.WRITE_CHARACTERISTIC_FOR_IDENTIFIER,
+                arguments,
+                new MethodChannel.Result() {
+                    @Override
+                    public void success(@Nullable Object characteristicJsonObject) {
+                        onSuccessCallback.onSuccess(characteristicJsonDecoder.decode((Map<String, Object>) characteristicJsonObject));
+                    }
+
+                    @Override
+                    public void error(String errorCode, @Nullable String jsonBody, @Nullable Object irrelevant) {
+                        onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(jsonBody));
+                    }
+
+                    @Override
+                    public void notImplemented() {
+                        Log.e(TAG, "writeCharacteristic not implemented");
                     }
                 });
     }

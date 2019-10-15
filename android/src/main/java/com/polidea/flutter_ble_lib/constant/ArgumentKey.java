@@ -21,7 +21,7 @@ public interface ArgumentKey {
     String SERVICE_IDENTIFIER = "serviceId";
     String CHARACTERISTIC_UUID = "characteristicUuid";
     String CHARACTERISTIC_IDENTIFIER = "characteristicIdentifier";
-    String BYTES = "bytes";
+    String VALUE = "value";
     String WITH_RESPONSE = "withResponse";
 
     String MTU = "mtu";
