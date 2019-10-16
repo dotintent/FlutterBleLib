@@ -27,7 +27,7 @@ abstract class ManagerForPeripheral {
 
   Future<void> requestMtu(Peripheral peripheral, int mtu, String transactionId);
 
-  Future<CharacteristicWithValue> readCharacteristicForDevice(
+  Future<CharacteristicWithValueWithTransactionId> readCharacteristicForDevice(
     Peripheral peripheral,
     String serviceUuid,
     String characteristicUUID,
@@ -42,7 +42,7 @@ abstract class ManagerForPeripheral {
       bool withResponse,
       String transactionId);
 
-  Stream<CharacteristicWithValue> monitorCharacteristicForDevice(
+  Stream<CharacteristicWithValueWithTransactionId> monitorCharacteristicForDevice(
     Peripheral peripheral,
     String serviceUUID,
     String characteristicUUID,
@@ -53,7 +53,7 @@ abstract class ManagerForPeripheral {
 abstract class ManagerForService {
   Future<List<Characteristic>> characteristicsForService(Service service);
 
-  Future<CharacteristicWithValue> readCharacteristicForService(
+  Future<CharacteristicWithValueWithTransactionId> readCharacteristicForService(
     Peripheral peripheral,
     InternalService service,
     String characteristicUUID,
@@ -69,7 +69,7 @@ abstract class ManagerForService {
     String transactionId,
   );
 
-  Stream<CharacteristicWithValue> monitorCharacteristicForService(
+  Stream<CharacteristicWithValueWithTransactionId> monitorCharacteristicForService(
     Peripheral peripheral,
     InternalService service,
     String characteristicUUID,

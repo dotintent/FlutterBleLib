@@ -21,9 +21,9 @@ mixin CharacteristicsMixin on FlutterBLE {
           .catchError((errorJson) =>
               Future.error(BleError.fromJson(jsonDecode(errorJson.details))))
           .then((rawJsonValue) =>
-              _parseCharacteristicWithValueResponse(peripheral, rawJsonValue).value);
+              _parseCharacteristicWithValueWithTransactionIdResponse(peripheral, rawJsonValue).value);
 
-  Future<CharacteristicWithValue> readCharacteristicForDevice(
+  Future<CharacteristicWithValueWithTransactionId> readCharacteristicForDevice(
     Peripheral peripheral,
     String serviceUuid,
     String characteristicUUID,
@@ -43,10 +43,10 @@ mixin CharacteristicsMixin on FlutterBLE {
               Future.error(BleError.fromJson(jsonDecode(errorJson.details))))
           .then(
             (rawJsonValue) =>
-                _parseCharacteristicWithValueResponse(peripheral, rawJsonValue),
+                _parseCharacteristicWithValueWithTransactionIdResponse(peripheral, rawJsonValue),
           );
 
-  Future<CharacteristicWithValue> readCharacteristicForService(
+  Future<CharacteristicWithValueWithTransactionId> readCharacteristicForService(
     Peripheral peripheral,
     int serviceIdentifier,
     String characteristicUUID,
@@ -65,7 +65,7 @@ mixin CharacteristicsMixin on FlutterBLE {
               Future.error(BleError.fromJson(jsonDecode(errorJson.details))))
           .then(
             (rawJsonValue) =>
-                _parseCharacteristicWithValueResponse(peripheral, rawJsonValue),
+                _parseCharacteristicWithValueWithTransactionIdResponse(peripheral, rawJsonValue),
           );
 
   Future<void> writeCharacteristicForIdentifier(
@@ -153,7 +153,7 @@ mixin CharacteristicsMixin on FlutterBLE {
     yield* _characteristicsMonitoringEvents
         .map(
           (rawJsonValue) =>
-              _parseCharacteristicWithValueResponse(peripheral, rawJsonValue),
+              _parseCharacteristicWithValueWithTransactionIdResponse(peripheral, rawJsonValue),
         )
         .where(
           (characteristic) => characteristic._id == characteristicIdentifier,
@@ -163,7 +163,7 @@ mixin CharacteristicsMixin on FlutterBLE {
             throw BleError.fromJson(jsonDecode(errorJson.details)));
   }
 
-  Stream<CharacteristicWithValue> monitorCharacteristicForDevice(
+  Stream<CharacteristicWithValueWithTransactionId> monitorCharacteristicForDevice(
     Peripheral peripheral,
     String serviceUuid,
     String characteristicUUID,
@@ -180,7 +180,7 @@ mixin CharacteristicsMixin on FlutterBLE {
     );
     yield* _characteristicsMonitoringEvents
         .map((rawJsonValue) =>
-            _parseCharacteristicWithValueResponse(peripheral, rawJsonValue))
+            _parseCharacteristicWithValueWithTransactionIdResponse(peripheral, rawJsonValue))
         .map((characteristic)  {
           print("flutter TransactionId [${transactionId}], native id [${characteristic.transactionId}]");
           return characteristic;
@@ -194,7 +194,7 @@ mixin CharacteristicsMixin on FlutterBLE {
             throw BleError.fromJson(jsonDecode(errorJson.details)));
   }
 
-  Stream<CharacteristicWithValue> monitorCharacteristicForService(
+  Stream<CharacteristicWithValueWithTransactionId> monitorCharacteristicForService(
     Peripheral peripheral,
     int serviceIdentifier,
     String characteristicUUID,
@@ -211,7 +211,7 @@ mixin CharacteristicsMixin on FlutterBLE {
     yield* _characteristicsMonitoringEvents
         .map(
           (rawJsonValue) =>
-              _parseCharacteristicWithValueResponse(peripheral, rawJsonValue),
+              _parseCharacteristicWithValueWithTransactionIdResponse(peripheral, rawJsonValue),
         )
         .where(
           (characteristic) =>
@@ -222,14 +222,13 @@ mixin CharacteristicsMixin on FlutterBLE {
             throw BleError.fromJson(jsonDecode(errorJson.details)));
   }
 
-CharacteristicWithValue _parseCharacteristicWithValueResponse(
+CharacteristicWithValueWithTransactionId _parseCharacteristicWithValueWithTransactionIdResponse(
     Peripheral peripheral, rawJsonValue) {
   Map<String, dynamic> rootObject = jsonDecode(rawJsonValue);
   Service service = Service.fromJson(rootObject, peripheral, _manager);
 
   var transactionId = rootObject["transactionId"];
-  print("---------------- $transactionId");
-  return CharacteristicWithValue.fromJson(
+  return CharacteristicWithValueWithTransactionId.fromJson(
       rootObject["characteristic"], service, _manager)
   .setTransactionId(transactionId);
 }
