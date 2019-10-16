@@ -1,13 +1,16 @@
 part of internal;
 
-mixin CharacteristicsMixin on SimulationManagerBase {
-  SimulatedCharacteristic getCharacteristic(int characteristicIdentifier) {
+mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
+  Future<SimulatedCharacteristic> _getCharacteristic(
+      int characteristicIdentifier) async {
     SimulatedCharacteristic targetCharacteristic;
 
     for (SimulatedPeripheral peripheral in _peripherals.values) {
       SimulatedCharacteristic characteristic =
-          peripheral.getCharacteristicForId(characteristicIdentifier);
+          peripheral.characteristic(characteristicIdentifier);
+
       if (characteristic != null) {
+        await _errorIfNotConnected(peripheral.id);
         targetCharacteristic = characteristic;
         break;
       }
@@ -19,11 +22,19 @@ mixin CharacteristicsMixin on SimulationManagerBase {
   Future<CharacteristicResponse> _readCharacteristicForIdentifier(
     int characteristicIdentifier,
   ) async {
-    SimulatedCharacteristic targetCharacteristic =
-        getCharacteristic(characteristicIdentifier);
+    SimulatedPeripheral peripheral =
+        _peripheralWithCharacteristicId(characteristicIdentifier);
+    await _errorIfPeripheralNull(peripheral);
+    await _errorIfNotConnected(peripheral.id);
 
-    _throwErrorIfNull(targetCharacteristic, characteristicIdentifier.toString());
+    SimulatedCharacteristic targetCharacteristic =
+        await _getCharacteristic(characteristicIdentifier);
+
+    await _throwErrorIfNull(
+        targetCharacteristic, characteristicIdentifier.toString());
+
     Uint8List value = await targetCharacteristic.read();
+    await _errorIfDisconnected(peripheral.id);
     return CharacteristicResponse(targetCharacteristic, value);
   }
 
@@ -32,14 +43,16 @@ mixin CharacteristicsMixin on SimulationManagerBase {
     String serviceUuid,
     String characteristicUUID,
   ) async {
-    SimulatedPeripheral targetPeripheral = _peripherals.values
-        .firstWhere((peripheral) => peripheral.id == peripheralId);
+    await _errorIfNotConnected(peripheralId);
+
+    SimulatedPeripheral targetPeripheral =_peripherals[peripheralId];
 
     SimulatedCharacteristic targetCharacteristic = targetPeripheral
         .getCharacteristicForService(serviceUuid, characteristicUUID);
 
-    _throwErrorIfNull(targetCharacteristic, characteristicUUID);
+    await _throwErrorIfNull(targetCharacteristic, characteristicUUID);
     Uint8List value = await targetCharacteristic.read();
+    await _errorIfDisconnected(peripheralId);
     return CharacteristicResponse(targetCharacteristic, value);
   }
 
@@ -48,6 +61,7 @@ mixin CharacteristicsMixin on SimulationManagerBase {
     String characteristicUUID,
   ) async {
     SimulatedCharacteristic targetCharacteristic;
+    String peripheralId;
     peripheralsLoop:
     for (SimulatedPeripheral peripheral in _peripherals.values) {
       SimulatedCharacteristic characteristic =
@@ -57,13 +71,16 @@ mixin CharacteristicsMixin on SimulationManagerBase {
               );
 
       if (characteristic != null) {
+        peripheralId = peripheral.id;
+        await _errorIfNotConnected(peripheralId);
         targetCharacteristic = characteristic;
         break peripheralsLoop;
       }
     }
 
-    _throwErrorIfNull(targetCharacteristic, characteristicUUID);
+    await _throwErrorIfNull(targetCharacteristic, characteristicUUID);
     Uint8List value = await targetCharacteristic.read();
+    await _errorIfDisconnected(peripheralId);
     return CharacteristicResponse(targetCharacteristic, value);
   }
 
@@ -71,12 +88,20 @@ mixin CharacteristicsMixin on SimulationManagerBase {
     int characteristicIdentifier,
     Uint8List value,
   ) async {
-    SimulatedCharacteristic targetCharacteristic =
-        getCharacteristic(characteristicIdentifier);
+    SimulatedPeripheral peripheral =
+        _peripheralWithCharacteristicId(characteristicIdentifier);
 
-    _throwErrorIfNull(targetCharacteristic, characteristicIdentifier.toString());
-    _throwErrorIfNotWritable(targetCharacteristic);
+    await _errorIfPeripheralNull(peripheral);
+    await _errorIfNotConnected(peripheral.id);
+
+    SimulatedCharacteristic targetCharacteristic =
+        await _getCharacteristic(characteristicIdentifier);
+
+    await _throwErrorIfNull(
+        targetCharacteristic, characteristicIdentifier.toString());
+    await _throwErrorIfNotWritable(targetCharacteristic);
     await targetCharacteristic.write(value);
+    await _errorIfDisconnected(peripheral.id);
     return targetCharacteristic;
   }
 
@@ -86,15 +111,16 @@ mixin CharacteristicsMixin on SimulationManagerBase {
     String characteristicUUID,
     Uint8List value,
   ) async {
-    SimulatedPeripheral targetPeripheral = _peripherals.values
-        .firstWhere((peripheral) => peripheral.id == peripheralId);
+    await _errorIfNotConnected(peripheralId);
+    SimulatedPeripheral targetPeripheral = _peripherals[peripheralId];
 
     SimulatedCharacteristic targetCharacteristic = targetPeripheral
         .getCharacteristicForService(serviceUuid, characteristicUUID);
 
-    _throwErrorIfNull(targetCharacteristic, characteristicUUID);
-    _throwErrorIfNotWritable(targetCharacteristic);
+    await _throwErrorIfNull(targetCharacteristic, characteristicUUID);
+    await _throwErrorIfNotWritable(targetCharacteristic);
     await targetCharacteristic.write(value);
+    await _errorIfDisconnected(peripheralId);
     return targetCharacteristic;
   }
 
@@ -103,6 +129,7 @@ mixin CharacteristicsMixin on SimulationManagerBase {
     String characteristicUUID,
     Uint8List value,
   ) async {
+    String peripheralId;
     SimulatedCharacteristic targetCharacteristic;
     peripheralsLoop:
     for (SimulatedPeripheral peripheral in _peripherals.values) {
@@ -113,33 +140,37 @@ mixin CharacteristicsMixin on SimulationManagerBase {
               );
 
       if (characteristic != null) {
+        peripheralId = peripheral.id;
+        await _errorIfNotConnected(peripheral.id);
         targetCharacteristic = characteristic;
         break peripheralsLoop;
       }
     }
 
-    _throwErrorIfNull(targetCharacteristic, characteristicUUID);
-    _throwErrorIfNotWritable(targetCharacteristic);
+    await _throwErrorIfNull(targetCharacteristic, characteristicUUID);
+    await _throwErrorIfNotWritable(targetCharacteristic);
     await targetCharacteristic.write(value);
+    _errorIfDisconnected(peripheralId);
     return targetCharacteristic;
   }
 
-  _throwErrorIfNotWritable(SimulatedCharacteristic characteristic) {
+  Future<void> _throwErrorIfNotWritable(
+      SimulatedCharacteristic characteristic) async {
     if (!characteristic.isWritableWithResponse ||
         !characteristic.isWritableWithoutResponse) {
-      throw Future.error(SimulatedBleError(
+      return Future.error(SimulatedBleError(
         BleErrorCode.CharacteristicWriteFailed,
         "Characteristic ${characteristic.uuid} is not writeable",
       ));
     }
   }
 
-  _throwErrorIfNull(
+  Future<void> _throwErrorIfNull(
     SimulatedCharacteristic characteristic,
     String characteristicId,
-  ) {
+  ) async {
     if (characteristic == null) {
-      throw Future.error(SimulatedBleError(
+      return Future.error(SimulatedBleError(
         BleErrorCode.CharacteristicNotFound,
         "Characteristic $characteristicId not found",
       ));

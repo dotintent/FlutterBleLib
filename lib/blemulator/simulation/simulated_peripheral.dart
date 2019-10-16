@@ -34,6 +34,7 @@ abstract class SimulatedPeripheral {
   ScanInfo scanInfo;
 
   Map<int, SimulatedService> _services;
+  Map<int, SimulatedCharacteristic> _characteristics;
   final StreamController<FlutterBLELib.PeripheralConnectionState>
       _connectionStateStreamController;
 
@@ -59,6 +60,13 @@ abstract class SimulatedPeripheral {
         .map((service) => service.uuid));
 
     _services = Map.fromIterable(services, key: (service) => service.id);
+    _characteristics = Map();
+    for (SimulatedService service in services) {
+      for (SimulatedCharacteristic characteristic
+          in service.characteristics()) {
+        _characteristics.putIfAbsent(characteristic.id, () => characteristic);
+      }
+    }
   }
 
   Stream<FlutterBLELib.PeripheralConnectionState> get connectionStateStream {
@@ -97,23 +105,33 @@ abstract class SimulatedPeripheral {
   bool isConnected() => _isConnected;
 
   List<SimulatedService> services() {
-      return _services.values.toList();
+    return _services.values.toList();
   }
 
   SimulatedService service(int id) => _services[id];
 
-  SimulatedCharacteristic getCharacteristicForId(int characteristicIdentifier) {
-    SimulatedCharacteristic targetCharacteristic;
-    servicesLoop:
-    for (SimulatedService service in services()) {
-      SimulatedCharacteristic characteristic =
-          service.characteristic(characteristicIdentifier);
-      if (characteristic != null) {
-        targetCharacteristic = characteristic;
-        break servicesLoop;
-      }
-    }
-    return targetCharacteristic;
+  SimulatedCharacteristic characteristic(int characteristicIdentifier) =>
+      _characteristics[characteristicIdentifier];
+
+  bool hasService(int id) => _services.containsKey(id);
+
+  bool hasServiceWithUuid(String uuid) {
+    SimulatedService service = _services.values.firstWhere(
+      (service) => service.uuid.toLowerCase() == uuid.toLowerCase(),
+      orElse: () => null,
+    );
+    return service != null;
+  }
+
+  bool hasCharacteristic(int id) => _characteristics.containsKey(id);
+
+  bool hasCharacteristicWithUuid(String uuid) {
+    SimulatedCharacteristic characteristic = _characteristics.values.firstWhere(
+      (characteristic) =>
+          characteristic.uuid.toLowerCase() == uuid.toLowerCase(),
+      orElse: () => null,
+    );
+    return characteristic != null;
   }
 
   SimulatedCharacteristic getCharacteristicForService(

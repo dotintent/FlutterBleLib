@@ -19,6 +19,22 @@ mixin ErrorChecksMixin on SimulationManagerBase {
     }
   }
 
+  Future<void> _errorIfDisconnected(String identifier) async {
+    if (!_peripherals[identifier].isConnected()) {
+      return Future.error(SimulatedBleError(BleErrorCode.DeviceDisconnected,
+          "Peripheral $identifier has disconnected"));
+    }
+  }
+
+  Future<void> _errorIfPeripheralNull(SimulatedPeripheral peripheral) async {
+    if (peripheral == null) {
+      return Future.error(SimulatedBleError(
+        BleErrorCode.DeviceNotFound,
+        "Unknown peripheral",
+      ));
+    }
+  }
+
   Future<void> _errorIfUnknown(String identifier) async {
     if (_peripherals[identifier] == null) {
       return Future.error(SimulatedBleError(
