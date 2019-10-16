@@ -1,5 +1,0 @@
-NSString * const SIMULATION_ARGUMENT_NAME_DEVICE_ID = @"id";
-
-NSString * const SIMULATION_ARGUMENT_NAME_SERVICE_ID = @"serviceId";
-NSString * const SIMULATION_ARGUMENT_NAME_CHARACTERISTICS = @"characteristics";
-NSString * const SIMULATION_ARGUMENT_NAME_SERVICE_UUID = @"serviceUuid";

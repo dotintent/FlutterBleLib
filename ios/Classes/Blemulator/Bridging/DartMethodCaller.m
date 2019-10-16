@@ -1,6 +1,6 @@
 #import "DartMethodCaller.h"
 #import "DartMethodName.h"
-#import "SimulationArgumentName.h"
+#import "DartCallArgumentKeys.h"
 #import "Peripheral.h"
 #import "DartResultConverter.h"
 
@@ -56,7 +56,7 @@ typedef void (^ErrorHandler)(id error);
                 resolve:(Resolve)resolve
                  reject:(Reject)reject {
     NSDictionary<NSString *,id> *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
-                                               deviceIdentifier, SIMULATION_ARGUMENT_NAME_DEVICE_ID,
+                                               deviceIdentifier, DART_CALL_ARGUMENT_DEVICE_ID,
                                                nil];
     SuccessHandler successHandler = ^(id _Nullable result) {
         resolve([[[Peripheral alloc] initWithIdentifier:deviceIdentifier
@@ -79,7 +79,7 @@ typedef void (^ErrorHandler)(id error);
                        resolve:(Resolve)resolve
                         reject:(Reject)reject {
     NSDictionary<NSString *,id> *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
-                                              deviceIdentifier, SIMULATION_ARGUMENT_NAME_DEVICE_ID,
+                                              deviceIdentifier, DART_CALL_ARGUMENT_DEVICE_ID,
                                               nil];
     ErrorHandler errorHandler = ^(id error) {
         // TODO: - Send error here
@@ -96,7 +96,7 @@ typedef void (^ErrorHandler)(id error);
                   resolve:(Resolve)resolve
                    reject:(Reject)reject {
     NSDictionary<NSString *,id> *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
-                                              deviceIdentifier, SIMULATION_ARGUMENT_NAME_DEVICE_ID,
+                                              deviceIdentifier, DART_CALL_ARGUMENT_DEVICE_ID,
                                               nil];
     ErrorHandler errorHandler = ^(id error) {
         // TODO: - Send error here
@@ -117,7 +117,7 @@ typedef void (^ErrorHandler)(id error);
                                       resolve:(Resolve)resolve
                                        reject:(Reject)reject {
     NSDictionary<NSString *,id> *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
-                                              deviceIdentifier, SIMULATION_ARGUMENT_NAME_DEVICE_ID,
+                                              deviceIdentifier, DART_CALL_ARGUMENT_DEVICE_ID,
                                               nil];
     SuccessHandler successHandler = ^(id result) {
         resolve([DartResultConverter deviceContainerFromDartResult:result

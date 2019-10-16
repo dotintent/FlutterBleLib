@@ -1,3 +1,5 @@
+extern NSString * const DART_CALL_ARGUMENT_DEVICE_ID;
+
 extern NSString * const DART_CALL_ARGUMENT_PERIPHERAL_ID;
 extern NSString * const DART_CALL_ARGUMENT_IS_CONNECTABLE;
 extern NSString * const DART_CALL_ARGUMENT_LOCAL_NAME;
