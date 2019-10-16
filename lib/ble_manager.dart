@@ -1,6 +1,6 @@
 part of flutter_ble_lib;
 
-typedef RestoreStateAction = Function(List<Peripheral> restoreStateIdentifier);
+typedef RestoreStateAction = Function(List<Peripheral> peripherals);
 
 enum LogLevel { none, verbose, debug, info, warning, error }
 
