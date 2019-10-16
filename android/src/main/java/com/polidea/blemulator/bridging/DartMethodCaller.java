@@ -225,7 +225,7 @@ public class DartMethodCaller {
             final OnErrorCallback onErrorCallback) {
         dartMethodChannel.invokeMethod(DartMethodName.DISCOVER_ALL_SERVICES_AND_CHARACTERISTICS, new HashMap<String, Object>() {{
             put(ArgumentName.IDENTIFIER, deviceIdentifier);
-            put(SimulationArgumentName.TRANSACTION_ID, transactionId);
+            put(ArgumentName.TRANSACTION_ID, transactionId);
         }}, new MethodChannel.Result() {
             @Override
             public void success(@Nullable Object discoveryResponse) {
@@ -462,7 +462,7 @@ public class DartMethodCaller {
     public void cancelTransaction(final String transactionId) {
         Log.i(TAG, "cancelTransaction");
         dartMethodChannel.invokeMethod(DartMethodName.CANCEL_TRANSACTION, new HashMap<String, String>() {{
-            put(SimulationArgumentName.TRANSACTION_ID, transactionId);
+            put(ArgumentName.TRANSACTION_ID, transactionId);
         }});
     }
 }
