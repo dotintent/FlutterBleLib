@@ -19,7 +19,7 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 
 @interface FlutterBleLibPlugin () <BleClientManagerDelegate>
 
-@property (nonatomic) BleClientManager *manager;
+@property (nonatomic) id <BleAdapter> manager;
 @property (nonatomic) AdapterStateStreamHandler *adapterStateStreamHandler;
 @property (nonatomic) RestoreStateStreamHandler *restoreStateStreamHandler;
 @property (nonatomic) ScanningStreamHandler *scanningStreamHandler;
@@ -135,8 +135,8 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
 // MARK: - MBA Methods - BleClient lifecycle
 
 - (void)createClient:(FlutterMethodCall *)call result:(FlutterResult)result {
-    _manager = [[BleClientManager alloc] initWithQueue:dispatch_get_main_queue()
-                                  restoreIdentifierKey:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_RESTORE_STATE_IDENTIFIER]]];
+    _manager = [BleAdapterFactory getNewAdapterWithQueue:dispatch_get_main_queue()
+                                    restoreIdentifierKey:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_RESTORE_STATE_IDENTIFIER]]];
     _manager.delegate = self;
     result(nil);
 }
