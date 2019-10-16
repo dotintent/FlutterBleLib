@@ -208,15 +208,13 @@
                           resolve:(NS_NOESCAPE Resolve)resolve
                            reject:(NS_NOESCAPE Reject)reject {
     // TODO: - Error handling
-//    for (DeviceContainer *container in self.knownPeripherals) {
-//        for (Service *service in container.services) {
-//            if (service.objectId == serviceIdentifier) {
-//                resolve([container characteristicsJsonRepresentationForService:[service.uuid UUIDString]]);
-//            } else {
-//                NSLog(@"Nope");
-//            }
-//        }
-//    }
+    for (DeviceContainer *container in [self.knownPeripherals allValues]) {
+        for (Service *service in container.services) {
+            if (service.objectId == serviceIdentifier) {
+                resolve([container characteristicsJsonRepresentationForService:[service.uuid UUIDString]]);
+            }
+        }
+    }
     NSLog(@"SimulatedAdapter.characteristicsForService");
 }
 

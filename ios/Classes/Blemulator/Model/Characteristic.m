@@ -26,12 +26,12 @@
             [NSNumber numberWithInt:_service.objectId], CHARACTERISTIC_RESPONSE_SERVICE_ID,
             [_service.uuid UUIDString], CHARACTERISTIC_RESPONSE_SERVICE_UUID,
             _service.peripheral.identifier, CHARACTERISTIC_RESPONSE_DEVICE_ID,
-            false, CHARACTERISTIC_RESPONSE_IS_READABLE,
-            false, CHARACTERISTIC_RESPONSE_IS_WRITABLE_WITH_RESPONSE,
-            false, CHARACTERISTIC_RESPONSE_IS_WRITABLE_WITHOUT_RESPONSE,
-            false, CHARACTERISTIC_RESPONSE_IS_NOTIFIABLE,
-            _isNotifying, CHARACTERISTIC_RESPONSE_IS_NOTIFYING,
-            false, CHARACTERISTIC_RESPONSE_IS_INDICATABLE,
+            [NSNumber numberWithBool:false], CHARACTERISTIC_RESPONSE_IS_READABLE,
+            [NSNumber numberWithBool:false], CHARACTERISTIC_RESPONSE_IS_WRITABLE_WITH_RESPONSE,
+            [NSNumber numberWithBool:false], CHARACTERISTIC_RESPONSE_IS_WRITABLE_WITHOUT_RESPONSE,
+            [NSNumber numberWithBool:false], CHARACTERISTIC_RESPONSE_IS_NOTIFIABLE,
+            [NSNumber numberWithBool:_isNotifying], CHARACTERISTIC_RESPONSE_IS_NOTIFYING,
+            [NSNumber numberWithBool:false], CHARACTERISTIC_RESPONSE_IS_INDICATABLE,
             [NSNull null], CHARACTERISTIC_RESPONSE_VALUE,
             nil];
 }
