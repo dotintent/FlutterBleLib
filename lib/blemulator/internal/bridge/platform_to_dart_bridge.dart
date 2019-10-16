@@ -11,14 +11,15 @@ class PlatformToDartBridge {
   }
 
   Future<dynamic> _handleCall(MethodCall call) async {
-    String transactionId = call.arguments[SimulationArgumentName.transactionId];
-    Future<dynamic> platformCallResultFuture = _dispatchPlatformCall(call);
-
-    if (transactionId != null) {
+    if (call.method != DartMethodName.cancelTransaction &&
+        call.arguments.containsKey(SimulationArgumentName.transactionId)) {
+      String transactionId =
+          call.arguments[SimulationArgumentName.transactionId];
+      _cancelTransactionIfExists(transactionId);
       return _createAndSaveCancelablePlatformCall(
-          platformCallResultFuture, transactionId);
+          _dispatchPlatformCall(call), transactionId);
     } else {
-      return platformCallResultFuture;
+      return _dispatchPlatformCall(call);
     }
   }
 
@@ -27,30 +28,26 @@ class PlatformToDartBridge {
     String transactionId,
   ) {
     CancelableOperation operation =
-        CancelableOperation.fromFuture(platformCallResult);
+        CancelableOperation.fromFuture(platformCallResult, onCancel: () async {
+      return Future.error(SimulatedBleError(
+        BleErrorCode.OperationCancelled,
+        "Operation cancelled",
+      ));
+    });
     pendingTransactions.putIfAbsent(transactionId, () => operation);
 
-    return Future(() async {
-      dynamic result = await operation
-          .valueOrCancellation(
-        Future.error(
-          SimulatedBleError(
-            BleErrorCode.OperationCancelled,
-            "Operation cancelled",
-          ).toString(),
-        ),
-      )
-          .catchError((error) {
-        pendingTransactions.remove(transactionId);
-        throw error;
-      });
-      pendingTransactions.remove(transactionId);
-      return result;
+    return Future(() {
+      return operation.valueOrCancellation().then(
+        (result) {
+          pendingTransactions.remove(transactionId);
+          return result;
+        },
+        onError: (error) {
+          pendingTransactions.remove(transactionId);
+          return Future.error(error);
+        },
+      );
     });
-  }
-
-  void cancelOperationIfExists(String transactionId) async {
-    await pendingTransactions.remove(transactionId)?.cancel();
   }
 
   Future<dynamic> _dispatchPlatformCall(MethodCall call) {
@@ -84,7 +81,8 @@ class PlatformToDartBridge {
       case DartMethodName.writeCharacteristicForIdentifier:
         return _writeCharacteristicForIdentifier(call);
       case DartMethodName.cancelTransaction:
-        return _cancelTransaction(call);
+        return _cancelTransactionIfExists(
+            call.arguments[SimulationArgumentName.transactionId]);
       default:
         return Future.error(
           SimulatedBleError(
@@ -256,9 +254,7 @@ class PlatformToDartBridge {
         Metadata.isIndicatable: characteristic.isIndicatable,
       };
 
-  Future<void> _cancelTransaction(MethodCall call) async {
-    await pendingTransactions
-        .remove(call.arguments[SimulationArgumentName.transactionId])
-        ?.cancel();
+  Future<void> _cancelTransactionIfExists(String transactionId) async {
+    await pendingTransactions.remove(transactionId)?.cancel();
   }
 }
