@@ -46,4 +46,12 @@
     return result;
 }
 
+- (NSArray *)characteristicsJsonRepresentationForService:(NSString *)serviceUuidString {
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    for (Characteristic *characteristic in [_characteristics objectForKey:serviceUuidString]) {
+        [result addObject:[characteristic jsonObjectRepresentation]];
+    }
+    return result;
+}
+
 @end

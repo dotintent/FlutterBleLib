@@ -19,4 +19,6 @@
 
 - (NSArray *)servicesJsonRepresentation;
 
+- (NSArray *)characteristicsJsonRepresentationForService:(NSString *)serviceUuidString;
+
 @end
