@@ -17,7 +17,6 @@
         self.service = service;
         self.isNotifying = isNotifying;
         self.properties = properties;
-        NSLog(@"%@", [NSNumber numberWithBool:isNotifying]);
     }
     return self;
 }

@@ -11,14 +11,14 @@
     NSMutableDictionary<NSString *, NSArray<Characteristic *> *> *characteristics = [[NSMutableDictionary alloc] init];
 
     for (NSDictionary *serviceDictionary in resultArray) {
-        Service *service = [[Service alloc] initWithObjectId:(int)[serviceDictionary objectForKey:DART_RESULT_SERVICE_ID]
+        Service *service = [[Service alloc] initWithObjectId:[[serviceDictionary objectForKey:DART_RESULT_SERVICE_ID] integerValue]
                                                         uuid:[CBUUID UUIDWithString:[serviceDictionary objectForKey:DART_RESULT_SERVICE_UUID]]
                                                   peripheral:peripheral
                                                    isPrimary:true];
 
         NSMutableArray *characteristicsArray = [[NSMutableArray alloc] init];
         for (NSDictionary *characteristicDictionary in [serviceDictionary objectForKey:DART_RESULT_CHARACTERISTICS]) {
-            Characteristic *characteristic = [[Characteristic alloc] initWithObjectId:(int)[characteristicDictionary objectForKey:DART_RESULT_CHARACTERISTIC_ID]
+            Characteristic *characteristic = [[Characteristic alloc] initWithObjectId:[[characteristicDictionary objectForKey:DART_RESULT_CHARACTERISTIC_ID] integerValue]
                                                                                  uuid:[CBUUID UUIDWithString:[characteristicDictionary objectForKey:DART_RESULT_CHARACTERISTIC_UUID]]
                                                                                 value:[characteristicDictionary objectForKey:DART_RESULT_VALUE]
                                                                               service:service
