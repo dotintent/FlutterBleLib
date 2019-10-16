@@ -51,6 +51,7 @@ abstract class DartMethodName {
       "monitorCharacteristicForService";
   static const String cancelTransaction =
       "cancelTransaction";
+  static const String readRssi = "rssi";
 }
 
 abstract class SimulationArgumentName {

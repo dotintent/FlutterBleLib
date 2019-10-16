@@ -10,6 +10,7 @@ class PlatformToDartBridge {
   }
 
   Future<dynamic> _handleCall(MethodCall call) {
+    print("Observed method call on Flutter Simulator: ${call.method}");
     switch (call.method) {
       case DartMethodName.createClient:
         return _createClient(call);
@@ -47,6 +48,8 @@ class PlatformToDartBridge {
         return _monitorCharacteristicForIdentifier(call);
       case DartMethodName.cancelTransaction:
         return _cancelTransaction(call);
+      case DartMethodName.readRssi:
+        return _readRssiForDevice(call);
       default:
         return Future.error(
           SimulatedBleError(
@@ -221,4 +224,8 @@ class PlatformToDartBridge {
       _manager.cancelTransaction(
         call.arguments[SimulationArgumentName.transactionId],
       );
+
+  Future<int> _readRssiForDevice(MethodCall call) {
+    return _manager._readRssiForDevice(call.arguments[ArgumentName.id] as String);
+  }
 }
