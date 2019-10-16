@@ -22,7 +22,8 @@
                                                                                  uuid:[CBUUID UUIDWithString:[characteristicDictionary objectForKey:DART_RESULT_CHARACTERISTIC_UUID]]
                                                                                 value:[characteristicDictionary objectForKey:DART_RESULT_VALUE]
                                                                               service:service
-                                                                          isNotifying:[characteristicDictionary objectForKey:DART_RESULT_IS_NOTIFYING]];
+                                                                          isNotifying:[[characteristicDictionary objectForKey:DART_RESULT_IS_NOTIFYING] boolValue]
+                                                                           properties:[self calculatePropertiesFor:characteristicDictionary]];
             [characteristicsArray addObject:characteristic];
         }
 
@@ -34,6 +35,24 @@
                                                   name:peripheral.name
                                               services:services
                                        characteristics:characteristics];
+}
+
++ (CBCharacteristicProperties)calculatePropertiesFor:(NSDictionary *)characteristicDictionary {
+    CBCharacteristicProperties properties = 0;
+
+    BOOL isReadable = [[characteristicDictionary objectForKey:DART_RESULT_IS_READABLE] boolValue];
+    BOOL isWritableWithResponse = [[characteristicDictionary objectForKey:DART_RESULT_IS_WRITABLE_WITH_RESPONSE] boolValue];
+    BOOL isWritableWithoutResponse = [[characteristicDictionary objectForKey:DART_RESULT_IS_WRITABLE_WITHOUT_RESPONSE] boolValue];
+    BOOL isNotifiable = [[characteristicDictionary objectForKey:DART_RESULT_IS_NOTIFIABLE] boolValue];
+    BOOL isIndicatable = [[characteristicDictionary objectForKey:DART_RESULT_IS_INDICATABLE] boolValue];
+
+    if (isReadable) { properties |= CBCharacteristicPropertyRead; }
+    if (isWritableWithResponse) { properties |= CBCharacteristicPropertyWrite; }
+    if (isWritableWithoutResponse) { properties |= CBCharacteristicPropertyWriteWithoutResponse; }
+    if (isNotifiable) { properties |= CBCharacteristicPropertyNotify; }
+    if (isIndicatable) { properties |= CBCharacteristicPropertyIndicate; }
+
+    return properties;
 }
 
 @end
