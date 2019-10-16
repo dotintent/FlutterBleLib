@@ -39,7 +39,7 @@ public class DartValueHandler implements MethodChannel.MethodCallHandler {
         connectionStatePublishers.put(identifier, publisher);
     }
 
-    public void addCharacteristicsUpdatePublisher(OnEventCallback<Characteristic> publisher) {
+    public void setCharacteristicsUpdatePublisher(OnEventCallback<Characteristic> publisher) {
         characteristicsUpdatePublisher = publisher;
     }
 

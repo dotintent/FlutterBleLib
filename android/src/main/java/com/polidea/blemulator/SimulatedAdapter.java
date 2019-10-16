@@ -408,7 +408,7 @@ public class SimulatedAdapter implements BleAdapter {
                                                OnEventCallback<Characteristic> onEventCallback,
                                                OnErrorCallback onErrorCallback) {
         Log.i(TAG, "monitorCharacteristicForDevice");
-        dartValueHandler.addCharacteristicsUpdatePublisher(onEventCallback);
+        dartValueHandler.setCharacteristicsUpdatePublisher(onEventCallback);
         dartMethodCaller.monitorCharacteristicForDevice(deviceIdentifier, serviceUUID, characteristicUUID, transactionId, onErrorCallback);
     }
 
@@ -418,7 +418,7 @@ public class SimulatedAdapter implements BleAdapter {
                                                 String transactionId, OnEventCallback<Characteristic> onEventCallback,
                                                 OnErrorCallback onErrorCallback) {
         Log.i(TAG, "monitorCharacteristicForService");
-        dartValueHandler.addCharacteristicsUpdatePublisher(onEventCallback);
+        dartValueHandler.setCharacteristicsUpdatePublisher(onEventCallback);
         dartMethodCaller.monitorCharacteristicForService(serviceIdentifier, characteristicUUID, transactionId, onErrorCallback);
     }
 
@@ -428,7 +428,7 @@ public class SimulatedAdapter implements BleAdapter {
                                       OnEventCallback<Characteristic> onEventCallback,
                                       OnErrorCallback onErrorCallback) {
         Log.i(TAG, "monitorCharacteristic");
-        dartValueHandler.addCharacteristicsUpdatePublisher(onEventCallback);
+        dartValueHandler.setCharacteristicsUpdatePublisher(onEventCallback);
         dartMethodCaller.monitorCharacteristic(characteristicIdentifier, transactionId, onErrorCallback);
 
     }

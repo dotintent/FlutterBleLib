@@ -1,7 +1,5 @@
 package com.polidea.blemulator.bridging;
 
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattService;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -16,18 +14,14 @@ import com.polidea.multiplatformbleadapter.Characteristic;
 import com.polidea.multiplatformbleadapter.ConnectionOptions;
 import com.polidea.multiplatformbleadapter.Device;
 import com.polidea.multiplatformbleadapter.OnErrorCallback;
-import com.polidea.multiplatformbleadapter.OnEventCallback;
 import com.polidea.multiplatformbleadapter.OnSuccessCallback;
 import com.polidea.multiplatformbleadapter.Service;
-import com.polidea.multiplatformbleadapter.errors.BleError;
-import com.polidea.multiplatformbleadapter.errors.BleErrorCode;
 import com.polidea.multiplatformbleadapter.utils.Base64Converter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import io.flutter.plugin.common.MethodChannel;
 
@@ -456,13 +450,13 @@ public class DartMethodCaller {
                     }
 
                     @Override
-                    public void error(String errorCode, @Nullable String message, @Nullable Object bleErrorJsonObject) {
-                        onErrorCallback.onError(new BleError(BleErrorCode.UnknownError, message, 0)); //TODO Add proper error parsing here
+                    public void error(String errorCode, @Nullable String jsonBody, @Nullable Object irrelevant) {
+                        onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(jsonBody));
                     }
 
                     @Override
                     public void notImplemented() {
-                        Log.e(TAG, "readCharacteristicForDevice not implemented");
+                        Log.e(TAG, "monitorCharacteristicForDevice not implemented");
                     }
                 });
     }
@@ -482,16 +476,17 @@ public class DartMethodCaller {
                 new MethodChannel.Result() {
                     @Override
                     public void success(@Nullable Object characteristicJsonObject) {
+                        Log.i(TAG, "monitorCharacteristicForService SUCCESS");
                     }
 
                     @Override
-                    public void error(String errorCode, @Nullable String message, @Nullable Object bleErrorJsonObject) {
-                        onErrorCallback.onError(new BleError(BleErrorCode.UnknownError, message, 0)); //TODO Add proper error parsing here
+                    public void error(String errorCode, @Nullable String jsonBody, @Nullable Object irrelevant) {
+                        onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(jsonBody));
                     }
 
                     @Override
                     public void notImplemented() {
-                        Log.e(TAG, "readCharacteristicForService not implemented");
+                        Log.e(TAG, "monitorCharacteristicForService not implemented");
                     }
                 });
     }
@@ -509,16 +504,17 @@ public class DartMethodCaller {
                 new MethodChannel.Result() {
                     @Override
                     public void success(@Nullable Object characteristicJsonObject) {
+                        Log.i(TAG, "monitorCharacteristic SUCCESS");
                     }
 
                     @Override
-                    public void error(String errorCode, @Nullable String message, @Nullable Object bleErrorJsonObject) {
-                        onErrorCallback.onError(new BleError(BleErrorCode.UnknownError, message, 0)); //TODO Add proper error parsing here
+                    public void error(String errorCode, @Nullable String jsonBody, @Nullable Object irrelevant) {
+                        onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(jsonBody));
                     }
 
                     @Override
                     public void notImplemented() {
-                        Log.e(TAG, "readCharacteristic not implemented");
+                        Log.e(TAG, "monitorCharacteristic not implemented");
                     }
                 });
     }
