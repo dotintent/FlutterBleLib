@@ -6,14 +6,14 @@ class SimulatedCharacteristic {
   SimulatedService service;
   Uint8List _value;
   final String convenienceName;
-  bool isReadable;
-  bool isWritableWithResponse;
-  bool isWritableWithoutResponse;
-  bool isNotifiable;
+  final bool isReadable;
+  final bool isWritableWithResponse;
+  final bool isWritableWithoutResponse;
+  final bool isNotifiable;
   bool isNotifying;
-  bool isIndicatable;
+  final bool isIndicatable;
 
-  StreamController<Uint8List> streamController;
+  StreamController<Uint8List> _streamController;
 
   SimulatedCharacteristic({
     @required this.uuid,
@@ -36,21 +36,24 @@ class SimulatedCharacteristic {
 
   Future<void> write(Uint8List value) async {
     this._value = value;
-    if (streamController?.hasListener == true)
-      streamController.sink.add(value);
+    if (_streamController?.hasListener == true)
+      _streamController.sink.add(value);
   }
 
   Stream<Uint8List> monitor() {
-    if (!isNotifiable) {
-      streamController.sink.addError("Characterisitc is not notifiable");
+    if (_streamController == null) {
+      _streamController = StreamController.broadcast(
+        onListen: () {
+          isNotifying = true;
+        },
+        onCancel: () {
+          isNotifying = false;
+          _streamController.close();
+          _streamController = null;
+        },
+      );
     }
-    if (streamController == null) {
-      streamController = StreamController(onCancel: () {
-        streamController.close();
-        streamController = null;
-      });
-    }
-    return streamController.stream.asBroadcastStream();
+    return _streamController.stream;
   }
 }
 

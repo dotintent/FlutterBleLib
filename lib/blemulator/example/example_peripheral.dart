@@ -7,6 +7,8 @@ import 'package:flutter_ble_lib/blemulator/blemulator.dart';
 class SensorTag extends SimulatedPeripheral {
   static const String peripheralId = "4B:99:4C:34:DE:77";
 
+  TemperatureDataCharacteristic dataCharacteristic;
+
   SensorTag(
       {String id = peripheralId,
       String name = "SensorTag",
@@ -46,6 +48,12 @@ class SensorTag extends SimulatedPeripheral {
                   convenienceName: "Accelerometer Service")
             ]) {
     scanInfo.localName = localName;
+    dataCharacteristic = services()
+        .firstWhere(
+            (service) => service.uuid == "F000AA00-0451-4000-B000-000000000000")
+        .characteristics()
+        .firstWhere((characteristic) =>
+            characteristic is TemperatureDataCharacteristic);
   }
 
   @override
@@ -53,44 +61,52 @@ class SensorTag extends SimulatedPeripheral {
     await Future.delayed(Duration(milliseconds: 200));
     return super.onConnectRequest();
   }
+
+  @override
+  Future<void> onConnect() async {
+    await super.onConnect();
+    _startEmittingTemperatureUpdates();
+  }
+
+  void _startEmittingTemperatureUpdates() async {
+    while (isConnected()) {
+      await Future.delayed(Duration(milliseconds: 300));
+      await dataCharacteristic.write(getValueToWrite());
+    }
+  }
+
+  Uint8List getValueToWrite() {
+    if (dataCharacteristic.isEnabled) {
+      Random random = Random();
+      return Uint8List.fromList([
+        random.nextInt(200),
+        random.nextInt(200),
+        random.nextInt(200),
+        random.nextInt(200)
+      ]);
+    } else
+      return Uint8List.fromList([0, 0, 0, 0]);
+  }
 }
 
 class TemperatureDataCharacteristic extends SimulatedCharacteristic {
+  bool isEnabled = false;
+
   TemperatureDataCharacteristic()
       : super(
           uuid: "F000AA01-0451-4000-B000-000000000000",
           value: Uint8List.fromList([101, 254, 64, 12]),
-          convenienceName: "IR Temperature Config",
+          convenienceName: "IR Temperature Data",
           isNotifiable: true,
         );
-
-  void startEmittingValues() async {
-    do {
-      await Future.delayed(Duration(milliseconds: 500));
-      if (isNotifying) {
-        int t1 = Random().nextInt(200);
-        int t2 = Random().nextInt(200);
-        int t3 = Random().nextInt(200);
-        int t4 = Random().nextInt(200);
-        streamController.sink.add(Uint8List.fromList([t1, t2, t3, t4]));
-      }
-    } while (isNotifying);
-  }
-
-  void setNotifying(bool isNotifying) {
-    this.isNotifying = isNotifying;
-    if (isNotifying) {
-      startEmittingValues();
-    }
-  }
 }
 
 class TemperatureConfigCharacteristic extends SimulatedCharacteristic {
   TemperatureConfigCharacteristic()
       : super(
           uuid: "F000AA02-0451-4000-B000-000000000000",
-          value: Uint8List.fromList([101, 254, 64, 12]),
-          convenienceName: "IR Temperature Data",
+          value: Uint8List.fromList([0]),
+          convenienceName: "IR Temperature Config",
         );
 
   @override
@@ -101,6 +117,6 @@ class TemperatureConfigCharacteristic extends SimulatedCharacteristic {
               (characteristic) =>
                   characteristic is TemperatureDataCharacteristic,
             );
-    dataCharacteristic.setNotifying(value.first == 1);
+    dataCharacteristic.isEnabled = value.first == 1;
   }
 }
