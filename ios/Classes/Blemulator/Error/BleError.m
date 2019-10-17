@@ -13,7 +13,6 @@
         self.iosErrorCode = nil;
         self.deviceID = nil;
         self.serviceUUID = nil;
-        self.serviceUUID = nil;
         self.characteristicUUID = nil;
         self.descriptorUUID = nil;
         self.internalMessage = nil;
