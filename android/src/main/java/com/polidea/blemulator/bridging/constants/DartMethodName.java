@@ -21,5 +21,7 @@ public interface DartMethodName {
     String WRITE_CHARACTERISTIC_FOR_IDENTIFIER = "writeCharacteristicForIdentifier";
     String WRITE_CHARACTERISTIC_FOR_DEVICE = "writeCharacteristicForDevice";
     String WRITE_CHARACTERISTIC_FOR_SERVICE = "writeCharacteristicForService";
+
+    String RSSI = "rssi";
     String CANCEL_TRANSACTION = "cancelTransaction";
 }

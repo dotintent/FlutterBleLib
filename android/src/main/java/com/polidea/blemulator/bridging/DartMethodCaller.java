@@ -144,7 +144,7 @@ public class DartMethodCaller {
 
             @Override
             public void error(String s, @Nullable String s1, @Nullable Object o) {
-                Log.e(TAG, s);
+                Log.e(TAG, "connectToDevice error "+ s1);
                 onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(s1));
             }
 
@@ -457,6 +457,34 @@ public class DartMethodCaller {
                         Log.e(TAG, "writeCharacteristic not implemented");
                     }
                 });
+    }
+
+    public void readRSSIForDevice(final String deviceIdentifier,
+                                  final OnSuccessCallback<Device> onSuccessCallback,
+                                  final OnErrorCallback onErrorCallback) {
+        HashMap<String, Object> arguments = new HashMap<String, Object>();
+        arguments.put(SimulationArgumentName.DEVICE_ID, deviceIdentifier);
+        dartMethodChannel.invokeMethod(DartMethodName.RSSI, arguments, new MethodChannel.Result() {
+            @Override
+            public void success(@Nullable Object rssi) {
+                Log.d(TAG, "Fetch RSSI");
+                String placeholderName = "Simulated device"; // the name does not matter but API of MBA requires it
+                Device device = new Device(deviceIdentifier, placeholderName);
+                device.setRssi((int) rssi);
+                onSuccessCallback.onSuccess(device);
+            }
+
+            @Override
+            public void error(String s, @Nullable String s1, @Nullable Object o) {
+                Log.e(TAG, "Error during reading rssi of simulating peripheral: " + s1);
+                onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(s1));
+            }
+
+            @Override
+            public void notImplemented() {
+                Log.e(TAG, "readRSSIForDevice not implemented");
+            }
+        });
     }
 
     public void cancelTransaction(final String transactionId) {

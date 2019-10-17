@@ -11,6 +11,7 @@ class PlatformToDartBridge {
   }
 
   Future<dynamic> _handleCall(MethodCall call) async {
+    print("Observed method call on Flutter Simulator: ${call.method}");
     if (_isCallCancellable(call)) {
       return _handleCancelablePlatformCall(call);
     } else {
@@ -80,6 +81,8 @@ class PlatformToDartBridge {
         return _writeCharacteristicForService(call);
       case DartMethodName.writeCharacteristicForIdentifier:
         return _writeCharacteristicForIdentifier(call);
+      case DartMethodName.readRssi:
+        return _readRssiForDevice(call);
       case DartMethodName.cancelTransaction:
         return _cancelTransactionIfExists(
             call.arguments[SimulationArgumentName.transactionId]);
@@ -253,6 +256,10 @@ class PlatformToDartBridge {
         Metadata.isNotifying: characteristic.isNotifying,
         Metadata.isIndicatable: characteristic.isIndicatable,
       };
+
+  Future<int> _readRssiForDevice(MethodCall call) {
+    return _manager._readRssiForDevice(call.arguments[ArgumentName.id] as String);
+  }
 
   Future<void> _cancelTransactionIfExists(String transactionId) async {
     await pendingTransactions.remove(transactionId)?.cancel();

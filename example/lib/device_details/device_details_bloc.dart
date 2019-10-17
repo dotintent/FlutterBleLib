@@ -111,6 +111,30 @@ class DeviceDetailsBloc {
   }
 
 
+  void readCharacteristicForPeripheral() {
+    _clearLogs();
+    _deviceController.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+          .readCharacteristicForPeripheral();
+    });
+  }
+
+  void readCharacteristicForService() {
+    _clearLogs();
+    _deviceController.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+          .readCharacteristicForService();
+    });
+  }
+
+  void readCharacteristicDirectly() {
+    _clearLogs();
+    _deviceController.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+          .readCharacteristic();
+    });
+  }
+
   void writeCharacteristicForPeripheral() {
     _clearLogs();
     _deviceController.stream.listen((bleDevice) async {
@@ -119,11 +143,19 @@ class DeviceDetailsBloc {
     });
   }
 
-  void readCharacteristicForPeripheral() {
+  void writeCharacteristicForService() {
     _clearLogs();
     _deviceController.stream.listen((bleDevice) async {
       PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
-          .readCharacteristicForPeripheral();
+          .writeCharacteristicForService();
+    });
+  }
+
+  void writeCharacteristicDirectly() {
+    _clearLogs();
+    _deviceController.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+          .writeCharacteristic();
     });
   }
 
@@ -155,8 +187,9 @@ class DeviceDetailsBloc {
     _clearLogs();
     _deviceController.stream.listen((bleDevice) async {
       var peripheral = bleDevice.peripheral;
+
       peripheral
-          .observeConnectionState(emitCurrentValue: true)
+          .observeConnectionState(emitCurrentValue: true, completeOnDisconnect: true)
           .listen((connectionState) {
         log('Observed new connection state: $connectionState');
         _connectionStateController.add(connectionState);

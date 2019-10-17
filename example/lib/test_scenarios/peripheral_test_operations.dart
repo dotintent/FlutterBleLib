@@ -68,22 +68,87 @@ class PeripheralTestOperations {
   }
 
   Future<void> readCharacteristicForPeripheral() async {
-    log("Reading temperature");
+    log("Reading temperature config");
     CharacteristicWithValue readValue = await peripheral.readCharacteristic(
         SensorTagTemperatureUuids.temperatureService,
-        SensorTagTemperatureUuids.temperatureDataCharacteristic);
-    log("Read temperature value ${_convertToTemperature(readValue.value)}C");
+        SensorTagTemperatureUuids.temperatureConfigCharacteristic);
+    log("Temperature config value: ${readValue.value}");
+  }
+
+  Future<void> readCharacteristicForService() async {
+    log("Reading temperature config");
+    Service service = await peripheral.services().then((services) =>
+        services.firstWhere((service) =>
+            service.uuid ==
+            SensorTagTemperatureUuids.temperatureService.toLowerCase()));
+    CharacteristicWithValue readValue = await service.readCharacteristic(
+        SensorTagTemperatureUuids.temperatureConfigCharacteristic);
+    log("Temperature config value: ${readValue.value}");
+  }
+
+  Future<void> readCharacteristic() async {
+    log("Reading temperature config");
+    Service service = await peripheral.services().then((services) =>
+        services.firstWhere((service) =>
+            service.uuid ==
+            SensorTagTemperatureUuids.temperatureService.toLowerCase()));
+
+    List<Characteristic> characteristics = await service.characteristics();
+    Characteristic characteristic = characteristics.firstWhere(
+        (characteristic) =>
+            characteristic.uuid ==
+            SensorTagTemperatureUuids.temperatureConfigCharacteristic
+                .toLowerCase());
+
+    Uint8List readValue = await characteristic.read();
+    log("Temperature config value: $readValue");
   }
 
   Future<void> writeCharacteristicForPeripheral() async {
     log("Turning on temperature update via peripheral");
+    int valueToSave = Random().nextInt(2);
     await peripheral.writeCharacteristic(
         SensorTagTemperatureUuids.temperatureService,
         SensorTagTemperatureUuids.temperatureConfigCharacteristic,
-        Uint8List.fromList([1]),
+        Uint8List.fromList([valueToSave]),
         false);
 
-    log("Turned on temperature update");
+    log("Written \"$valueToSave\" to temperature config");
+  }
+
+  Future<void> writeCharacteristicForService() async {
+    log("Turning on temperature update via service");
+    int valueToSave = Random().nextInt(2);
+    Service service = await peripheral.services().then((services) =>
+        services.firstWhere((service) =>
+            service.uuid ==
+            SensorTagTemperatureUuids.temperatureService.toLowerCase()));
+
+    await service.writeCharacteristic(
+        SensorTagTemperatureUuids.temperatureConfigCharacteristic,
+        Uint8List.fromList([valueToSave]),
+        false);
+
+    log("Written \"$valueToSave\" to temperature config");
+  }
+
+  Future<void> writeCharacteristic() async {
+    log("Turning on temperature update via characteristic");
+    int valueToSave = Random().nextInt(2);
+
+    Service service = await peripheral.services().then((services) =>
+        services.firstWhere((service) =>
+            service.uuid ==
+            SensorTagTemperatureUuids.temperatureService.toLowerCase()));
+
+    List<Characteristic> characteristics = await service.characteristics();
+    Characteristic characteristic = characteristics.firstWhere(
+        (characteristic) =>
+            characteristic.uuid ==
+            SensorTagTemperatureUuids.temperatureConfigCharacteristic
+                .toLowerCase());
+    await characteristic.write(Uint8List.fromList([valueToSave]), false);
+    log("Written \"$valueToSave\" to temperature config");
   }
 
   Future<void> readWriteMonitorCharacteristicForPeripheral() async {
@@ -92,8 +157,8 @@ class PeripheralTestOperations {
     _startMonitoringTemperature(
       peripheral
           .monitorCharacteristic(SensorTagTemperatureUuids.temperatureService,
-              SensorTagTemperatureUuids.temperatureDataCharacteristic,
-              transactionId: "1")
+          SensorTagTemperatureUuids.temperatureDataCharacteristic,
+          transactionId: "1")
           .map((characteristic) => characteristic.value),
       log,
     );
@@ -137,15 +202,15 @@ class PeripheralTestOperations {
 
     Service service = await peripheral.services().then((services) =>
         services.firstWhere((service) =>
-            service.uuid ==
+        service.uuid ==
             SensorTagTemperatureUuids.temperatureService.toLowerCase()));
 
     log("Start monitoring temperature");
     _startMonitoringTemperature(
       service
           .monitorCharacteristic(
-              SensorTagTemperatureUuids.temperatureDataCharacteristic,
-              transactionId: "2")
+          SensorTagTemperatureUuids.temperatureDataCharacteristic,
+          transactionId: "2")
           .map((characteristic) => characteristic.value),
       log,
     );
@@ -163,8 +228,8 @@ class PeripheralTestOperations {
 
     log("Reading temperature value");
     CharacteristicWithValue dataCharacteristic =
-        await service.readCharacteristic(
-            SensorTagTemperatureUuids.temperatureDataCharacteristic);
+    await service.readCharacteristic(
+        SensorTagTemperatureUuids.temperatureDataCharacteristic);
     log("Read temperature value ${_convertToTemperature(dataCharacteristic.value)}C");
 
     log("Turning on temperature update");
@@ -192,20 +257,20 @@ class PeripheralTestOperations {
     try {
       Service service = await peripheral.services().then((services) =>
           services.firstWhere((service) =>
-              service.uuid ==
+          service.uuid ==
               SensorTagTemperatureUuids.temperatureService.toLowerCase()));
 
       log("Fetching config characteristic");
       List<Characteristic> characteristics = await service.characteristics();
       Characteristic configCharacteristic = characteristics.firstWhere(
-          (characteristic) =>
-              characteristic.uuid ==
+              (characteristic) =>
+          characteristic.uuid ==
               SensorTagTemperatureUuids.temperatureConfigCharacteristic
                   .toLowerCase());
       log("Fetching data characteristic");
       Characteristic dataCharacteristic = characteristics.firstWhere(
-          (characteristic) =>
-              characteristic.uuid ==
+              (characteristic) =>
+          characteristic.uuid ==
               SensorTagTemperatureUuids.temperatureDataCharacteristic
                   .toLowerCase());
 
@@ -261,7 +326,7 @@ class PeripheralTestOperations {
   Future<void> fetchKnownDevice() async {
     log("Fetch known devices with no IDs specified");
     List<Peripheral> peripherals =
-        await bleManager.knownDevices([peripheral.identifier]);
+      await bleManager.knownDevices([]);
     peripherals.forEach((peripheral) => log("\t${peripheral.toString()}"));
     log("Device fetched");
     log("Fetch known devices with one known device's ID specified");
@@ -278,7 +343,7 @@ class PeripheralTestOperations {
         .where((temperature) => temperature != 0)
         .take(1)
         .listen(
-      (temperature) {
+          (temperature) {
         log("Temperature updated: ${temperature}C");
       },
       onError: (error) {
