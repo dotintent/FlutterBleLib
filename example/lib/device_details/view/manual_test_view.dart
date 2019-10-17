@@ -76,6 +76,18 @@ class ManualTestView extends StatelessWidget {
     _deviceDetailsBloc.writeCharacteristicDirectly();
   }
 
+  void _monitorCharacteristicForPeripheral() {
+    _deviceDetailsBloc.monitorCharacteristicForPeripheral();
+  }
+
+  void _monitorCharacteristicForService() {
+    _deviceDetailsBloc.monitorCharacteristicForService();
+  }
+
+  void _monitorCharacteristicDirectly() {
+    _deviceDetailsBloc.monitorCharacteristicDirectly();
+  }
+
   void _disableBluetooth() {
     _deviceDetailsBloc.disableBluetooth();
   }
@@ -125,7 +137,7 @@ class ManualTestView extends StatelessWidget {
             children: <Widget>[
               ButtonView("Write via peripheral", action: _writeCharacteristicForPeripheral),
               ButtonView("Read via peripheral", action: _readCharacteristicForPeripheral),
-              ButtonView("Monitor via peripheral"),
+              ButtonView("Monitor via peripheral", action: _monitorCharacteristicForPeripheral),
             ],
           ),
         ),
@@ -135,7 +147,7 @@ class ManualTestView extends StatelessWidget {
             children: <Widget>[
               ButtonView("Write via service", action: _writeCharacteristicForService),
               ButtonView("Read via service", action: _readCharacteristicForService),
-              ButtonView("Monitor via service"),
+              ButtonView("Monitor via service", action: _monitorCharacteristicForService),
             ],
           ),
         ),
@@ -145,7 +157,7 @@ class ManualTestView extends StatelessWidget {
             children: <Widget>[
               ButtonView("Write directly", action: _writeCharacteristicDirectly),
               ButtonView("Read directly", action: _readCharacteristicDirectly),
-              ButtonView("Monitor directly"),
+              ButtonView("Monitor directly", action: _monitorCharacteristicDirectly),
             ],
           ),
         ),
