@@ -11,19 +11,11 @@
     NSMutableDictionary<NSString *, NSArray<Characteristic *> *> *characteristics = [[NSMutableDictionary alloc] init];
 
     for (NSDictionary *serviceDictionary in resultArray) {
-        Service *service = [[Service alloc] initWithObjectId:[[serviceDictionary objectForKey:DART_RESULT_SERVICE_ID] integerValue]
-                                                        uuid:[CBUUID UUIDWithString:[serviceDictionary objectForKey:DART_RESULT_SERVICE_UUID]]
-                                                  peripheral:peripheral
-                                                   isPrimary:true];
+        Service *service = [self serviceFromDictionary:serviceDictionary peripheral:peripheral];
 
         NSMutableArray *characteristicsArray = [[NSMutableArray alloc] init];
         for (NSDictionary *characteristicDictionary in [serviceDictionary objectForKey:DART_RESULT_CHARACTERISTICS]) {
-            Characteristic *characteristic = [[Characteristic alloc] initWithObjectId:[[characteristicDictionary objectForKey:DART_RESULT_CHARACTERISTIC_ID] integerValue]
-                                                                                 uuid:[CBUUID UUIDWithString:[characteristicDictionary objectForKey:DART_RESULT_CHARACTERISTIC_UUID]]
-                                                                                value:[characteristicDictionary objectForKey:DART_RESULT_VALUE]
-                                                                              service:service
-                                                                          isNotifying:[[characteristicDictionary objectForKey:DART_RESULT_IS_NOTIFYING] boolValue]
-                                                                           properties:[self calculatePropertiesFor:characteristicDictionary]];
+            Characteristic *characteristic = [self characteristicFromDictionary:characteristicDictionary service:service];
             [characteristicsArray addObject:characteristic];
         }
 
@@ -35,6 +27,37 @@
                                                   name:peripheral.name
                                               services:services
                                        characteristics:characteristics];
+}
+
++ (Characteristic *)characteristicFromDartResult:(id)result {
+    NSDictionary *resultDictionary = (NSDictionary *)result;
+    return [self characteristicFromDictionary:resultDictionary
+                                      service:[self serviceFromDictionary:resultDictionary
+                                                               peripheral:[self peripheralFromDictionary:resultDictionary]]];
+}
+
++ (Peripheral *)peripheralFromDictionary:(NSDictionary *)dictionary {
+    return [[Peripheral alloc] initWithIdentifier:[dictionary objectForKey:DART_RESULT_DEVICE_IDENTIFIER]
+                                             name:nil
+                                              mtu:23];
+}
+
++ (Service *)serviceFromDictionary:(NSDictionary *)dictionary peripheral:(Peripheral *)peripheral {
+    return [[Service alloc] initWithObjectId:[[dictionary objectForKey:DART_RESULT_SERVICE_ID] integerValue]
+                                        uuid:[CBUUID UUIDWithString:[dictionary objectForKey:DART_RESULT_SERVICE_UUID]]
+                                  peripheral:peripheral
+                                   isPrimary:true];
+}
+
++ (Characteristic *)characteristicFromDictionary:(NSDictionary *)dictionary service:(Service *)service {
+    id value = [dictionary objectForKey:DART_RESULT_VALUE] != [NSNull null] ?
+                (NSData *)[dictionary objectForKey:DART_RESULT_VALUE] : nil;
+    return [[Characteristic alloc] initWithObjectId:[[dictionary objectForKey:DART_RESULT_CHARACTERISTIC_ID] integerValue]
+                                               uuid:[CBUUID UUIDWithString:[dictionary objectForKey:DART_RESULT_CHARACTERISTIC_UUID]]
+                                              value:value
+                                            service:service
+                                        isNotifying:[[dictionary objectForKey:DART_RESULT_IS_NOTIFYING] boolValue]
+                                         properties:[self calculatePropertiesFor:dictionary]];
 }
 
 + (CBCharacteristicProperties)calculatePropertiesFor:(NSDictionary *)characteristicDictionary {

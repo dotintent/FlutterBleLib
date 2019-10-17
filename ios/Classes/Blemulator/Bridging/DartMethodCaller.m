@@ -120,6 +120,25 @@ typedef void (^SuccessHandler)(id _Nullable result);
                                                                           onError:reject]];
 }
 
+// MARK: - Characteristics observation
+
+- (void)readCharacteristic:(int)characteristicIdentifier
+                   resolve:(Resolve)resolve
+                    reject:(Reject)reject {
+    NSDictionary<NSString *,id> *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
+                                              [NSNumber numberWithInt:characteristicIdentifier], DART_CALL_ARGUMENT_CHARACTERISTIC_IDENTIFIER,
+                                              nil];
+    SuccessHandler successHandler = ^(id result) {
+        resolve([[DartResultConverter characteristicFromDartResult:result] jsonObjectRepresentation]);
+    };
+    NSLog(@"characteristicIdentifier: %@", [NSNumber numberWithInt:characteristicIdentifier]);
+    [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_READ_CHARACTERISTIC_FOR_IDENTIFIER
+                               arguments:arguments
+                                  result:[self invokeMethodResultHandlerForMethod:DART_METHOD_NAME_READ_CHARACTERISTIC_FOR_IDENTIFIER
+                                                                        onSuccess:successHandler
+                                                                          onError:reject]];
+}
+
 // MARK: - Utility methods
 
 - (InvokeMethodResultHandler)simpleInvokeMethodResultHandlerForMethod:(NSString *)methodName {

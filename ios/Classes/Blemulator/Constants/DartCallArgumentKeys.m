@@ -14,3 +14,5 @@ NSString * const DART_CALL_ARGUMENT_SOLICITED_SERVICE_UUIDS = @"solicitedService
 NSString * const DART_CALL_ARGUMENT_TX_POWER_LEVEL = @"txPowerLevel";
 
 NSString * const DART_CALL_CONNECTION_STATE = @"connectionState";
+
+NSString * const DART_CALL_ARGUMENT_CHARACTERISTIC_IDENTIFIER = @"characteristicIdentifier";

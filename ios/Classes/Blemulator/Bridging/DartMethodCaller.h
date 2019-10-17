@@ -40,4 +40,10 @@
                                       resolve:(Resolve)resolve
                                        reject:(Reject)reject;
 
+// MARK: - Characteristics observation
+
+- (void)readCharacteristic:(int)characteristicIdentifier
+                   resolve:(Resolve)resolve
+                    reject:(Reject)reject;
+
 @end

@@ -251,6 +251,9 @@
                    resolve:(Resolve)resolve
                     reject:(Reject)reject {
     NSLog(@"SimulatedAdapter.readCharacteristic");
+    [self.dartMethodCaller readCharacteristic:characteristicIdentifier
+                                      resolve:resolve
+                                       reject:reject];
 }
 
 - (void)writeCharacteristicForDevice:(NSString * _Nonnull)deviceIdentifier
