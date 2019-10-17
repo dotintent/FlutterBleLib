@@ -1,6 +1,6 @@
 part of internal;
 
-mixin CharacteristicsMixin on SimulationManagerBase {
+mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
   Map<String, StreamSubscription> _monitoringSubscriptions = HashMap();
 
   SimulatedCharacteristic getCharacteristic(int characteristicIdentifier) {
@@ -24,7 +24,8 @@ mixin CharacteristicsMixin on SimulationManagerBase {
     SimulatedCharacteristic targetCharacteristic =
         getCharacteristic(characteristicIdentifier);
 
-    _throwErrorIfNull(targetCharacteristic, characteristicIdentifier.toString());
+    await _errorIfCharacteristicIsNull(
+        targetCharacteristic, characteristicIdentifier.toString());
     Uint8List value = await targetCharacteristic.read();
     return CharacteristicResponse(targetCharacteristic, value);
   }
@@ -40,7 +41,7 @@ mixin CharacteristicsMixin on SimulationManagerBase {
     SimulatedCharacteristic targetCharacteristic = targetPeripheral
         .getCharacteristicForService(serviceUuid, characteristicUUID);
 
-    _throwErrorIfNull(targetCharacteristic, characteristicUUID);
+    await _errorIfCharacteristicIsNull(targetCharacteristic, characteristicUUID);
     Uint8List value = await targetCharacteristic.read();
     return CharacteristicResponse(targetCharacteristic, value);
   }
@@ -64,7 +65,7 @@ mixin CharacteristicsMixin on SimulationManagerBase {
       }
     }
 
-    _throwErrorIfNull(targetCharacteristic, characteristicUUID);
+    await _errorIfCharacteristicIsNull(targetCharacteristic, characteristicUUID);
     Uint8List value = await targetCharacteristic.read();
     return CharacteristicResponse(targetCharacteristic, value);
   }
@@ -76,8 +77,9 @@ mixin CharacteristicsMixin on SimulationManagerBase {
     SimulatedCharacteristic targetCharacteristic =
         getCharacteristic(characteristicIdentifier);
 
-    _throwErrorIfNull(targetCharacteristic, characteristicIdentifier.toString());
-    _throwErrorIfNotWritable(targetCharacteristic);
+    await _errorIfCharacteristicIsNull(
+        targetCharacteristic, characteristicIdentifier.toString());
+    await _errorIfNotWritable(targetCharacteristic);
     await targetCharacteristic.write(value);
     return targetCharacteristic;
   }
@@ -94,8 +96,8 @@ mixin CharacteristicsMixin on SimulationManagerBase {
     SimulatedCharacteristic targetCharacteristic = targetPeripheral
         .getCharacteristicForService(serviceUuid, characteristicUUID);
 
-    _throwErrorIfNull(targetCharacteristic, characteristicUUID);
-    _throwErrorIfNotWritable(targetCharacteristic);
+    await _errorIfCharacteristicIsNull(targetCharacteristic, characteristicUUID);
+    await _errorIfNotWritable(targetCharacteristic);
     await targetCharacteristic.write(value);
     return targetCharacteristic;
   }
@@ -120,33 +122,12 @@ mixin CharacteristicsMixin on SimulationManagerBase {
       }
     }
 
-    _throwErrorIfNull(targetCharacteristic, characteristicUUID);
-    _throwErrorIfNotWritable(targetCharacteristic);
+    await _errorIfCharacteristicIsNull(targetCharacteristic, characteristicUUID);
+    await  _errorIfNotWritable(targetCharacteristic);
     await targetCharacteristic.write(value);
     return targetCharacteristic;
   }
 
-  _throwErrorIfNotWritable(SimulatedCharacteristic characteristic) {
-    if (!characteristic.isWritableWithResponse ||
-        !characteristic.isWritableWithoutResponse) {
-      throw Future.error(SimulatedBleError(
-        BleErrorCode.CharacteristicWriteFailed,
-        "Characteristic ${characteristic.uuid} is not writeable",
-      ));
-    }
-  }
-
-  _throwErrorIfNull(
-    SimulatedCharacteristic characteristic,
-    String characteristicId,
-  ) {
-    if (characteristic == null) {
-      throw Future.error(SimulatedBleError(
-        BleErrorCode.CharacteristicNotFound,
-        "Characteristic $characteristicId not found",
-      ));
-    }
-  }
   Future<void> _monitorCharacteristicForIdentifier(
     int characteristicIdentifier,
     String transactionId,
@@ -154,9 +135,10 @@ mixin CharacteristicsMixin on SimulationManagerBase {
     SimulatedCharacteristic targetCharacteristic =
         getCharacteristic(characteristicIdentifier);
 
-    if (targetCharacteristic == null)
-      return Future.error("Characteristic not found");
-
+    await _errorIfCharacteristicIsNull(
+        targetCharacteristic, characteristicIdentifier.toString());
+    await _errorIfNotConnected(targetCharacteristic.service.peripheralId);
+    await _errorIfNotMonitorable(targetCharacteristic);
     _monitoringSubscriptions.putIfAbsent(
       transactionId,
       () => targetCharacteristic.monitor().listen((value) {
@@ -171,15 +153,16 @@ mixin CharacteristicsMixin on SimulationManagerBase {
     String characteristicUUID,
     String transactionId,
   ) async {
+    await _errorIfUnknown(peripheralId);
+    await _errorIfNotConnected(peripheralId);
     SimulatedPeripheral targetPeripheral = _peripherals.values
         .firstWhere((peripheral) => peripheral.id == peripheralId);
 
     SimulatedCharacteristic targetCharacteristic = targetPeripheral
         .getCharacteristicForService(serviceUuid, characteristicUUID);
 
-    if (targetCharacteristic == null)
-      return Future.error("Characteristic not found");
-
+    await _errorIfCharacteristicIsNull(targetCharacteristic, characteristicUUID);
+    await _errorIfNotMonitorable(targetCharacteristic);
     _monitoringSubscriptions.putIfAbsent(
       transactionId,
       () => targetCharacteristic.monitor().listen((value) {
@@ -208,9 +191,9 @@ mixin CharacteristicsMixin on SimulationManagerBase {
       }
     }
 
-    if (targetCharacteristic == null)
-      return Future.error("Characteristic not found");
-
+    await _errorIfCharacteristicIsNull(targetCharacteristic, characteristicUUID);
+    await _errorIfNotConnected(targetCharacteristic.service.peripheralId);
+    await _errorIfNotMonitorable(targetCharacteristic);
     _monitoringSubscriptions.putIfAbsent(
       transactionId,
       () => targetCharacteristic.monitor().listen((value) {
@@ -219,7 +202,39 @@ mixin CharacteristicsMixin on SimulationManagerBase {
     );
   }
 
-  Future<void> _cancelMonitoringTransactionIfExists(String transactionId) async {
+  Future<void> _errorIfNotWritable(SimulatedCharacteristic characteristic) async {
+    if (!characteristic.isWritableWithResponse ||
+        !characteristic.isWritableWithoutResponse) {
+      return Future.error(SimulatedBleError(
+        BleErrorCode.CharacteristicWriteFailed,
+        "Characteristic ${characteristic.uuid} is not writeable",
+      ));
+    }
+  }
+
+  Future<void> _errorIfNotMonitorable(SimulatedCharacteristic characteristic) async {
+    if (!characteristic.isNotifiable && !characteristic.isIndicatable) {
+      return Future.error(SimulatedBleError(
+        BleErrorCode.CharacteristicNotifyChangeFailed,
+        "Characteristic ${characteristic.uuid} is not monitorable",
+      ));
+    }
+  }
+
+  Future<void> _errorIfCharacteristicIsNull(
+    SimulatedCharacteristic characteristic,
+    String characteristicId,
+  ) async {
+    if (characteristic == null) {
+      return Future.error(SimulatedBleError(
+        BleErrorCode.CharacteristicNotFound,
+        "Characteristic $characteristicId not found",
+      ));
+    }
+  }
+
+  Future<void> _cancelMonitoringTransactionIfExists(
+      String transactionId) async {
     await _monitoringSubscriptions.remove(transactionId)?.cancel();
   }
 }
