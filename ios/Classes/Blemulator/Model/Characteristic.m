@@ -24,9 +24,9 @@
 - (NSDictionary<NSString *,id> *)jsonObjectRepresentation {
     return [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithInt:_objectId], CHARACTERISTIC_RESPONSE_ID,
-            [_uuid UUIDString], CHARACTERISTIC_RESPONSE_UUID,
+            [_uuid UUIDString].lowercaseString, CHARACTERISTIC_RESPONSE_UUID,
             [NSNumber numberWithInt:_service.objectId], CHARACTERISTIC_RESPONSE_SERVICE_ID,
-            [_service.uuid UUIDString], CHARACTERISTIC_RESPONSE_SERVICE_UUID,
+            [_service.uuid UUIDString].lowercaseString, CHARACTERISTIC_RESPONSE_SERVICE_UUID,
             _service.peripheral.identifier, CHARACTERISTIC_RESPONSE_DEVICE_ID,
             [NSNumber numberWithBool:_properties & CBCharacteristicPropertyRead], CHARACTERISTIC_RESPONSE_IS_READABLE,
             [NSNumber numberWithBool:_properties & CBCharacteristicPropertyWrite], CHARACTERISTIC_RESPONSE_IS_WRITABLE_WITH_RESPONSE,

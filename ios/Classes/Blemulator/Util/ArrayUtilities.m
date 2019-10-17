@@ -5,7 +5,7 @@
 + (NSArray<NSString *> *)stringArrayFromCBUUIDArray:(NSArray<CBUUID *> *)cbuuidArray {
     NSMutableArray<NSString *> *stringArray = [[NSMutableArray alloc] init];
     for (CBUUID * cbuuid in cbuuidArray) {
-        [stringArray addObject:[cbuuid UUIDString]];
+        [stringArray addObject:[cbuuid UUIDString].lowercaseString];
     }
     return stringArray;
 }
