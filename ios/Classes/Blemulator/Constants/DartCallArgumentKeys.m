@@ -1,3 +1,5 @@
+NSString * const DART_CALL_ARGUMENT_DEVICE_ID = @"id";
+
 NSString * const DART_CALL_ARGUMENT_PERIPHERAL_ID = @"id";
 NSString * const DART_CALL_ARGUMENT_IS_CONNECTABLE = @"isConnectable";
 NSString * const DART_CALL_ARGUMENT_LOCAL_NAME = @"localName";

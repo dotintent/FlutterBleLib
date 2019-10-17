@@ -2,7 +2,7 @@
 
 @implementation Service
 
-- (instancetype)initWithObjectId:(uint)objectId
+- (instancetype)initWithObjectId:(int)objectId
                             uuid:(CBUUID *)uuid
                       peripheral:(Peripheral *)peripheral
                        isPrimary:(BOOL)isPrimary {
@@ -18,7 +18,8 @@
 
 - (NSDictionary<NSString *,id> *)jsonObjectRepresentation {
     return [NSDictionary dictionaryWithObjectsAndKeys:
-            @"", @"",
+            [NSNumber numberWithInt:_objectId], @"id",
+            [_uuid UUIDString].lowercaseString, @"uuid",
             nil];
 }
 

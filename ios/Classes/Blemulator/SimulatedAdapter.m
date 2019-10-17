@@ -2,6 +2,7 @@
 #import <flutter_ble_lib-Swift.h>
 #import "CommonTypes.h"
 #import "DeviceContainer.h"
+#import "BleError.h"
 
 @interface SimulatedAdapter () <BleAdapter>
 
@@ -37,10 +38,10 @@
     NSString *deviceId = connectionStateEvent.deviceId;
     NSString *connectionState = connectionStateEvent.connectionState;
     if ([connectionState isEqualToString:@"CONNECTING"]) {
-        [self.knownPeripherals objectForKey:deviceId].isConnected = true;
+        [self.knownPeripherals objectForKey:deviceId].isConnected = false;
         [self.delegate dispatchEvent:BleEvent.connectingEvent value:deviceId];
     } else if ([connectionState isEqualToString:@"CONNECTED"]) {
-        [self.knownPeripherals objectForKey:deviceId].isConnected = false;
+        [self.knownPeripherals objectForKey:deviceId].isConnected = true;
         [self.delegate dispatchEvent:BleEvent.connectedEvent value:deviceId];
     } else if ([connectionState isEqualToString:@"DISCONNECTED"]) {
         [self.knownPeripherals objectForKey:deviceId].isConnected = false;
@@ -54,6 +55,7 @@
 
 - (instancetype)initWithDartMethodCaller:(DartMethodCaller *)dartMethodCaller
                         dartValueHandler:(DartValueHandler *)dartValueHandler {
+    NSLog(@"SimulatedAdapter.createClient");
     self = [super init];
     if (self) {
         self.dartMethodCaller = dartMethodCaller;
@@ -61,7 +63,6 @@
         self.knownPeripherals = [[NSMutableDictionary alloc] init];
 
         [self.dartMethodCaller createClient];
-        NSLog(@"SimulatedAdapter.createClient");
     }
     return self;
 }
@@ -81,15 +82,15 @@
 
 - (void)startDeviceScan:(NSArray<NSString *> * _Nullable)filteredUUIDs
                 options:(NSDictionary<NSString *,id> * _Nullable)options {
+    NSLog(@"SimulatedAdapter.startDeviceScan");
     self.dartValueHandler.scanEventDelegate = self;
     [self.dartMethodCaller startDeviceScan];
-    NSLog(@"SimulatedAdapter.startDeviceScan");
 }
 
 - (void)stopDeviceScan {
+    NSLog(@"SimulatedAdapter.stopDeviceScan");
     [self.dartMethodCaller stopDeviceScan];
     self.dartValueHandler.scanEventDelegate = nil;
-    NSLog(@"SimulatedAdapter.stopDeviceScan");
 }
 
 // MARK: - Adapter Methods -  BT state monitoring
@@ -117,32 +118,32 @@
                 options:(NSDictionary<NSString *,id> * _Nullable)options
                 resolve:(Resolve)resolve
                  reject:(Reject)reject {
+    NSLog(@"SimulatedAdapter.connectToDevice");
     self.dartValueHandler.connectionEventDelegate = self;
     [self.dartMethodCaller connectToDevice:deviceIdentifier
                                       name:[self.knownPeripherals objectForKey:deviceIdentifier].name
                                    options:options
                                    resolve:resolve
                                     reject:reject];
-    NSLog(@"SimulatedAdapter.connectToDevice");
 }
 
 - (void)cancelDeviceConnection:(NSString * _Nonnull)deviceIdentifier
                        resolve:(Resolve)resolve
                         reject:(Reject)reject {
+    NSLog(@"SimulatedAdapter.cancelDeviceConnection");
     [self.dartMethodCaller cancelDeviceConnection:deviceIdentifier
                                              name:[self.knownPeripherals objectForKey:deviceIdentifier].name
                                           resolve:resolve
                                            reject:reject];
-    NSLog(@"SimulatedAdapter.cancelDeviceConnection");
 }
 
 - (void)isDeviceConnected:(NSString * _Nonnull)deviceIdentifier
                   resolve:(NS_NOESCAPE Resolve)resolve
                    reject:(NS_NOESCAPE Reject)reject {
+    NSLog(@"SimulatedAdapter.isDeviceConnected");
     [self.dartMethodCaller isDeviceConnected:deviceIdentifier
                                      resolve:resolve
                                       reject:reject];
-    NSLog(@"SimulatedAdapter.isDeviceConnected");
 }
 
 - (void)requestConnectionPriorityForDevice:(NSString * _Nonnull)deviceIdentifier
@@ -170,6 +171,13 @@
                   resolve:(NS_NOESCAPE Resolve)resolve
                    reject:(NS_NOESCAPE Reject)reject {
     NSLog(@"SimulatedAdapter.servicesForDevice");
+    DeviceContainer *deviceContainer = [self.knownPeripherals objectForKey:deviceIdentifier];
+    if (!deviceContainer.isConnected) {
+        BleError *bleError = [[BleError alloc] initWithErrorCode:BleErrorCodeDeviceNotConnected
+                                                          reason:@"Device not connected"];
+        [bleError callReject:reject];
+    }
+    resolve([deviceContainer servicesJsonRepresentation]);
 }
 
 - (void)discoverAllServicesAndCharacteristicsForDevice:(NSString * _Nonnull)deviceIdentifier
@@ -177,6 +185,21 @@
                                                resolve:(Resolve)resolve
                                                 reject:(Reject)reject {
     NSLog(@"SimulatedAdapter.discoverAllServicesAndCharacteristicsForDevice");
+    Resolve callbackResolve = ^(DeviceContainer *container) {
+        DeviceContainer *oldContainer = [self.knownPeripherals objectForKey:container.identifier];
+        if (oldContainer != nil) {
+            container.isConnected = oldContainer.isConnected;
+        }
+        [self.knownPeripherals setObject:container forKey:container.identifier];
+        resolve([[[Peripheral alloc] initWithIdentifier:container.identifier
+                                                   name:container.name
+                                                    mtu:23] jsonObjectRepresentation]);
+    };
+    [self.dartMethodCaller discoverAllServicesAndCharacteristics:deviceIdentifier
+                                                            name:[self.knownPeripherals objectForKey:deviceIdentifier].name
+                                                   transactionId:transactionId
+                                                         resolve:callbackResolve
+                                                          reject:reject];
 }
 
 // UNUSED
@@ -191,6 +214,17 @@
                           resolve:(NS_NOESCAPE Resolve)resolve
                            reject:(NS_NOESCAPE Reject)reject {
     NSLog(@"SimulatedAdapter.characteristicsForService");
+    for (DeviceContainer *container in [self.knownPeripherals allValues]) {
+        for (Service *service in container.services) {
+            if (service.objectId == serviceIdentifier) {
+                resolve([container characteristicsJsonRepresentationForService:[service.uuid UUIDString]]);
+                return;
+            }
+        }
+    }
+    BleError *bleError = [[BleError alloc] initWithErrorCode:BleErrorCodeServiceNotFound
+                                                      reason:[NSString stringWithFormat:@"Service with id %.0f not found", serviceIdentifier]];
+    [bleError callReject:reject];
 }
 
 // MARK: - Adapter Methods - Characteristics observation
@@ -310,5 +344,3 @@
 }
 
 @end
-
-
