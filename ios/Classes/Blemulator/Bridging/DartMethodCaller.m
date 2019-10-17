@@ -3,10 +3,10 @@
 #import "DartCallArgumentKeys.h"
 #import "Peripheral.h"
 #import "DartResultConverter.h"
+#import "BleError.h"
 
 typedef void (^InvokeMethodResultHandler)(id _Nullable result);
 typedef void (^SuccessHandler)(id _Nullable result);
-typedef void (^ErrorHandler)(id error);
 
 @interface DartMethodCaller ()
 
@@ -63,15 +63,11 @@ typedef void (^ErrorHandler)(id error);
                                                    name:name
                                                     mtu:23] jsonObjectRepresentation]);
     };
-    ErrorHandler errorHandler = ^(id error) {
-        // TODO: - Send error here
-        // reject();
-    };
     [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_CONNECT_TO_DEVICE
                                arguments:arguments
                                   result:[self invokeMethodResultHandlerForMethod:DART_METHOD_NAME_CONNECT_TO_DEVICE
-                                                                          onSuccess:successHandler
-                                                                           onError:errorHandler]];
+                                                                        onSuccess:successHandler
+                                                                          onError:reject]];
 }
 
 - (void)cancelDeviceConnection:(NSString *)deviceIdentifier
@@ -81,15 +77,11 @@ typedef void (^ErrorHandler)(id error);
     NSDictionary<NSString *,id> *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
                                               deviceIdentifier, DART_CALL_ARGUMENT_DEVICE_ID,
                                               nil];
-    ErrorHandler errorHandler = ^(id error) {
-        // TODO: - Send error here
-        // reject();
-    };
     [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_DISCONNECT_OR_CANCEL_CONNECTION
                                arguments:arguments
                                   result:[self invokeMethodResultHandlerForMethod:DART_METHOD_NAME_DISCONNECT_OR_CANCEL_CONNECTION
                                                                         onSuccess:resolve
-                                                                          onError:errorHandler]];
+                                                                          onError:reject]];
 }
 
 - (void)isDeviceConnected:(NSString *)deviceIdentifier
@@ -98,15 +90,11 @@ typedef void (^ErrorHandler)(id error);
     NSDictionary<NSString *,id> *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
                                               deviceIdentifier, DART_CALL_ARGUMENT_DEVICE_ID,
                                               nil];
-    ErrorHandler errorHandler = ^(id error) {
-        // TODO: - Send error here
-        // reject();
-    };
     [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_IS_DEVICE_CONNECTED
                                arguments:arguments
                                   result:[self invokeMethodResultHandlerForMethod:DART_METHOD_NAME_IS_DEVICE_CONNECTED
                                                                         onSuccess:resolve
-                                                                          onError:errorHandler]];
+                                                                          onError:reject]];
 }
 
 // MARK: - Discovery
@@ -125,25 +113,21 @@ typedef void (^ErrorHandler)(id error);
                                                                                                      name:name
                                                                                                       mtu:23]]);
     };
-    ErrorHandler errorHandler = ^(id error) {
-        // TODO: - Send error here
-        // reject();
-    };
     [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_DISCOVER_ALL_SERVICES_AND_CHARACTERISTICS
                                arguments:arguments
                                   result:[self invokeMethodResultHandlerForMethod:DART_METHOD_NAME_DISCOVER_ALL_SERVICES_AND_CHARACTERISTICS
                                                                         onSuccess:successHandler
-                                                                          onError:errorHandler]];
+                                                                          onError:reject]];
 }
 
 // MARK: - Utility methods
 
 - (InvokeMethodResultHandler)simpleInvokeMethodResultHandlerForMethod:(NSString *)methodName {
     return ^(id _Nullable result) {
-        if ([result class] == [FlutterError class]) {
+        if (result == FlutterMethodNotImplemented) {
+            NSLog(@"%@%@%@", @"DartMethodCaller.", methodName, @": FlutterMethodNotImplemented");
+        } else if ([result class] == [FlutterError class]) {
             NSLog(@"%@%@%@%@", @"DartMethodCaller.", methodName, @": FlutterError: ", [(FlutterError *)result message]);
-        } else if ([result class] == [NSError class]) {
-            NSLog(@"%@%@%@%@", @"DartMethodCaller.", methodName, @": error: ", (NSError *)result);
         } else {
             NSLog(@"%@%@%@%@", @"DartMethodCaller.", methodName, @": success: ", result);
         }
@@ -152,17 +136,17 @@ typedef void (^ErrorHandler)(id error);
 
 - (InvokeMethodResultHandler)invokeMethodResultHandlerForMethod:(NSString *)methodName
                                                         onSuccess:(SuccessHandler)successHandler
-                                                         onError:(ErrorHandler)errorHandler {
+                                                         onError:(Reject)reject {
     return ^(id _Nullable result) {
-        if ([result class] == [FlutterError class]) {
-            NSLog(@"%@%@%@%@", @"DartMethodCaller.", methodName, @": FlutterError: ", [(FlutterError *)result message]);
-            errorHandler((FlutterError *)result);
-        } else if ([result class] == [NSError class]) {
-            NSLog(@"%@%@%@%@", @"DartMethodCaller.", methodName, @": error: ", (NSError *)result);
-            errorHandler((NSError *)result);
+        if (result == FlutterMethodNotImplemented) {
+            NSLog(@"%@%@%@", @"DartMethodCaller.", methodName, @": FlutterMethodNotImplemented");
+        } else if ([result class] == [FlutterError class]) {
+            FlutterError *error = (FlutterError *)result;
+            [BleError callReject:reject withErrorCode:[error.code intValue] reason:error.message];
+            NSLog(@"%@%@%@%@", @"DartMethodCaller.", methodName, @": FlutterError: ", error.message);
         } else {
-            NSLog(@"%@%@%@%@", @"DartMethodCaller.", methodName, @": success: ", result);
             successHandler(result);
+            NSLog(@"%@%@%@%@", @"DartMethodCaller.", methodName, @": success: ", result);
         }
     };
 }
