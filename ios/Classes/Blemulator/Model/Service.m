@@ -19,7 +19,7 @@
 - (NSDictionary<NSString *,id> *)jsonObjectRepresentation {
     return [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithInt:_objectId], @"id",
-            [_uuid UUIDString], @"uuid",
+            [_uuid UUIDString].lowercaseString, @"uuid",
             nil];
 }
 
