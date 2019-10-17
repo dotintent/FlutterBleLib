@@ -38,8 +38,7 @@
 
 + (Peripheral *)peripheralFromDictionary:(NSDictionary *)dictionary {
     return [[Peripheral alloc] initWithIdentifier:[dictionary objectForKey:DART_RESULT_DEVICE_IDENTIFIER]
-                                             name:nil
-                                              mtu:23];
+                                             name:nil];
 }
 
 + (Service *)serviceFromDictionary:(NSDictionary *)dictionary peripheral:(Peripheral *)peripheral {

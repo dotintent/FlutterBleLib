@@ -192,8 +192,7 @@
         }
         [self.knownPeripherals setObject:container forKey:container.identifier];
         resolve([[[Peripheral alloc] initWithIdentifier:container.identifier
-                                                   name:container.name
-                                                    mtu:23] jsonObjectRepresentation]);
+                                                   name:container.name] jsonObjectRepresentation]);
     };
     [self.dartMethodCaller discoverAllServicesAndCharacteristics:deviceIdentifier
                                                             name:[self.knownPeripherals objectForKey:deviceIdentifier].name

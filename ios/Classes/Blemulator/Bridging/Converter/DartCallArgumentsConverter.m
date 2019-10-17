@@ -6,8 +6,7 @@
 
 + (ScannedPeripheral *)scannedPeripheralFromCallArguments:(NSDictionary<NSString *,id> *)callArguments {
     Peripheral *peripheral = [[Peripheral alloc] initWithIdentifier:[callArguments objectForKey:DART_CALL_ARGUMENT_PERIPHERAL_ID]
-                                                               name:[callArguments objectForKey:DART_CALL_ARGUMENT_NAME]
-                                                                mtu:(NSInteger)[callArguments objectForKey:DART_CALL_ARGUMENT_MTU]];
+                                                               name:[callArguments objectForKey:DART_CALL_ARGUMENT_NAME]];
 
     id serviceUUIDs = [NSNull null];
     id solicitedServiceUUIDs = [NSNull null];

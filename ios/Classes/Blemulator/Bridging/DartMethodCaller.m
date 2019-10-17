@@ -60,8 +60,7 @@ typedef void (^SuccessHandler)(id _Nullable result);
                                                nil];
     SuccessHandler successHandler = ^(id _Nullable result) {
         resolve([[[Peripheral alloc] initWithIdentifier:deviceIdentifier
-                                                   name:name
-                                                    mtu:23] jsonObjectRepresentation]);
+                                                   name:name] jsonObjectRepresentation]);
     };
     [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_CONNECT_TO_DEVICE
                                arguments:arguments
@@ -110,8 +109,7 @@ typedef void (^SuccessHandler)(id _Nullable result);
     SuccessHandler successHandler = ^(id result) {
         resolve([DartResultConverter deviceContainerFromDartResult:result
                                                         peripheral:[[Peripheral alloc] initWithIdentifier:deviceIdentifier
-                                                                                                     name:name
-                                                                                                      mtu:23]]);
+                                                                                                     name:name]]);
     };
     [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_DISCOVER_ALL_SERVICES_AND_CHARACTERISTICS
                                arguments:arguments
