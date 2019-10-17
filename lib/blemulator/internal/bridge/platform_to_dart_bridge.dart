@@ -11,24 +11,24 @@ class PlatformToDartBridge {
   }
 
   Future<dynamic> _handleCall(MethodCall call) async {
-    if (call.method != DartMethodName.cancelTransaction &&
-        call.arguments.containsKey(SimulationArgumentName.transactionId)) {
-      String transactionId =
-          call.arguments[SimulationArgumentName.transactionId];
-      _cancelTransactionIfExists(transactionId);
-      return _createAndSaveCancelablePlatformCall(
-          _dispatchPlatformCall(call), transactionId);
+    if (_isCallCancellable(call)) {
+      return _handleCancelablePlatformCall(call);
     } else {
       return _dispatchPlatformCall(call);
     }
   }
 
-  Future<dynamic> _createAndSaveCancelablePlatformCall(
-    Future<dynamic> platformCallResult,
-    String transactionId,
-  ) {
-    CancelableOperation operation =
-        CancelableOperation.fromFuture(platformCallResult, onCancel: () async {
+  bool _isCallCancellable(MethodCall call) =>
+      call.method != DartMethodName.cancelTransaction &&
+      call.arguments.containsKey(SimulationArgumentName.transactionId);
+
+  Future<dynamic> _handleCancelablePlatformCall(MethodCall call) {
+    String transactionId = call.arguments[SimulationArgumentName.transactionId];
+
+    _cancelTransactionIfExists(transactionId);
+
+    CancelableOperation operation = CancelableOperation.fromFuture(
+        _dispatchPlatformCall(call), onCancel: () {
       return Future.error(SimulatedBleError(
         BleErrorCode.OperationCancelled,
         "Operation cancelled",
