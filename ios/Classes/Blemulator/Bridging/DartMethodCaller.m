@@ -141,14 +141,14 @@ typedef void (^SuccessHandler)(id _Nullable result);
         if (result == FlutterMethodNotImplemented) {
             NSLog(@"%@%@%@", @"DartMethodCaller.", methodName, @": FlutterMethodNotImplemented");
         } else if ([result class] == [FlutterError class]) {
-            FlutterError *error = (FlutterError *)result;
-            NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:[error.message dataUsingEncoding:NSUTF8StringEncoding]
+            FlutterError *flutterError = (FlutterError *)result;
+            NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:[flutterError.message dataUsingEncoding:NSUTF8StringEncoding]
                                                                        options:NSJSONReadingMutableContainers
                                                                          error:nil];
-            [BleError callReject:reject
-                   withErrorCode:[[dictionary objectForKey:@"errorCode"] intValue]
-                          reason:[dictionary objectForKey:@"reason"]];
-            NSLog(@"%@%@%@%@", @"DartMethodCaller.", methodName, @": FlutterError: ", error.message);
+            BleError *bleError = [[BleError alloc] initWithErrorCode:[[dictionary objectForKey:@"errorCode"] intValue]
+                                                              reason:[dictionary objectForKey:@"reason"]];
+            [bleError callReject:reject];
+            NSLog(@"%@%@%@%@", @"DartMethodCaller.", methodName, @": FlutterError: ", flutterError.message);
         } else {
             successHandler(result);
             NSLog(@"%@%@%@%@", @"DartMethodCaller.", methodName, @": success: ", result);

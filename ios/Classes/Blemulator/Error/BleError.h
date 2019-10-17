@@ -13,12 +13,10 @@
 @property NSString *descriptorUUID;
 @property NSString *internalMessage;
 
-+ (void)callReject:(Reject)reject
-     withErrorCode:(BleErrorCode)code
-            reason:(NSString *)reason;
-
 - (instancetype)initWithErrorCode:(BleErrorCode)errorCode reason:(NSString *)reason;
 
 - (NSDictionary *)jsonObjectRepresentation;
+
+- (void)callReject:(Reject)reject;
 
 @end

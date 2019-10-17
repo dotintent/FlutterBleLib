@@ -173,7 +173,9 @@
     NSLog(@"SimulatedAdapter.servicesForDevice");
     DeviceContainer *deviceContainer = [self.knownPeripherals objectForKey:deviceIdentifier];
     if (!deviceContainer.isConnected) {
-        [BleError callReject:reject withErrorCode:BleErrorCodeDeviceNotConnected reason:@"Device not connected"];
+        BleError *bleError = [[BleError alloc] initWithErrorCode:BleErrorCodeDeviceNotConnected
+                                                          reason:@"Device not connected"];
+        [bleError callReject:reject];
     }
     resolve([deviceContainer servicesJsonRepresentation]);
 }
@@ -220,9 +222,9 @@
             }
         }
     }
-    [BleError callReject:reject
-           withErrorCode:BleErrorCodeServiceNotFound
-                  reason:[NSString stringWithFormat:@"Service with id %.0f not found", serviceIdentifier]];
+    BleError *bleError = [[BleError alloc] initWithErrorCode:BleErrorCodeServiceNotFound
+                                                      reason:[NSString stringWithFormat:@"Service with id %.0f not found", serviceIdentifier]];
+    [bleError callReject:reject];
 }
 
 // MARK: - Adapter Methods - Characteristics observation

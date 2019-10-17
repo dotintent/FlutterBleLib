@@ -3,12 +3,6 @@
 
 @implementation BleError
 
-+ (void)callReject:(Reject)reject
-     withErrorCode:(BleErrorCode)code
-            reason:(NSString *)reason {
-    [[[BleError alloc] initWithErrorCode:code reason:reason] callReject:reject];
-}
-
 - (instancetype)initWithErrorCode:(BleErrorCode)errorCode reason:(NSString *)reason {
     self = [super init];
     if (self) {
