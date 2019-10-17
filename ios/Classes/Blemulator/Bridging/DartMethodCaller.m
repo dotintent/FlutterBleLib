@@ -142,7 +142,12 @@ typedef void (^SuccessHandler)(id _Nullable result);
             NSLog(@"%@%@%@", @"DartMethodCaller.", methodName, @": FlutterMethodNotImplemented");
         } else if ([result class] == [FlutterError class]) {
             FlutterError *error = (FlutterError *)result;
-            [BleError callReject:reject withErrorCode:[error.code intValue] reason:error.message];
+            NSDictionary *dictionary = [NSJSONSerialization JSONObjectWithData:[error.message dataUsingEncoding:NSUTF8StringEncoding]
+                                                                       options:NSJSONReadingMutableContainers
+                                                                         error:nil];
+            [BleError callReject:reject
+                   withErrorCode:[[dictionary objectForKey:@"errorCode"] intValue]
+                          reason:[dictionary objectForKey:@"reason"]];
             NSLog(@"%@%@%@%@", @"DartMethodCaller.", methodName, @": FlutterError: ", error.message);
         } else {
             successHandler(result);
