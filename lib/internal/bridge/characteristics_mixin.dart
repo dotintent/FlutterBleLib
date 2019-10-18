@@ -243,3 +243,17 @@ Characteristic _parseCharacteristicResponse(
 }
 
 }
+
+class CharacteristicWithValueAndTransactionId extends CharacteristicWithValue with WitTransactionId {
+  CharacteristicWithValueAndTransactionId.fromJson(
+      Map<String, dynamic> jsonObject,
+      Service service,
+      ManagerForCharacteristic manager,
+      ) : super.fromJson(jsonObject, service, manager);
+
+  CharacteristicWithValueAndTransactionId setTransactionId(String transactionId) {
+    this.transactionId = transactionId;
+    return this;
+  }
+
+}
