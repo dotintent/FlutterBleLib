@@ -37,8 +37,9 @@ typedef void (^SuccessHandler)(id _Nullable result);
 // MARK: - Methods - Scanning
 
 - (void)startDeviceScan {
+    NSDictionary<NSString *,id> *arguments = [[NSDictionary alloc] init];
     [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_START_DEVICE_SCAN
-                               arguments:nil
+                               arguments:arguments
                                   result:[self simpleInvokeMethodResultHandlerForMethod:DART_METHOD_NAME_START_DEVICE_SCAN]];
 }
 
