@@ -159,6 +159,14 @@ class DeviceDetailsBloc {
     });
   }
 
+  void monitorCharacteristicForPeripheral() {
+    _clearLogs();
+    _deviceController.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+          .monitorCharacteristicForPeripheral();
+    });
+  }
+
   void disableBluetooth() {
     _clearLogs();
     _deviceController.stream.listen((bleDevice) async {
