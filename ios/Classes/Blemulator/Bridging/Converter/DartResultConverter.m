@@ -11,7 +11,7 @@
     NSMutableDictionary<NSString *, NSArray<Characteristic *> *> *characteristics = [[NSMutableDictionary alloc] init];
 
     for (NSDictionary *serviceDictionary in resultArray) {
-        Service *service = [self serviceFromDictionary:serviceDictionary peripheral:peripheral];
+        Service *service = [self serviceFromDictionary:serviceDictionary];
 
         NSMutableArray *characteristicsArray = [[NSMutableArray alloc] init];
         for (NSDictionary *characteristicDictionary in [serviceDictionary objectForKey:DART_RESULT_CHARACTERISTICS]) {
@@ -32,26 +32,20 @@
 + (Characteristic *)characteristicFromDartResult:(id)result {
     NSDictionary *resultDictionary = (NSDictionary *)result;
     return [self characteristicFromDictionary:resultDictionary
-                                      service:[self serviceFromDictionary:resultDictionary
-                                                               peripheral:[self peripheralFromDictionary:resultDictionary]]];
+                                      service:[self serviceFromDictionary:resultDictionary]];
 }
 
-+ (Peripheral *)peripheralFromDictionary:(NSDictionary *)dictionary {
-    return [[Peripheral alloc] initWithIdentifier:[dictionary objectForKey:DART_RESULT_DEVICE_IDENTIFIER]
-                                             name:nil];
-}
-
-+ (Service *)serviceFromDictionary:(NSDictionary *)dictionary peripheral:(Peripheral *)peripheral {
-    return [[Service alloc] initWithObjectId:[[dictionary objectForKey:DART_RESULT_SERVICE_ID] integerValue]
++ (Service *)serviceFromDictionary:(NSDictionary *)dictionary {
+    return [[Service alloc] initWithObjectId:[[dictionary objectForKey:DART_RESULT_SERVICE_ID] intValue]
                                         uuid:[CBUUID UUIDWithString:[dictionary objectForKey:DART_RESULT_SERVICE_UUID]]
-                                  peripheral:peripheral
+                        peripheralIdentifier:[dictionary objectForKey:DART_RESULT_DEVICE_IDENTIFIER]
                                    isPrimary:true];
 }
 
 + (Characteristic *)characteristicFromDictionary:(NSDictionary *)dictionary service:(Service *)service {
     id value = [dictionary objectForKey:DART_RESULT_VALUE] != [NSNull null] ?
                 (NSData *)[dictionary objectForKey:DART_RESULT_VALUE] : nil;
-    return [[Characteristic alloc] initWithObjectId:[[dictionary objectForKey:DART_RESULT_CHARACTERISTIC_ID] integerValue]
+    return [[Characteristic alloc] initWithObjectId:[[dictionary objectForKey:DART_RESULT_CHARACTERISTIC_ID] intValue]
                                                uuid:[CBUUID UUIDWithString:[dictionary objectForKey:DART_RESULT_CHARACTERISTIC_UUID]]
                                               value:value
                                             service:service

@@ -9,4 +9,10 @@ NSString * const DART_METHOD_NAME_IS_DEVICE_CONNECTED = @"isDeviceConnected";
 
 NSString * const DART_METHOD_NAME_DISCOVER_ALL_SERVICES_AND_CHARACTERISTICS = @"discoverAllServicesAndCharacteristics";
 
+NSString * const DART_METHOD_NAME_READ_CHARACTERISTIC_FOR_DEVICE = @"readCharacteristicForDevice";
+NSString * const DART_METHOD_NAME_READ_CHARACTERISTIC_FOR_SERVICE = @"readCharacteristicForService";
 NSString * const DART_METHOD_NAME_READ_CHARACTERISTIC_FOR_IDENTIFIER = @"readCharacteristicForIdentifier";
+
+NSString * const DART_METHOD_NAME_WRITE_CHARACTERISTIC_FOR_DEVICE = @"writeCharacteristicForDevice";
+NSString * const DART_METHOD_NAME_WRITE_CHARACTERISTIC_FOR_SERVICE = @"writeCharacteristicForService";
+NSString * const DART_METHOD_NAME_WRITE_CHARACTERISTIC_FOR_IDENTIFIER = @"writeCharacteristicForIdentifier";

@@ -235,6 +235,11 @@
                             resolve:(Resolve)resolve
                              reject:(Reject)reject {
     NSLog(@"SimulatedAdapter.readCharacteristicForDevice");
+    [self.dartMethodCaller readCharacteristicForDevice:deviceIdentifier
+                                           serviceUUID:serviceUUID
+                                    characteristicUUID:characteristicUUID
+                                               resolve:resolve
+                                                reject:reject];
 }
 
 - (void)readCharacteristicForService:(double)serviceIdentifier
@@ -243,6 +248,10 @@
                              resolve:(Resolve)resolve
                               reject:(Reject)reject {
     NSLog(@"SimulatedAdapter.readCharacteristicForService");
+    [self.dartMethodCaller readCharacteristicForService:serviceIdentifier
+                                     characteristicUUID:characteristicUUID
+                                                resolve:resolve
+                                                 reject:reject];
 }
 
 - (void)readCharacteristic:(double)characteristicIdentifier
@@ -263,6 +272,12 @@
                              resolve:(Resolve)resolve
                               reject:(Reject)reject {
     NSLog(@"SimulatedAdapter.writeCharacteristicForDevice");
+    [self.dartMethodCaller writeCharacteristicForDevice:deviceIdentifier
+                                            serviceUUID:serviceUUID
+                                     characteristicUUID:characteristicUUID
+                                                  value:valueBase64
+                                                resolve:resolve
+                                                 reject:reject];
 }
 
 - (void)writeCharacteristicForService:(double)serviceIdentifier
@@ -273,6 +288,11 @@
                               resolve:(Resolve)resolve
                                reject:(Reject)reject {
     NSLog(@"SimulatedAdapter.writeCharacteristicForService");
+    [self.dartMethodCaller writeCharacteristicForService:serviceIdentifier
+                                      characteristicUUID:characteristicUUID
+                                                   value:valueBase64
+                                                 resolve:resolve
+                                                  reject:reject];
 }
 
 - (void)writeCharacteristic:(double)characteristicIdentifier
@@ -281,6 +301,10 @@
               transactionId:(NSString * _Nonnull)transactionId
                     resolve:(Resolve)resolve reject:(Reject)reject {
     NSLog(@"SimulatedAdapter.writeCharacteristic");
+    [self.dartMethodCaller writeCharacteristic:characteristicIdentifier
+                                         value:valueBase64
+                                       resolve:resolve
+                                        reject:reject];
 }
 
 - (void)monitorCharacteristicForDevice:(NSString * _Nonnull)deviceIdentifier

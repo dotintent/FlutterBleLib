@@ -7,4 +7,8 @@
                                  encoding:NSUTF8StringEncoding];
 }
 
++ (NSData *)dataFromBase64String:(NSString *)string {
+    return [[NSData alloc] initWithBase64EncodedString:string options:0];
+}
+
 @end
