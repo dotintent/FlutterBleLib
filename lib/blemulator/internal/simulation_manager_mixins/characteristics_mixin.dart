@@ -3,7 +3,8 @@ part of internal;
 mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
   Map<String, StreamSubscription> _monitoringSubscriptions = HashMap();
 
-  SimulatedCharacteristic _findCharacteristicForId(int characteristicIdentifier) {
+  SimulatedCharacteristic _findCharacteristicForId(
+      int characteristicIdentifier) {
     SimulatedCharacteristic targetCharacteristic;
 
     for (SimulatedPeripheral peripheral in _peripherals.values) {
@@ -141,7 +142,10 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
       transactionId,
       () => targetCharacteristic.monitor().listen((value) {
         _bridge.publishCharacteristicUpdate(targetCharacteristic, value);
-      }),
+      }, onError: (error) {
+        _bridge.publishCharacteristicMonitoringError(
+            characteristicIdentifier, error);
+      }, cancelOnError: true),
     );
   }
 
@@ -166,7 +170,10 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
       transactionId,
       () => targetCharacteristic.monitor().listen((value) {
         _bridge.publishCharacteristicUpdate(targetCharacteristic, value);
-      }),
+      }, onError: (error) {
+        _bridge.publishCharacteristicMonitoringError(
+            targetCharacteristic.id, error);
+      }, cancelOnError: true),
     );
   }
 
@@ -186,7 +193,10 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
       transactionId,
       () => targetCharacteristic.monitor().listen((value) {
         _bridge.publishCharacteristicUpdate(targetCharacteristic, value);
-      }),
+      }, onError: (error) {
+        _bridge.publishCharacteristicMonitoringError(
+            targetCharacteristic.id, error);
+      }, cancelOnError: true),
     );
   }
 

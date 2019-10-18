@@ -6,5 +6,6 @@ public interface PlatformMethodName {
     String PUBLISH_SCAN_RESULT = "publishScanResult";
     String PUBLISH_CONNECTION_STATE = "publishConnectionState";
     String PUBLISH_CHARACTERISTIC_UPDATE = "publishCharacteristicUpdate";
+    String PUBLISH_CHARACTERISTIC_MONITORING_ERROR = "publishCharacteristicMonitoringError";
 }
 

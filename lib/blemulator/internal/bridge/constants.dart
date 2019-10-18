@@ -14,6 +14,7 @@ abstract class SimulationPlatformMethodName {
   static const String publishScanResult = "publishScanResult";
   static const String publishConnectionState = "publishConnectionState";
   static const String publishCharacteristicUpdate = "publishCharacteristicUpdate";
+  static const String publishCharacteristicMonitoringError = "publishCharacteristicMonitoringError";
 }
 
 abstract class DartMethodName {
@@ -95,6 +96,10 @@ abstract class Metadata {
   static const String isNotifying = "isNotifying";
   static const String isIndicatable = "isIndicatable";
   static const String value = "value";
+
+  static const String errorCode = "errorCode";
+  static const String reason = "reason";
+
 }
 
 abstract class ArgumentName {

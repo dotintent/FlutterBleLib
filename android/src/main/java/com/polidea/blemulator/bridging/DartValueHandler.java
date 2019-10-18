@@ -2,15 +2,19 @@ package com.polidea.blemulator.bridging;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.util.Pair;
 
 import com.polidea.blemulator.bridging.constants.PlatformMethodName;
 import com.polidea.blemulator.bridging.constants.SimulationArgumentName;
+import com.polidea.blemulator.bridging.decoder.BleErrorDartValueDecoder;
 import com.polidea.blemulator.bridging.decoder.CharacteristicDartValueDecoder;
 import com.polidea.multiplatformbleadapter.AdvertisementData;
 import com.polidea.multiplatformbleadapter.Characteristic;
 import com.polidea.multiplatformbleadapter.ConnectionState;
+import com.polidea.multiplatformbleadapter.OnErrorCallback;
 import com.polidea.multiplatformbleadapter.OnEventCallback;
 import com.polidea.multiplatformbleadapter.ScanResult;
+import com.polidea.multiplatformbleadapter.errors.BleError;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -27,9 +32,10 @@ public class DartValueHandler implements MethodChannel.MethodCallHandler {
     private static final String TAG = DartValueHandler.class.getSimpleName();
 
     private CharacteristicDartValueDecoder characteristicDartValueDecoder = new CharacteristicDartValueDecoder();
+    private BleErrorDartValueDecoder bleErrorDartValueDecoder = new BleErrorDartValueDecoder();
     private OnEventCallback<ScanResult> scanResultPublisher;
     private Map<String, OnEventCallback<ConnectionState>> connectionStatePublishers = new HashMap<>();
-    private OnEventCallback<Characteristic> characteristicsUpdatePublisher;
+    private Map<Integer, Pair<OnEventCallback<Characteristic>, OnErrorCallback>> characteristicsUpdatePublishers = new HashMap<>();
 
     public void setScanResultPublisher(OnEventCallback<ScanResult> scanResultPublisher) {
         this.scanResultPublisher = scanResultPublisher;
@@ -39,8 +45,12 @@ public class DartValueHandler implements MethodChannel.MethodCallHandler {
         connectionStatePublishers.put(identifier, publisher);
     }
 
-    public void setCharacteristicsUpdatePublisher(OnEventCallback<Characteristic> publisher) {
-        characteristicsUpdatePublisher = publisher;
+    public void addCharacteristicsUpdatePublishers(int characteristicId, OnEventCallback<Characteristic> eventPublisher, OnErrorCallback errorPublisher) {
+        characteristicsUpdatePublishers.put(characteristicId, new Pair<>(eventPublisher, errorPublisher));
+    }
+
+    public void removeCharacteristicsUpdatePublisher(int characteristicId) {
+        characteristicsUpdatePublishers.remove(characteristicId);
     }
 
     @Override
@@ -54,6 +64,9 @@ public class DartValueHandler implements MethodChannel.MethodCallHandler {
                 return;
             case PlatformMethodName.PUBLISH_CHARACTERISTIC_UPDATE:
                 publishCharacteristicUpdate(call, result);
+                return;
+            case PlatformMethodName.PUBLISH_CHARACTERISTIC_MONITORING_ERROR:
+                publishCharacteristicUpdateError(call, result);
                 return;
             default:
                 result.notImplemented();
@@ -139,7 +152,14 @@ public class DartValueHandler implements MethodChannel.MethodCallHandler {
 
     private void publishCharacteristicUpdate(MethodCall call, MethodChannel.Result result) {
         Characteristic characteristic = characteristicDartValueDecoder.decode((Map<String, Object>) call.arguments);
-        characteristicsUpdatePublisher.onEvent(characteristic);
+        characteristicsUpdatePublishers.get(characteristic.getId()).first.onEvent(characteristic);
+        result.success(null);
+    }
+
+    private void publishCharacteristicUpdateError(MethodCall call, MethodChannel.Result result) {
+        int characteristicId = call.argument(SimulationArgumentName.CHARACTERISTIC_ID);
+        BleError bleError = bleErrorDartValueDecoder.decode((Map<String, Object>) call.arguments);
+        characteristicsUpdatePublishers.get(characteristicId).second.onError(bleError);
         result.success(null);
     }
 }

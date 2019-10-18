@@ -59,6 +59,19 @@ class DartToPlatformBridge {
   ) =>
       _dartToPlatformChannel.invokeMethod(
         SimulationPlatformMethodName.publishCharacteristicUpdate,
-        mapToCharacteristicJson(characteristic.service.peripheralId, characteristic, value),
+        mapToCharacteristicJson(
+            characteristic.service.peripheralId, characteristic, value),
       );
+
+  Future<void> publishCharacteristicMonitoringError(
+    int characteristicId,
+    SimulatedBleError bleError,
+  ) =>
+      _dartToPlatformChannel.invokeMethod(
+          SimulationPlatformMethodName.publishCharacteristicMonitoringError,
+          <String, dynamic>{
+            Metadata.characteristicId: characteristicId,
+            Metadata.errorCode: bleError.errorCode,
+            Metadata.reason: bleError.reason
+          });
 }
