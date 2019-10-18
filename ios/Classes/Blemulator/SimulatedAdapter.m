@@ -235,6 +235,11 @@
                             resolve:(Resolve)resolve
                              reject:(Reject)reject {
     NSLog(@"SimulatedAdapter.readCharacteristicForDevice");
+    [self.dartMethodCaller readCharacteristicForDevice:deviceIdentifier
+                                           serviceUUID:serviceUUID
+                                    characteristicUUID:characteristicUUID
+                                               resolve:resolve
+                                                reject:reject];
 }
 
 - (void)readCharacteristicForService:(double)serviceIdentifier
@@ -243,6 +248,10 @@
                              resolve:(Resolve)resolve
                               reject:(Reject)reject {
     NSLog(@"SimulatedAdapter.readCharacteristicForService");
+    [self.dartMethodCaller readCharacteristicForService:serviceIdentifier
+                                     characteristicUUID:characteristicUUID
+                                                resolve:resolve
+                                                 reject:reject];
 }
 
 - (void)readCharacteristic:(double)characteristicIdentifier

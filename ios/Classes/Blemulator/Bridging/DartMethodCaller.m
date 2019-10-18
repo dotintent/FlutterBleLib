@@ -120,6 +120,44 @@ typedef void (^SuccessHandler)(id _Nullable result);
 
 // MARK: - Characteristics observation
 
+- (void)readCharacteristicForDevice:(NSString *)deviceIdentifier
+                        serviceUUID:(NSString *)serviceUUID
+                 characteristicUUID:(NSString *)characteristicUUID
+                            resolve:(Resolve)resolve
+                             reject:(Reject)reject {
+    NSDictionary<NSString *,id> *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
+                                              deviceIdentifier, DART_CALL_ARGUMENT_DEVICE_IDENTIFIER,
+                                              serviceUUID, DART_CALL_ARGUMENT_SERVICE_UUID,
+                                              characteristicUUID, DART_CALL_ARGUMENT_CHARACTERISTIC_UUID,
+                                              nil];
+    SuccessHandler successHandler = ^(id result) {
+        resolve([[DartResultConverter characteristicFromDartResult:result] jsonObjectRepresentation]);
+    };
+    [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_READ_CHARACTERISTIC_FOR_DEVICE
+                               arguments:arguments
+                                  result:[self invokeMethodResultHandlerForMethod:DART_METHOD_NAME_READ_CHARACTERISTIC_FOR_DEVICE
+                                                                        onSuccess:successHandler
+                                                                          onError:reject]];
+}
+
+- (void)readCharacteristicForService:(int)serviceIdentifier
+                  characteristicUUID:(NSString *)characteristicUUID
+                             resolve:(Resolve)resolve
+                              reject:(Reject)reject {
+    NSDictionary<NSString *,id> *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
+                                              [NSNumber numberWithInt:serviceIdentifier], DART_CALL_ARGUMENT_SERVICE_ID,
+                                              characteristicUUID, DART_CALL_ARGUMENT_CHARACTERISTIC_UUID,
+                                              nil];
+    SuccessHandler successHandler = ^(id result) {
+        resolve([[DartResultConverter characteristicFromDartResult:result] jsonObjectRepresentation]);
+    };
+    [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_READ_CHARACTERISTIC_FOR_SERVICE
+                               arguments:arguments
+                                  result:[self invokeMethodResultHandlerForMethod:DART_METHOD_NAME_READ_CHARACTERISTIC_FOR_SERVICE
+                                                                        onSuccess:successHandler
+                                                                          onError:reject]];
+}
+
 - (void)readCharacteristic:(int)characteristicIdentifier
                    resolve:(Resolve)resolve
                     reject:(Reject)reject {
@@ -129,7 +167,6 @@ typedef void (^SuccessHandler)(id _Nullable result);
     SuccessHandler successHandler = ^(id result) {
         resolve([[DartResultConverter characteristicFromDartResult:result] jsonObjectRepresentation]);
     };
-    NSLog(@"characteristicIdentifier: %@", [NSNumber numberWithInt:characteristicIdentifier]);
     [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_READ_CHARACTERISTIC_FOR_IDENTIFIER
                                arguments:arguments
                                   result:[self invokeMethodResultHandlerForMethod:DART_METHOD_NAME_READ_CHARACTERISTIC_FOR_IDENTIFIER

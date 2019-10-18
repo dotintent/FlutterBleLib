@@ -42,6 +42,17 @@
 
 // MARK: - Characteristics observation
 
+- (void)readCharacteristicForDevice:(NSString *)deviceIdentifier
+                        serviceUUID:(NSString *)serviceUUID
+                 characteristicUUID:(NSString *)characteristicUUID
+                            resolve:(Resolve)resolve
+                             reject:(Reject)reject;
+
+- (void)readCharacteristicForService:(int)serviceIdentifier
+                  characteristicUUID:(NSString *)characteristicUUID
+                             resolve:(Resolve)resolve
+                              reject:(Reject)reject;
+
 - (void)readCharacteristic:(int)characteristicIdentifier
                    resolve:(Resolve)resolve
                     reject:(Reject)reject;
