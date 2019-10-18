@@ -5,12 +5,11 @@ import 'dart:typed_data';
 import 'package:flutter_ble_lib/blemulator/blemulator.dart';
 
 class SensorTag extends SimulatedPeripheral {
-  static const String peripheralId = "4B:99:4C:34:DE:77";
 
   TemperatureDataCharacteristic dataCharacteristic;
 
   SensorTag(
-      {String id = peripheralId,
+      {String id = "4B:99:4C:34:DE:77",
       String name = "SensorTag",
       String localName = "SensorTag"})
       : super(
@@ -19,7 +18,6 @@ class SensorTag extends SimulatedPeripheral {
             advertisementInterval: Duration(milliseconds: 800),
             services: [
               SimulatedService(
-                  peripheralId: peripheralId,
                   uuid: "F000AA00-0451-4000-B000-000000000000",
                   isAdvertised: true,
                   characteristics: [
@@ -32,7 +30,6 @@ class SensorTag extends SimulatedPeripheral {
                   ],
                   convenienceName: "Temperature service"),
               SimulatedService(
-                  peripheralId: peripheralId,
                   uuid: "F000AA10-0451-4000-B000-000000000000",
                   isAdvertised: true,
                   characteristics: [

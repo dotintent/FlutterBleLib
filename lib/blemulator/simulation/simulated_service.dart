@@ -1,7 +1,7 @@
 part of blemulator;
 
 class SimulatedService {
-  final String peripheralId;
+  String peripheralId;
   final String uuid;
   final int id;
   final bool isAdvertised;
@@ -9,8 +9,7 @@ class SimulatedService {
   Map<int, SimulatedCharacteristic> _characteristics;
 
   SimulatedService(
-      {@required this.peripheralId,
-      @required this.uuid,
+      {@required this.uuid,
       @required this.isAdvertised,
       @required List<SimulatedCharacteristic> characteristics,
       this.convenienceName})
