@@ -1,4 +1,4 @@
-part of blemulator;
+part of internal;
 
 Map<String, dynamic> mapToCharacteristicJson(
   String peripheralId,
