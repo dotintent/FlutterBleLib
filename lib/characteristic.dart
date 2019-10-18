@@ -68,10 +68,6 @@ mixin WithValue on Characteristic {
   Uint8List value;
 }
 
-mixin WitTransactionId on Characteristic {
-  String transactionId;
-}
-
 class CharacteristicWithValue extends Characteristic with WithValue {
   CharacteristicWithValue.fromJson(
     Map<String, dynamic> jsonObject,

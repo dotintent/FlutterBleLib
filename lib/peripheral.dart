@@ -84,7 +84,7 @@ class Peripheral {
         transactionId,
       );
 
-  Stream<CharacteristicWithValueAndTransactionId> monitorCharacteristic(
+  Stream<CharacteristicWithValue> monitorCharacteristic(
     String serviceUUID,
     String characteristicUUID, {
     String transactionId,

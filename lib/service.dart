@@ -41,7 +41,7 @@ class Service extends InternalService {
         transactionId,
       );
 
-  Stream<CharacteristicWithValueAndTransactionId> monitorCharacteristic(
+  Stream<CharacteristicWithValue> monitorCharacteristic(
     String characteristicUUID, {
     String transactionId,
   }) =>
