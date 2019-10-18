@@ -238,6 +238,7 @@
     [self.dartMethodCaller readCharacteristicForDevice:deviceIdentifier
                                            serviceUUID:serviceUUID
                                     characteristicUUID:characteristicUUID
+                                         transactionId:(NSString *)transactionId
                                                resolve:resolve
                                                 reject:reject];
 }
@@ -250,6 +251,7 @@
     NSLog(@"SimulatedAdapter.readCharacteristicForService");
     [self.dartMethodCaller readCharacteristicForService:serviceIdentifier
                                      characteristicUUID:characteristicUUID
+                                          transactionId:(NSString *)transactionId
                                                 resolve:resolve
                                                  reject:reject];
 }
@@ -260,6 +262,7 @@
                     reject:(Reject)reject {
     NSLog(@"SimulatedAdapter.readCharacteristic");
     [self.dartMethodCaller readCharacteristic:characteristicIdentifier
+                                transactionId:(NSString *)transactionId
                                       resolve:resolve
                                        reject:reject];
 }
@@ -276,6 +279,7 @@
                                             serviceUUID:serviceUUID
                                      characteristicUUID:characteristicUUID
                                                   value:valueBase64
+                                          transactionId:(NSString *)transactionId
                                                 resolve:resolve
                                                  reject:reject];
 }
@@ -291,6 +295,7 @@
     [self.dartMethodCaller writeCharacteristicForService:serviceIdentifier
                                       characteristicUUID:characteristicUUID
                                                    value:valueBase64
+                                           transactionId:(NSString *)transactionId
                                                  resolve:resolve
                                                   reject:reject];
 }
@@ -303,6 +308,7 @@
     NSLog(@"SimulatedAdapter.writeCharacteristic");
     [self.dartMethodCaller writeCharacteristic:characteristicIdentifier
                                          value:valueBase64
+                                 transactionId:(NSString *)transactionId
                                        resolve:resolve
                                         reject:reject];
 }

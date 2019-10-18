@@ -24,3 +24,5 @@ NSString * const DART_CALL_ARGUMENT_SERVICE_UUID = @"serviceUuid";
 NSString * const DART_CALL_ARGUMENT_CHARACTERISTIC_UUID = @"characteristicUuid";
 
 NSString * const DART_CALL_ARGUMENT_VALUE = @"value";
+
+NSString * const DART_CALL_ARGUMENT_TRANSACTION_ID = @"transactionId";

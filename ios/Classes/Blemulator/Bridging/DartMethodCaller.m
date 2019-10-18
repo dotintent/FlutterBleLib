@@ -124,12 +124,14 @@ typedef void (^SuccessHandler)(id _Nullable result);
 - (void)readCharacteristicForDevice:(NSString *)deviceIdentifier
                         serviceUUID:(NSString *)serviceUUID
                  characteristicUUID:(NSString *)characteristicUUID
+                      transactionId:(NSString *)transactionId
                             resolve:(Resolve)resolve
                              reject:(Reject)reject {
     NSDictionary<NSString *,id> *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
                                               deviceIdentifier, DART_CALL_ARGUMENT_DEVICE_IDENTIFIER,
                                               serviceUUID, DART_CALL_ARGUMENT_SERVICE_UUID,
                                               characteristicUUID, DART_CALL_ARGUMENT_CHARACTERISTIC_UUID,
+                                              transactionId, DART_CALL_ARGUMENT_TRANSACTION_ID,
                                               nil];
     [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_READ_CHARACTERISTIC_FOR_DEVICE
                                arguments:arguments
@@ -140,11 +142,13 @@ typedef void (^SuccessHandler)(id _Nullable result);
 
 - (void)readCharacteristicForService:(int)serviceIdentifier
                   characteristicUUID:(NSString *)characteristicUUID
+                       transactionId:(NSString *)transactionId
                              resolve:(Resolve)resolve
                               reject:(Reject)reject {
     NSDictionary<NSString *,id> *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
                                               [NSNumber numberWithInt:serviceIdentifier], DART_CALL_ARGUMENT_SERVICE_ID,
                                               characteristicUUID, DART_CALL_ARGUMENT_CHARACTERISTIC_UUID,
+                                              transactionId, DART_CALL_ARGUMENT_TRANSACTION_ID,
                                               nil];
     [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_READ_CHARACTERISTIC_FOR_SERVICE
                                arguments:arguments
@@ -154,10 +158,12 @@ typedef void (^SuccessHandler)(id _Nullable result);
 }
 
 - (void)readCharacteristic:(int)characteristicIdentifier
+             transactionId:(NSString *)transactionId
                    resolve:(Resolve)resolve
                     reject:(Reject)reject {
     NSDictionary<NSString *,id> *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
                                               [NSNumber numberWithInt:characteristicIdentifier], DART_CALL_ARGUMENT_CHARACTERISTIC_IDENTIFIER,
+                                              transactionId, DART_CALL_ARGUMENT_TRANSACTION_ID,
                                               nil];
     [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_READ_CHARACTERISTIC_FOR_IDENTIFIER
                                arguments:arguments
@@ -170,6 +176,7 @@ typedef void (^SuccessHandler)(id _Nullable result);
                         serviceUUID:(NSString *)serviceUUID
                  characteristicUUID:(NSString *)characteristicUUID
                               value:(NSString *)value
+                      transactionId:(NSString *)transactionId
                             resolve:(Resolve)resolve
                              reject:(Reject)reject {
     NSDictionary<NSString *,id> *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -178,6 +185,7 @@ typedef void (^SuccessHandler)(id _Nullable result);
                                               characteristicUUID, DART_CALL_ARGUMENT_CHARACTERISTIC_UUID,
                                               [FlutterStandardTypedData
                                                typedDataWithBytes:[Base64Coder dataFromBase64String:value]], DART_CALL_ARGUMENT_VALUE,
+                                              transactionId, DART_CALL_ARGUMENT_TRANSACTION_ID,
                                               nil];
     [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_WRITE_CHARACTERISTIC_FOR_DEVICE
                                arguments:arguments
@@ -189,6 +197,7 @@ typedef void (^SuccessHandler)(id _Nullable result);
 - (void)writeCharacteristicForService:(int)serviceIdentifier
                    characteristicUUID:(NSString *)characteristicUUID
                                 value:(NSString *)value
+                        transactionId:(NSString *)transactionId
                               resolve:(Resolve)resolve
                                reject:(Reject)reject {
     NSDictionary<NSString *,id> *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -196,6 +205,7 @@ typedef void (^SuccessHandler)(id _Nullable result);
                                               characteristicUUID, DART_CALL_ARGUMENT_CHARACTERISTIC_UUID,
                                               [FlutterStandardTypedData
                                                typedDataWithBytes:[Base64Coder dataFromBase64String:value]], DART_CALL_ARGUMENT_VALUE,
+                                              transactionId, DART_CALL_ARGUMENT_TRANSACTION_ID,
                                               nil];
     [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_WRITE_CHARACTERISTIC_FOR_SERVICE
                                arguments:arguments
@@ -206,12 +216,14 @@ typedef void (^SuccessHandler)(id _Nullable result);
 
 - (void)writeCharacteristic:(int)characteristicIdentifier
                       value:(NSString *)value
+              transactionId:(NSString *)transactionId
                     resolve:(Resolve)resolve
                      reject:(Reject)reject {
     NSDictionary<NSString *,id> *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
                                               [NSNumber numberWithInt:characteristicIdentifier], DART_CALL_ARGUMENT_CHARACTERISTIC_IDENTIFIER,
                                               [FlutterStandardTypedData
                                                typedDataWithBytes:[Base64Coder dataFromBase64String:value]], DART_CALL_ARGUMENT_VALUE,
+                                              transactionId, DART_CALL_ARGUMENT_TRANSACTION_ID,
                                               nil];
     [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_WRITE_CHARACTERISTIC_FOR_IDENTIFIER
                                arguments:arguments
