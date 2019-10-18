@@ -233,6 +233,26 @@ typedef void (^SuccessHandler)(id _Nullable result);
                                                                           onError:reject]];
 }
 
+// MARK: - RSSI
+
+- (void)readRSSIForDevice:(NSString *)deviceIdentifier
+                     name:(NSString *)name
+                  resolve:(Resolve)resolve
+                   reject:(Reject)reject {
+    NSDictionary<NSString *,id> *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
+                                              deviceIdentifier, DART_CALL_ARGUMENT_DEVICE_ID,
+                                              nil];
+    SuccessHandler successHandler = ^(id result) {
+        resolve([[[Peripheral alloc] initWithIdentifier:deviceIdentifier
+                                                   name:name] jsonObjectRepresentationWithRssi:(NSNumber *)result]);
+    };
+    [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_RSSI
+                               arguments:arguments
+                                  result:[self invokeMethodResultHandlerForMethod:DART_METHOD_NAME_RSSI
+                                                                        onSuccess:successHandler
+                                                                          onError:reject]];
+}
+
 // MARK: - Utility methods
 
 - (SuccessHandler)characteristicResultSuccessHandler:(Resolve)resolve {

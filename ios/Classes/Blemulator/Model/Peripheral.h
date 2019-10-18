@@ -8,6 +8,8 @@
 
 - (NSDictionary<NSString *,id> * _Nonnull)jsonObjectRepresentation;
 
+- (NSDictionary<NSString *,id> * _Nonnull)jsonObjectRepresentationWithRssi:(NSNumber * _Nonnull)rssi;
+
 - (NSInteger)mtu;
 
 @end
