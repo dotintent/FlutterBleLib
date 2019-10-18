@@ -28,7 +28,7 @@
             [_uuid UUIDString].lowercaseString, CHARACTERISTIC_RESPONSE_UUID,
             [NSNumber numberWithInt:_service.objectId], CHARACTERISTIC_RESPONSE_SERVICE_ID,
             [_service.uuid UUIDString].lowercaseString, CHARACTERISTIC_RESPONSE_SERVICE_UUID,
-            _service.peripheral.identifier, CHARACTERISTIC_RESPONSE_DEVICE_ID,
+            _service.peripheralIdentifier, CHARACTERISTIC_RESPONSE_DEVICE_ID,
             [NSNumber numberWithBool:_properties & CBCharacteristicPropertyRead], CHARACTERISTIC_RESPONSE_IS_READABLE,
             [NSNumber numberWithBool:_properties & CBCharacteristicPropertyWrite], CHARACTERISTIC_RESPONSE_IS_WRITABLE_WITH_RESPONSE,
             [NSNumber numberWithBool:_properties & CBCharacteristicPropertyWriteWithoutResponse], CHARACTERISTIC_RESPONSE_IS_WRITABLE_WITHOUT_RESPONSE,
