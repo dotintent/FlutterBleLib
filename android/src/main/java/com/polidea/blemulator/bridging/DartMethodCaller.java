@@ -220,11 +220,12 @@ public class DartMethodCaller {
     public void discoverAllServicesAndCharacteristicsForDevice(
             final String deviceIdentifier,
             final String name,
-            String transactionId,
+            final String transactionId,
             final OnSuccessCallback<DeviceContainer> onSuccessCallback,
             final OnErrorCallback onErrorCallback) {
         dartMethodChannel.invokeMethod(DartMethodName.DISCOVER_ALL_SERVICES_AND_CHARACTERISTICS, new HashMap<String, Object>() {{
             put(ArgumentName.IDENTIFIER, deviceIdentifier);
+            put(ArgumentName.TRANSACTION_ID, transactionId);
         }}, new MethodChannel.Result() {
             @Override
             public void success(@Nullable Object discoveryResponse) {
@@ -270,12 +271,14 @@ public class DartMethodCaller {
             final String deviceIdentifier,
             final String serviceUUID,
             final String characteristicUUID,
+            final String transactionId,
             final OnSuccessCallback<Characteristic> onSuccessCallback,
             final OnErrorCallback onErrorCallback) {
         HashMap<String, Object> arguments = new HashMap<String, Object>() {{
             put(ArgumentKey.DEVICE_IDENTIFIER, deviceIdentifier);
             put(ArgumentKey.SERVICE_UUID, serviceUUID);
             put(ArgumentKey.CHARACTERISTIC_UUID, characteristicUUID);
+            put(ArgumentKey.TRANSACTION_ID, transactionId);
         }};
         dartMethodChannel.invokeMethod(DartMethodName.READ_CHARACTERISTIC_FOR_DEVICE,
                 arguments,
@@ -300,11 +303,13 @@ public class DartMethodCaller {
     public void readCharacteristicForService(
             final int serviceIdentifier,
             final String characteristicUUID,
+            final String transactionId,
             final OnSuccessCallback<Characteristic> onSuccessCallback,
             final OnErrorCallback onErrorCallback) {
         HashMap<String, Object> arguments = new HashMap<String, Object>() {{
             put(ArgumentKey.SERVICE_IDENTIFIER, serviceIdentifier);
             put(ArgumentKey.CHARACTERISTIC_UUID, characteristicUUID);
+            put(ArgumentKey.TRANSACTION_ID, transactionId);
         }};
         dartMethodChannel.invokeMethod(DartMethodName.READ_CHARACTERISTIC_FOR_SERVICE,
                 arguments,
@@ -328,10 +333,12 @@ public class DartMethodCaller {
 
     public void readCharacteristic(
             final int characteristicIdentifier,
+            final String transactionId,
             final OnSuccessCallback<Characteristic> onSuccessCallback,
             final OnErrorCallback onErrorCallback) {
         HashMap<String, Object> arguments = new HashMap<String, Object>() {{
             put(ArgumentKey.CHARACTERISTIC_IDENTIFIER, characteristicIdentifier);
+            put(ArgumentKey.TRANSACTION_ID, transactionId);
         }};
         dartMethodChannel.invokeMethod(DartMethodName.READ_CHARACTERISTIC_FOR_IDENTIFIER,
                 arguments,
@@ -358,6 +365,7 @@ public class DartMethodCaller {
             final String serviceUUID,
             final String characteristicUUID,
             final String valueBase64,
+            final String transactionId,
             final OnSuccessCallback<Characteristic> onSuccessCallback,
             final OnErrorCallback onErrorCallback) {
         HashMap<String, Object> arguments = new HashMap<String, Object>() {{
@@ -365,6 +373,7 @@ public class DartMethodCaller {
             put(ArgumentKey.SERVICE_UUID, serviceUUID);
             put(ArgumentKey.CHARACTERISTIC_UUID, characteristicUUID);
             put(ArgumentKey.VALUE, Base64Converter.decode(valueBase64));
+            put(ArgumentKey.TRANSACTION_ID, transactionId);
         }};
         dartMethodChannel.invokeMethod(DartMethodName.WRITE_CHARACTERISTIC_FOR_DEVICE,
                 arguments,
@@ -390,12 +399,14 @@ public class DartMethodCaller {
             final int serviceIdentifier,
             final String characteristicUUID,
             final String valueBase64,
+            final String transactionId,
             final OnSuccessCallback<Characteristic> onSuccessCallback,
             final OnErrorCallback onErrorCallback) {
         HashMap<String, Object> arguments = new HashMap<String, Object>() {{
             put(ArgumentKey.SERVICE_IDENTIFIER, serviceIdentifier);
             put(ArgumentKey.CHARACTERISTIC_UUID, characteristicUUID);
             put(ArgumentKey.VALUE, Base64Converter.decode(valueBase64));
+            put(ArgumentKey.TRANSACTION_ID, transactionId);
         }};
         dartMethodChannel.invokeMethod(DartMethodName.WRITE_CHARACTERISTIC_FOR_SERVICE,
                 arguments,
@@ -420,11 +431,13 @@ public class DartMethodCaller {
     public void writeCharacteristic(
             final int characteristicIdentifier,
             final String valueBase64,
+            final String transactionId,
             final OnSuccessCallback<Characteristic> onSuccessCallback,
             final OnErrorCallback onErrorCallback) {
         HashMap<String, Object> arguments = new HashMap<String, Object>() {{
             put(ArgumentKey.CHARACTERISTIC_IDENTIFIER, characteristicIdentifier);
             put(ArgumentKey.VALUE, Base64Converter.decode(valueBase64));
+            put(ArgumentKey.TRANSACTION_ID, transactionId);
         }};
         dartMethodChannel.invokeMethod(DartMethodName.WRITE_CHARACTERISTIC_FOR_IDENTIFIER,
                 arguments,
@@ -472,5 +485,12 @@ public class DartMethodCaller {
                 Log.e(TAG, "readRSSIForDevice not implemented");
             }
         });
+    }
+
+    public void cancelTransaction(final String transactionId) {
+        Log.i(TAG, "cancelTransaction");
+        dartMethodChannel.invokeMethod(DartMethodName.CANCEL_TRANSACTION, new HashMap<String, String>() {{
+            put(ArgumentName.TRANSACTION_ID, transactionId);
+        }});
     }
 }
