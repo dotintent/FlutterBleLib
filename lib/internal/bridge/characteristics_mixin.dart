@@ -23,7 +23,7 @@ mixin CharacteristicsMixin on FlutterBLE {
           .then((rawJsonValue) =>
               _parseCharacteristicWithValueWithTransactionIdResponse(peripheral, rawJsonValue).value);
 
-  Future<CharacteristicWithValueWithTransactionId> readCharacteristicForDevice(
+  Future<CharacteristicWithValue> readCharacteristicForDevice(
     Peripheral peripheral,
     String serviceUuid,
     String characteristicUUID,
@@ -46,7 +46,7 @@ mixin CharacteristicsMixin on FlutterBLE {
                 _parseCharacteristicWithValueWithTransactionIdResponse(peripheral, rawJsonValue),
           );
 
-  Future<CharacteristicWithValueWithTransactionId> readCharacteristicForService(
+  Future<CharacteristicWithValue> readCharacteristicForService(
     Peripheral peripheral,
     int serviceIdentifier,
     String characteristicUUID,
@@ -163,7 +163,7 @@ mixin CharacteristicsMixin on FlutterBLE {
             throw BleError.fromJson(jsonDecode(errorJson.details)));
   }
 
-  Stream<CharacteristicWithValueWithTransactionId> monitorCharacteristicForDevice(
+  Stream<CharacteristicWithValueAndTransactionId> monitorCharacteristicForDevice(
     Peripheral peripheral,
     String serviceUuid,
     String characteristicUUID,
@@ -194,7 +194,7 @@ mixin CharacteristicsMixin on FlutterBLE {
             throw BleError.fromJson(jsonDecode(errorJson.details)));
   }
 
-  Stream<CharacteristicWithValueWithTransactionId> monitorCharacteristicForService(
+  Stream<CharacteristicWithValueAndTransactionId> monitorCharacteristicForService(
     Peripheral peripheral,
     int serviceIdentifier,
     String characteristicUUID,
@@ -222,13 +222,13 @@ mixin CharacteristicsMixin on FlutterBLE {
             throw BleError.fromJson(jsonDecode(errorJson.details)));
   }
 
-CharacteristicWithValueWithTransactionId _parseCharacteristicWithValueWithTransactionIdResponse(
+CharacteristicWithValueAndTransactionId _parseCharacteristicWithValueWithTransactionIdResponse(
     Peripheral peripheral, rawJsonValue) {
   Map<String, dynamic> rootObject = jsonDecode(rawJsonValue);
   Service service = Service.fromJson(rootObject, peripheral, _manager);
 
   var transactionId = rootObject["transactionId"];
-  return CharacteristicWithValueWithTransactionId.fromJson(
+  return CharacteristicWithValueAndTransactionId.fromJson(
       rootObject["characteristic"], service, _manager)
   .setTransactionId(transactionId);
 }

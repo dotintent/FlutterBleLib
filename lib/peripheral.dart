@@ -56,7 +56,7 @@ class Peripheral {
     return _manager.requestMtu(this, mtu, transactionId);
   }
 
-  Future<CharacteristicWithValueWithTransactionId> readCharacteristic(
+  Future<CharacteristicWithValue> readCharacteristic(
     String serviceUUID,
     String characteristicUUID, {
     String transactionId,
@@ -84,7 +84,7 @@ class Peripheral {
         transactionId,
       );
 
-  Stream<CharacteristicWithValueWithTransactionId> monitorCharacteristic(
+  Stream<CharacteristicWithValueAndTransactionId> monitorCharacteristic(
     String serviceUUID,
     String characteristicUUID, {
     String transactionId,

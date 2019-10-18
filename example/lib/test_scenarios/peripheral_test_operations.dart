@@ -69,7 +69,7 @@ class PeripheralTestOperations {
 
   Future<void> readCharacteristicForPeripheral() async {
     log("Reading temperature config");
-    CharacteristicWithValueWithTransactionId readValue = await peripheral.readCharacteristic(
+    CharacteristicWithValue readValue = await peripheral.readCharacteristic(
         SensorTagTemperatureUuids.temperatureService,
         SensorTagTemperatureUuids.temperatureConfigCharacteristic);
     log("Temperature config value: ${readValue.value}");
@@ -81,7 +81,7 @@ class PeripheralTestOperations {
         services.firstWhere((service) =>
             service.uuid ==
             SensorTagTemperatureUuids.temperatureService.toLowerCase()));
-    CharacteristicWithValueWithTransactionId readValue = await service.readCharacteristic(
+    CharacteristicWithValue readValue = await service.readCharacteristic(
         SensorTagTemperatureUuids.temperatureConfigCharacteristic);
     log("Temperature config value: ${readValue.value}");
   }
@@ -171,7 +171,7 @@ class PeripheralTestOperations {
     log("Turned off temperature update");
 
     log("Reading temperature");
-    CharacteristicWithValueWithTransactionId readValue = await peripheral.readCharacteristic(
+    CharacteristicWithValue readValue = await peripheral.readCharacteristic(
         SensorTagTemperatureUuids.temperatureService,
         SensorTagTemperatureUuids.temperatureDataCharacteristic);
     log("Read temperature value ${_convertToTemperature(readValue.value)}C");
@@ -201,7 +201,7 @@ class PeripheralTestOperations {
   Future<void> monitorCharacteristicForPeripheral() async {
     log("Reading temperature");
     int id = monitorCounter;
-    Stream<CharacteristicWithValueWithTransactionId> characteristicStream = await peripheral.monitorCharacteristic(
+    Stream<CharacteristicWithValue> characteristicStream = await peripheral.monitorCharacteristic(
         SensorTagTemperatureUuids.temperatureService,
         SensorTagTemperatureUuids.temperatureDataCharacteristic,
         transactionId: "$id");
@@ -242,7 +242,7 @@ class PeripheralTestOperations {
     await Future.delayed(Duration(seconds: 1));
 
     log("Reading temperature value");
-    CharacteristicWithValueWithTransactionId dataCharacteristic =
+    CharacteristicWithValue dataCharacteristic =
     await service.readCharacteristic(
         SensorTagTemperatureUuids.temperatureDataCharacteristic);
     log("Read temperature value ${_convertToTemperature(dataCharacteristic.value)}C");

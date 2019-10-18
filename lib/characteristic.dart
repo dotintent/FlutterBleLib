@@ -72,8 +72,8 @@ mixin WitTransactionId on Characteristic {
   String transactionId;
 }
 
-class CharacteristicWithValueWithTransactionId extends Characteristic with WithValue, WitTransactionId {
-  CharacteristicWithValueWithTransactionId.fromJson(
+class CharacteristicWithValue extends Characteristic with WithValue {
+  CharacteristicWithValue.fromJson(
     Map<String, dynamic> jsonObject,
     Service service,
     ManagerForCharacteristic manager,
@@ -81,10 +81,20 @@ class CharacteristicWithValueWithTransactionId extends Characteristic with WithV
     value = base64Decode(jsonObject[_CharacteristicMetadata.value]);
   }
 
-  CharacteristicWithValueWithTransactionId setTransactionId(String transactionId) {
+}
+
+class CharacteristicWithValueAndTransactionId extends CharacteristicWithValue with WitTransactionId {
+  CharacteristicWithValueAndTransactionId.fromJson(
+      Map<String, dynamic> jsonObject,
+      Service service,
+      ManagerForCharacteristic manager,
+      ) : super.fromJson(jsonObject, service, manager) {
+    value = base64Decode(jsonObject[_CharacteristicMetadata.value]);
+  }
+
+  CharacteristicWithValueAndTransactionId setTransactionId(String transactionId) {
     this.transactionId = transactionId;
     return this;
   }
-
 
 }
