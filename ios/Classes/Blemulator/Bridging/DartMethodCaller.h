@@ -57,4 +57,22 @@
                    resolve:(Resolve)resolve
                     reject:(Reject)reject;
 
+- (void)writeCharacteristicForDevice:(NSString *)deviceIdentifier
+                         serviceUUID:(NSString *)serviceUUID
+                  characteristicUUID:(NSString *)characteristicUUID
+                               value:(NSString *)value
+                             resolve:(Resolve)resolve
+                              reject:(Reject)reject;
+
+- (void)writeCharacteristicForService:(int)serviceIdentifier
+                   characteristicUUID:(NSString *)characteristicUUID
+                                value:(NSString *)value
+                              resolve:(Resolve)resolve
+                               reject:(Reject)reject;
+
+- (void)writeCharacteristic:(int)characteristicIdentifier
+                      value:(NSString *)value
+                    resolve:(Resolve)resolve
+                     reject:(Reject)reject;
+
 @end
