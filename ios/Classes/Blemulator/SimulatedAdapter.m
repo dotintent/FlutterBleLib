@@ -9,6 +9,7 @@
 @property DartMethodCaller *dartMethodCaller;
 @property DartValueHandler *dartValueHandler;
 @property NSMutableDictionary<NSString *, DeviceContainer *> *knownPeripherals;
+@property NSString *logLevelValue;
 
 @end
 
@@ -61,6 +62,7 @@
         self.dartMethodCaller = dartMethodCaller;
         self.dartValueHandler = dartValueHandler;
         self.knownPeripherals = [[NSMutableDictionary alloc] init];
+        self.logLevelValue = @"None";
 
         [self.dartMethodCaller createClient];
     }
@@ -157,12 +159,14 @@
 // MARK: - Adapter Methods - Log Level
 
 - (void)setLogLevel:(NSString * _Nonnull)logLevel {
-    NSLog(@"setLogLevel");
+    NSLog(@"setLogLevel: %@", logLevel);
+    self.logLevelValue = logLevel;
 }
 
 - (void)logLevel:(NS_NOESCAPE Resolve)resolve
           reject:(NS_NOESCAPE Reject)reject {
     NSLog(@"SimulatedAdapter.logLevel");
+    resolve(self.logLevelValue);
 }
 
 // MARK: - Adapter Methods - Discovery
