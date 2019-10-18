@@ -252,12 +252,9 @@ mixin CharacteristicsMixin on FlutterBLE {
   }
 }
 
-mixin WithTransactionId on Characteristic {
+class CharacteristicWithValueAndTransactionId extends CharacteristicWithValue {
   String transactionId;
-}
 
-class CharacteristicWithValueAndTransactionId extends CharacteristicWithValue
-    with WithTransactionId {
   CharacteristicWithValueAndTransactionId.fromJson(
     Map<String, dynamic> jsonObject,
     Service service,
