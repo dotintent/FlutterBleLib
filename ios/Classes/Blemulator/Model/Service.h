@@ -5,12 +5,12 @@
 
 @property int objectId;
 @property CBUUID * _Nonnull uuid;
-@property Peripheral * _Nonnull peripheral;
+@property NSString * _Nonnull peripheralIdentifier;
 @property BOOL isPrimary;
 
 - (instancetype _Nonnull)initWithObjectId:(int)objectId
                                      uuid:(CBUUID * _Nonnull)uuid
-                               peripheral:(Peripheral * _Nonnull)peripheral
+                     peripheralIdentifier:(NSString * _Nonnull)peripheralIdentifier
                                 isPrimary:(BOOL)isPrimary;
 
 - (NSDictionary<NSString *,id> * _Nonnull)jsonObjectRepresentation;
