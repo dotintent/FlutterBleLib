@@ -8,6 +8,7 @@ mixin DiscoveryMixin on SimulationManagerBaseWithErrorChecks {
 
     await _peripherals[deviceIdentifier].onDiscoveryRequest();
     await _peripherals[deviceIdentifier].onDiscovery();
+    await _errorIfDisconnected(deviceIdentifier);
     return _peripherals[deviceIdentifier].services();
   }
 }

@@ -6,7 +6,8 @@ mixin PeripheralRssiMixin on SimulationManagerBaseWithErrorChecks {
     await _errorIfUnknown(identifier);
     await _errorIfNotConnected(identifier);
 
-    SimulatedPeripheral peripheral = _peripherals[identifier];
-    return peripheral.rssi();
+    int rssi = await _peripherals[identifier].rssi();
+    await _errorIfDisconnected(identifier);
+    return rssi;
   }
 }
