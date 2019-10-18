@@ -30,7 +30,8 @@
             nil];
 }
 
-// MARK: - Dummy  implementation for now
+// TODO: - Dummy implementation of (NSInteger)mtu for now
+//          Should ask flutter for a value
 
 - (NSInteger)mtu {
     return -1;
