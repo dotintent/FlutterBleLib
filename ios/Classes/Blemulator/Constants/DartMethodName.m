@@ -18,3 +18,5 @@ NSString * const DART_METHOD_NAME_WRITE_CHARACTERISTIC_FOR_SERVICE = @"writeChar
 NSString * const DART_METHOD_NAME_WRITE_CHARACTERISTIC_FOR_IDENTIFIER = @"writeCharacteristicForIdentifier";
 
 NSString * const DART_METHOD_NAME_RSSI = @"rssi";
+
+NSString * const DART_METHOD_NAME_CANCEL_TRANSACTION = @"cancelTransaction";
