@@ -40,7 +40,7 @@
             _peripheral.identifier, PERIPHERAL_RESPONSE_ID,
             _peripheral.name, PERIPHERAL_RESPONSE_NAME,
             _rssi, PERIPHERAL_RESPONSE_RSSI,
-            _peripheral.mtu, PERIPHERAL_RESPONSE_MTU,
+            [NSNumber numberWithInteger:[_peripheral mtu]], PERIPHERAL_RESPONSE_MTU,
             manufacturerData, PERIPHERAL_RESPONSE_MANUFACTURER_DATA,
             _advertisementData.serviceData, PERIPHERAL_RESPONSE_SERVICE_DATA,
             serviceUUIDs, PERIPHERAL_RESPONSE_SERVICE_UUIDS,

@@ -1,5 +1,6 @@
 #import "Characteristic.h"
 #import "CharacteristicResponse.h"
+#import <Flutter/Flutter.h>
 
 @implementation Characteristic
 
@@ -27,15 +28,19 @@
             [_uuid UUIDString].lowercaseString, CHARACTERISTIC_RESPONSE_UUID,
             [NSNumber numberWithInt:_service.objectId], CHARACTERISTIC_RESPONSE_SERVICE_ID,
             [_service.uuid UUIDString].lowercaseString, CHARACTERISTIC_RESPONSE_SERVICE_UUID,
-            _service.peripheral.identifier, CHARACTERISTIC_RESPONSE_DEVICE_ID,
+            _service.peripheralIdentifier, CHARACTERISTIC_RESPONSE_DEVICE_ID,
             [NSNumber numberWithBool:_properties & CBCharacteristicPropertyRead], CHARACTERISTIC_RESPONSE_IS_READABLE,
             [NSNumber numberWithBool:_properties & CBCharacteristicPropertyWrite], CHARACTERISTIC_RESPONSE_IS_WRITABLE_WITH_RESPONSE,
             [NSNumber numberWithBool:_properties & CBCharacteristicPropertyWriteWithoutResponse], CHARACTERISTIC_RESPONSE_IS_WRITABLE_WITHOUT_RESPONSE,
             [NSNumber numberWithBool:_properties & CBCharacteristicPropertyNotify], CHARACTERISTIC_RESPONSE_IS_NOTIFIABLE,
             [NSNumber numberWithBool:_isNotifying], CHARACTERISTIC_RESPONSE_IS_NOTIFYING,
             [NSNumber numberWithBool:_properties & CBCharacteristicPropertyIndicate], CHARACTERISTIC_RESPONSE_IS_INDICATABLE,
-            [NSNull null], CHARACTERISTIC_RESPONSE_VALUE,
+            [self base64encodedStringFromBytes:_value], CHARACTERISTIC_RESPONSE_VALUE,
             nil];
+}
+
+- (NSString *)base64encodedStringFromBytes:(FlutterStandardTypedData *)bytes {
+    return [bytes.data base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
 }
 
 @end

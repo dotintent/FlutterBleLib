@@ -5,4 +5,6 @@
 + (DeviceContainer *)deviceContainerFromDartResult:(id)result
                            peripheral:(Peripheral *)peripheral;
 
++ (Characteristic *)characteristicFromDartResult:(id)result;
+
 @end

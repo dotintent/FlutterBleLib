@@ -40,4 +40,45 @@
                                       resolve:(Resolve)resolve
                                        reject:(Reject)reject;
 
+// MARK: - Characteristics observation
+
+- (void)readCharacteristicForDevice:(NSString *)deviceIdentifier
+                        serviceUUID:(NSString *)serviceUUID
+                 characteristicUUID:(NSString *)characteristicUUID
+                      transactionId:(NSString *)transactionId
+                            resolve:(Resolve)resolve
+                             reject:(Reject)reject;
+
+- (void)readCharacteristicForService:(int)serviceIdentifier
+                  characteristicUUID:(NSString *)characteristicUUID
+                       transactionId:(NSString *)transactionId
+                             resolve:(Resolve)resolve
+                              reject:(Reject)reject;
+
+- (void)readCharacteristic:(int)characteristicIdentifier
+             transactionId:(NSString *)transactionId
+                   resolve:(Resolve)resolve
+                    reject:(Reject)reject;
+
+- (void)writeCharacteristicForDevice:(NSString *)deviceIdentifier
+                         serviceUUID:(NSString *)serviceUUID
+                  characteristicUUID:(NSString *)characteristicUUID
+                               value:(NSString *)value
+                       transactionId:(NSString *)transactionId
+                             resolve:(Resolve)resolve
+                              reject:(Reject)reject;
+
+- (void)writeCharacteristicForService:(int)serviceIdentifier
+                   characteristicUUID:(NSString *)characteristicUUID
+                                value:(NSString *)value
+                        transactionId:(NSString *)transactionId
+                              resolve:(Resolve)resolve
+                               reject:(Reject)reject;
+
+- (void)writeCharacteristic:(int)characteristicIdentifier
+                      value:(NSString *)value
+              transactionId:(NSString *)transactionId
+                    resolve:(Resolve)resolve
+                     reject:(Reject)reject;
+
 @end
