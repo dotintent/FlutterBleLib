@@ -56,6 +56,8 @@ class DeviceDetailsBloc {
       Fimber.e(text);
       _logsController.add(_logs);
     };
+
+    _bleManager.stopDeviceScan();
   }
 
   void init() {
@@ -199,7 +201,7 @@ class DeviceDetailsBloc {
       peripheral
           .observeConnectionState(emitCurrentValue: true, completeOnDisconnect: true)
           .listen((connectionState) {
-        log('Observed new connection state: $connectionState');
+        log('Observed new connection state: \n$connectionState');
         _connectionStateController.add(connectionState);
       });
 
