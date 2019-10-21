@@ -275,21 +275,6 @@ class PeripheralTestOperations {
     return peripheral;
   }
 
-  static int monitorCounter = 0;
-
-  Future<void> monitorCharacteristicForPeripheral() async {
-    log("Reading temperature");
-    int id = monitorCounter;
-    Stream<CharacteristicWithValue> characteristicStream = await peripheral.monitorCharacteristic(
-        SensorTagTemperatureUuids.temperatureService,
-        SensorTagTemperatureUuids.temperatureDataCharacteristic,
-        transactionId: "$id");
-    characteristicStream.listen((characteristicValue) {
-      log("Read temperature [$id] value ${_convertToTemperature(characteristicValue.value)}C");
-    });
-    ++monitorCounter;
-  }
-
   Future<void> readWriteMonitorCharacteristicForService() async {
     log("Test read/write/monitor characteristic on service");
     log("Fetching service");
