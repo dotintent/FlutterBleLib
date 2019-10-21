@@ -85,7 +85,6 @@ ScanInfo supports following data:
 ```dart
 class ScanInfo {
   int rssi;
-  int mtu;
   bool isConnectable;
   int txPowerLevel;
 
@@ -96,25 +95,14 @@ class ScanInfo {
   String localName;
   List<String> solicitedServiceUuids;
   List<String> overflowUuids;
-
-  ScanInfo(
-      {this.rssi = defaultRssi,
-      this.mtu = defaultMtu,
-      this.isConnectable = true,
-      this.txPowerLevel,
-      this.manufacturerData,
-      this.serviceData,
-      this.serviceUuids,
-      this.localName,
-      this.solicitedServiceUuids,
-      this.overflowUuids});
 }
 ```
 You can also provide it in the constructor of the SimulatedPeripheral.
 
 #### Custom characteristic behaviour
-Blemulator does most of the heavy lifting for you adn takes care of the basic stuff, but there's always more complicated logic.
-If you need to validate values or a write to one characteristic has to trigger a change in the behaviour of another, you may need to extend SimulatedService or SimulatedCharacteristic classes.
+Blemulator does most of the heavy lifting for you and takes care of the basic stuff, but there's always more complicated logic.
+If you need to validate values or writing to one characteristic has to trigger a change in the behaviour of different characteristic,
+ you may need to extend SimulatedService or SimulatedCharacteristic classes.
 ##### Limiting values supported by characteristic
 
 Following is an example of a characteristic that accepts only 0 or 1.
