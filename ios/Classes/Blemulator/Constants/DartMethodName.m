@@ -17,6 +17,10 @@ NSString * const DART_METHOD_NAME_WRITE_CHARACTERISTIC_FOR_DEVICE = @"writeChara
 NSString * const DART_METHOD_NAME_WRITE_CHARACTERISTIC_FOR_SERVICE = @"writeCharacteristicForService";
 NSString * const DART_METHOD_NAME_WRITE_CHARACTERISTIC_FOR_IDENTIFIER = @"writeCharacteristicForIdentifier";
 
+NSString * const DART_METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_DEVICE = @"monitorCharacteristicForDevice";
+NSString * const DART_METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_SERVICE = @"monitorCharacteristicForService";
+NSString * const DART_METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_IDENTIFIER = @"monitorCharacteristicForIdentifier";
+
 NSString * const DART_METHOD_NAME_RSSI = @"rssi";
 
 NSString * const DART_METHOD_NAME_CANCEL_TRANSACTION = @"cancelTransaction";
