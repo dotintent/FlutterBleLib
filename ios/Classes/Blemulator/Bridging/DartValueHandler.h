@@ -23,7 +23,8 @@
 
 @interface DartValueHandler : NSObject<FlutterMethodCallHandler>
 
-@property NSMutableArray<NSString *> * observedDeviceIdentifiers;
+@property NSMutableArray<NSString *> *observedDeviceIdentifiers;
+@property NSMutableArray<NSString *> *monitoredCharacteristics;
 
 @property id <DartValueHandlerScanEventDelegate> scanEventDelegate;
 @property id <DartValueHandlerConnectionEventDelegate> connectionEventDelegate;

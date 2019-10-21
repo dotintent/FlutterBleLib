@@ -13,6 +13,9 @@
     } else if ([PLATFORM_METHOD_NAME_PUBLISH_CONNECTION_STATE isEqualToString:call.method]) {
         [self.connectionEventDelegate dispatchDartValueHandlerConnectionStateEvent:[DartCallArgumentsConverter connectionStateEventFromCallArguments:call.arguments]];
         result(nil);
+    } else if ([PLATFORM_METHOD_NAME_PUBLISH_CHARACTERISTIC_UPADTE isEqualToString:call.method]) {
+        NSLog(@"%@", result);
+        result(nil);
     } else {
         result(FlutterMethodNotImplemented);
     }
