@@ -56,12 +56,11 @@ class DeviceDetailsBloc {
       Fimber.e(text);
       _logsController.add(_logs);
     };
-
-    _bleManager.stopDeviceScan();
   }
 
   void init() {
     Fimber.d("init bloc");
+    _bleManager.stopDeviceScan();
   }
 
   Future<void> disconnect() async {
