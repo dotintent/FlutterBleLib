@@ -15,7 +15,6 @@ class DartToPlatformBridge {
           SimulationPlatformMethodName.publishScanResult, <String, dynamic>{
         SimulationArgumentName.name: scanResult.name,
         SimulationArgumentName.id: scanResult.id,
-        SimulationArgumentName.mtu: scanResult.mtu,
         SimulationArgumentName.rssi: scanResult.rssi,
         SimulationArgumentName.isConnectable: scanResult.isConnectable,
         SimulationArgumentName.txPowerLevel: scanResult.txPowerLevel,

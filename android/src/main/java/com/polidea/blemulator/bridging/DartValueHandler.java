@@ -103,7 +103,7 @@ public class DartValueHandler implements MethodChannel.MethodCallHandler {
                 call.<String>argument(SimulationArgumentName.DEVICE_ID),
                 call.<String>argument(SimulationArgumentName.DEVICE_NAME),
                 call.<Integer>argument(SimulationArgumentName.RSSI),
-                call.<Integer>argument(SimulationArgumentName.MTU),
+                -1, //shouldn't be in ScanResult at all, it is there for legacy reasons
                 call.<Boolean>argument(SimulationArgumentName.IS_CONNECTABLE),
                 overflowServiceUuidsArray,
                 advertisementData

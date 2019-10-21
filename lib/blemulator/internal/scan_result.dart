@@ -4,7 +4,6 @@ class ScanResult {
   final String name;
   final String id;
 
-  final int mtu;
   final int rssi;
   final bool isConnectable;
   final int txPowerLevel;
@@ -20,7 +19,6 @@ class ScanResult {
   ScanResult(ScanInfo scanInfo, SimulatedPeripheral peripheral)
       : name = peripheral.name,
         id = peripheral.id,
-        mtu = scanInfo.mtu,
         rssi = scanInfo.rssi,
         isConnectable = scanInfo.isConnectable,
         txPowerLevel = scanInfo.txPowerLevel,
