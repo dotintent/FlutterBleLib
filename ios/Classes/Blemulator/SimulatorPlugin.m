@@ -6,6 +6,8 @@
 #import "PlatformMethodName.h"
 #import "SimulationChannelName.h"
 
+@import MultiplatformBleAdapter;
+
 typedef id<BleAdapter> _Nonnull (^BleAdapterCreator)(dispatch_queue_t _Nonnull queue, NSString * _Nullable restoreIdentifierKey);
 
 @interface SimulatorPlugin ()
