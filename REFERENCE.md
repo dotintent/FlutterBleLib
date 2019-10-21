@@ -10,7 +10,7 @@ The basic idea is to create an instance of **BleManager**, use it to create/rele
 # BleManager
 This entity serves as the library's entry point. It doesn't track any state, so it is safe to create as many of those as you wish.
 All of the following methods belong to BleManager instance.
-## Initialization
+## Managing native resources
 ```dart
   Future<void> createClient({
     String restoreStateIdentifier,
@@ -20,7 +20,7 @@ All of the following methods belong to BleManager instance.
 Creates native adapters for handling BLE. *This method has to be called before you can begin using the library.*
 Both parameters are iOS-specific and handle restoration of already bonded devices, eg. after a crash.
 
-Method will return error if an instance of native BleAdapter has already beeen created.
+Method will return error if an instance of native BleAdapter has already been created.
 ```dart
   Future<void> destroyClient();
 ```
@@ -34,7 +34,7 @@ Releases native resources. Should be called once there's no further need for BLE
     bool allowDuplicates,
   });
 ```
-Returns a stream of objects containg advertisemnt data of the peripheral and the peripheral itself.
+Returns a stream of objects containing advertisement data of the peripheral and the peripheral itself.
 `scanMode` and `callbackType` are Android-specific. [More information in Android documentation](https://developer.android.com/reference/android/bluetooth/le/ScanSettings)
 `allowDuplicates` is iOS-specific. [More information in iOS documentation](https://developer.apple.com/documentation/corebluetooth/cbcentralmanagerscanoptionallowduplicateskey)
 `uuids` is used to filter peripherals to only return those containing services with specified UUIDs.
@@ -89,7 +89,7 @@ Return a list of Peripherals that have been scanned and match any of the supplie
 ```dart
   Future<List<Peripheral>> connectedDevices(List<String> serviceUUIDs);
 ```
-Returns a list of connecterd Peripherals that have at least one service with UUID matching any of the supplied UUIDs. Returns empty list if an empty list is passed.
+Returns a list of connected Peripherals that have at least one service with UUID matching any of the supplied UUIDs. Returns empty list if an empty list is passed.
 ## Cancelling asynchronous operations
 ```dart
   Future<void> cancelTransaction(String transactionId);
@@ -110,7 +110,8 @@ All of the following methods belong to Peripheral instance.
           bool refreshGatt = false,
           Duration timeout});
 ```
-Attemps to connect to the peripheral.
+Attempts to connect to the peripheral.
+`autoConnect` waits for device to be discoverable before attempting connection; Android-specific. [See more](https://github.com/Polidea/RxAndroidBle#auto-connect) 
 `requestMtu` defaults to 23.
 `refreshGatt` forces GATT to refresh its cache; Android-specific.
 If connection has not been established by `timeout`, the operation fails. `timeout` defaults to 30 seconds.
@@ -119,7 +120,7 @@ If connection has not been established by `timeout`, the operation fails. `timeo
           {bool emitCurrentValue = false,
           bool completeOnDisconnect = false});
 ```
-Return a stream containing changes to the connection state. By default doesn't emit current state, nor terminates the stream after disconnecting.
+Returns a stream containing changes to the connection state. By default doesn't emit current state, nor terminates the stream after disconnecting.
 **Note:** due ambiguities concerning `disconnecting` state, current implementation never emits `disconnecting`, only `connecting`, `connected`, `disconnected`.
 
 ```dart
@@ -136,7 +137,7 @@ Terminates connection or any attempt to connect.
   Future<void> discoverAllServicesAndCharacteristics({String transactionId});
 ```
 Runs the discovery process, caching all discovered services and characteristics in the native parts.
-**Must be run before `services()` or `characteristics()`**
+**Must be run before `services()`, `characteristics()` and any operations on characteristics**
 Operation is cancellable, meaning the operation's result in Dart can be discarded.
 ```dart
   Future<List<Service>> services();
@@ -161,7 +162,7 @@ Reads current RSSI if the device is connected.
     return _manager.requestMtu(this, mtu, transactionId);
   }
 ```
-Request peripheral to set a different MTU. Operation is cancellable, meaning the operation's result in Dart can be discarded.
+Request peripheral to set a different MTU. On iOS only returns the current value.
 Return the MTU set by peripheral after request.
 ## Characteristic convenience methods
 Finds first service with specified UUID and first characteristic
@@ -250,7 +251,7 @@ Reads the value of the characteristic. Operation is cancellable, meaning the ope
     String transactionId,
   });
 ```
-Writes value to this characteristic. It is user's responsibility to choose whether write should be done with or without response. Operation is cancellable, meaning the operation's result in Dart can be discarded.
+Writes value to this characteristic. It is user's responsibility to choose whether write should be done with or without response.
 ```dart
   Stream<Uint8List> monitor({String transactionId});
 ```

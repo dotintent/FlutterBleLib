@@ -35,12 +35,32 @@ For more informations, see [REFERENCE](https://github.com/Polidea/FlutterBleLib/
 ### Initialising
 ```dart
 BleManager bleManager = BleManager();
-bleManager.createClient();
+bleManager.createClient(); //ready to go!
+// your peripheral logic
+bleManager.destroyClient(); //remember to release native resources when you're done!
 ```
 Following snippets assume the library has been initialised.
 
 ### Handling Bluetooth adapter state
+```dart
+enum BluetoothState {
+  UNKNOWN,
+  UNSUPPORTED,
+  UNAUTHORIZED,
+  POWERED_ON,
+  POWERED_OFF,
+  RESETTING,
+}
 
+
+bleManager.enableRadio(); //ANDROID-NLY turns on BT. NOTE: doesn't check permissions
+bleManager.disableRadio() //ANDROID-ONLY turns off BT. NOTE: doesn't check permissions
+BluetoothState currentState = await bleManager.bluetoothState();
+bleManager.observeBluetoothState().listen((btState) {
+  print(btState);
+  //do your BT logic, open different screen, etc.
+});
+```
 ### Scanning for peripherals
 ```dart
 bleManager.startPeripheralScan(
@@ -58,21 +78,20 @@ The snippet above starts peripheral scan and stops it after receiving first resu
 It filters the scan results to those that advertise a service with specified UUID.
 
 ### Connecting to peripheral
-
+First you must obtain a _ScanResult_ from _BleManager.startPeripheralScan()_.
 ```dart
-bleManager.startPeripheralScan().listen((scanResult) async {
-  //Scan one peripheral and stop scanning
-  scanResult.peripheral.observeConnectionState(emitCurrentValue: true, completeOnDisconnect: true)
-    .listen((connectionState) {
-      print("Peripheral ${scanResult.peripheral.identifier} connection state is $connectionState");
-    });
-  await scanResult.peripheral.connect();
-  await scanResult.peripheral.disconnectOrCancelConnection();
-});
+Peripheral peripheral = scanResult.peripheral;
+peripheral.observeConnectionState(emitCurrentValue: true, completeOnDisconnect: true)
+  .listen((connectionState) {
+    print("Peripheral ${scanResult.peripheral.identifier} connection state is $connectionState");
+  });
+await peripheral.connect();
+bool connected = await peripheral.isConnected();
+await peripheral.disconnectOrCancelConnection();
 ```
 
-The snippet above starts observing the state of the connection to each scanned peripheral,
- connects to it and then disconnects from it.
+The snippet above starts observing the state of the connection to the peripheral,
+ connects to it, checks if it's connected and then disconnects from it.
 
 ### Transactions
 
