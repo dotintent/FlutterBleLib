@@ -75,7 +75,10 @@ class DeviceListScreenState extends State<DevicesListScreen> {
         initialData: _devicesBloc.visibleDevices.value,
         stream: _devicesBloc.visibleDevices,
         builder: (context, snapshot) =>
-            DevicesList(_devicesBloc, snapshot.data),
+          RefreshIndicator(
+            onRefresh: _devicesBloc.refresh,
+            child: DevicesList(_devicesBloc, snapshot.data),
+          ),
       ),
     );
   }

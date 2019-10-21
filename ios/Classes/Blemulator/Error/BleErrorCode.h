@@ -1,0 +1,46 @@
+typedef enum {
+    BleErrorCodeUnknownError = 0,
+    BleErrorCodeBluetoothManagerDestroyed = 1,
+    BleErrorCodeOperationCancelled = 2,
+    BleErrorCodeOperationTimedOut = 3,
+    BleErrorCodeOperationStartFailed = 4,
+    BleErrorCodeInvalidIdentifiers = 5,
+
+    BleErrorCodeBluetoothUnsupported = 100,
+    BleErrorCodeBluetoothUnauthorized = 101,
+    BleErrorCodeBluetoothPoweredOff = 102,
+    BleErrorCodeBluetoothInUnknownState = 103,
+    BleErrorCodeBluetoothResetting = 104,
+    BleErrorCodeBluetoothStateChangeFailed = 105,
+
+    BleErrorCodeDeviceConnectionFailed = 200,
+    BleErrorCodeDeviceDisconnected = 201,
+    BleErrorCodeDeviceRSSIReadFailed = 202,
+    BleErrorCodeDeviceAlreadyConnected = 203,
+    BleErrorCodeDeviceNotFound = 204,
+    BleErrorCodeDeviceNotConnected = 205,
+    BleErrorCodeDeviceMTUChangeFailed = 206,
+
+    BleErrorCodeServicesDiscoveryFailed = 300,
+    BleErrorCodeIncludedServicesDiscoveryFailed = 301,
+    BleErrorCodeServiceNotFound = 302,
+    BleErrorCodeServicesNotDiscovered = 303,
+
+    BleErrorCodeCharacteristicsDiscoveryFailed = 400,
+    BleErrorCodeCharacteristicWriteFailed = 401,
+    BleErrorCodeCharacteristicReadFailed = 402,
+    BleErrorCodeCharacteristicNotifyChangeFailed = 403,
+    BleErrorCodeCharacteristicNotFound = 404,
+    BleErrorCodeCharacteristicsNotDiscovered = 405,
+    BleErrorCodeCharacteristicInvalidDataFormat = 406,
+
+    BleErrorCodeDescriptorsDiscoveryFailed = 500,
+    BleErrorCodeDescriptorWriteFailed = 501,
+    BleErrorCodeDescriptorReadFailed = 502,
+    BleErrorCodeDescriptorNotFound = 503,
+    BleErrorCodeDescriptorsNotDiscovered = 504,
+    BleErrorCodeDescriptorInvalidDataFormat = 505,
+
+    BleErrorCodeScanStartFailed = 600,
+    BleErrorCodeLocationServicesDisabled = 601,
+} BleErrorCode;

@@ -1,7 +1,3 @@
-#import "MethodName.h"
-
-@implementation MethodName
-
 NSString * const METHOD_NAME_CREATE_CLIENT = @"createClient";
 NSString * const METHOD_NAME_DESTROY_CLIENT = @"destroyClient";
 
@@ -46,5 +42,3 @@ NSString * const METHOD_NAME_WRITE_CHARACTERISTIC_FOR_SERVICE = @"writeCharacter
 NSString * const METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_IDENTIFIER = @"monitorCharacteristicForIdentifier";
 NSString * const METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_DEVICE = @"monitorCharacteristicForDevice";
 NSString * const METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_SERVICE = @"monitorCharacteristicForService";
-
-@end

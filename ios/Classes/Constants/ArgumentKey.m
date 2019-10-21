@@ -1,7 +1,3 @@
-#import "ArgumentKey.h"
-
-@implementation ArgumentKey
-
 NSString * const ARGUMENT_KEY_RESTORE_STATE_IDENTIFIER = @"restoreStateIdentifier";
 NSString * const ARGUMENT_KEY_SCAN_MODE = @"scanMode";
 NSString * const ARGUMENT_KEY_ALLOW_DUPLICATES = @"allowDuplicates";
@@ -29,5 +25,3 @@ NSString * const ARGUMENT_KEY_WITH_RESPONSE = @"withResponse";
 NSString * const ARGUMENT_KEY_MTU = @"mtu";
 
 NSString * const ARGUMENT_KEY_DEVICE_IDENTIFIERS = @"deviceIdentifiers";
-
-@end

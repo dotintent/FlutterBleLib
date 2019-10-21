@@ -1,21 +1,22 @@
 #import "FlutterBleLibPlugin.h"
 #import <flutter_ble_lib-Swift.h>
-#import "Constants/ArgumentKey.h"
-#import "Constants/ChannelName.h"
-#import "Constants/MethodName.h"
-#import "Event/AdapterStateStreamHandler.h"
-#import "Event/RestoreStateStreamHandler.h"
-#import "Event/ScanningStreamHandler.h"
-#import "Event/ConnectionStateStreamHandler.h"
-#import "Event/MonitorCharacteristicStreamHandler.h"
-#import "Util/ArgumentValidator.h"
-#import "Util/FlutterErrorFactory.h"
-#import "Util/JSONStringifier.h"
-#import "ResponseConverter/CharacteristicResponseConverter.h"
-#import "ResponseConverter/PeripheralResponseConverter.h"
+#import "ArgumentKey.h"
+#import "ChannelName.h"
+#import "MethodName.h"
+#import "AdapterStateStreamHandler.h"
+#import "RestoreStateStreamHandler.h"
+#import "ScanningStreamHandler.h"
+#import "ConnectionStateStreamHandler.h"
+#import "MonitorCharacteristicStreamHandler.h"
+#import "ArgumentValidator.h"
+#import "FlutterErrorFactory.h"
+#import "JSONStringifier.h"
+#import "CommonTypes.h"
+#import "CharacteristicResponseConverter.h"
+#import "PeripheralResponseConverter.h"
+#import "SimulatorPlugin.h"
 
-typedef void (^Resolve)(id result);
-typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
+@import MultiplatformBleAdapter;
 
 @interface FlutterBleLibPlugin () <BleClientManagerDelegate>
 
@@ -64,6 +65,9 @@ typedef void (^Reject)(NSString *code, NSString *message, NSError *error);
     [scanningChannel setStreamHandler:instance.scanningStreamHandler];
     [connectionStateChannel setStreamHandler:instance.connectionStateStreamHandler];
     [monitorCharacteristicChannel setStreamHandler:instance.monitorCharacteristicStreamHandler];
+
+    //TEMPORARY
+    [SimulatorPlugin registerWithRegistrar:registrar];
 }
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
