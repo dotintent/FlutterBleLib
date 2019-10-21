@@ -105,6 +105,7 @@
                      name:(NSString *)name
                   resolve:(Resolve)resolve
                    reject:(Reject)reject;
+
 // MARK: - Cancel transaction
 
 - (void)cancelTransaction:(NSString *)transactionId;

@@ -48,4 +48,9 @@
                                                       service:[DomainTypesConverter serviceFromDictionary:callArguments]];
 }
 
++ (BleError *)bleErrorFromCallArguments:(NSDictionary<NSString *,id> *)callArguments {
+    return [[BleError alloc] initWithErrorCode:[[callArguments objectForKey:DART_CALL_ARGUMENT_ERROR_CODE] intValue]
+                                        reason:[callArguments objectForKey:DART_CALL_ARGUMENT_REASON]];
+}
+
 @end

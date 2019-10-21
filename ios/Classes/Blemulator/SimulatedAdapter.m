@@ -65,6 +65,13 @@
                                                            nil]];
 }
 
+- (void)dispatchDartValueHandlerReadError:(BleError *)bleError transactionId:(NSString *)transactionId {
+    [self.delegate dispatchEvent:BleEvent.readEvent value:[NSArray arrayWithObjects:[bleError jsonObjectRepresentation],
+                                                           [NSNull null],
+                                                           transactionId != nil ? transactionId : [NSNull null],
+                                                           nil]];
+}
+
 // MARK: - Initializer
 
 - (instancetype)initWithDartMethodCaller:(DartMethodCaller *)dartMethodCaller

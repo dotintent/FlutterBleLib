@@ -297,6 +297,8 @@ typedef void (^SuccessHandler)(id _Nullable result);
                                   result:[self invokeMethodResultHandlerForMethod:DART_METHOD_NAME_RSSI
                                                                         onSuccess:successHandler
                                                                           onError:reject]];
+}
+
 // MARK: - Cancel transaction
 
 - (void)cancelTransaction:(NSString *)transactionId {

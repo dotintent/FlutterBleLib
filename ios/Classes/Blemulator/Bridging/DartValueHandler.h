@@ -2,6 +2,7 @@
 #import "ScannedPeripheral.h"
 #import "ConnectionStateEvent.h"
 #import "Characteristic.h"
+#import "BleError.h"
 
 @protocol DartValueHandlerScanEventDelegate
 
@@ -18,6 +19,9 @@
 @protocol DartValueHandlerReadEventDelegate
 
 - (void)dispatchDartValueHandlerReadEvent:(Characteristic *)characteristic
+                            transactionId:(NSString *)transactionId;
+
+- (void)dispatchDartValueHandlerReadError:(BleError *)bleError
                             transactionId:(NSString *)transactionId;
 
 @end
