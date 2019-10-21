@@ -55,6 +55,13 @@
     }
 }
 
+// MARK: - DartValueHandlerReadEventDelegate implementation
+
+- (void)dispatchDartValueHandlerReadEvent:(Characteristic *)characteristic {
+    NSLog(@"SimulatedAdapter.dispatchDartValueHandlerReadEvent called");
+    NSLog(@"Characteristic: %@", [characteristic jsonObjectRepresentation]);
+}
+
 // MARK: - Initializer
 
 - (instancetype)initWithDartMethodCaller:(DartMethodCaller *)dartMethodCaller
@@ -335,6 +342,12 @@
                                resolve:(Resolve)resolve
                                 reject:(Reject)reject {
     NSLog(@"SimulatedAdapter.monitorCharacteristicForDevice");
+    [self.dartMethodCaller monitorCharacteristicForDevice:deviceIdentifier
+                                              serviceUUID:serviceUUID
+                                       characteristicUUID:characteristicUUID
+                                            transactionId:transactionId
+                                                  resolve:resolve
+                                                   reject:reject];
 }
 
 - (void)monitorCharacteristicForService:(double)serviceIdentifier
@@ -343,6 +356,11 @@
                                 resolve:(Resolve)resolve
                                  reject:(Reject)reject {
     NSLog(@"SimulatedAdapter.monitorCharacteristicForService");
+    [self.dartMethodCaller monitorCharacteristicForService:serviceIdentifier
+                                        characteristicUUID:characteristicUUID
+                                             transactionId:transactionId
+                                                   resolve:resolve
+                                                    reject:reject];
 }
 
 - (void)monitorCharacteristic:(double)characteristicIdentifier
@@ -350,6 +368,10 @@
                       resolve:(Resolve)resolve
                        reject:(Reject)reject {
     NSLog(@"SimulatedAdapter.monitorCharacteristic");
+    [self.dartMethodCaller monitorCharacteristic:characteristicIdentifier
+                                   transactionId:transactionId
+                                         resolve:resolve
+                                          reject:reject];
 }
 
 // MARK: - Adapter Methods - Known / Connected devices
