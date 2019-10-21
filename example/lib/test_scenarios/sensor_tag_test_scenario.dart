@@ -14,13 +14,13 @@ class SensorTagTestScenario {
     _peripheralTestOperations.connect()
         .then((_) => _peripheralTestOperations.cancelTransaction())
         .then((_) => _peripheralTestOperations.discovery())
-        .then((_) => _peripheralTestOperations.testRequestingMtu())
-        .then((_) => _peripheralTestOperations.testReadingRssi())
+//        .then((_) => _peripheralTestOperations.testRequestingMtu())
+//        .then((_) => _peripheralTestOperations.testReadingRssi())
         .then((_) => _peripheralTestOperations.readWriteMonitorCharacteristicForPeripheral())
         .then((_) => _peripheralTestOperations.readWriteMonitorCharacteristicForService())
         .then((_) => _peripheralTestOperations.readWriteMonitorCharacteristic())
-        .then((_) => _peripheralTestOperations.fetchConnectedDevice())
-        .then((_) => _peripheralTestOperations.fetchKnownDevice())
+//        .then((_) => _peripheralTestOperations.fetchConnectedDevice())
+//        .then((_) => _peripheralTestOperations.fetchKnownDevice())
         .then((_) => _peripheralTestOperations.disconnect());
   }
 

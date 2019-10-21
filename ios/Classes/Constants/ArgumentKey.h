@@ -1,5 +1,3 @@
-@interface ArgumentKey : NSObject 
-
 extern NSString * const ARGUMENT_KEY_RESTORE_STATE_IDENTIFIER;
 extern NSString * const ARGUMENT_KEY_SCAN_MODE;
 extern NSString * const ARGUMENT_KEY_ALLOW_DUPLICATES;
@@ -27,5 +25,3 @@ extern NSString * const ARGUMENT_KEY_WITH_RESPONSE;
 extern NSString * const ARGUMENT_KEY_MTU;
 
 extern NSString * const ARGUMENT_KEY_DEVICE_IDENTIFIERS;
-
-@end
