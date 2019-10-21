@@ -163,10 +163,11 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
     _monitoringSubscriptions.putIfAbsent(
       transactionId,
       () => targetCharacteristic.monitor().listen((value) {
-        _bridge.publishCharacteristicUpdate(targetCharacteristic, value);
+        _bridge.publishCharacteristicUpdate(
+            targetCharacteristic, value, transactionId);
       }, onError: (error) {
         _bridge.publishCharacteristicMonitoringError(
-            characteristicIdentifier, error);
+            characteristicIdentifier, error, transactionId);
       }, cancelOnError: true),
     );
   }
@@ -191,10 +192,11 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
     _monitoringSubscriptions.putIfAbsent(
       transactionId,
       () => targetCharacteristic.monitor().listen((value) {
-        _bridge.publishCharacteristicUpdate(targetCharacteristic, value);
+        _bridge.publishCharacteristicUpdate(
+            targetCharacteristic, value, transactionId);
       }, onError: (error) {
         _bridge.publishCharacteristicMonitoringError(
-            targetCharacteristic.id, error);
+            targetCharacteristic.id, error, transactionId);
       }, cancelOnError: true),
     );
   }
@@ -214,10 +216,11 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
     _monitoringSubscriptions.putIfAbsent(
       transactionId,
       () => targetCharacteristic.monitor().listen((value) {
-        _bridge.publishCharacteristicUpdate(targetCharacteristic, value);
+        _bridge.publishCharacteristicUpdate(
+            targetCharacteristic, value, transactionId);
       }, onError: (error) {
         _bridge.publishCharacteristicMonitoringError(
-            targetCharacteristic.id, error);
+            targetCharacteristic.id, error, transactionId);
       }, cancelOnError: true),
     );
   }
