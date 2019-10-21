@@ -233,6 +233,30 @@ typedef void (^SuccessHandler)(id _Nullable result);
                                                                           onError:reject]];
 }
 
+- (void)monitorCharacteristicForDevice:(NSString *)deviceIdentifier
+                           serviceUUID:(NSString *)serviceUUID
+                    characteristicUUID:(NSString *)characteristicUUID
+                         transactionId:(NSString *)transactionId
+                               resolve:(Resolve)resolve
+                                reject:(Reject)reject {
+
+}
+
+- (void)monitorCharacteristicForService:(int)serviceIdentifier
+                     characteristicUUID:(NSString *)characteristicUUID
+                          transactionId:(NSString *)transactionId
+                                resolve:(Resolve)resolve
+                                 reject:(Reject)reject {
+
+}
+
+- (void)monitorCharacteristic:(int)characteristicIdentifier
+                transactionId:(NSString *)transactionId
+                      resolve:(Resolve)resolve
+                       reject:(Reject)reject {
+
+}
+
 // MARK: - RSSI
 
 - (void)readRSSIForDevice:(NSString *)deviceIdentifier
