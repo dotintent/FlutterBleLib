@@ -394,6 +394,7 @@
 
 - (void)cancelTransaction:(NSString * _Nonnull)transactionId {
     NSLog(@"SimulatedAdapter.cancelTransaction");
+    [self.dartMethodCaller cancelTransaction:transactionId];
 }
 
 // MARK: - Utility methods

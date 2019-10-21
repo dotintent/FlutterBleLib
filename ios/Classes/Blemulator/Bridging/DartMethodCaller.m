@@ -251,6 +251,14 @@ typedef void (^SuccessHandler)(id _Nullable result);
                                   result:[self invokeMethodResultHandlerForMethod:DART_METHOD_NAME_RSSI
                                                                         onSuccess:successHandler
                                                                           onError:reject]];
+// MARK: - Cancel transaction
+
+- (void)cancelTransaction:(NSString *)transactionId {
+    NSDictionary<NSString *,id> *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
+                                              transactionId, DART_CALL_ARGUMENT_TRANSACTION_ID,
+                                              nil];
+    [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_CANCEL_TRANSACTION
+                               arguments:arguments];
 }
 
 // MARK: - Utility methods
