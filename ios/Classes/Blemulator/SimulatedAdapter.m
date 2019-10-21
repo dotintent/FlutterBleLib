@@ -356,12 +356,14 @@
         resolve:(Resolve)resolve
          reject:(Reject)reject {
     NSLog(@"SimulatedAdapter.devices");
+    resolve([self knownDevicesJsonRepresentationForDeviceIdentifiers:deviceIdentifiers]);
 }
 
 - (void)connectedDevices:(NSArray<NSString *> * _Nonnull)serviceUUIDs
                  resolve:(Resolve)resolve
                   reject:(Reject)reject {
     NSLog(@"SimulatedAdapter.connectedDevices");
+    resolve([self connectedDevicesJsonRepresentationForServiceUUIDs:serviceUUIDs]);
 }
 
 // MARK: - Adapter Methods - MTU
@@ -390,6 +392,39 @@
 
 - (void)cancelTransaction:(NSString * _Nonnull)transactionId {
     NSLog(@"SimulatedAdapter.cancelTransaction");
+}
+
+// MARK: - Utility methods
+
+- (NSArray *)knownDevicesJsonRepresentationForDeviceIdentifiers:(NSArray<NSString *> *)deviceIdentifiers {
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    for (NSString *deviceIdentifier in deviceIdentifiers) {
+        if ([_knownPeripherals objectForKey:deviceIdentifier] != nil) {
+            DeviceContainer *container = [_knownPeripherals objectForKey:deviceIdentifier];
+            Peripheral *peripheral = [[Peripheral alloc] initWithIdentifier:container.identifier name:container.name];
+            [result addObject:[peripheral jsonObjectRepresentation]];
+        }
+    }
+    return result;
+}
+
+- (NSArray *)connectedDevicesJsonRepresentationForServiceUUIDs:(NSArray<NSString *> *)serviceUUIDs {
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    for (NSString *serviceUUID in serviceUUIDs) {
+        for (NSString *deviceIdentifier in self.knownPeripherals) {
+            DeviceContainer *container = [self.knownPeripherals objectForKey:deviceIdentifier];
+            if (!container.isConnected || container.services == nil) {
+                continue;
+            }
+            for (Service *service in container.services) {
+                if ([serviceUUID.lowercaseString isEqualToString:[service.uuid UUIDString].lowercaseString]) {
+                    Peripheral *peripheral = [[Peripheral alloc] initWithIdentifier:container.identifier name:container.name];
+                    [result addObject:[peripheral jsonObjectRepresentation]];
+                }
+            }
+        }
+    }
+    return result;
 }
 
 @end
