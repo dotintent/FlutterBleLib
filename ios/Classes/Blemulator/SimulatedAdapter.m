@@ -10,6 +10,7 @@
 @property DartValueHandler *dartValueHandler;
 @property NSMutableDictionary<NSString *, DeviceContainer *> *knownPeripherals;
 @property NSString *logLevelValue;
+@property NSString *bluetoothState;
 
 @end
 
@@ -63,6 +64,7 @@
         self.dartValueHandler = dartValueHandler;
         self.knownPeripherals = [[NSMutableDictionary alloc] init];
         self.logLevelValue = @"None";
+        self.bluetoothState = @"PoweredOn";
 
         [self.dartMethodCaller createClient];
     }
@@ -101,17 +103,24 @@
        resolve:(NS_NOESCAPE Resolve)resolve
         reject:(NS_NOESCAPE Reject)reject {
     NSLog(@"SimulatedAdapter.enable");
+    BleError *bleError = [[BleError alloc] initWithErrorCode:BleErrorCodeBluetoothStateChangeFailed
+                                                      reason:@"Unavailable operation"];
+    [bleError callReject:reject];
 }
 
 - (void)disable:(NSString * _Nonnull)transactionId
         resolve:(NS_NOESCAPE Resolve)resolve
          reject:(NS_NOESCAPE Reject)reject {
     NSLog(@"SimulatedAdapter.disable");
+    BleError *bleError = [[BleError alloc] initWithErrorCode:BleErrorCodeBluetoothStateChangeFailed
+                                                      reason:@"Unavailable operation"];
+    [bleError callReject:reject];
 }
 
 - (void)state:(NS_NOESCAPE Resolve)resolve
        reject:(NS_NOESCAPE Reject)reject {
     NSLog(@"SimulatedAdapter.state");
+    resolve(self.bluetoothState);
 }
 
 // MARK: - Adapter Methods -  Connection
