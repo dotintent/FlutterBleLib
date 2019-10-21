@@ -2,15 +2,15 @@
 
 @implementation Service
 
-- (instancetype)initWithObjectId:(uint)objectId
+- (instancetype)initWithObjectId:(int)objectId
                             uuid:(CBUUID *)uuid
-                      peripheral:(Peripheral *)peripheral
+            peripheralIdentifier:(NSString *)peripheralIdentifier
                        isPrimary:(BOOL)isPrimary {
     self = [super init];
     if (self) {
         self.objectId = objectId;
         self.uuid = uuid;
-        self.peripheral = peripheral;
+        self.peripheralIdentifier = peripheralIdentifier;
         self.isPrimary = isPrimary;
     }
     return self;
@@ -18,7 +18,8 @@
 
 - (NSDictionary<NSString *,id> *)jsonObjectRepresentation {
     return [NSDictionary dictionaryWithObjectsAndKeys:
-            @"", @"",
+            [NSNumber numberWithInt:_objectId], @"id",
+            [_uuid UUIDString].lowercaseString, @"uuid",
             nil];
 }
 

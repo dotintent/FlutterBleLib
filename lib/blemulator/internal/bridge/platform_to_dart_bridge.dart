@@ -3,14 +3,55 @@ part of internal;
 class PlatformToDartBridge {
   SimulationManager _manager;
   MethodChannel _platformToDartChannel;
+  Map<String, CancelableOperation> pendingTransactions = HashMap();
 
   PlatformToDartBridge(this._manager) {
     _platformToDartChannel = new MethodChannel(ChannelName.platformToDart);
     _platformToDartChannel.setMethodCallHandler(_handleCall);
   }
 
-  Future<dynamic> _handleCall(MethodCall call) {
+  Future<dynamic> _handleCall(MethodCall call) async {
     print("Observed method call on Flutter Simulator: ${call.method}");
+    if (_isCallCancellable(call)) {
+      return _handleCancelablePlatformCall(call);
+    } else {
+      return _dispatchPlatformCall(call);
+    }
+  }
+
+  bool _isCallCancellable(MethodCall call) =>
+      call.method != DartMethodName.cancelTransaction &&
+      call.arguments.containsKey(SimulationArgumentName.transactionId);
+
+  Future<dynamic> _handleCancelablePlatformCall(MethodCall call) {
+    String transactionId = call.arguments[SimulationArgumentName.transactionId];
+
+    _cancelTransactionIfExists(transactionId);
+
+    CancelableOperation operation = CancelableOperation.fromFuture(
+        _dispatchPlatformCall(call), onCancel: () {
+      return Future.error(SimulatedBleError(
+        BleErrorCode.OperationCancelled,
+        "Operation cancelled",
+      ));
+    });
+    pendingTransactions.putIfAbsent(transactionId, () => operation);
+
+    return Future(() {
+      return operation.valueOrCancellation().then(
+        (result) {
+          pendingTransactions.remove(transactionId);
+          return result;
+        },
+        onError: (error) {
+          pendingTransactions.remove(transactionId);
+          return Future.error(error);
+        },
+      );
+    });
+  }
+
+  Future<dynamic> _dispatchPlatformCall(MethodCall call) {
     switch (call.method) {
       case DartMethodName.createClient:
         return _createClient(call);
@@ -50,6 +91,9 @@ class PlatformToDartBridge {
         return _cancelTransaction(call);
       case DartMethodName.readRssi:
         return _readRssiForDevice(call);
+      case DartMethodName.cancelTransaction:
+        return _cancelTransactionIfExists(
+            call.arguments[SimulationArgumentName.transactionId]);
       default:
         return Future.error(
           SimulatedBleError(
@@ -227,5 +271,9 @@ class PlatformToDartBridge {
 
   Future<int> _readRssiForDevice(MethodCall call) {
     return _manager._readRssiForDevice(call.arguments[ArgumentName.id] as String);
+  }
+
+  Future<void> _cancelTransactionIfExists(String transactionId) async {
+    await pendingTransactions.remove(transactionId)?.cancel();
   }
 }

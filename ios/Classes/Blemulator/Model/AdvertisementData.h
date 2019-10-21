@@ -12,12 +12,12 @@
 @property NSArray<CBUUID *> * _Nullable overflowServiceUUIDs;
 
 - (instancetype _Nonnull)initWithManufacturerData:(NSData * _Nullable)manufacturerData
-                             serviceData:(NSDictionary<CBUUID *, NSData *> * _Nullable)serviceData
-                            serviceUUIDs:(NSArray<CBUUID *> * _Nullable)serviceUUIDs
-                               localName:(NSString * _Nullable)localName
-                            txPowerLevel:(NSNumber * _Nullable)txPowerLevel
-                   solicitedServiceUUIDs:(NSArray<CBUUID *> * _Nullable)solicitedServiceUUIDs
-                           isConnectable:(BOOL * _Nullable)isConnectable
-                    overflowServiceUUIDs:(NSArray<CBUUID *> * _Nullable)overflowServiceUUIDs;
+                                      serviceData:(NSDictionary<CBUUID *, NSData *> * _Nullable)serviceData
+                                     serviceUUIDs:(NSArray<CBUUID *> * _Nullable)serviceUUIDs
+                                        localName:(NSString * _Nullable)localName
+                                     txPowerLevel:(NSNumber * _Nullable)txPowerLevel
+                            solicitedServiceUUIDs:(NSArray<CBUUID *> * _Nullable)solicitedServiceUUIDs
+                                    isConnectable:(BOOL * _Nullable)isConnectable
+                             overflowServiceUUIDs:(NSArray<CBUUID *> * _Nullable)overflowServiceUUIDs;
 
 @end

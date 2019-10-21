@@ -6,8 +6,7 @@
 
 + (ScannedPeripheral *)scannedPeripheralFromCallArguments:(NSDictionary<NSString *,id> *)callArguments {
     Peripheral *peripheral = [[Peripheral alloc] initWithIdentifier:[callArguments objectForKey:DART_CALL_ARGUMENT_PERIPHERAL_ID]
-                                                               name:[callArguments objectForKey:DART_CALL_ARGUMENT_NAME]
-                                                                mtu:(NSInteger)[callArguments objectForKey:DART_CALL_ARGUMENT_MTU]];
+                                                               name:[callArguments objectForKey:DART_CALL_ARGUMENT_NAME]];
 
     id serviceUUIDs = [NSNull null];
     id solicitedServiceUUIDs = [NSNull null];
@@ -30,7 +29,7 @@
                                               localName:[callArguments objectForKey:DART_CALL_ARGUMENT_LOCAL_NAME]
                                            txPowerLevel:[callArguments objectForKey:DART_CALL_ARGUMENT_TX_POWER_LEVEL]
                                   solicitedServiceUUIDs:solicitedServiceUUIDs
-                                          isConnectable:(BOOL)[callArguments objectForKey:DART_CALL_ARGUMENT_IS_CONNECTABLE]
+                                          isConnectable:[[callArguments objectForKey:DART_CALL_ARGUMENT_IS_CONNECTABLE] boolValue]
                                    overflowServiceUUIDs:overflowServiceUUIDs];
 
     return [[ScannedPeripheral alloc] initWithPeripheral:peripheral

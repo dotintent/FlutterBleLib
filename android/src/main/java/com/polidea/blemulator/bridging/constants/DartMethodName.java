@@ -28,4 +28,5 @@ public interface DartMethodName {
     String CANCEL_TRANSACTION = "cancelTransaction";
 
     String RSSI = "rssi";
+    String CANCEL_TRANSACTION = "cancelTransaction";
 }
