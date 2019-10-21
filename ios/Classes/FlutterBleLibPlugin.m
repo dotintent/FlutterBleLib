@@ -16,6 +16,8 @@
 #import "PeripheralResponseConverter.h"
 #import "SimulatorPlugin.h"
 
+@import MultiplatformBleAdapter;
+
 @interface FlutterBleLibPlugin () <BleClientManagerDelegate>
 
 @property (nonatomic) id <BleAdapter> adapter;

@@ -13,6 +13,7 @@ public class SingleCharacteristicResponseJsonConverter implements JsonConverter<
         String UUID = "serviceUuid";
         String ID = "serviceId";
         String CHARACTERISTIC = "characteristic";
+        String TRANSACTION_ID = "transactionId";
     }
 
     private CharacteristicJsonConverter characteristicJsonConverter = new CharacteristicJsonConverter();
@@ -24,6 +25,7 @@ public class SingleCharacteristicResponseJsonConverter implements JsonConverter<
 
         jsonObject.put(Metadata.UUID, value.getServiceUuid());
         jsonObject.put(Metadata.ID, value.getServiceId());
+        jsonObject.put(Metadata.TRANSACTION_ID, value.getTransactionId());
 
         jsonObject.put(Metadata.CHARACTERISTIC, characteristicJsonConverter.toJsonObject(value.getCharacteristic()));
         return jsonObject.toString();
