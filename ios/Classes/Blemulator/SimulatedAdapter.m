@@ -371,6 +371,10 @@
                   resolve:(Resolve)resolve
                    reject:(Reject)reject {
     NSLog(@"SimulatedAdapter.readRSSIForDevice");
+    [self.dartMethodCaller readRSSIForDevice:deviceIdentifier
+                                        name:[self.knownPeripherals objectForKey:deviceIdentifier].name
+                                     resolve:resolve
+                                      reject:reject];
 }
 
 // MARK: - Adapter Methods - Cancel transaction
