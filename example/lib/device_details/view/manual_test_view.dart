@@ -76,6 +76,18 @@ class ManualTestView extends StatelessWidget {
     _deviceDetailsBloc.writeCharacteristicDirectly();
   }
 
+  void _monitorCharacteristicForPeripheral() {
+    _deviceDetailsBloc.monitorCharacteristicForPeripheral();
+  }
+
+  void _monitorCharacteristicForService() {
+    _deviceDetailsBloc.monitorCharacteristicForService();
+  }
+
+  void _monitorCharacteristicDirectly() {
+    _deviceDetailsBloc.monitorCharacteristicDirectly();
+  }
+
   void _disableBluetooth() {
     _deviceDetailsBloc.disableBluetooth();
   }
@@ -116,6 +128,46 @@ class ManualTestView extends StatelessWidget {
           child: Row(
             children: <Widget>[
               ButtonView("Discovery", action: _discovery),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 2.0),
+          child: Row(
+            children: <Widget>[
+              ButtonView("Write via peripheral", action: _writeCharacteristicForPeripheral),
+              ButtonView("Read via peripheral", action: _readCharacteristicForPeripheral),
+              ButtonView("Monitor via peripheral", action: _monitorCharacteristicForPeripheral),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 2.0),
+          child: Row(
+            children: <Widget>[
+              ButtonView("Write via service", action: _writeCharacteristicForService),
+              ButtonView("Read via service", action: _readCharacteristicForService),
+              ButtonView("Monitor via service", action: _monitorCharacteristicForService),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 2.0),
+          child: Row(
+            children: <Widget>[
+              ButtonView("Write directly", action: _writeCharacteristicDirectly),
+              ButtonView("Read directly", action: _readCharacteristicDirectly),
+              ButtonView("Monitor directly", action: _monitorCharacteristicDirectly),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 2.0),
+          child: Row(
+            children: <Widget>[
+              ButtonView("Monitor temp", action: _monitorCharacteristicForPeripheral),
+              ButtonView("Turn on temp", action: _writeCharacteristicForPeripheral),
+              ButtonView("Read temp", action: _readCharacteristicForPeripheral),
             ],
           ),
         ),

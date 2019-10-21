@@ -60,6 +60,7 @@ class DeviceDetailsBloc {
 
   void init() {
     Fimber.d("init bloc");
+    _bleManager.stopDeviceScan();
   }
 
   Future<void> disconnect() async {
@@ -159,6 +160,30 @@ class DeviceDetailsBloc {
     });
   }
 
+  void monitorCharacteristicForPeripheral() {
+    _clearLogs();
+    _deviceController.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+          .monitorCharacteristicForPeripheral();
+    });
+  }
+
+  void monitorCharacteristicForService() {
+    _clearLogs();
+    _deviceController.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+          .monitorCharacteristicForService();
+    });
+  }
+
+  void monitorCharacteristicDirectly() {
+    _clearLogs();
+    _deviceController.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+          .monitorCharacteristic();
+    });
+  }
+
   void disableBluetooth() {
     _clearLogs();
     _deviceController.stream.listen((bleDevice) async {
@@ -191,7 +216,7 @@ class DeviceDetailsBloc {
       peripheral
           .observeConnectionState(emitCurrentValue: true, completeOnDisconnect: true)
           .listen((connectionState) {
-        log('Observed new connection state: $connectionState');
+        log('Observed new connection state: \n$connectionState');
         _connectionStateController.add(connectionState);
       });
 
