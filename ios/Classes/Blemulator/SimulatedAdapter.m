@@ -4,6 +4,8 @@
 #import "DeviceContainer.h"
 #import "BleError.h"
 
+@import MultiplatformBleAdapter;
+
 @interface SimulatedAdapter () <BleAdapter>
 
 @property DartMethodCaller *dartMethodCaller;

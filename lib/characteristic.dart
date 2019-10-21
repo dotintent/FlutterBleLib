@@ -76,4 +76,5 @@ class CharacteristicWithValue extends Characteristic with WithValue {
   ) : super.fromJson(jsonObject, service, manager) {
     value = base64Decode(jsonObject[_CharacteristicMetadata.value]);
   }
+
 }
