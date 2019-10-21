@@ -75,6 +75,7 @@
         self.logLevelValue = @"None";
         self.bluetoothState = @"PoweredOn";
 
+        self.dartValueHandler.readEventDelegate = self;
         [self.dartMethodCaller createClient];
     }
     return self;
