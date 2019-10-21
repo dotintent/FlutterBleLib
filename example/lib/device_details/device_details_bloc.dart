@@ -168,6 +168,22 @@ class DeviceDetailsBloc {
     });
   }
 
+  void monitorCharacteristicForService() {
+    _clearLogs();
+    _deviceController.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+          .monitorCharacteristicForService();
+    });
+  }
+
+  void monitorCharacteristicDirectly() {
+    _clearLogs();
+    _deviceController.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+          .monitorCharacteristic();
+    });
+  }
+
   void disableBluetooth() {
     _clearLogs();
     _deviceController.stream.listen((bleDevice) async {
