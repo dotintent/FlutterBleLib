@@ -21,7 +21,7 @@ class PlatformToDartBridge {
 
   bool _isCallCancellable(MethodCall call) =>
       call.method != DartMethodName.cancelTransaction &&
-      call.arguments.containsKey(SimulationArgumentName.transactionId);
+      call.arguments?.containsKey(SimulationArgumentName.transactionId) == true;
 
   Future<dynamic> _handleCancelablePlatformCall(MethodCall call) {
     String transactionId = call.arguments[SimulationArgumentName.transactionId];

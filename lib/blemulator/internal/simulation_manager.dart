@@ -43,7 +43,8 @@ class SimulationManager extends SimulationManagerBaseWithErrorChecks
   }
 
   Future<void> _stopDeviceScan() async {
-    _scanSubscriptions.forEach((subscription) => subscription.cancel());
+    _scanSubscriptions
+        .forEach((subscription) async => await subscription.cancel());
     _scanSubscriptions.clear();
   }
 
