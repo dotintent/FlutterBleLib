@@ -60,6 +60,7 @@ class DeviceDetailsBloc {
 
   void init() {
     Fimber.d("init bloc");
+    _bleManager.stopDeviceScan();
   }
 
   Future<void> disconnect() async {
@@ -199,7 +200,7 @@ class DeviceDetailsBloc {
       peripheral
           .observeConnectionState(emitCurrentValue: true, completeOnDisconnect: true)
           .listen((connectionState) {
-        log('Observed new connection state: $connectionState');
+        log('Observed new connection state: \n$connectionState');
         _connectionStateController.add(connectionState);
       });
 

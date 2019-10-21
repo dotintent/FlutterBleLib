@@ -44,6 +44,7 @@ class DevicesBloc {
 
   void init() {
     Fimber.d("Init devices bloc");
+    bleDevices.clear();
     _bleManager.createClient()
         .then((it) => startScan())
         .catchError((e) => Fimber.d("Couldn't create BLE client", ex: e));
@@ -73,5 +74,13 @@ class DevicesBloc {
         _visibleDevicesController.add(bleDevices.sublist(0));
       }
     });
+  }
+
+  Future<void> refresh() async {
+    _scanSubscription.cancel();
+    await _bleManager.stopDeviceScan();
+    bleDevices.clear();
+    _visibleDevicesController.add(bleDevices.sublist(0));
+    startScan();
   }
 }
