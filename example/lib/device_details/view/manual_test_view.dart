@@ -165,6 +165,16 @@ class ManualTestView extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 2.0),
           child: Row(
             children: <Widget>[
+              ButtonView("Monitor temp", action: _monitorCharacteristicForPeripheral),
+              ButtonView("Turn on temp", action: _writeCharacteristicForPeripheral),
+              ButtonView("Read temp", action: _readCharacteristicForPeripheral),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 2.0),
+          child: Row(
+            children: <Widget>[
               ButtonView("Enable bluetooth", action: _enableBluetooth),
               ButtonView("Disable bluetooth", action: _disableBluetooth),
               ButtonView("Fetch BT State", action: _fetchBluetoothState),

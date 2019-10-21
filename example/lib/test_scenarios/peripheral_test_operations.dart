@@ -23,8 +23,8 @@ class PeripheralTestOperations {
         .catchError((error) {
       BleError bleError = error as BleError;
       return logError("Cancelled operation caught an error: "
-          "error code ${bleError.errorCode},"
-          " reason: ${bleError.reason}");
+          "\nerror code ${bleError.errorCode},"
+          "\nreason: ${bleError.reason}");
     });
     log("Operation to cancel started: discover all"
         " services and characteristics");
@@ -37,8 +37,8 @@ class PeripheralTestOperations {
   Future<void> discovery() async {
     await peripheral.discoverAllServicesAndCharacteristics();
     List<Service> services = await peripheral.services();
-    log("PRINTING SERVICES for ${peripheral.name}");
-    services.forEach((service) => log("Found service ${service.uuid}"));
+    log("PRINTING SERVICES for \n${peripheral.name}");
+    services.forEach((service) => log("Found service \n${service.uuid}"));
     Service service = services.first;
     log("PRINTING CHARACTERISTICS FOR SERVICE \n${service.uuid}");
 
@@ -72,7 +72,7 @@ class PeripheralTestOperations {
     CharacteristicWithValue readValue = await peripheral.readCharacteristic(
         SensorTagTemperatureUuids.temperatureService,
         SensorTagTemperatureUuids.temperatureConfigCharacteristic);
-    log("Temperature config value: ${readValue.value}");
+    log("Temperature config value: \n${readValue.value}");
   }
 
   Future<void> readCharacteristicForService() async {
@@ -83,7 +83,7 @@ class PeripheralTestOperations {
             SensorTagTemperatureUuids.temperatureService.toLowerCase()));
     CharacteristicWithValue readValue = await service.readCharacteristic(
         SensorTagTemperatureUuids.temperatureConfigCharacteristic);
-    log("Temperature config value: ${readValue.value}");
+    log("Temperature config value: \n${readValue.value}");
   }
 
   Future<void> readCharacteristic() async {
@@ -101,7 +101,7 @@ class PeripheralTestOperations {
                 .toLowerCase());
 
     Uint8List readValue = await characteristic.read();
-    log("Temperature config value: $readValue");
+    log("Temperature config value: \n$readValue");
   }
 
   Future<void> writeCharacteristicForPeripheral() async {
@@ -275,6 +275,21 @@ class PeripheralTestOperations {
     return peripheral;
   }
 
+  static int monitorCounter = 0;
+
+  Future<void> monitorCharacteristicForPeripheral() async {
+    log("Reading temperature");
+    int id = monitorCounter;
+    Stream<CharacteristicWithValue> characteristicStream = await peripheral.monitorCharacteristic(
+        SensorTagTemperatureUuids.temperatureService,
+        SensorTagTemperatureUuids.temperatureDataCharacteristic,
+        transactionId: "$id");
+    characteristicStream.listen((characteristicValue) {
+      log("Read temperature [$id] value ${_convertToTemperature(characteristicValue.value)}C");
+    });
+    ++monitorCounter;
+  }
+
   Future<void> readWriteMonitorCharacteristicForService() async {
     log("Test read/write/monitor characteristic on service");
     log("Fetching service");
@@ -370,7 +385,7 @@ class PeripheralTestOperations {
 
       log("Reading characteristic value");
       Uint8List value = await configCharacteristic.read();
-      log("Read temperature config value $value");
+      log("Read temperature config value \n$value");
 
       log("Turning on temperature update");
       await configCharacteristic.write(Uint8List.fromList([1]), false);
@@ -381,7 +396,7 @@ class PeripheralTestOperations {
 
       log("Reading characteristic value");
       value = await configCharacteristic.read();
-      log("Read temperature config value $value");
+      log("Read temperature config value \n$value");
 
       log("Canceling temperature monitoring");
       await bleManager.cancelTransaction("3");
@@ -435,7 +450,7 @@ class PeripheralTestOperations {
         log("Temperature updated: ${temperature}C");
       },
       onError: (error) {
-        log("Error when trying to modify characteristic value. $error");
+        log("Error when trying to modify characteristic value. \n$error");
       },
     );
   }
