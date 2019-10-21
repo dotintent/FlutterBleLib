@@ -3,6 +3,7 @@
 #import "PlatformMethodName.h"
 #import "ScannedPeripheral.h"
 #import "DartCallArgumentsConverter.h"
+#import "DartCallArgumentKeys.h"
 
 @implementation DartValueHandler
 
@@ -14,7 +15,8 @@
         [self.connectionEventDelegate dispatchDartValueHandlerConnectionStateEvent:[DartCallArgumentsConverter connectionStateEventFromCallArguments:call.arguments]];
         result(nil);
     } else if ([PLATFORM_METHOD_NAME_PUBLISH_CHARACTERISTIC_UPADTE isEqualToString:call.method]) {
-        NSLog(@"%@", result);
+        [self.readEventDelegate dispatchDartValueHandlerReadEvent:[DartCallArgumentsConverter characteristicFromCallArguments:call.arguments]
+                                                    transactionId:[call.arguments objectForKey:DART_CALL_ARGUMENT_TRANSACTION_ID]];
         result(nil);
     } else {
         result(FlutterMethodNotImplemented);

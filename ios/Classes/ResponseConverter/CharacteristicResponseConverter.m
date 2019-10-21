@@ -7,6 +7,7 @@
 const NSString *keyServiceUUID = @"serviceUuid";
 const NSString *keyServiceID = @"serviceId";
 const NSString *keyCharacteristic = @"characteristic";
+const NSString *keyTransactionId = @"transactionId";
 
 const NSString *keyCharacteristicResponseUUID = @"characteristicUuid";
 const NSString *keyCharacteristicResponseId = @"id";
@@ -18,11 +19,13 @@ const NSString *keyIsWritableWithResponse = @"isWritableWithResponse";
 const NSString *keyIsWritableWithoutResponse = @"isWritableWithoutResponse";
 const NSString *keyValue = @"value";
 
-+ (NSString *)jsonStringFromCharacteristicResponse:(NSDictionary *)characteristicResponse {
++ (NSString *)jsonStringFromCharacteristicResponse:(NSDictionary *)characteristicResponse
+                                     transactionId:(NSString *)transactionId {
     NSDictionary *result = [[NSDictionary alloc] initWithObjectsAndKeys:
                             [characteristicResponse objectForKey:CHARACTERISTIC_RESPONSE_SERVICE_UUID], keyServiceUUID,
                             [characteristicResponse objectForKey:CHARACTERISTIC_RESPONSE_SERVICE_ID], keyServiceID,
                             [self characteristicDictionaryFromCharacteristicResponse:characteristicResponse], keyCharacteristic,
+                            transactionId, keyTransactionId,
                             nil];
 
     return [JSONStringifier jsonStringFromJSONObject:result];

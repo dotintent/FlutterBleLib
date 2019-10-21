@@ -57,9 +57,12 @@
 
 // MARK: - DartValueHandlerReadEventDelegate implementation
 
-- (void)dispatchDartValueHandlerReadEvent:(Characteristic *)characteristic {
-    NSLog(@"SimulatedAdapter.dispatchDartValueHandlerReadEvent called");
-    NSLog(@"Characteristic: %@", [characteristic jsonObjectRepresentation]);
+- (void)dispatchDartValueHandlerReadEvent:(Characteristic *)characteristic
+                            transactionId:(NSString *)transactionId {
+    [self.delegate dispatchEvent:BleEvent.readEvent value:[NSArray arrayWithObjects:[NSNull null],
+                                                           [characteristic jsonObjectRepresentation],
+                                                           transactionId != nil ? transactionId : [NSNull null],
+                                                           nil]];
 }
 
 // MARK: - Initializer

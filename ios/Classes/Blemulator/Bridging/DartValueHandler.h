@@ -17,7 +17,8 @@
 
 @protocol DartValueHandlerReadEventDelegate
 
-- (void)dispatchDartValueHandlerReadEvent:(Characteristic *)characteristic;
+- (void)dispatchDartValueHandlerReadEvent:(Characteristic *)characteristic
+                            transactionId:(NSString *)transactionId;
 
 @end
 
