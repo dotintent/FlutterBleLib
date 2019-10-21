@@ -53,8 +53,6 @@ abstract class DartMethodName {
   static const String cancelTransaction =
       "cancelTransaction";
   static const String readRssi = "rssi";
-  static const String cancelTransaction =
-      "cancelTransaction";
 }
 
 abstract class SimulationArgumentName {

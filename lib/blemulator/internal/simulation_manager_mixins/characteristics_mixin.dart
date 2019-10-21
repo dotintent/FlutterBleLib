@@ -3,8 +3,8 @@ part of internal;
 mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
   Map<String, StreamSubscription> _monitoringSubscriptions = HashMap();
 
-  SimulatedCharacteristic _findCharacteristicForId(
-      int characteristicIdentifier) {
+  Future<SimulatedCharacteristic> _findCharacteristicForId(
+      int characteristicIdentifier) async {
     SimulatedCharacteristic targetCharacteristic;
 
     for (SimulatedPeripheral peripheral in _peripherals.values) {
@@ -48,7 +48,7 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
     await _errorIfNotConnected(peripheral.id);
 
     SimulatedCharacteristic targetCharacteristic =
-        _findCharacteristicForId(characteristicIdentifier);
+        await _findCharacteristicForId(characteristicIdentifier);
 
     await _errorIfCharacteristicIsNull(
         targetCharacteristic, characteristicIdentifier.toString());
@@ -64,7 +64,7 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
   ) async {
     await _errorIfNotConnected(peripheralId);
 
-    SimulatedPeripheral targetPeripheral =_peripherals[peripheralId];
+    SimulatedPeripheral targetPeripheral = _peripherals[peripheralId];
 
     SimulatedCharacteristic targetCharacteristic = targetPeripheral
         .getCharacteristicForService(serviceUuid, characteristicUUID);
@@ -85,9 +85,9 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
 
     await _errorIfCharacteristicIsNull(
         targetCharacteristic, characteristicUUID);
-        await _errorIfNotConnected(peripheralId);
+    await _errorIfNotConnected(targetCharacteristic.service.peripheralId);
     Uint8List value = await targetCharacteristic.read();
-    await _errorIfDisconnected(peripheralId);
+    await _errorIfDisconnected(targetCharacteristic.service.peripheralId);
     return CharacteristicResponse(targetCharacteristic, value);
   }
 
@@ -102,7 +102,7 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
     await _errorIfNotConnected(peripheral.id);
 
     SimulatedCharacteristic targetCharacteristic =
-        _findCharacteristicForId(characteristicIdentifier);
+        await _findCharacteristicForId(characteristicIdentifier);
 
     await _errorIfCharacteristicIsNull(
         targetCharacteristic, characteristicIdentifier.toString());
@@ -142,10 +142,10 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
 
     await _errorIfCharacteristicIsNull(
         targetCharacteristic, characteristicUUID);
-        await _errorIfNotConnected(peripheral.id);
+    await _errorIfNotConnected(targetCharacteristic.service.peripheralId);
     await _errorIfNotWritable(targetCharacteristic);
     await targetCharacteristic.write(value);
-    _errorIfDisconnected(peripheralId);
+    await _errorIfDisconnected(targetCharacteristic.service.peripheralId);
     return targetCharacteristic;
   }
 
@@ -154,7 +154,7 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
     String transactionId,
   ) async {
     SimulatedCharacteristic targetCharacteristic =
-        _findCharacteristicForId(characteristicIdentifier);
+        await _findCharacteristicForId(characteristicIdentifier);
 
     await _errorIfCharacteristicIsNull(
         targetCharacteristic, characteristicIdentifier.toString());

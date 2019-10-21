@@ -24,9 +24,7 @@ public interface DartMethodName {
     String MONITOR_CHARACTERISTIC_FOR_IDENTIFIER = "monitorCharacteristicForIdentifier";
     String MONITOR_CHARACTERISTIC_FOR_DEVICE = "monitorCharacteristicForDevice";
     String MONITOR_CHARACTERISTIC_FOR_SERVICE = "monitorCharacteristicForService";
-
-    String CANCEL_TRANSACTION = "cancelTransaction";
-
+    
     String RSSI = "rssi";
     String CANCEL_TRANSACTION = "cancelTransaction";
 }

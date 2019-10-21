@@ -532,13 +532,6 @@ public class DartMethodCaller {
                 });
     }
 
-    public void cancelTransaction(final String transactionId) {
-        Log.i(TAG, "cancelTransaction");
-        dartMethodChannel.invokeMethod(DartMethodName.CANCEL_TRANSACTION, new HashMap<String, String>() {{
-            put(SimulationArgumentName.TRANSACTION_ID, transactionId);
-        }});
-    }
-
     public void readRSSIForDevice(final String deviceIdentifier,
                                   final OnSuccessCallback<Device> onSuccessCallback,
                                   final OnErrorCallback onErrorCallback) {
