@@ -22,12 +22,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class SimulatedAdapter implements BleAdapter {
 
     private static final String TAG = SimulatedAdapter.class.getSimpleName();
 
-    private HashMap<String, DeviceContainer> knownPeripherals = new HashMap<>();
+    private Map<String, DeviceContainer> knownPeripherals = new HashMap<>();
     private DartMethodCaller dartMethodCaller;
     private DartValueHandler dartValueHandler;
     private String logLevel = Constants.BluetoothLogLevel.NONE;
@@ -408,24 +409,79 @@ public class SimulatedAdapter implements BleAdapter {
                                                String characteristicUUID,
                                                String transactionId,
                                                OnEventCallback<Characteristic> onEventCallback,
-                                               OnErrorCallback onErrorCallback) {
+                                               final OnErrorCallback onErrorCallback) {
         Log.i(TAG, "monitorCharacteristicForDevice");
+        UUID targetCharacteristicUuid = UUID.fromString(characteristicUUID);
+        Integer targetCharacteristicId = null;
+        for (Characteristic characteristic : knownPeripherals.get(deviceIdentifier).getCharacteristics().get(serviceUUID)) {
+            if (characteristic.getUuid().equals(targetCharacteristicUuid)) {
+                targetCharacteristicId = characteristic.getId();
+            }
+        }
+        final Integer finalId = targetCharacteristicId;
+        OnErrorCallback localOnErrorCallback = new OnErrorCallback() {
+            @Override
+            public void onError(BleError error) {
+                if (finalId != null) {
+                    dartValueHandler.removeCharacteristicsUpdatePublisher(finalId);
+                }
+                onErrorCallback.onError(error);
+            }
+        };
+        if (targetCharacteristicId != null) {
+            dartValueHandler.addCharacteristicsUpdatePublishers(targetCharacteristicId, onEventCallback, localOnErrorCallback);
+        }
+        dartMethodCaller.monitorCharacteristicForDevice(deviceIdentifier, serviceUUID, characteristicUUID, transactionId, localOnErrorCallback);
     }
 
     @Override
     public void monitorCharacteristicForService(int serviceIdentifier,
                                                 String characteristicUUID,
                                                 String transactionId, OnEventCallback<Characteristic> onEventCallback,
-                                                OnErrorCallback onErrorCallback) {
+                                                final OnErrorCallback onErrorCallback) {
         Log.i(TAG, "monitorCharacteristicForService");
+        UUID desiredCharacteristicUuid = UUID.fromString(characteristicUUID);
+        try {
+            Integer targetCharacteristicId = null;
+            for (Characteristic characteristic : getCharacteristicsForService(serviceIdentifier)) {
+                if (characteristic.getUuid().equals(desiredCharacteristicUuid)) {
+                    targetCharacteristicId = characteristic.getId();
+                }
+            }
+            final Integer finalId = targetCharacteristicId;
+            OnErrorCallback localOnErrorCallback = new OnErrorCallback() {
+                @Override
+                public void onError(BleError error) {
+                    if (finalId != null) {
+                        dartValueHandler.removeCharacteristicsUpdatePublisher(finalId);
+                    }
+                    onErrorCallback.onError(error);
+                }
+            };
+            if (finalId != null) {
+                dartValueHandler.addCharacteristicsUpdatePublishers(finalId, onEventCallback, localOnErrorCallback);
+            }
+            dartMethodCaller.monitorCharacteristicForService(serviceIdentifier, characteristicUUID, transactionId, localOnErrorCallback);
+        } catch (BleError error) {
+            onErrorCallback.onError(error);
+        }
     }
 
     @Override
-    public void monitorCharacteristic(int characteristicIdentifier,
+    public void monitorCharacteristic(final int characteristicIdentifier,
                                       String transactionId,
                                       OnEventCallback<Characteristic> onEventCallback,
-                                      OnErrorCallback onErrorCallback) {
+                                      final OnErrorCallback onErrorCallback) {
         Log.i(TAG, "monitorCharacteristic");
+        OnErrorCallback localOnErrorCallback = new OnErrorCallback() {
+            @Override
+            public void onError(BleError error) {
+                dartValueHandler.removeCharacteristicsUpdatePublisher(characteristicIdentifier);
+                onErrorCallback.onError(error);
+            }
+        };
+        dartValueHandler.addCharacteristicsUpdatePublishers(characteristicIdentifier, onEventCallback, localOnErrorCallback);
+        dartMethodCaller.monitorCharacteristic(characteristicIdentifier, transactionId, localOnErrorCallback);
     }
 
     @Override

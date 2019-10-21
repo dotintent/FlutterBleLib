@@ -6,12 +6,12 @@ class SimulatedCharacteristic {
   SimulatedService service;
   Uint8List _value;
   final String convenienceName;
-  bool isReadable;
-  bool isWritableWithResponse;
-  bool isWritableWithoutResponse;
-  bool isNotifiable;
+  final bool isReadable;
+  final bool isWritableWithResponse;
+  final bool isWritableWithoutResponse;
+  final bool isNotifiable;
   bool isNotifying;
-  bool isIndicatable;
+  final bool isIndicatable;
 
   StreamController<Uint8List> _streamController;
 
@@ -42,12 +42,18 @@ class SimulatedCharacteristic {
 
   Stream<Uint8List> monitor() {
     if (_streamController == null) {
-      _streamController = StreamController(onCancel: () {
-        _streamController.close();
-        _streamController = null;
-      });
+      _streamController = StreamController.broadcast(
+        onListen: () {
+          isNotifying = true;
+        },
+        onCancel: () {
+          isNotifying = false;
+          _streamController.close();
+          _streamController = null;
+        },
+      );
     }
-    return _streamController.stream.asBroadcastStream();
+    return _streamController.stream;
   }
 }
 

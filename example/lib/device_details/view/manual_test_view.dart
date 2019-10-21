@@ -1,11 +1,9 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_ble_lib_example/device_details/device_details_bloc.dart';
 import 'package:flutter_ble_lib_example/device_details/view/button_view.dart';
 import 'package:flutter_ble_lib_example/device_details/view/logs_container_view.dart';
 
 class ManualTestView extends StatelessWidget {
-
   final DeviceDetailsBloc _deviceDetailsBloc;
 
   ManualTestView(this._deviceDetailsBloc);
@@ -80,6 +78,14 @@ class ManualTestView extends StatelessWidget {
     _deviceDetailsBloc.monitorCharacteristicForPeripheral();
   }
 
+  void _monitorCharacteristicForService() {
+    _deviceDetailsBloc.monitorCharacteristicForService();
+  }
+
+  void _monitorCharacteristicDirectly() {
+    _deviceDetailsBloc.monitorCharacteristicDirectly();
+  }
+
   void _disableBluetooth() {
     _deviceDetailsBloc.disableBluetooth();
   }
@@ -127,9 +133,12 @@ class ManualTestView extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 2.0),
           child: Row(
             children: <Widget>[
-              ButtonView("Write via peripheral", action: _writeCharacteristicForPeripheral),
-              ButtonView("Read via peripheral", action: _readCharacteristicForPeripheral),
-              ButtonView("Monitor via peripheral"),
+              ButtonView("Write to temp config via peripheral",
+                  action: _writeCharacteristicForPeripheral),
+              ButtonView("Read temp via peripheral",
+                  action: _readCharacteristicForPeripheral),
+              ButtonView("Monitor temp via peripheral",
+                  action: _monitorCharacteristicForPeripheral),
             ],
           ),
         ),
@@ -137,9 +146,12 @@ class ManualTestView extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 2.0),
           child: Row(
             children: <Widget>[
-              ButtonView("Write via service", action: _writeCharacteristicForService),
-              ButtonView("Read via service", action: _readCharacteristicForService),
-              ButtonView("Monitor via service"),
+              ButtonView("Write to temp config via service",
+                  action: _writeCharacteristicForService),
+              ButtonView("Read temp via service",
+                  action: _readCharacteristicForService),
+              ButtonView("Monitor temp via service",
+                  action: _monitorCharacteristicForService),
             ],
           ),
         ),
@@ -147,9 +159,12 @@ class ManualTestView extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 2.0),
           child: Row(
             children: <Widget>[
-              ButtonView("Write directly", action: _writeCharacteristicDirectly),
-              ButtonView("Read directly", action: _readCharacteristicDirectly),
-              ButtonView("Monitor directly"),
+              ButtonView("Write to temp config directly",
+                  action: _writeCharacteristicDirectly),
+              ButtonView("Read temp directly",
+                  action: _readCharacteristicDirectly),
+              ButtonView("Monitor temp directly",
+                  action: _monitorCharacteristicDirectly),
             ],
           ),
         ),

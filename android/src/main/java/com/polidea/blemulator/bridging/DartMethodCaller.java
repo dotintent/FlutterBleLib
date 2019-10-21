@@ -1,7 +1,5 @@
 package com.polidea.blemulator.bridging;
 
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattService;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -18,15 +16,12 @@ import com.polidea.multiplatformbleadapter.Device;
 import com.polidea.multiplatformbleadapter.OnErrorCallback;
 import com.polidea.multiplatformbleadapter.OnSuccessCallback;
 import com.polidea.multiplatformbleadapter.Service;
-import com.polidea.multiplatformbleadapter.errors.BleError;
-import com.polidea.multiplatformbleadapter.errors.BleErrorCode;
 import com.polidea.multiplatformbleadapter.utils.Base64Converter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import io.flutter.plugin.common.MethodChannel;
 
@@ -203,18 +198,6 @@ public class DartMethodCaller {
                 Log.e(TAG, "CONNECT TO DEVICE not implemented");
             }
         });
-    }
-
-    private BleError objectToBleError(Object o) {
-        Map<String, Object> error = (Map<String, Object>) o;
-        if (error.containsKey("errorCode") && error.containsKey("reason")) {
-            for (BleErrorCode errorCode : BleErrorCode.values()) {
-                if (errorCode.code == (Integer) error.get("errorCode")) {
-                    return new BleError(errorCode, (String) error.get("reason"), 0);
-                }
-            }
-        }
-        return new BleError(BleErrorCode.UnknownError, "Wrong format of error from Dart BLEmulator", 0);
     }
 
     public void discoverAllServicesAndCharacteristicsForDevice(
@@ -455,6 +438,96 @@ public class DartMethodCaller {
                     @Override
                     public void notImplemented() {
                         Log.e(TAG, "writeCharacteristic not implemented");
+                    }
+                });
+    }
+
+    public void monitorCharacteristicForDevice(
+            final String deviceIdentifier,
+            final String serviceUUID,
+            final String characteristicUUID,
+            final String transactionId,
+            final OnErrorCallback onErrorCallback) {
+        HashMap<String, Object> arguments = new HashMap<String, Object>() {{
+            put(ArgumentKey.DEVICE_IDENTIFIER, deviceIdentifier);
+            put(ArgumentKey.SERVICE_UUID, serviceUUID);
+            put(ArgumentKey.CHARACTERISTIC_UUID, characteristicUUID);
+            put(ArgumentKey.TRANSACTION_ID, transactionId);
+        }};
+        dartMethodChannel.invokeMethod(DartMethodName.MONITOR_CHARACTERISTIC_FOR_DEVICE,
+                arguments,
+                new MethodChannel.Result() {
+                    @Override
+                    public void success(@Nullable Object characteristicJsonObject) {
+                        Log.i(TAG, "monitorCharacteristicForDevice SUCCESS");
+                    }
+
+                    @Override
+                    public void error(String errorCode, @Nullable String jsonBody, @Nullable Object irrelevant) {
+                        onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(jsonBody));
+                    }
+
+                    @Override
+                    public void notImplemented() {
+                        Log.e(TAG, "monitorCharacteristicForDevice not implemented");
+                    }
+                });
+    }
+
+    public void monitorCharacteristicForService(
+            final int serviceIdentifier,
+            final String characteristicUUID,
+            final String transactionId,
+            final OnErrorCallback onErrorCallback) {
+        HashMap<String, Object> arguments = new HashMap<String, Object>() {{
+            put(ArgumentKey.SERVICE_IDENTIFIER, serviceIdentifier);
+            put(ArgumentKey.CHARACTERISTIC_UUID, characteristicUUID);
+            put(ArgumentKey.TRANSACTION_ID, transactionId);
+        }};
+        dartMethodChannel.invokeMethod(DartMethodName.MONITOR_CHARACTERISTIC_FOR_SERVICE,
+                arguments,
+                new MethodChannel.Result() {
+                    @Override
+                    public void success(@Nullable Object characteristicJsonObject) {
+                        Log.i(TAG, "monitorCharacteristicForService SUCCESS");
+                    }
+
+                    @Override
+                    public void error(String errorCode, @Nullable String jsonBody, @Nullable Object irrelevant) {
+                        onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(jsonBody));
+                    }
+
+                    @Override
+                    public void notImplemented() {
+                        Log.e(TAG, "monitorCharacteristicForService not implemented");
+                    }
+                });
+    }
+
+    public void monitorCharacteristic(
+            final int characteristicIdentifier,
+            final String transactionId,
+            final OnErrorCallback onErrorCallback) {
+        HashMap<String, Object> arguments = new HashMap<String, Object>() {{
+            put(ArgumentKey.CHARACTERISTIC_IDENTIFIER, characteristicIdentifier);
+            put(ArgumentKey.TRANSACTION_ID, transactionId);
+        }};
+        dartMethodChannel.invokeMethod(DartMethodName.MONITOR_CHARACTERISTIC_FOR_IDENTIFIER,
+                arguments,
+                new MethodChannel.Result() {
+                    @Override
+                    public void success(@Nullable Object characteristicJsonObject) {
+                        Log.i(TAG, "monitorCharacteristic SUCCESS");
+                    }
+
+                    @Override
+                    public void error(String errorCode, @Nullable String jsonBody, @Nullable Object irrelevant) {
+                        onErrorCallback.onError(jsonToBleErrorConverter.bleErrorFromJSON(jsonBody));
+                    }
+
+                    @Override
+                    public void notImplemented() {
+                        Log.e(TAG, "monitorCharacteristic not implemented");
                     }
                 });
     }
