@@ -16,3 +16,5 @@ NSString * const DART_METHOD_NAME_READ_CHARACTERISTIC_FOR_IDENTIFIER = @"readCha
 NSString * const DART_METHOD_NAME_WRITE_CHARACTERISTIC_FOR_DEVICE = @"writeCharacteristicForDevice";
 NSString * const DART_METHOD_NAME_WRITE_CHARACTERISTIC_FOR_SERVICE = @"writeCharacteristicForService";
 NSString * const DART_METHOD_NAME_WRITE_CHARACTERISTIC_FOR_IDENTIFIER = @"writeCharacteristicForIdentifier";
+
+NSString * const DART_METHOD_NAME_RSSI = @"rssi";
