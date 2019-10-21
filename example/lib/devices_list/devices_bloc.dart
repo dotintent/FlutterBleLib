@@ -48,8 +48,7 @@ class DevicesBloc {
     bleDevices.clear();
     Blemulator().addSimulatedPeripheral(SensorTag());
     Blemulator().simulate();
-    _bleManager
-        .createClient()
+    _bleManager.createClient()
         .then((it) => startScan())
         .catchError((e) => Fimber.d("Couldn't create BLE client", ex: e));
 
