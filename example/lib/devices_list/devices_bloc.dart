@@ -48,7 +48,15 @@ class DevicesBloc {
     bleDevices.clear();
     Blemulator().addSimulatedPeripheral(SensorTag());
     Blemulator().simulate();
-    _bleManager.createClient()
+    _bleManager.createClient(
+          restoreStateIdentifier: "example-restore-state-identifier",
+          restoreStateAction: (peripherals) {
+            peripherals.forEach((peripheral) {
+              bleDevices.add(ConnectedBleDevice(peripheral.name, peripheral.identifier, peripheral));
+              Fimber.d("Restored peripheral: ${peripheral.name}");
+            });
+          }
+        )
         .then((it) => startScan())
         .catchError((e) => Fimber.d("Couldn't create BLE client", ex: e));
 
