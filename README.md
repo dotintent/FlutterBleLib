@@ -53,7 +53,7 @@ enum BluetoothState {
 }
 
 
-bleManager.enableRadio(); //ANDROID-NLY turns on BT. NOTE: doesn't check permissions
+bleManager.enableRadio(); //ANDROID-ONLY turns on BT. NOTE: doesn't check permissions
 bleManager.disableRadio() //ANDROID-ONLY turns off BT. NOTE: doesn't check permissions
 BluetoothState currentState = await bleManager.bluetoothState();
 bleManager.observeBluetoothState().listen((btState) {
