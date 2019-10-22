@@ -108,8 +108,10 @@ peripheral.discoverAllServicesAndCharacteristics(transactionId: "discovery");
 bleManager.cancelTransaction("discovery");
 ```
 
-If no _transactionId_ has been specified, it is null. Each new operation with the same _transactionId_
+If no _transactionId_ has been specified, it is _null_. Each new operation with the same _transactionId_
 will cause the previous to be cancelled with error, if it hasn't finished yet.
+
+**NOTE: _null_ is a valid transactionId, which means every operation with default transactionId will cancel any ongoing operation with default _transactionId_.**
 
 ### Obtaining characteristics
 
