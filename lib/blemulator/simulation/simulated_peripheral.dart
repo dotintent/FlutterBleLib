@@ -2,7 +2,6 @@ part of blemulator;
 
 class ScanInfo {
   int rssi;
-  int mtu;
   bool isConnectable;
   int txPowerLevel;
 
@@ -16,7 +15,6 @@ class ScanInfo {
 
   ScanInfo(
       {this.rssi = defaultRssi,
-      this.mtu = defaultMtu,
       this.isConnectable = true,
       this.txPowerLevel,
       this.manufacturerData,
@@ -32,6 +30,7 @@ abstract class SimulatedPeripheral {
   final String id;
   Duration advertisementInterval;
   ScanInfo scanInfo;
+  int mtu;
 
   Map<int, SimulatedService> _services;
   Map<int, SimulatedCharacteristic> _characteristics;
@@ -47,6 +46,7 @@ abstract class SimulatedPeripheral {
       @required List<SimulatedService> services,
       this.scanInfo})
       : _connectionStateStreamController = StreamController.broadcast() {
+    mtu = defaultMtu;
     if (scanInfo == null) {
       this.scanInfo = ScanInfo();
     }
