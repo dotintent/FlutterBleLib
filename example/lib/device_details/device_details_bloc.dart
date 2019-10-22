@@ -46,7 +46,7 @@ class DeviceDetailsBloc {
 
     log = (text) {
       var now = DateTime.now();
-      _logs.insert(0, DebugLog('${now.hour}:${now.minute}:${now.second}:${now.millisecond}', text));
+      _logs.insert(0, DebugLog('${now.hour}:${now.minute}:${now.second}.${now.millisecond}', text));
       Fimber.d(text);
       _logsController.add(_logs);
     };
