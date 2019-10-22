@@ -495,8 +495,8 @@ class PeripheralTestOperations {
   }
 
   void _startMonitoringTemperature(
-      Stream<Uint8List> characteristicUpdates, Function log) {
-    monitoringStreamSubscription?.cancel();
+      Stream<Uint8List> characteristicUpdates, Function log) async {
+    await monitoringStreamSubscription?.cancel();
     monitoringStreamSubscription =
         characteristicUpdates.map(_convertToTemperature).listen(
       (temperature) {
@@ -505,6 +505,7 @@ class PeripheralTestOperations {
       onError: (error) {
         log("Error while monitoring characteristic \n$error");
       },
+      cancelOnError: true,
     );
   }
 
