@@ -31,8 +31,8 @@ class FlutterBleLib extends FlutterBLE
           if (jsonString == null)
             return null;
           else {
-            List<dynamic> restoredPeripheralsJson =
-                jsonDecode(jsonString);
+            List<Map<String, dynamic>> restoredPeripheralsJson =
+              (jsonDecode(jsonString) as List<dynamic>).cast();
             return restoredPeripheralsJson
                 .map((peripheralJson) =>
                     Peripheral.fromJson(peripheralJson, _manager))
