@@ -1,3 +1,12 @@
+<p align="center">
+  <img
+    alt="FlutterBLE library logo"
+    src="site/logo_Blemulator.png"
+    height="300"
+    style="margin-top: 20px; margin-bottom: 20px;"
+  />
+</p>
+
 # BLEmulator
 
 Plugin for simulating Bluetooth Low Energy peripherals.
