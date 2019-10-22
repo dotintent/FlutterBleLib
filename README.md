@@ -96,7 +96,7 @@ The snippet above starts observing the state of the connection to the peripheral
 ### Transactions
 
 Methods that do not have counterpart with opposite effect and are asynchronous accept
- ` String transactionId` as an optional argument, to allow the user to cancel such an operation.
+ `String transactionId` as an optional argument, to allow the user to cancel such an operation.
  The Future returned to Dart will then finish with a _BleError(BleErrorCode.operationCancelled...)_,
  **but this will only discard the result of the operation, the operation itself will be executed either way**.
  
