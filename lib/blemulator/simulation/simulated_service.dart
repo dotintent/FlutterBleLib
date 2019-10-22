@@ -22,4 +22,9 @@ class SimulatedService {
       _characteristics.values.toList();
 
   SimulatedCharacteristic characteristic(int id) => _characteristics[id];
+
+  SimulatedCharacteristic characteristicByUuid(String uuid) =>
+      _characteristics.values.firstWhere(
+          (characteristic) => characteristic.uuid == uuid,
+          orElse: () => null);
 }
