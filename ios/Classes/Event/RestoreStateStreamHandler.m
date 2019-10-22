@@ -1,4 +1,5 @@
 #import "RestoreStateStreamHandler.h"
+#import "JSONStringifier.h"
 
 @implementation RestoreStateStreamHandler {
     FlutterEventSink restoreStateSink;
@@ -18,10 +19,11 @@
     }
 }
 
-- (void)onRestoreEvent:(id)restoreStateIdentifier {
+- (void)onRestoreEvent:(id)restoreState {
     @synchronized (self) {
-        if (restoreStateSink != nil) {
-            restoreStateSink(restoreStateIdentifier);
+        if (restoreStateSink != nil && restoreState != [NSNull null]) {
+            NSArray *connectedPeripherals = [restoreState objectForKey:@"connectedPeripherals"];
+            restoreStateSink([JSONStringifier jsonStringFromJSONObject:connectedPeripherals]);
         }
     }
 }

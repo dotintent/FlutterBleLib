@@ -2,6 +2,6 @@
 
 @interface RestoreStateStreamHandler : NSObject<FlutterStreamHandler>
 
-- (void)onRestoreEvent:(id)restoreStateIdentifier;
+- (void)onRestoreEvent:(id)restoreState;
 
 @end
