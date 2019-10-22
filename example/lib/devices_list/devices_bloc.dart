@@ -52,7 +52,6 @@ class DevicesBloc {
           restoreStateIdentifier: "example-restore-state-identifier",
           restoreStateAction: (peripherals) {
             peripherals.forEach((peripheral) {
-              bleDevices.add(BleDevice.notConnected(peripheral.name, peripheral.identifier, peripheral));
               Fimber.d("Restored peripheral: ${peripheral.name}");
             });
           }
