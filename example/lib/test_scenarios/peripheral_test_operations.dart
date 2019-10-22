@@ -71,8 +71,9 @@ class PeripheralTestOperations {
     log("Reading temperature config");
     CharacteristicWithValue readValue = await peripheral.readCharacteristic(
         SensorTagTemperatureUuids.temperatureService,
-        SensorTagTemperatureUuids.temperatureConfigCharacteristic);
-    log("Temperature config value: \n${readValue.value}");
+        SensorTagTemperatureUuids.temperatureDataCharacteristic);
+
+    log("Temperature config value: \n${_convertToTemperature(readValue.value)}");
   }
 
   Future<void> readCharacteristicForService() async {

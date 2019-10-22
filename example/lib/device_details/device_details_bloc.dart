@@ -45,7 +45,8 @@ class DeviceDetailsBloc {
     _logsController = PublishSubject<List<DebugLog>>();
 
     log = (text) {
-      _logs.insert(0, DebugLog(DateTime.now().toString(), text));
+      var now = DateTime.now();
+      _logs.insert(0, DebugLog('${now.hour}:${now.minute}:${now.second}.${now.millisecond}', text));
       Fimber.d(text);
       _logsController.add(_logs);
     };
@@ -255,7 +256,7 @@ class DeviceDetailsBloc {
     peripheral
         .observeConnectionState(emitCurrentValue: true)
         .listen((connectionState) {
-      log('Observed new connection state: $connectionState');
+      log('Observed new connection state: \n$connectionState');
       _connectionStateController.add(connectionState);
     });
 

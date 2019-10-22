@@ -2,6 +2,7 @@ package com.polidea.flutter_ble_lib;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.polidea.flutter_ble_lib.constant.ArgumentKey;
 import com.polidea.flutter_ble_lib.constant.ChannelName;
@@ -39,6 +40,8 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 public class FlutterBleLibPlugin implements MethodCallHandler {
+
+    static final String TAG = FlutterBleLibPlugin.class.getName();
 
     private BleAdapter bleAdapter;
     private Context context;
@@ -91,6 +94,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
 
     @Override
     public void onMethodCall(MethodCall call, Result result) {
+        Log.d(TAG, "on native side observed method: " + call.method);
         for (CallDelegate delegate : delegates) {
             if (delegate.canHandle(call)) {
                 delegate.onMethodCall(call, result);
