@@ -1,7 +1,7 @@
 <p align="center">
   <img
     alt="FlutterBLE library logo"
-    src="site/logo_Blemulator.png"
+    src="https://github.com/Polidea/FlutterBleLib/blob/develop/site/logo_Blemulator.png"
     height="300"
     style="margin-top: 20px; margin-bottom: 20px;"
   />
