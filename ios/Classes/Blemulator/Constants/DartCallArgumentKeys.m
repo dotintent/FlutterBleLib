@@ -26,3 +26,6 @@ NSString * const DART_CALL_ARGUMENT_CHARACTERISTIC_UUID = @"characteristicUuid";
 NSString * const DART_CALL_ARGUMENT_VALUE = @"value";
 
 NSString * const DART_CALL_ARGUMENT_TRANSACTION_ID = @"transactionId";
+
+NSString * const DART_CALL_ARGUMENT_ERROR_CODE = @"errorCode";
+NSString * const DART_CALL_ARGUMENT_REASON = @"reason";

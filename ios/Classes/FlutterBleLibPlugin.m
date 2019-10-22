@@ -277,7 +277,8 @@
                               serviceUUID:call.arguments[ARGUMENT_KEY_SERVICE_UUID]
                        characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
                             transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
-                                  resolve:[self resolveForReadWriteCharacteristic:result]
+                                  resolve:[self resolveForReadWriteCharacteristic:result
+                                                                    transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]]
                                    reject:[self rejectForFlutterResult:result]];
 }
 
@@ -285,14 +286,16 @@
     [_adapter readCharacteristicForService:[call.arguments[ARGUMENT_KEY_SERVICE_ID] doubleValue]
                         characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
                              transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
-                                   resolve:[self resolveForReadWriteCharacteristic:result]
+                                   resolve:[self resolveForReadWriteCharacteristic:result
+                                                                     transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]]
                                     reject:[self rejectForFlutterResult:result]];
 }
 
 - (void)readCharacteristic:(FlutterMethodCall *)call result:(FlutterResult)result {
     [_adapter readCharacteristic:[call.arguments[ARGUMENT_KEY_CHARACTERISTIC_IDENTIFIER] doubleValue]
                    transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
-                         resolve:[self resolveForReadWriteCharacteristic:result]
+                         resolve:[self resolveForReadWriteCharacteristic:result
+                                                           transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]]
                           reject:[self rejectForFlutterResult:result]];
 }
 
@@ -303,7 +306,8 @@
                                valueBase64:[self base64encodedStringFromBytes:call.arguments[ARGUMENT_KEY_VALUE]]
                                   response:(BOOL)call.arguments[ARGUMENT_KEY_WITH_RESPONSE]
                              transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
-                                   resolve:[self resolveForReadWriteCharacteristic:result]
+                                   resolve:[self resolveForReadWriteCharacteristic:result
+                                                                     transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]]
                                     reject:[self rejectForFlutterResult:result]];
 }
 
@@ -313,7 +317,8 @@
                                 valueBase64:[self base64encodedStringFromBytes:call.arguments[ARGUMENT_KEY_VALUE]]
                                    response:(BOOL)call.arguments[ARGUMENT_KEY_WITH_RESPONSE]
                               transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
-                                    resolve:[self resolveForReadWriteCharacteristic:result]
+                                    resolve:[self resolveForReadWriteCharacteristic:result
+                                                                      transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]]
                                      reject:[self rejectForFlutterResult:result]];
 }
 
@@ -322,7 +327,8 @@
                       valueBase64:[self base64encodedStringFromBytes:call.arguments[ARGUMENT_KEY_VALUE]]
                          response:(BOOL)call.arguments[ARGUMENT_KEY_WITH_RESPONSE]
                     transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
-                          resolve:[self resolveForReadWriteCharacteristic:result]
+                          resolve:[self resolveForReadWriteCharacteristic:result
+                                                            transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]]
                            reject:[self rejectForFlutterResult:result]];
 }
 
@@ -466,9 +472,11 @@
     };
 }
 
-- (Resolve)resolveForReadWriteCharacteristic:(FlutterResult)result {
+- (Resolve)resolveForReadWriteCharacteristic:(FlutterResult)result
+                               transactionId:(NSString *)transactionId {
     return ^(NSDictionary *characteristicResponse) {
-        result([CharacteristicResponseConverter jsonStringFromCharacteristicResponse:characteristicResponse]);
+        result([CharacteristicResponseConverter jsonStringFromCharacteristicResponse:characteristicResponse
+                                                                       transactionId:transactionId]);
     };
 }
 

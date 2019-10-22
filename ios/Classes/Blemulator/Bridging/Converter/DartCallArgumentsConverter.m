@@ -1,4 +1,5 @@
 #import "DartCallArgumentsConverter.h"
+#import "DomainTypesConverter.h"
 #import "DartCallArgumentKeys.h"
 #import "ArrayUtilities.h"
 
@@ -40,6 +41,16 @@
 + (ConnectionStateEvent *)connectionStateEventFromCallArguments:(NSDictionary<NSString *,id> *)callArguments {
     return [[ConnectionStateEvent alloc] initWith:[callArguments objectForKey:DART_CALL_ARGUMENT_PERIPHERAL_ID]
                                   connectionState:[callArguments objectForKey:DART_CALL_CONNECTION_STATE]];
+}
+
++ (Characteristic *)characteristicFromCallArguments:(NSDictionary<NSString *,id> *)callArguments {
+    return [DomainTypesConverter characteristicFromDictionary:callArguments
+                                                      service:[DomainTypesConverter serviceFromDictionary:callArguments]];
+}
+
++ (BleError *)bleErrorFromCallArguments:(NSDictionary<NSString *,id> *)callArguments {
+    return [[BleError alloc] initWithErrorCode:[[callArguments objectForKey:DART_CALL_ARGUMENT_ERROR_CODE] intValue]
+                                        reason:[callArguments objectForKey:DART_CALL_ARGUMENT_REASON]];
 }
 
 @end

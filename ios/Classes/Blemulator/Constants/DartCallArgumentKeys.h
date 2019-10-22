@@ -26,3 +26,6 @@ extern NSString * const DART_CALL_ARGUMENT_CHARACTERISTIC_UUID;
 extern NSString * const DART_CALL_ARGUMENT_VALUE;
 
 extern NSString * const DART_CALL_ARGUMENT_TRANSACTION_ID;
+
+extern NSString * const DART_CALL_ARGUMENT_ERROR_CODE;
+extern NSString * const DART_CALL_ARGUMENT_REASON;

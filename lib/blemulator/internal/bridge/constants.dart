@@ -99,6 +99,7 @@ abstract class Metadata {
 
   static const String errorCode = "errorCode";
   static const String reason = "reason";
+  static const String transactionId = "transactionId";
 
 }
 

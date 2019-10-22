@@ -24,7 +24,8 @@
     @synchronized (self) {
         if (characteristicEventSink != nil) {
             if (readResult[0] == [NSNull null]) {
-                characteristicEventSink([CharacteristicResponseConverter jsonStringFromCharacteristicResponse:readResult[1]]);
+                characteristicEventSink([CharacteristicResponseConverter jsonStringFromCharacteristicResponse:readResult[1]
+                                                                                                transactionId:readResult[2]]);
             } else {
                 characteristicEventSink([FlutterErrorFactory flutterErrorFromJSONString:readResult[0]]);
             }

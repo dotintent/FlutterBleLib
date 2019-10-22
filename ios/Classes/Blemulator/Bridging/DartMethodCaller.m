@@ -233,6 +233,52 @@ typedef void (^SuccessHandler)(id _Nullable result);
                                                                           onError:reject]];
 }
 
+- (void)monitorCharacteristicForDevice:(NSString *)deviceIdentifier
+                           serviceUUID:(NSString *)serviceUUID
+                    characteristicUUID:(NSString *)characteristicUUID
+                         transactionId:(NSString *)transactionId
+                               resolve:(Resolve)resolve
+                                reject:(Reject)reject {
+    NSDictionary<NSString *,id> *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
+                                              deviceIdentifier, DART_CALL_ARGUMENT_DEVICE_IDENTIFIER,
+                                              serviceUUID, DART_CALL_ARGUMENT_SERVICE_UUID,
+                                              characteristicUUID, DART_CALL_ARGUMENT_CHARACTERISTIC_UUID,
+                                              transactionId, DART_CALL_ARGUMENT_TRANSACTION_ID,
+                                              nil];
+    [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_DEVICE
+                               arguments:arguments
+                                  result:[self simpleInvokeMethodResultHandlerForMethod:DART_METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_DEVICE]];
+}
+
+- (void)monitorCharacteristicForService:(int)serviceIdentifier
+                     characteristicUUID:(NSString *)characteristicUUID
+                          transactionId:(NSString *)transactionId
+                                resolve:(Resolve)resolve
+                                 reject:(Reject)reject {
+    NSDictionary<NSString *,id> *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
+                                              [NSNumber numberWithInt:serviceIdentifier], DART_CALL_ARGUMENT_SERVICE_ID,
+                                              characteristicUUID, DART_CALL_ARGUMENT_CHARACTERISTIC_UUID,
+                                              transactionId, DART_CALL_ARGUMENT_TRANSACTION_ID,
+                                              nil];
+    [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_SERVICE
+                               arguments:arguments
+                                  result:[self simpleInvokeMethodResultHandlerForMethod:DART_METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_SERVICE]];
+                                     
+}
+
+- (void)monitorCharacteristic:(int)characteristicIdentifier
+                transactionId:(NSString *)transactionId
+                      resolve:(Resolve)resolve
+                       reject:(Reject)reject {
+    NSDictionary<NSString *,id> *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
+                                              [NSNumber numberWithInt:characteristicIdentifier], DART_CALL_ARGUMENT_CHARACTERISTIC_IDENTIFIER,
+                                              transactionId, DART_CALL_ARGUMENT_TRANSACTION_ID,
+                                              nil];
+    [self.dartMethodChannel invokeMethod:DART_METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_IDENTIFIER
+                               arguments:arguments
+                                  result:[self simpleInvokeMethodResultHandlerForMethod:DART_METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_IDENTIFIER]];
+}
+
 // MARK: - RSSI
 
 - (void)readRSSIForDevice:(NSString *)deviceIdentifier
@@ -251,6 +297,8 @@ typedef void (^SuccessHandler)(id _Nullable result);
                                   result:[self invokeMethodResultHandlerForMethod:DART_METHOD_NAME_RSSI
                                                                         onSuccess:successHandler
                                                                           onError:reject]];
+}
+
 // MARK: - Cancel transaction
 
 - (void)cancelTransaction:(NSString *)transactionId {

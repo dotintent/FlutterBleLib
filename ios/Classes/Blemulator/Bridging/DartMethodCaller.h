@@ -81,12 +81,31 @@
                     resolve:(Resolve)resolve
                      reject:(Reject)reject;
 
+- (void)monitorCharacteristicForDevice:(NSString *)deviceIdentifier
+                           serviceUUID:(NSString *)serviceUUID
+                    characteristicUUID:(NSString *)characteristicUUID
+                         transactionId:(NSString *)transactionId
+                               resolve:(Resolve)resolve
+                                reject:(Reject)reject;
+
+- (void)monitorCharacteristicForService:(int)serviceIdentifier
+                     characteristicUUID:(NSString *)characteristicUUID
+                          transactionId:(NSString *)transactionId
+                                resolve:(Resolve)resolve
+                                 reject:(Reject)reject;
+
+- (void)monitorCharacteristic:(int)characteristicIdentifier
+                transactionId:(NSString *)transactionId
+                      resolve:(Resolve)resolve
+                       reject:(Reject)reject;
+
 // MARK: - RSSI
 
 - (void)readRSSIForDevice:(NSString *)deviceIdentifier
                      name:(NSString *)name
                   resolve:(Resolve)resolve
                    reject:(Reject)reject;
+
 // MARK: - Cancel transaction
 
 - (void)cancelTransaction:(NSString *)transactionId;
