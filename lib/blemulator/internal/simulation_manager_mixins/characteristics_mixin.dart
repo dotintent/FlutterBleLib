@@ -52,6 +52,7 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
 
     await _errorIfCharacteristicIsNull(
         targetCharacteristic, characteristicIdentifier.toString());
+    await _errorIfCharacteristicNotReadable(targetCharacteristic);
     Uint8List value = await targetCharacteristic.read();
     await _errorIfDisconnected(peripheral.id);
     return CharacteristicResponse(targetCharacteristic, value);
@@ -71,6 +72,7 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
 
     await _errorIfCharacteristicIsNull(
         targetCharacteristic, characteristicUUID);
+    await _errorIfCharacteristicNotReadable(targetCharacteristic);
     Uint8List value = await targetCharacteristic.read();
     await _errorIfDisconnected(peripheralId);
     return CharacteristicResponse(targetCharacteristic, value);
@@ -86,6 +88,7 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
     await _errorIfCharacteristicIsNull(
         targetCharacteristic, characteristicUUID);
     await _errorIfNotConnected(targetCharacteristic.service.peripheralId);
+    await _errorIfCharacteristicNotReadable(targetCharacteristic);
     Uint8List value = await targetCharacteristic.read();
     await _errorIfDisconnected(targetCharacteristic.service.peripheralId);
     return CharacteristicResponse(targetCharacteristic, value);
@@ -93,8 +96,9 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
 
   Future<SimulatedCharacteristic> _writeCharacteristicForIdentifier(
     int characteristicIdentifier,
-    Uint8List value,
-  ) async {
+    Uint8List value, {
+    bool withResponse = true,
+  }) async {
     SimulatedPeripheral peripheral =
         _peripheralWithCharacteristicId(characteristicIdentifier);
 
@@ -106,7 +110,12 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
 
     await _errorIfCharacteristicIsNull(
         targetCharacteristic, characteristicIdentifier.toString());
-    await _errorIfNotWritable(targetCharacteristic);
+    if (withResponse) {
+      await _errorIfCharacteristicNotWritableWithResponse(targetCharacteristic);
+    } else {
+      await _errorIfCharacteristicNotWritableWithoutResponse(
+          targetCharacteristic);
+    }
     await targetCharacteristic.write(value);
     await _errorIfDisconnected(peripheral.id);
     return targetCharacteristic;
@@ -116,8 +125,9 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
     String peripheralId,
     String serviceUuid,
     String characteristicUUID,
-    Uint8List value,
-  ) async {
+    Uint8List value, {
+    bool withResponse = true,
+  }) async {
     await _errorIfNotConnected(peripheralId);
     SimulatedPeripheral targetPeripheral = _peripherals[peripheralId];
 
@@ -126,7 +136,12 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
 
     await _errorIfCharacteristicIsNull(
         targetCharacteristic, characteristicUUID);
-    await _errorIfNotWritable(targetCharacteristic);
+    if (withResponse) {
+      await _errorIfCharacteristicNotWritableWithResponse(targetCharacteristic);
+    } else {
+      await _errorIfCharacteristicNotWritableWithoutResponse(
+          targetCharacteristic);
+    }
     await targetCharacteristic.write(value);
     await _errorIfDisconnected(peripheralId);
     return targetCharacteristic;
@@ -135,15 +150,21 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
   Future<SimulatedCharacteristic> _writeCharacteristicForService(
     int serviceIdentifier,
     String characteristicUUID,
-    Uint8List value,
-  ) async {
+    Uint8List value, {
+    bool withResponse = true,
+  }) async {
     SimulatedCharacteristic targetCharacteristic =
         _findCharacteristicForServiceId(serviceIdentifier, characteristicUUID);
 
     await _errorIfCharacteristicIsNull(
         targetCharacteristic, characteristicUUID);
     await _errorIfNotConnected(targetCharacteristic.service.peripheralId);
-    await _errorIfNotWritable(targetCharacteristic);
+    if (withResponse) {
+      await _errorIfCharacteristicNotWritableWithResponse(targetCharacteristic);
+    } else {
+      await _errorIfCharacteristicNotWritableWithoutResponse(
+          targetCharacteristic);
+    }
     await targetCharacteristic.write(value);
     await _errorIfDisconnected(targetCharacteristic.service.peripheralId);
     return targetCharacteristic;
@@ -159,7 +180,7 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
     await _errorIfCharacteristicIsNull(
         targetCharacteristic, characteristicIdentifier.toString());
     await _errorIfNotConnected(targetCharacteristic.service.peripheralId);
-    await _errorIfNotMonitorable(targetCharacteristic);
+    await _errorIfCharacteristicNotNotifiable(targetCharacteristic);
     _monitoringSubscriptions.putIfAbsent(
       transactionId,
       () => targetCharacteristic.monitor().listen((value) {
@@ -188,7 +209,7 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
 
     await _errorIfCharacteristicIsNull(
         targetCharacteristic, characteristicUUID);
-    await _errorIfNotMonitorable(targetCharacteristic);
+    await _errorIfCharacteristicNotNotifiable(targetCharacteristic);
     _monitoringSubscriptions.putIfAbsent(
       transactionId,
       () => targetCharacteristic.monitor().listen((value) {
@@ -212,7 +233,7 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
     await _errorIfCharacteristicIsNull(
         targetCharacteristic, characteristicUUID);
     await _errorIfNotConnected(targetCharacteristic.service.peripheralId);
-    await _errorIfNotMonitorable(targetCharacteristic);
+    await _errorIfCharacteristicNotNotifiable(targetCharacteristic);
     _monitoringSubscriptions.putIfAbsent(
       transactionId,
       () => targetCharacteristic.monitor().listen((value) {
@@ -223,27 +244,6 @@ mixin CharacteristicsMixin on SimulationManagerBaseWithErrorChecks {
             targetCharacteristic.id, error, transactionId);
       }, cancelOnError: true),
     );
-  }
-
-  Future<void> _errorIfNotWritable(
-      SimulatedCharacteristic characteristic) async {
-    if (!characteristic.isWritableWithResponse ||
-        !characteristic.isWritableWithoutResponse) {
-      return Future.error(SimulatedBleError(
-        BleErrorCode.CharacteristicWriteFailed,
-        "Characteristic ${characteristic.uuid} is not writeable",
-      ));
-    }
-  }
-
-  Future<void> _errorIfNotMonitorable(
-      SimulatedCharacteristic characteristic) async {
-    if (!characteristic.isNotifiable && !characteristic.isIndicatable) {
-      return Future.error(SimulatedBleError(
-        BleErrorCode.CharacteristicNotifyChangeFailed,
-        "Characteristic ${characteristic.uuid} is not monitorable",
-      ));
-    }
   }
 
   Future<void> _errorIfCharacteristicIsNull(

@@ -31,8 +31,7 @@ class SimulatedCharacteristic {
 
   void attachToService(SimulatedService service) => this.service = service;
 
-  Future<Uint8List> read() async =>
-      isReadable ? _value : Future.error("This characteristic is not readable");
+  Future<Uint8List> read() async => _value;
 
   Future<void> write(Uint8List value) async {
     this._value = value;
