@@ -17,12 +17,14 @@ dependencies:
   rxdart: ^0.22.0
   fimber: ^0.1.10
 
+  flutter_ble_lib: ^2.0.0-dev.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_ble_lib:
-    path: ../
+#  flutter_ble_lib:
+#    path: ../
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
