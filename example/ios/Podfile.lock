@@ -6,7 +6,7 @@ PODS:
   - MultiplatformBleAdapter (0.0.4)
 
 DEPENDENCIES:
-  - Flutter (from `.symlinks/flutter/ios`)
+  - Flutter (from `.symlinks/flutter/ios-release`)
   - flutter_ble_lib (from `.symlinks/plugins/flutter_ble_lib/ios`)
 
 SPEC REPOS:
@@ -15,7 +15,7 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   Flutter:
-    :path: ".symlinks/flutter/ios"
+    :path: ".symlinks/flutter/ios-release"
   flutter_ble_lib:
     :path: ".symlinks/plugins/flutter_ble_lib/ios"
 
