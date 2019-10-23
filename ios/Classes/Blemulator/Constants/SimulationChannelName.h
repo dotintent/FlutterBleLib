@@ -1,2 +1,0 @@
-extern NSString * const SIMULATION_CHANNEL_NAME_TO_PLATFORM;
-extern NSString * const SIMULATION_CHANNEL_NAME_TO_DART;
