@@ -48,8 +48,8 @@ _ios_job_template: &ios_job_template
   language: objective-c
   os: osx
   osx_image: xcode11
-  xcode_project: iOS/MultiPlatformBLEAdapter.xcodeproj
-  xcode_scheme: MultiplatformBLEAdapter
+  xcode_workspave: example/ios/Runner.xcworkspace
+  xcode_scheme: Runner
   before_script:
     - git clone https://github.com/flutter/flutter.git -b stable
     - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
@@ -62,10 +62,9 @@ matrix:
     - <<: *android_job_template
       name: Build Android
       stage: native
-# Native build is turned off at the moment because of a certificate issue
-#    - <<: *ios_job_template
-#      name: Build iOS
-#      stage: ntive
+    - <<: *ios_job_template
+      name: Build iOS
+      stage: native
     - <<: *_flutter_job_template
       name: Build Flutter
       stage: flutter
