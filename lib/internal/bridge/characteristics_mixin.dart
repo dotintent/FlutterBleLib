@@ -164,6 +164,7 @@ mixin CharacteristicsMixin on FlutterBLE {
           (characteristic) => characteristic._id == characteristicIdentifier,
         )
         .map((characteristicWithValue) => characteristicWithValue.value)
+        .transform(CancelOnErrorStreamTransformer())
         .handleError((errorJson) =>
             throw BleError.fromJson(jsonDecode(errorJson.details)));
   }
@@ -197,6 +198,7 @@ mixin CharacteristicsMixin on FlutterBLE {
             equalsIgnoreAsciiCase(serviceUuid, characteristic.service.uuid) &&
             equalsIgnoreAsciiCase(
                 transactionId ?? "", characteristic.transactionId ?? ""))
+        .transform(CancelOnErrorStreamTransformer())
         .handleError((errorJson) =>
             throw BleError.fromJson(jsonDecode(errorJson.details)));
   }
@@ -226,6 +228,7 @@ mixin CharacteristicsMixin on FlutterBLE {
               equalsIgnoreAsciiCase(characteristicUUID, characteristic.uuid) &&
               serviceIdentifier == characteristic.service._id,
         )
+        .transform(CancelOnErrorStreamTransformer())
         .handleError((errorJson) =>
             throw BleError.fromJson(jsonDecode(errorJson.details)));
   }
