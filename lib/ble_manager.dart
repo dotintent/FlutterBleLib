@@ -49,3 +49,25 @@ abstract class BleManager {
 
   Future<List<Peripheral>> connectedDevices(List<String> serviceUUIDs);
 }
+
+enum BluetoothState {
+  UNKNOWN,
+  UNSUPPORTED,
+  UNAUTHORIZED,
+  POWERED_ON,
+  POWERED_OFF,
+  RESETTING,
+}
+
+abstract class ScanMode {
+  static const int opportunistic = -1;
+  static const int lowPower = 0;
+  static const int balanced = 1;
+  static const int lowLatency = 2;
+}
+
+abstract class CallbackType {
+  static const int allMatches = 1;
+  static const int firstMatch = 2;
+  static const int matchLost = 4;
+}

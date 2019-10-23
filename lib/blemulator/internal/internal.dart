@@ -25,5 +25,6 @@ part 'simulation_manager_mixins/peripheral_connection_mixin.dart';
 part 'simulation_manager_mixins/peripheral_scanning_mixin.dart';
 part 'simulation_manager_mixins/characteristics_mixin.dart';
 part 'simulation_manager_mixins/rssi_mixin.dart';
+part 'simulation_manager_mixins/response_models.dart';
 part 'simulation_manager_mixins/simulation_manager_base.dart';
 part 'util/mappers.dart';
