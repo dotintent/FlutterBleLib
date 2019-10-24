@@ -14,7 +14,6 @@
 #import "CommonTypes.h"
 #import "CharacteristicResponseConverter.h"
 #import "PeripheralResponseConverter.h"
-#import "SimulatorPlugin.h"
 
 @import MultiplatformBleAdapter;
 
@@ -65,9 +64,6 @@
     [scanningChannel setStreamHandler:instance.scanningStreamHandler];
     [connectionStateChannel setStreamHandler:instance.connectionStateStreamHandler];
     [monitorCharacteristicChannel setStreamHandler:instance.monitorCharacteristicStreamHandler];
-
-    //TEMPORARY
-    [SimulatorPlugin registerWithRegistrar:registrar];
 }
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
