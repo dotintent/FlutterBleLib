@@ -146,7 +146,7 @@ mixin CharacteristicsMixin on FlutterBLE {
     Peripheral peripheral,
     int characteristicIdentifier,
     String transactionId,
-  ) async* {
+  ) {
     _methodChannel.invokeMethod(
       MethodName.monitorCharacteristicForIdentifier,
       <String, dynamic>{
@@ -154,7 +154,7 @@ mixin CharacteristicsMixin on FlutterBLE {
         ArgumentName.transactionId: transactionId,
       },
     );
-    yield* _characteristicsMonitoringEvents
+    return _characteristicsMonitoringEvents
         .map(
           (rawJsonValue) =>
               _parseCharacteristicWithValueWithTransactionIdResponse(
@@ -174,7 +174,7 @@ mixin CharacteristicsMixin on FlutterBLE {
     String serviceUuid,
     String characteristicUUID,
     String transactionId,
-  ) async* {
+  ) {
     _methodChannel.invokeMethod(
       MethodName.monitorCharacteristicForDevice,
       <String, dynamic>{
@@ -184,7 +184,7 @@ mixin CharacteristicsMixin on FlutterBLE {
         ArgumentName.transactionId: transactionId,
       },
     );
-    yield* _characteristicsMonitoringEvents
+    return _characteristicsMonitoringEvents
         .map((rawJsonValue) =>
             _parseCharacteristicWithValueWithTransactionIdResponse(
                 peripheral, rawJsonValue))
@@ -208,7 +208,7 @@ mixin CharacteristicsMixin on FlutterBLE {
     int serviceIdentifier,
     String characteristicUUID,
     String transactionId,
-  ) async* {
+  ) {
     _methodChannel.invokeMethod(
       MethodName.monitorCharacteristicForService,
       <String, dynamic>{
@@ -217,7 +217,7 @@ mixin CharacteristicsMixin on FlutterBLE {
         ArgumentName.transactionId: transactionId,
       },
     );
-    yield* _characteristicsMonitoringEvents
+    return _characteristicsMonitoringEvents
         .map(
           (rawJsonValue) =>
               _parseCharacteristicWithValueWithTransactionIdResponse(
