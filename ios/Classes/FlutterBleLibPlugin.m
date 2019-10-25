@@ -1,5 +1,4 @@
 #import "FlutterBleLibPlugin.h"
-#import <flutter_ble_lib-Swift.h>
 #import "ArgumentKey.h"
 #import "ChannelName.h"
 #import "MethodName.h"
