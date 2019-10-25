@@ -13,7 +13,7 @@ class PeripheralTestOperations {
       this.bleManager, this.peripheral, this.log, this.logError);
 
   Future<void> connect() async {
-    await _tryCatch(() async {
+    await _runWithErrorHandling(() async {
       log("Connecting to ${peripheral.name}");
       await peripheral.connect();
       log("Connected!");
@@ -21,7 +21,7 @@ class PeripheralTestOperations {
   }
 
   Future<void> cancelTransaction() async {
-    await _tryCatch(() async {
+    await _runWithErrorHandling(() async {
       log("Starting operation to cancel...");
       peripheral
           .discoverAllServicesAndCharacteristics(transactionId: "test")
@@ -41,7 +41,7 @@ class PeripheralTestOperations {
   }
 
   Future<void> discovery() async {
-    await _tryCatch(() async {
+    await _runWithErrorHandling(() async {
       await peripheral.discoverAllServicesAndCharacteristics();
       List<Service> services = await peripheral.services();
       log("PRINTING SERVICES for \n${peripheral.name}");
@@ -63,14 +63,14 @@ class PeripheralTestOperations {
   }
 
   Future<void> testReadingRssi() async {
-    await _tryCatch(() async {
+    await _runWithErrorHandling(() async {
       int rssi = await peripheral.rssi();
       log("rssi $rssi");
     });
   }
 
   Future<void> testRequestingMtu() async {
-    await _tryCatch(() async {
+    await _runWithErrorHandling(() async {
       int requestedMtu = 79;
       log("Requesting MTU = $requestedMtu");
       int negotiatedMtu = await peripheral.requestMtu(requestedMtu);
@@ -79,7 +79,7 @@ class PeripheralTestOperations {
   }
 
   Future<void> readCharacteristicForPeripheral() async {
-    await _tryCatch(() async {
+    await _runWithErrorHandling(() async {
       log("Reading temperature config");
       CharacteristicWithValue readValue = await peripheral.readCharacteristic(
           SensorTagTemperatureUuids.temperatureService,
@@ -89,7 +89,7 @@ class PeripheralTestOperations {
   }
 
   Future<void> readCharacteristicForService() async {
-    await _tryCatch(() async {
+    await _runWithErrorHandling(() async {
       log("Reading temperature config");
       Service service = await peripheral.services().then((services) =>
           services.firstWhere((service) =>
@@ -102,7 +102,7 @@ class PeripheralTestOperations {
   }
 
   Future<void> readCharacteristic() async {
-    await _tryCatch(() async {
+    await _runWithErrorHandling(() async {
       log("Reading temperature config");
       Service service = await peripheral.services().then((services) =>
           services.firstWhere((service) =>
@@ -122,7 +122,7 @@ class PeripheralTestOperations {
   }
 
   Future<void> writeCharacteristicForPeripheral() async {
-    await _tryCatch(() async {
+    await _runWithErrorHandling(() async {
       Uint8List currentValue = await peripheral
           .readCharacteristic(SensorTagTemperatureUuids.temperatureService,
               SensorTagTemperatureUuids.temperatureConfigCharacteristic)
@@ -148,7 +148,7 @@ class PeripheralTestOperations {
   }
 
   Future<void> writeCharacteristicForService() async {
-    await _tryCatch(() async {
+    await _runWithErrorHandling(() async {
       Service service = await peripheral.services().then((services) =>
           services.firstWhere((service) =>
               service.uuid ==
@@ -178,7 +178,7 @@ class PeripheralTestOperations {
   }
 
   Future<void> writeCharacteristic() async {
-    await _tryCatch(() async {
+    await _runWithErrorHandling(() async {
       Service service = await peripheral.services().then((services) =>
           services.firstWhere((service) =>
               service.uuid ==
@@ -205,7 +205,7 @@ class PeripheralTestOperations {
   }
 
   Future<void> monitorCharacteristicForPeripheral() async {
-    await _tryCatch(() async {
+    await _runWithErrorHandling(() async {
       log("Start monitoring temperature update");
       _startMonitoringTemperature(
           peripheral
@@ -219,7 +219,7 @@ class PeripheralTestOperations {
   }
 
   Future<void> monitorCharacteristicForService() async {
-    await _tryCatch(() async {
+    await _runWithErrorHandling(() async {
       log("Start monitoring temperature update");
       Service service = await peripheral.services().then((services) =>
           services.firstWhere((service) =>
@@ -236,7 +236,7 @@ class PeripheralTestOperations {
   }
 
   Future<void> monitorCharacteristic() async {
-    await _tryCatch(() async {
+    await _runWithErrorHandling(() async {
       log("Start monitoring temperature update");
       Service service = await peripheral.services().then((services) =>
           services.firstWhere((service) =>
@@ -256,7 +256,7 @@ class PeripheralTestOperations {
   }
 
   Future<void> readWriteMonitorCharacteristicForPeripheral() async {
-    await _tryCatch(() async {
+    await _runWithErrorHandling(() async {
       log("Test read/write/monitor characteristic on device");
       log("Start monitoring temperature");
       _startMonitoringTemperature(
@@ -307,7 +307,7 @@ class PeripheralTestOperations {
   }
 
   Future<void> readWriteMonitorCharacteristicForService() async {
-    await _tryCatch(() async {
+    await _runWithErrorHandling(() async {
       log("Test read/write/monitor characteristic on service");
       log("Fetching service");
 
@@ -363,7 +363,7 @@ class PeripheralTestOperations {
   }
 
   Future<void> readWriteMonitorCharacteristic() async {
-    await _tryCatch(() async {
+    await _runWithErrorHandling(() async {
       log("Test read/write/monitor characteristic on characteristic");
 
       log("Fetching service");
@@ -420,7 +420,7 @@ class PeripheralTestOperations {
   }
 
   Future<void> disconnect() async {
-    await _tryCatch(() async {
+    await _runWithErrorHandling(() async {
       log("WAITING 10 SECOND BEFORE DISCONNECTING");
       await Future.delayed(Duration(seconds: 10));
       log("DISCONNECTING...");
@@ -430,7 +430,7 @@ class PeripheralTestOperations {
   }
 
   Future<void> fetchConnectedDevice() async {
-    await _tryCatch(() async {
+    await _runWithErrorHandling(() async {
       log("Fetch connected devices with no service specified");
       List<Peripheral> peripherals = await bleManager.connectedDevices([]);
       peripherals.forEach((peripheral) => log("\t${peripheral.toString()}"));
@@ -444,7 +444,7 @@ class PeripheralTestOperations {
   }
 
   Future<void> fetchKnownDevice() async {
-    await _tryCatch(() async {
+    await _runWithErrorHandling(() async {
       log("Fetch known devices with no IDs specified");
       List<Peripheral> peripherals = await bleManager.knownDevices([]);
       peripherals.forEach((peripheral) => log("\t${peripheral.toString()}"));
@@ -478,27 +478,27 @@ class PeripheralTestOperations {
   }
 
   Future<void> disableBluetooth() async {
-    await _tryCatch(() async {
+    await _runWithErrorHandling(() async {
       log("Disabling radio");
       await bleManager.disableRadio();
     });
   }
 
   Future<void> enableBluetooth() async {
-    await _tryCatch(() async {
+    await _runWithErrorHandling(() async {
       log("Enabling radio");
       await bleManager.enableRadio();
     });
   }
 
   Future<void> fetchBluetoothState() async {
-    await _tryCatch(() async {
+    await _runWithErrorHandling(() async {
       BluetoothState bluetoothState = await bleManager.bluetoothState();
       log("Radio state: $bluetoothState");
     });
   }
 
-  Future<void> _tryCatch(TestedFunction testedFunction) async {
+  Future<void> _runWithErrorHandling(TestedFunction testedFunction) async {
     try {
       await testedFunction();
     } on BleError catch (e) {
