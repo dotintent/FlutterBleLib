@@ -166,7 +166,7 @@ mixin CharacteristicsMixin on FlutterBLE {
         .map((characteristicWithValue) => characteristicWithValue.value)
         .transform(CancelOnErrorStreamTransformer())
         .handleError((errorJson) =>
-            throw BleError.fromJson(jsonDecode(errorJson.details)));
+            _throwErrorIfMatchesWithTransactionId(errorJson, transactionId));
   }
 
   Stream<CharacteristicWithValue> monitorCharacteristicForDevice(
@@ -200,7 +200,7 @@ mixin CharacteristicsMixin on FlutterBLE {
                 transactionId ?? "", characteristic.transactionId ?? ""))
         .transform(CancelOnErrorStreamTransformer())
         .handleError((errorJson) =>
-            throw BleError.fromJson(jsonDecode(errorJson.details)));
+            _throwErrorIfMatchesWithTransactionId(errorJson, transactionId));
   }
 
   Stream<CharacteristicWithValue> monitorCharacteristicForService(
@@ -230,7 +230,7 @@ mixin CharacteristicsMixin on FlutterBLE {
         )
         .transform(CancelOnErrorStreamTransformer())
         .handleError((errorJson) =>
-            throw BleError.fromJson(jsonDecode(errorJson.details)));
+            _throwErrorIfMatchesWithTransactionId(errorJson, transactionId));
   }
 
   CharacteristicWithValueAndTransactionId
@@ -252,6 +252,14 @@ mixin CharacteristicsMixin on FlutterBLE {
 
     return Characteristic.fromJson(
         rootObject["characteristic"], service, _manager);
+  }
+
+  void _throwErrorIfMatchesWithTransactionId(errorJson, transactionId) {
+    var errorDetails = jsonDecode(errorJson.details);
+    if (transactionId == errorDetails["transactionId"])
+      throw BleError.fromJson(errorDetails);
+    else
+      return;
   }
 }
 
