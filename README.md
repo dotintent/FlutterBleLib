@@ -9,7 +9,7 @@
 
 # FlutterBleLib
 
-![Frontside](https://img.shields.io/static/v1?label=Facilitated%20by&message=frontside.io&color=blue)
+[![Frontside](https://img.shields.io/static/v1?label=Facilitated%20by&message=frontside.io&color=blue)](#facilitated-by-frontside)
 
 A library for your all your Bluetooth Low Energy needs in Flutter. Internally utilises Polidea's 
 [MultiPlatformBleAdapter](https://github.com/Polidea/MultiPlatformBleAdapter), 
