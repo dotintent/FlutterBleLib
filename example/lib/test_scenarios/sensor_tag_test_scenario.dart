@@ -21,7 +21,8 @@ class SensorTagTestScenario {
         .then((_) => _peripheralTestOperations.readWriteMonitorCharacteristic())
         .then((_) => _peripheralTestOperations.fetchConnectedDevice())
         .then((_) => _peripheralTestOperations.fetchKnownDevice())
-        .then((_) => _peripheralTestOperations.disconnect());
+        .then((_) => _peripheralTestOperations.disconnect())
+        .catchError((error) => _peripheralTestOperations.logError(error));
   }
 
 
