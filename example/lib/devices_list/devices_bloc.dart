@@ -47,7 +47,7 @@ class DevicesBloc {
     _bleManager.createClient(
           restoreStateIdentifier: "example-restore-state-identifier",
           restoreStateAction: (peripherals) {
-            peripherals.forEach((peripheral) {
+            peripherals?.forEach((peripheral) {
               Fimber.d("Restored peripheral: ${peripheral.name}");
             });
           }

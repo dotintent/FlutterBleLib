@@ -53,7 +53,7 @@ class DeviceDetailsBloc {
 
     logError = (text) {
       _logs.insert(0,
-          DebugLog(DateTime.now().toString(), "ERROR: ${text.toUpperCase()}"));
+          DebugLog(DateTime.now().toString(), "ERROR: $text"));
       Fimber.e(text);
       _logsController.add(_logs);
     };
@@ -221,10 +221,13 @@ class DeviceDetailsBloc {
         _connectionStateController.add(connectionState);
       });
 
-      log("Connecting to ${peripheral.name}");
-      await peripheral.connect();
-      log("Connected!");
-      return peripheral;
+      try {
+        log("Connecting to ${peripheral.name}");
+        await peripheral.connect();
+        log("Connected!");
+      } on BleError catch (e) {
+        logError(e.toString());
+      }
     });
   }
 
@@ -238,8 +241,6 @@ class DeviceDetailsBloc {
   }
 
   void _connectTo(BleDevice bleDevice) async {
-
-
     log("Fetching log level");
     LogLevel logLevel = await _bleManager.logLevel();
     log("Current log level $logLevel");
