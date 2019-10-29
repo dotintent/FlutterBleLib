@@ -19,6 +19,8 @@ const NSString *keyIsWritableWithResponse = @"isWritableWithResponse";
 const NSString *keyIsWritableWithoutResponse = @"isWritableWithoutResponse";
 const NSString *keyValue = @"value";
 
+const NSString *keyCharacteristics = @"characteristics";
+
 + (NSString *)jsonStringFromCharacteristicResponse:(NSDictionary *)characteristicResponse
                                      transactionId:(NSString *)transactionId {
     NSDictionary *result = [[NSDictionary alloc] initWithObjectsAndKeys:
@@ -29,6 +31,28 @@ const NSString *keyValue = @"value";
                             nil];
 
     return [JSONStringifier jsonStringFromJSONObject:result];
+}
+
++ (NSString *)jsonStringFromCharacteristicsResponse:(NSArray *)characteristicsResponse {
+    NSArray *result = [self characteristicsFromCharacteristicResponse:characteristicsResponse];
+    return [JSONStringifier jsonStringFromJSONObject:result];
+}
+
++ (NSString *)jsonStringFromCharacteristicsResponse:(NSArray *)characteristicsResponse
+                                            service:(NSDictionary *)service {
+    NSMutableDictionary *result = [[NSMutableDictionary alloc] initWithDictionary:service];
+    [result setObject:[self characteristicsFromCharacteristicResponse:characteristicsResponse]
+               forKey:keyCharacteristics];
+    return [JSONStringifier jsonStringFromJSONObject:result];
+
+}
+
++ (NSArray *)characteristicsFromCharacteristicResponse:(NSArray *)characteristicsResponse {
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    for (NSDictionary *characteristic in characteristicsResponse) {
+        [result addObject:[self characteristicDictionaryFromCharacteristicResponse:characteristic]];
+    }
+    return result;
 }
 
 + (NSDictionary *)characteristicDictionaryFromCharacteristicResponse:(NSDictionary *)characteristicResponse {

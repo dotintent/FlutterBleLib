@@ -9,10 +9,10 @@
 #import "MonitorCharacteristicStreamHandler.h"
 #import "ArgumentHandler.h"
 #import "FlutterErrorFactory.h"
-#import "JSONStringifier.h"
 #import "CommonTypes.h"
 #import "CharacteristicResponseConverter.h"
 #import "PeripheralResponseConverter.h"
+#import "ServiceResponseConverter.h"
 
 @import MultiplatformBleAdapter;
 
@@ -422,16 +422,13 @@
 
 - (Resolve)resolveForServicesForDevice:(FlutterResult)result {
     return ^(NSArray *servicesArray) {
-        result([JSONStringifier jsonStringFromJSONObject:[self arrayReplacingKeys:@[@[@"id", @"serviceId"],
-                                                                                    @[@"uuid", @"serviceUuid"]]
-                                                                          inArray:servicesArray]]);
+        result([ServiceResponseConverter jsonStringFromServicesResponse:servicesArray]);
     };
 }
 
 - (Resolve)resolveForCharacteristicsForService:(FlutterResult)result {
     return ^(NSArray *characteristicsArray) {
-        result([JSONStringifier jsonStringFromJSONObject:[self arrayReplacingKeys:@[@[@"uuid", @"characteristicUuid"]]
-                                                                          inArray:characteristicsArray]]);
+        result([CharacteristicResponseConverter jsonStringFromCharacteristicsResponse:characteristicsArray]);
     };
 }
 
@@ -439,8 +436,7 @@
     return ^(NSArray *servicesArray) {
 
         NSDictionary *matchingService = nil;
-        for (NSDictionary *service in [self arrayReplacingKeys:@[@[@"id", @"serviceId"], @[@"uuid", @"serviceUuid"]]
-                                                       inArray:servicesArray]) {
+        for (NSDictionary *service in [ServiceResponseConverter servicesFromServicesResponse:servicesArray]) {
             if ([[service valueForKey:@"serviceUuid"] isEqualToString:serviceUuid]) {
                 matchingService = service;
                 break;
@@ -453,15 +449,11 @@
         }
 
         Resolve resolve = ^(NSArray* characteristicsArray) {
-            NSMutableDictionary *resultDictionary = [[NSMutableDictionary alloc] init];
-            [resultDictionary addEntriesFromDictionary:matchingService];
-            [resultDictionary setObject:[self arrayReplacingKeys:@[@[@"uuid", @"characteristicUuid"]]
-                                                         inArray:characteristicsArray]
-                                 forKey:@"characteristics"];
-            result([JSONStringifier jsonStringFromJSONObject:resultDictionary]);
+            result([CharacteristicResponseConverter jsonStringFromCharacteristicsResponse:characteristicsArray
+                                                                                  service:matchingService]);
         };
 
-        [_adapter characteristicsForService:[[matchingService valueForKey:@"id"] doubleValue]
+        [_adapter characteristicsForService:[[matchingService valueForKey:@"serviceId"] doubleValue]
                             resolve:resolve
                              reject:[self rejectForFlutterResult:result]];
     };
@@ -503,20 +495,6 @@
     return ^(NSString *code, NSString *message, NSError *error) {
         result([FlutterErrorFactory flutterErrorFromJSONString:message]);
     };
-}
-
-- (NSArray *)arrayReplacingKeys:(NSArray<NSArray<NSString *> *> *)keys inArray:(NSArray *)servicesArray {
-    NSMutableArray *newArray = [[NSMutableArray alloc] init];
-    for (NSDictionary *dictionary in servicesArray) {
-        NSMutableDictionary *newDictionary = [[NSMutableDictionary alloc] init];
-        for (NSArray *keyPair in keys) {
-            [newDictionary addEntriesFromDictionary:dictionary];
-            [newDictionary setObject:[dictionary objectForKey:keyPair[0]] forKey:keyPair[1]];
-            [newDictionary removeObjectForKey:keyPair[0]];
-        }
-        [newArray addObject:newDictionary];
-    }
-    return newArray;
 }
 
 - (NSString *)base64encodedStringFromBytes:(FlutterStandardTypedData *)bytes {
