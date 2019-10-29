@@ -1,5 +1,5 @@
 #import "ScanningStreamHandler.h"
-#import "ArgumentValidator.h"
+#import "ArgumentChecker.h"
 #import "JSONStringifier.h"
 #import "FlutterErrorFactory.h"
 
