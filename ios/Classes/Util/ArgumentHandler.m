@@ -1,6 +1,6 @@
-#import "ArgumentChecker.h"
+#import "ArgumentHandler.h"
 
-@implementation ArgumentChecker
+@implementation ArgumentHandler
 
 + (nullable id)argumentOrNil:(id)argument {
     if (argument != nil && (NSNull *)argument != [NSNull null]) {

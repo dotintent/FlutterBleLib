@@ -1,4 +1,4 @@
-@interface ArgumentChecker : NSObject
+@interface ArgumentHandler : NSObject
 
 + (nullable id)argumentOrNil:(id _Nonnull)argument;
 
