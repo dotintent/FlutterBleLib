@@ -62,6 +62,37 @@ class Characteristic extends InternalCharacteristic {
         this,
         transactionId,
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Characteristic &&
+          runtimeType == other.runtimeType &&
+          service == other.service &&
+          _manager == other._manager &&
+          uuid == other.uuid &&
+          isReadable == other.isReadable &&
+          isWritableWithResponse == other.isWritableWithResponse &&
+          isWritableWithoutResponse == other.isWritableWithoutResponse &&
+          isNotifiable == other.isNotifiable &&
+          isIndicatable == other.isIndicatable;
+
+  @override
+  int get hashCode =>
+      service.hashCode ^
+      _manager.hashCode ^
+      uuid.hashCode ^
+      isReadable.hashCode ^
+      isWritableWithResponse.hashCode ^
+      isWritableWithoutResponse.hashCode ^
+      isNotifiable.hashCode ^
+      isIndicatable.hashCode;
+
+  @override
+  String toString() {
+    return 'Characteristic{service: $service, _manager: $_manager, uuid: $uuid, isReadable: $isReadable, isWritableWithResponse: $isWritableWithResponse, isWritableWithoutResponse: $isWritableWithoutResponse, isNotifiable: $isNotifiable, isIndicatable: $isIndicatable}';
+  }
+
 }
 
 mixin WithValue on Characteristic {
@@ -77,4 +108,20 @@ class CharacteristicWithValue extends Characteristic with WithValue {
     value = base64Decode(jsonObject[_CharacteristicMetadata.value]);
   }
 
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        super == other &&
+            other is CharacteristicWithValue &&
+            value?.toString() == other.value?.toString() &&
+            runtimeType == other.runtimeType;
+  }
+
+  @override
+  int get hashCode => super.hashCode;
+
+  @override
+  String toString() {
+    return super.toString() + ' CharacteristicWithValue{value = ${value.toString()}';
+  }
 }

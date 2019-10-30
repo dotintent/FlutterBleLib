@@ -51,4 +51,22 @@ class Service extends InternalService {
         characteristicUUID,
         transactionId,
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Service &&
+          runtimeType == other.runtimeType &&
+          peripheral.identifier == other.peripheral.identifier &&
+          uuid == other.uuid;
+
+  @override
+  int get hashCode => peripheral.hashCode ^ _manager.hashCode ^ uuid.hashCode;
+
+  @override
+  String toString() {
+    return 'Service{peripheralId: ${peripheral.identifier}, uuid: $uuid}';
+  }
+
+
 }
