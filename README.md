@@ -8,6 +8,9 @@
 </p>
 
 # FlutterBleLib
+
+[![Frontside](https://img.shields.io/static/v1?label=Facilitated%20by&message=frontside.io&color=blue)](#facilitated-by-frontside)
+
 A library for your all your Bluetooth Low Energy needs in Flutter. Internally utilises Polidea's 
 [MultiPlatformBleAdapter](https://github.com/Polidea/MultiPlatformBleAdapter), 
 which runs on [RxAndroidBle](https://github.com/Polidea/RxAndroidBle)
@@ -150,6 +153,9 @@ characteristic.write(Uint8List.fromList([0]), false); //returns void
 
 Monitoring or reading a characteristic from _Peripheral_/_Service_ level 
  return _CharacteristicWithValue_ object, which is _Characteristic_ with additional `Uint8List value` property.
+ 
+## Facilitated by Frontside 
+[Frontside](https://github.com/thefrontside) provided architectural advice and financial support for this library on behalf of [Resideo](https://github.com/resideo). 
 
 ## Maintained by
 This library is maintained by [Polidea](http://www.polidea.com)
