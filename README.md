@@ -24,7 +24,7 @@ The library is organised around a few base entities, which are:
 * **BleManager**
 * **Peripheral**
 * **Service**
-* **Characteristic**
+* **Characteristic** sdf
 
 You have to create an instance _BleManager_ and initialise underlying native resources. 
 Using that instance you then obtain an instance of _Peripheral_,
