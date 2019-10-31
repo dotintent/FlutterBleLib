@@ -18,7 +18,7 @@ which runs on [RxAndroidBle](https://github.com/Polidea/RxAndroidBle)
  and [RxBluetoothKit](https://github.com/Polidea/RxBluetoothKit).
 
 ## BLE Simulator
-Along with the library there is a [BLE Simulator](https://github.com/Polidea/blemulator_flutter) released.
+Along with the library there is [BLE Simulator](https://github.com/Polidea/blemulator_flutter) released.
 
 ## Overview
 The library is organised around a few base entities, which are:
