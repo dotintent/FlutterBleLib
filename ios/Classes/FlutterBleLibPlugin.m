@@ -1,487 +1,504 @@
 #import "FlutterBleLibPlugin.h"
-#import "Methods.h"
-#import "Namespace.h"
-#import "BleData/Bledata.pbobjc.h"
-#import "Converter.h"
-#import <flutter_ble_lib/flutter_ble_lib-Swift.h>
+#import "ArgumentKey.h"
+#import "ChannelName.h"
+#import "MethodName.h"
+#import "AdapterStateStreamHandler.h"
+#import "RestoreStateStreamHandler.h"
+#import "ScanningStreamHandler.h"
+#import "ConnectionStateStreamHandler.h"
+#import "MonitorCharacteristicStreamHandler.h"
+#import "ArgumentHandler.h"
+#import "FlutterErrorFactory.h"
+#import "CommonTypes.h"
+#import "CharacteristicResponseConverter.h"
+#import "PeripheralResponseConverter.h"
+#import "ServiceResponseConverter.h"
+
+@import MultiplatformBleAdapter;
 
 @interface FlutterBleLibPlugin () <BleClientManagerDelegate>
-@property(nonatomic) BleClientManager* manager;
-@property(nonatomic) ScanDevicesHandler* scanDevicesHandler;
-@property(nonatomic) BluetoothStateHandler* bluetoothStateHandler;
-@property(nonatomic) DeviceConnectionChangeHandler* deviceConnectionChangeHandler;
-@property(nonatomic) MonitorCharacteristicHandler* monitorCharacteristicHandler;
-@end
 
-@interface ScanDevicesHandler ()
-@property(nonatomic) FlutterEventSink scanDevicesSink;
-@end
+@property (nonatomic) id <BleAdapter> adapter;
+@property (nonatomic) AdapterStateStreamHandler *adapterStateStreamHandler;
+@property (nonatomic) RestoreStateStreamHandler *restoreStateStreamHandler;
+@property (nonatomic) ScanningStreamHandler *scanningStreamHandler;
+@property (nonatomic) ConnectionStateStreamHandler *connectionStateStreamHandler;
+@property (nonatomic) MonitorCharacteristicStreamHandler *monitorCharacteristicStreamHandler;
 
-@interface BluetoothStateHandler ()
-@property(nonatomic) FlutterEventSink bluetoothStateSink;
-@end
-
-@interface DeviceConnectionChangeHandler ()
-@property(nonatomic) FlutterEventSink deviceConnectionChangeStateSink;
-@end
-
-@interface MonitorCharacteristicHandler ()
-@property(nonatomic) FlutterEventSink monitorCharacteristicHandlerSink;
 @end
 
 @implementation FlutterBleLibPlugin
 
+// MARK: - Initializers
 
-+ (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        self.adapterStateStreamHandler = [AdapterStateStreamHandler new];
+        self.restoreStateStreamHandler = [RestoreStateStreamHandler new];
+        self.scanningStreamHandler = [ScanningStreamHandler new];
+        self.connectionStateStreamHandler = [ConnectionStateStreamHandler new];
+        self.monitorCharacteristicStreamHandler = [MonitorCharacteristicStreamHandler new];
+    }
+    return self;
+}
 
-    FlutterMethodChannel* channel = [FlutterMethodChannel
-                                     methodChannelWithName: FBLFlutterBleLib
-                                     binaryMessenger:[registrar messenger]];
-    
-    FlutterEventChannel* scanDevicesChannel = [FlutterEventChannel
-                                               eventChannelWithName: FBLFlutterBleLibScanDevices
-                                               binaryMessenger: [registrar messenger]];
-    FlutterEventChannel* bluetoothStateChanel = [FlutterEventChannel
-                                                 eventChannelWithName: FBLFlutterBleLibStateChange
-                                                 binaryMessenger: [registrar messenger]];
-    FlutterEventChannel* deviceConnectionChangeChannel = [FlutterEventChannel
-                                                 eventChannelWithName: FBLFlutterBleLibDeviceConnectionChange
-                                                 binaryMessenger: [registrar messenger]];
-    FlutterEventChannel* monitorCharacteristicChannel = [FlutterEventChannel
-                                                          eventChannelWithName: FBLFlutterBleLibMonitorCharacteristicChange
-                                                          binaryMessenger: [registrar messenger]];
-    FlutterBleLibPlugin* instance = [[FlutterBleLibPlugin alloc] init];
-    
-    instance.scanDevicesHandler = [[ScanDevicesHandler alloc] init];
-    instance.bluetoothStateHandler = [[BluetoothStateHandler alloc] init];
-    instance.deviceConnectionChangeHandler = [[DeviceConnectionChangeHandler alloc] init];
-    instance.monitorCharacteristicHandler = [[MonitorCharacteristicHandler alloc] init];
+// MARK: - FlutterPlugin implementation
+
++ (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+    FlutterMethodChannel *channel = [FlutterMethodChannel methodChannelWithName:CHANNEL_NAME_FLUTTER_BLE_LIB binaryMessenger:[registrar messenger]];
+
+    FlutterEventChannel *adapterStateChannel = [FlutterEventChannel eventChannelWithName:CHANNEL_NAME_ADAPTER_STATE_CHANGES binaryMessenger:[registrar messenger]];
+    FlutterEventChannel *restoreStateChannel = [FlutterEventChannel eventChannelWithName:CHANNEL_NAME_STATE_RESTORE_EVENTS binaryMessenger:[registrar messenger]];
+    FlutterEventChannel *scanningChannel = [FlutterEventChannel eventChannelWithName:CHANNEL_NAME_SCANNING_EVENTS binaryMessenger:[registrar messenger]];
+    FlutterEventChannel *connectionStateChannel = [FlutterEventChannel eventChannelWithName:CHANNEL_NAME_CONNECTION_STATE_CHANGE_EVENTS binaryMessenger:[registrar messenger]];
+    FlutterEventChannel *monitorCharacteristicChannel = [FlutterEventChannel eventChannelWithName:CHANNEL_NAME_MONITOR_CHARACTERISTIC binaryMessenger:[registrar messenger]];
+
+    FlutterBleLibPlugin *instance = [[FlutterBleLibPlugin alloc] init];
     
     [registrar addMethodCallDelegate:instance channel:channel];
-    
-    [scanDevicesChannel setStreamHandler:instance.scanDevicesHandler];
-    [bluetoothStateChanel setStreamHandler:instance.bluetoothStateHandler];
-    [deviceConnectionChangeChannel setStreamHandler:instance.deviceConnectionChangeHandler];
-    [monitorCharacteristicChannel setStreamHandler:instance.monitorCharacteristicHandler];
+
+    [adapterStateChannel setStreamHandler:instance.adapterStateStreamHandler];
+    [restoreStateChannel setStreamHandler:instance.restoreStateStreamHandler];
+    [scanningChannel setStreamHandler:instance.scanningStreamHandler];
+    [connectionStateChannel setStreamHandler:instance.connectionStateStreamHandler];
+    [monitorCharacteristicChannel setStreamHandler:instance.monitorCharacteristicStreamHandler];
 }
 
-
-
-- (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
-    
-  if([FBLCreateClient isEqualToString:call.method]) {
-      //TODO flutter should pass something here.
-      [self createClient:nil result:result];
-  } else if([FBLDestroyClient isEqualToString:call.method]) {
-      [self destroyClient];
-  } else if([FBLSetLogLevel isEqualToString:call.method]) {
-      [self setLogLevel:call.arguments];
-  } else if([FBLCancelTransaction isEqualToString:call.method]) {
-      [self cancelTransaction:call.arguments];
-  } else if([FBLLogLevel isEqualToString:call.method]) {
-      [self logLevel:result];
-  } else if([FBLState isEqualToString:call.method]) {
-      [self state:result];
-  } else if([FBLStartDeviceScan isEqualToString:call.method]) {
-      [self startDeviceScan:call result:result];
-  } else if([FBLStopDeviceScan isEqualToString:call.method]) {
-      [self stopDeviceScan:result];
-  } else if([FBLRequestMTUForDevice isEqualToString:call.method]) {
-      [self requestMTUForDevice:call result:result];
-  } else if([FBLReadRSSIForDevice isEqualToString:call.method]) {
-      [self readRSSIForDevice:call result:result];
-  } else if([FBLConnectToDevice isEqualToString:call.method]) {
-      [self connectToDevice:call.arguments result:result];
-  } else if([FBLCancelDeviceConnection isEqualToString:call.method]) {
-      [self cancelDeviceConnection:call.arguments result:result];
-  } else if([FBLIsDeviceConnected isEqualToString:call.method]) {
-      [self isDeviceConnected:call.arguments result:result];
-  } else if([FBLDiscoverAllServicesAndCharacteristicsForDevice isEqualToString:call.method]) {
-      [self discoverAllServicesAndCharacteristicsForDevice:call.arguments result:result];
-  } else if([FBLServicesForDevice isEqualToString:call.method]) {
-      [self servicesForDevice:call.arguments result:result];
-  } else if([FBLCharacteristicsForDevice isEqualToString:call.method]) {
-      [self characteristicsForDevice:call result:result];
-  } else if([FBLCharacteristicsForService isEqualToString:call.method]) {
-      [self characteristicsForService:call result:result];
-  } else if([FBLWriteCharacteristicForDevice isEqualToString:call.method]) {
-      [self writeCharacteristicForDevice:call result:result];
-  } else if([FBLWriteCharacteristicForService isEqualToString:call.method]) {
-      [self writeCharacteristicForService:call result:result];
-  } else if([FBLWriteCharacteristic isEqualToString:call.method]) {
-      [self writeCharacteristic:call result:result];
-  } else if([FBLReadCharacteristicForDevice isEqualToString:call.method]) {
-      [self readCharacteristicForDevice:call result:result];
-  } else if([FBLReadCharacteristicForService isEqualToString:call.method]) {
-      [self readCharacteristicForService:call result:result];
-  } else if([FBLReadCharacteristic isEqualToString:call.method]) {
-      [self readCharacteristic:call result:result];
-  } else if([FBLMonitorCharacteristicForDevice isEqualToString:call.method]) {
-      [self monitorCharacteristicForDevice:call result:result];
-  } else if([FBLMonitorCharacteristicForService isEqualToString:call.method]) {
-      [self monitorCharacteristicForService:call result:result];
-  } else if([FBLMonitorCharacteristic isEqualToString:call.method]) {
-      [self monitorCharacteristic:call result:result];
-  } else {
-    result(FlutterMethodNotImplemented);
-  }
-}
-
-- (void)dispatchEvent:(NSString * _Nonnull)name value:(id _Nonnull)value {
-    if([BleEvent.scanEvent isEqualToString: name]) {
-        [_scanDevicesHandler handleScanDevice : [Converter convertToScanResultMessage:value]];
-    } else if([BleEvent.stateChangeEvent isEqualToString: name]) {
-        [_bluetoothStateHandler handleBluetoothState:[Converter convertToBleDataBluetoothStateMessageFromString:value]];
-    } else if([BleEvent.disconnectionEvent isEqualToString: name]) {
-         [_deviceConnectionChangeHandler handleDeviceConnectionState:[Converter convertToBleDeviceMessage:value]];
-    } else if([BleEvent.readEvent isEqualToString: name]) {
-        [_monitorCharacteristicHandler handleMonitorCharacteristic:[Converter conevrtToMonitorCharacteristicMessage:value]];
+- (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
+    if ([METHOD_NAME_CREATE_CLIENT isEqualToString:call.method]) {
+        [self createClient:call result:result];
+    } else if ([METHOD_NAME_ENABLE_RADIO isEqualToString:call.method]) {
+        [self enable:call result:result];
+    } else if ([METHOD_NAME_DISABLE_RADIO isEqualToString:call.method]) {
+        [self disable:call result:result];
+    } else if ([METHOD_NAME_GET_STATE isEqualToString:call.method]) {
+        [self state:call result:result];
+    } else if ([METHOD_NAME_START_DEVICE_SCAN isEqualToString:call.method]) {
+        [self startDeviceScan:call result:result];
+    } else if ([METHOD_NAME_STOP_DEVICE_SCAN isEqualToString:call.method]) {
+        [self stopDeviceScan:result];
+    } else if ([METHOD_NAME_CONNECT_TO_DEVICE isEqualToString:call.method]) {
+        [self connectToDevice:call result:result];
+    } else if ([METHOD_NAME_CANCEL_CONNECTION isEqualToString:call.method]) {
+        [self cancelDeviceConnection:call result:result];
+    } else if ([METHOD_NAME_IS_DEVICE_CONNECTED isEqualToString:call.method]) {
+        [self isDeviceConnected:call result:result];
+    } else if ([METHOD_NAME_OBSERVE_CONNECTION_STATE isEqualToString:call.method]) {
+        [self observeConnectionState:call result:result];
+    } else if ([METHOD_NAME_SET_LOG_LEVEL isEqualToString:call.method]) {
+        [self setLogLevel:call result:result];
+    } else if ([METHOD_NAME_LOG_LEVEL isEqualToString:call.method]) {
+        [self logLevel:call result:result];
+    } else if ([METHOD_NAME_GET_SERVICES isEqualToString:call.method]) {
+        [self servicesForDevice:call result:result];
+    } else if ([METHOD_NAME_DISCOVER_ALL_SERVICES_AND_CHARACTERISTICS isEqualToString:call.method]) {
+        [self discoverAllServicesAndCharacteristicsForDevice:call result:result];
+    } else if ([METHOD_NAME_GET_CHARACTERISTICS_FOR_SERVICE isEqualToString:call.method]) {
+        [self characteristicsForService:call result:result];
+    } else if ([METHOD_NAME_GET_CHARACTERISTICS isEqualToString:call.method]) {
+        [self characteristics:call result:result];
+    } else if ([METHOD_NAME_READ_CHARACTERISTIC_FOR_DEVICE isEqualToString:call.method]) {
+        [self readCharacteristicForDevice:call result:result];
+    } else if ([METHOD_NAME_READ_CHARACTERISTIC_FOR_SERVICE isEqualToString:call.method]) {
+        [self readCharacteristicForService:call result:result];
+    } else if ([METHOD_NAME_READ_CHARACTERISTIC_FOR_IDENTIFIER isEqualToString:call.method]) {
+        [self readCharacteristic:call result:result];
+    } else if ([METHOD_NAME_WRITE_CHARACTERISTIC_FOR_DEVICE isEqualToString:call.method]) {
+        [self writeCharacteristicForDevice:call result:result];
+    } else if ([METHOD_NAME_WRITE_CHARACTERISTIC_FOR_SERVICE isEqualToString:call.method]) {
+        [self writeCharacteristicForService:call result:result];
+    } else if ([METHOD_NAME_WRITE_CHARACTERISTIC_FOR_IDENTIFIER isEqualToString:call.method]) {
+        [self writeCharacteristic:call result:result];
+    } else if ([METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_DEVICE isEqualToString:call.method]) {
+        [self monitorCharacteristicForDevice:call result:result];
+    } else if ([METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_SERVICE isEqualToString:call.method]) {
+        [self monitorCharacteristicForService:call result:result];
+    } else if ([METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_IDENTIFIER isEqualToString:call.method]) {
+        [self monitorCharacteristic:call result:result];
+    } else if ([METHOD_NAME_GET_KNOWN_DEVICES isEqualToString:call.method]) {
+        [self devices:call result:result];
+    } else if ([METHOD_NAME_GET_CONNECTED_DEVICES isEqualToString:call.method]) {
+        [self connectedDevices:call result:result];
+    } else if ([METHOD_NAME_REQUEST_MTU isEqualToString:call.method]) {
+        [self requestMTUForDevice:call result:result];
+    } else if ([METHOD_NAME_RSSI isEqualToString:call.method]) {
+        [self readRSSIForDevice:call result:result];
+    } else if ([METHOD_NAME_CANCEL_TRANSACTION isEqualToString:call.method]) {
+        [self cancelTransaction:call result:result];
+    } else {
+        result(FlutterMethodNotImplemented);
     }
 }
 
-- (void)createClient:(NSString*)restoreIdentifierKey  result: (FlutterResult) result  {
-    _manager = [[BleClientManager alloc] initWithQueue:dispatch_get_main_queue()
-                                  restoreIdentifierKey:restoreIdentifierKey];
-     _manager.delegate = self;
+// MARK: - MBA Methods - BleClient lifecycle
+
+- (void)createClient:(FlutterMethodCall *)call result:(FlutterResult)result {
+    _adapter = [BleAdapterFactory getNewAdapterWithQueue:dispatch_get_main_queue()
+                                    restoreIdentifierKey:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_RESTORE_STATE_IDENTIFIER]]];
+    _adapter.delegate = self;
     result(nil);
 }
 
 - (void)destroyClient {
-    [_manager invalidate];
-    _manager = nil;
+    [_adapter invalidate];
+    _adapter = nil;
 }
 
 - (void)invalidate {
     [self destroyClient];
 }
 
-- (void)setLogLevel:(NSString*)logLevel {
-    [_manager setLogLevel:[logLevel capitalizedString]];
+// MARK: - MBA Methods - BT state monitoring
+
+- (void)enable:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_adapter enable:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+             resolve:result
+              reject:[self rejectForFlutterResult:result]];
 }
 
-- (void)cancelTransaction:(NSString*)transactionId {
-    [_manager cancelTransaction:transactionId];
+- (void)disable:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_adapter disable:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+              resolve:result
+               reject:[self rejectForFlutterResult:result]];
 }
 
-- (void)logLevel:(FlutterResult) result {
-    [_manager logLevel:^(id _Nullable logLevel) {
-        result(@([Converter convertToBleDataLogLevelMessage: (NSNumber*) logLevel]));
-    }];
+- (void)state:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_adapter state:result
+             reject:[self rejectForFlutterResult:result]];
 }
 
-- (void)state: (FlutterResult) result {
-    [_manager state:^(id _Nullable state) {
-        result(@([Converter convertToBleDataBluetoothStateMessage: (NSNumber*) state]));
-    } ];
-}
+// MARK: - MBA Methods - Scanning
 
-- (void)startDeviceScan: (FlutterMethodCall *) methodData result:(FlutterResult) result {
-    NSData *data = [((FlutterStandardTypedData *) methodData.arguments) data];
-    BleDataScanDataMessage* scanData = [BleDataScanDataMessage parseFromData:data error: nil];
-    [_manager startDeviceScan:[scanData.uuidsArray copy] options: nil];
+- (void)startDeviceScan:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSArray* expectedArguments = [NSArray arrayWithObjects:ARGUMENT_KEY_ALLOW_DUPLICATES, nil];
+    [_adapter startDeviceScan:[ArgumentHandler stringArrayOrNil:call.arguments[ARGUMENT_KEY_UUIDS]]
+                      options:[ArgumentHandler dictionaryOrNil:expectedArguments in:call.arguments]];
     result(nil);
 }
 
-- (void)stopDeviceScan: (FlutterResult) result {
-    [_manager stopDeviceScan];
+- (void)stopDeviceScan:(FlutterResult)result {
+    [_adapter stopDeviceScan];
+    [self.scanningStreamHandler onComplete];
     result(nil);
 }
 
-- (void) connectToDevice:(FlutterStandardTypedData*) device result: (FlutterResult) result {
-    
-    NSError *error = nil;
-    [_manager
-     connectToDevice:[[[BleDataBleDeviceMessage alloc] initWithData:[device data] error: &error] id_p]
-     options:nil
-     resolve:^(id _Nullable device) {
-         BleDataBleDeviceMessage* bleDeviceMessage = [Converter convertToBleDeviceMessage: device];
-         result([FlutterStandardTypedData typedDataWithBytes:[bleDeviceMessage data]]);
-     }
-     reject:^(NSString * _Nullable code, NSString * _Nullable message, NSError * _Nullable error) {
-         result([FlutterError errorWithCode:code message:message details:@"connectToDevice method"]);
-     }
-    ];
-    if(error != nil) {
-        NSString *errorCodeAsString = [NSString stringWithFormat: @"%ld", (long)error.code ];
-        result([FlutterError errorWithCode : errorCodeAsString message :@"Could not parse data" details:error.localizedDescription]);
+// MARK: - MBA Methods - Connection
+
+- (void)connectToDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSArray* expectedArguments = [NSArray arrayWithObjects:ARGUMENT_KEY_TIMEOUT_MILLIS, nil];
+    [_adapter connectToDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
+                      options:[ArgumentHandler dictionaryOrNil:expectedArguments in:call.arguments]
+                      resolve:result
+                       reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)cancelDeviceConnection:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_adapter cancelDeviceConnection:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
+                             resolve:[self resolveForCancelConnection:result]
+                              reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)isDeviceConnected:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_adapter isDeviceConnected:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
+                        resolve:result
+                         reject:[self rejectForFlutterResult:result]];
+
+}
+
+- (void)observeConnectionState:(FlutterMethodCall *)call result:(FlutterResult)result {
+    BOOL emitCurrentValue = (BOOL)call.arguments[ARGUMENT_KEY_EMIT_CURRENT_VALUE];
+    if (emitCurrentValue == YES) {
+        Resolve resolve = ^(id isConnected) {
+            if ((BOOL)isConnected == YES) {
+                [self.connectionStateStreamHandler onConnectedEvent:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]];
+            } else {
+                [self.connectionStateStreamHandler emitDisconnectedEvent:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]];
+            }
+            result(nil);
+        };
+        [self isDeviceConnected:call result:resolve];
+    } else {
+        result(nil);
     }
-   
+
 }
 
--(void) isDeviceConnected: (NSString *) deviceId result:(FlutterResult) result {
-    [_manager isDeviceConnected:deviceId resolve:^(id _Nullable isConnected) {
-        result(isConnected);
-    } reject:^(NSString * _Nullable code, NSString * _Nullable message, NSError * _Nullable error) {
-        result([FlutterError errorWithCode:code message:message details:@"connectToDevice method"]);
-    }];
+// MARK: - MBA Methods - Log Level
+
+- (void)setLogLevel:(FlutterMethodCall *)call result:(FlutterResult)result {
+    NSString *logLevel = call.arguments[ARGUMENT_KEY_LOG_LEVEL];
+    [_adapter setLogLevel:[logLevel capitalizedString]];
+    result(nil);
 }
 
--(void) requestMTUForDevice: (FlutterMethodCall *) methodData result:(FlutterResult) result {
-    NSString* deviceId = methodData.arguments[@"deviceId"];
-    NSNumber* mtu = methodData.arguments[@"mtu"];
-    NSString* transactionId = methodData.arguments[@"transactionId"];
-    [_manager requestMTUForDevice:deviceId mtu:mtu transactionId:transactionId resolve:^(id _Nullable device) {
-        BleDataBleDeviceMessage* bleDeviceMessage = [Converter convertToBleDeviceMessage: device];
-        result([FlutterStandardTypedData typedDataWithBytes:[bleDeviceMessage data]]);
-    } reject:^(NSString * _Nullable code, NSString * _Nullable message, NSError * _Nullable error) {
-        result([FlutterError errorWithCode:code message:message details:@"requestMTUForDevice method"]);
-    }];
+- (void)logLevel:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_adapter logLevel:result
+                reject:[self rejectForFlutterResult:result]];
 }
 
--(void) readRSSIForDevice: (FlutterMethodCall *) methodData result:(FlutterResult) result {
-    NSString* deviceId = methodData.arguments[@"deviceId"];
-    NSString* transactionId = methodData.arguments[@"transactionId"];
-    [_manager readRSSIForDevice:deviceId transactionId:transactionId resolve:^(id _Nullable device) {
-        BleDataBleDeviceMessage* bleDeviceMessage = [Converter convertToBleDeviceMessage: device];
-        result([FlutterStandardTypedData typedDataWithBytes:[bleDeviceMessage data]]);
-    } reject:^(NSString * _Nullable code, NSString * _Nullable message, NSError * _Nullable error) {
-        result([FlutterError errorWithCode:code message:message details:@"readRSSIForDevice method"]);
-    }];
+// MARK: - MBA Methods - Discovery
+
+- (void)servicesForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_adapter servicesForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
+                        resolve:[self resolveForServicesForDevice:result]
+                         reject:[self rejectForFlutterResult:result]];
 }
 
--(void) cancelDeviceConnection: (NSString *) deviceId result:(FlutterResult) result {
-    [_manager cancelDeviceConnection :deviceId resolve:^(id _Nullable device) {
-        BleDataBleDeviceMessage* bleDeviceMessage = [Converter convertToBleDeviceMessage: device];
-        result([FlutterStandardTypedData typedDataWithBytes:[bleDeviceMessage data]]);
-    } reject:^(NSString * _Nullable code, NSString * _Nullable message, NSError * _Nullable error) {
-        result([FlutterError errorWithCode:code message:message details:@"cancelDeviceConnection method"]);
-    }];
+- (void)discoverAllServicesAndCharacteristicsForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_adapter discoverAllServicesAndCharacteristicsForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
+                                               transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                                                     resolve:result
+                                                      reject:[self rejectForFlutterResult:result]];
 }
 
--(void) discoverAllServicesAndCharacteristicsForDevice: (NSString *) deviceId result:(FlutterResult) result {
-    [_manager discoverAllServicesAndCharacteristicsForDevice :deviceId resolve:^(id _Nullable device) {
-        BleDataBleDeviceMessage* bleDeviceMessage = [Converter convertToBleDeviceMessage: device];
-        result([FlutterStandardTypedData typedDataWithBytes:[bleDeviceMessage data]]);
-    } reject:^(NSString * _Nullable code, NSString * _Nullable message, NSError * _Nullable error) {
-        result([FlutterError errorWithCode:code message:message details:@"discoverAllServicesAndCharacteristicsForDevice method"]);
-    }];
+- (void)characteristicsForService:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_adapter characteristicsForService:[call.arguments[ARGUMENT_KEY_SERVICE_ID] doubleValue]
+                                resolve:[self resolveForCharacteristicsForService:result]
+                                 reject:[self rejectForFlutterResult:result]];
 }
 
--(void) servicesForDevice: (NSString *) deviceId result:(FlutterResult) result {
-    [_manager servicesForDevice :deviceId resolve:^(id _Nullable services) {
-        BleDataServiceMessages * bleDataServiceMessages = [Converter convertToBleDataServiceMessages: services];
-        result([FlutterStandardTypedData typedDataWithBytes:[bleDataServiceMessages data]]);
-    } reject:^(NSString * _Nullable code, NSString * _Nullable message, NSError * _Nullable error) {
-        result([FlutterError errorWithCode:code message:message details:@"servicesForDevice method"]);
-    }];
+- (void)characteristics:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_adapter servicesForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
+                        resolve:[self resolveForCharacteristics:result
+                                                    serviceUuid:call.arguments[ARGUMENT_KEY_SERVICE_UUID]]
+                         reject:[self rejectForFlutterResult:result]];
 }
 
--(void) characteristicsForDevice: (FlutterMethodCall *) methodData result:(FlutterResult) result {
-    NSString* deviceId = methodData.arguments[@"deviceId"];
-    NSString* serviceUUID = methodData.arguments[@"serviceUUID"];
-    [_manager characteristicsForDevice:deviceId serviceUUID:serviceUUID resolve:^(id _Nullable characteristics) {
-        BleDataCharacteristicMessages* bleDataCharacteristicMessages = [Converter convertToBleDataCharacteristicMessages: characteristics];
-        result([FlutterStandardTypedData typedDataWithBytes:[bleDataCharacteristicMessages data]]);
-    } reject:^(NSString * _Nullable code, NSString * _Nullable message, NSError * _Nullable error) {
-        result([FlutterError errorWithCode:code message:message details:@"characteristicsForDevice method"]);
-    }];
+// MARK: - MBA Methods - Characteristics observation
+
+- (void)readCharacteristicForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_adapter readCharacteristicForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
+                              serviceUUID:call.arguments[ARGUMENT_KEY_SERVICE_UUID]
+                       characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
+                            transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                                  resolve:[self resolveForReadWriteCharacteristic:result
+                                                                    transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]]
+                                   reject:[self rejectForFlutterResult:result]];
 }
 
--(void) characteristicsForService: (FlutterMethodCall *) methodData result:(FlutterResult) result {
-    NSNumber* serviceIdentifier = methodData.arguments[@"serviceIdentifier"];
-    [_manager characteristicsForService:serviceIdentifier.doubleValue resolve:^(id _Nullable characteristics) {
-        BleDataCharacteristicMessages* bleDataCharacteristicMessages = [Converter convertToBleDataCharacteristicMessages: characteristics];
-        result([FlutterStandardTypedData typedDataWithBytes:[bleDataCharacteristicMessages data]]);
-    } reject:^(NSString * _Nullable code, NSString * _Nullable message, NSError * _Nullable error) {
-        result([FlutterError errorWithCode:code message:message details:@"characteristicsForService method"]);
-    }];
+- (void)readCharacteristicForService:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_adapter readCharacteristicForService:[call.arguments[ARGUMENT_KEY_SERVICE_ID] doubleValue]
+                        characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
+                             transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                                   resolve:[self resolveForReadWriteCharacteristic:result
+                                                                     transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]]
+                                    reject:[self rejectForFlutterResult:result]];
 }
 
--(void) writeCharacteristicForDevice: (FlutterMethodCall *) methodData result:(FlutterResult) result {
-    NSString* deviceId = methodData.arguments[@"deviceId"];
-    NSString* serviceUUID = methodData.arguments[@"serviceUUID"];
-    NSString* characteristicUUID = methodData.arguments[@"characteristicUUID"];
-    NSString* valueBase64 = methodData.arguments[@"valueBase64"];
-    BOOL response = methodData.arguments[@"response"];
-    NSString* transactionId = methodData.arguments[@"transactionId"];
-    [_manager writeCharacteristicForDevice:deviceId serviceUUID:serviceUUID characteristicUUID:characteristicUUID valueBase64:valueBase64
-                                  response:response transactionId:transactionId
-                                   resolve:^(id _Nullable characteristic) {
-                                       BleDataCharacteristicMessage* bleDataCharacteristicMessage = [Converter convertToBleDataCharacteristicMessage: characteristic];
-                                       result([FlutterStandardTypedData typedDataWithBytes:[bleDataCharacteristicMessage data]]);
-                                   } reject:^(NSString * _Nullable code, NSString * _Nullable message, NSError * _Nullable error) {
-                                       result([FlutterError errorWithCode:code message:message details:@"writeCharacteristicForDevice method"]);
-                                   }];
-}
--(void) writeCharacteristicForService: (FlutterMethodCall *) methodData result:(FlutterResult) result {
-    NSNumber* serviceIdentifier = methodData.arguments[@"serviceIdentifier"];
-    NSString* characteristicUUID = methodData.arguments[@"characteristicUUID"];
-    NSString* valueBase64 = methodData.arguments[@"valueBase64"];
-    BOOL response = methodData.arguments[@"response"];
-    NSString* transactionId = methodData.arguments[@"transactionId"];
-    [_manager writeCharacteristicForService:serviceIdentifier.doubleValue characteristicUUID:characteristicUUID valueBase64:valueBase64
-                                  response:response transactionId:transactionId
-                                   resolve:^(id _Nullable characteristic) {
-                                       BleDataCharacteristicMessage* bleDataCharacteristicMessage = [Converter convertToBleDataCharacteristicMessage: characteristic];
-                                       result([FlutterStandardTypedData typedDataWithBytes:[bleDataCharacteristicMessage data]]);
-                                   } reject:^(NSString * _Nullable code, NSString * _Nullable message, NSError * _Nullable error) {
-                                       result([FlutterError errorWithCode:code message:message details:@"writeCharacteristicForService method"]);
-                                   }];
+- (void)readCharacteristic:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_adapter readCharacteristic:[call.arguments[ARGUMENT_KEY_CHARACTERISTIC_IDENTIFIER] doubleValue]
+                   transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                         resolve:[self resolveForReadWriteCharacteristic:result
+                                                           transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]]
+                          reject:[self rejectForFlutterResult:result]];
 }
 
--(void) writeCharacteristic: (FlutterMethodCall *) methodData result:(FlutterResult) result {
-    NSNumber* characteristicIdentifier = methodData.arguments[@"characteristicIdentifier"];
-    NSString* valueBase64 = methodData.arguments[@"valueBase64"];
-    BOOL response = methodData.arguments[@"response"];
-    NSString* transactionId = methodData.arguments[@"transactionId"];
-    [_manager writeCharacteristic:characteristicIdentifier.doubleValue valueBase64:valueBase64 response:response transactionId:transactionId
-                                    resolve:^(id _Nullable characteristic) {
-                                        BleDataCharacteristicMessage* bleDataCharacteristicMessage = [Converter convertToBleDataCharacteristicMessage: characteristic];
-                                        result([FlutterStandardTypedData typedDataWithBytes:[bleDataCharacteristicMessage data]]);
-                                    } reject:^(NSString * _Nullable code, NSString * _Nullable message, NSError * _Nullable error) {
-                                        result([FlutterError errorWithCode:code message:message details:@"writeCharacteristic method"]);
-                                    }];
+- (void)writeCharacteristicForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_adapter writeCharacteristicForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
+                               serviceUUID:call.arguments[ARGUMENT_KEY_SERVICE_UUID]
+                        characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
+                               valueBase64:[self base64encodedStringFromBytes:call.arguments[ARGUMENT_KEY_VALUE]]
+                                  response:(BOOL)call.arguments[ARGUMENT_KEY_WITH_RESPONSE]
+                             transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                                   resolve:[self resolveForReadWriteCharacteristic:result
+                                                                     transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]]
+                                    reject:[self rejectForFlutterResult:result]];
 }
 
--(void) readCharacteristicForDevice: (FlutterMethodCall *) methodData result:(FlutterResult) result {
-    NSString* deviceId = methodData.arguments[@"deviceId"];
-    NSString* serviceUUID = methodData.arguments[@"serviceUUID"];
-    NSString* characteristicUUID = methodData.arguments[@"characteristicUUID"];
-    NSString* transactionId = methodData.arguments[@"transactionId"];
-    [_manager readCharacteristicForDevice:deviceId serviceUUID:serviceUUID characteristicUUID:characteristicUUID transactionId:transactionId
-                                   resolve:^(id _Nullable characteristic) {
-                                       BleDataCharacteristicMessage* bleDataCharacteristicMessage = [Converter convertToBleDataCharacteristicMessage: characteristic];
-                                       result([FlutterStandardTypedData typedDataWithBytes:[bleDataCharacteristicMessage data]]);
-                                   } reject:^(NSString * _Nullable code, NSString * _Nullable message, NSError * _Nullable error) {
-                                       result([FlutterError errorWithCode:code message:message details:@"writeCharacteristicForDevice method"]);
-                                   }];
+- (void)writeCharacteristicForService:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_adapter writeCharacteristicForService:[call.arguments[ARGUMENT_KEY_SERVICE_ID] doubleValue]
+                         characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
+                                valueBase64:[self base64encodedStringFromBytes:call.arguments[ARGUMENT_KEY_VALUE]]
+                                   response:(BOOL)call.arguments[ARGUMENT_KEY_WITH_RESPONSE]
+                              transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                                    resolve:[self resolveForReadWriteCharacteristic:result
+                                                                      transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]]
+                                     reject:[self rejectForFlutterResult:result]];
 }
 
--(void) readCharacteristicForService: (FlutterMethodCall *) methodData result:(FlutterResult) result {
-    NSNumber* serviceIdentifier = methodData.arguments[@"serviceIdentifier"];
-    NSString* characteristicUUID = methodData.arguments[@"characteristicUUID"];
-    NSString* transactionId = methodData.arguments[@"transactionId"];
-    [_manager readCharacteristicForService:serviceIdentifier.doubleValue characteristicUUID:characteristicUUID transactionId:transactionId
-                                  resolve:^(id _Nullable characteristic) {
-                                      BleDataCharacteristicMessage* bleDataCharacteristicMessage = [Converter convertToBleDataCharacteristicMessage: characteristic];
-                                      result([FlutterStandardTypedData typedDataWithBytes:[bleDataCharacteristicMessage data]]);
-                                  } reject:^(NSString * _Nullable code, NSString * _Nullable message, NSError * _Nullable error) {
-                                      result([FlutterError errorWithCode:code message:message details:@"writeCharacteristicForDevice method"]);
-                                  }];
+- (void)writeCharacteristic:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_adapter writeCharacteristic:[call.arguments[ARGUMENT_KEY_CHARACTERISTIC_IDENTIFIER] doubleValue]
+                      valueBase64:[self base64encodedStringFromBytes:call.arguments[ARGUMENT_KEY_VALUE]]
+                         response:(BOOL)call.arguments[ARGUMENT_KEY_WITH_RESPONSE]
+                    transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                          resolve:[self resolveForReadWriteCharacteristic:result
+                                                            transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]]
+                           reject:[self rejectForFlutterResult:result]];
 }
 
--(void) readCharacteristic: (FlutterMethodCall *) methodData result:(FlutterResult) result {
-    NSNumber* characteristicIdentifier = methodData.arguments[@"characteristicIdentifier"];
-    NSString* transactionId = methodData.arguments[@"transactionId"];
-    [_manager readCharacteristic:characteristicIdentifier.doubleValue transactionId:transactionId
-                                   resolve:^(id _Nullable characteristic) {
-                                       BleDataCharacteristicMessage* bleDataCharacteristicMessage = [Converter convertToBleDataCharacteristicMessage: characteristic];
-                                       result([FlutterStandardTypedData typedDataWithBytes:[bleDataCharacteristicMessage data]]);
-                                   } reject:^(NSString * _Nullable code, NSString * _Nullable message, NSError * _Nullable error) {
-                                       result([FlutterError errorWithCode:code message:message details:@"writeCharacteristicForDevice method"]);
-                                   }];
+- (void)monitorCharacteristicForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_adapter monitorCharacteristicForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
+                                 serviceUUID:call.arguments[ARGUMENT_KEY_SERVICE_UUID]
+                          characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
+                               transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                                     resolve:[self resolveForMonitorCharacteristic:result]
+                                      reject:[self rejectForFlutterResult:result]];
 }
 
--(void) monitorCharacteristicForDevice: (FlutterMethodCall *) methodData result:(FlutterResult) result {
-    NSString* deviceId = methodData.arguments[@"deviceId"];
-    NSString* serviceUUID = methodData.arguments[@"serviceUUID"];
-    NSString* characteristicUUID = methodData.arguments[@"characteristicUUID"];
-    NSString* transactionId = methodData.arguments[@"transactionId"];
-    [_manager monitorCharacteristicForDevice:deviceId serviceUUID:serviceUUID characteristicUUID:characteristicUUID transactionId:transactionId
-                         resolve:^(id _Nullable characteristic) {
-                             result(nil);
-                         } reject:^(NSString * _Nullable code, NSString * _Nullable message, NSError * _Nullable error) {
-                             result([FlutterError errorWithCode:code message:message details:@"writeCharacteristicForDevice method"]);
-                         }];
+- (void)monitorCharacteristicForService:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_adapter monitorCharacteristicForService:[call.arguments[ARGUMENT_KEY_SERVICE_ID] doubleValue]
+                           characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
+                                transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                                      resolve:[self resolveForMonitorCharacteristic:result]
+                                       reject:[self rejectForFlutterResult:result]];
+
 }
 
--(void) monitorCharacteristicForService: (FlutterMethodCall *) methodData result:(FlutterResult) result {
-    NSString* deviceId = methodData.arguments[@"deviceId"];
-    NSString* serviceUUID = methodData.arguments[@"serviceUUID"];
-    NSString* characteristicUUID = methodData.arguments[@"characteristicUUID"];
-    NSString* transactionId = methodData.arguments[@"transactionId"];
-    [_manager monitorCharacteristicForDevice:deviceId serviceUUID:serviceUUID characteristicUUID:characteristicUUID transactionId:transactionId
-                                     resolve:^(id _Nullable characteristic) {
-                                         result(nil);
-                                     } reject:^(NSString * _Nullable code, NSString * _Nullable message, NSError * _Nullable error) {
-                                         result([FlutterError errorWithCode:code message:message details:@"writeCharacteristicForDevice method"]);
-                                     }];
+- (void)monitorCharacteristic:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_adapter monitorCharacteristic:[call.arguments[ARGUMENT_KEY_CHARACTERISTIC_IDENTIFIER] doubleValue]
+                      transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                            resolve:[self resolveForMonitorCharacteristic:result]
+                             reject:[self rejectForFlutterResult:result]];
 }
 
--(void) monitorCharacteristic: (FlutterMethodCall *) methodData result:(FlutterResult) result {
-    NSString* deviceId = methodData.arguments[@"deviceId"];
-    NSString* serviceUUID = methodData.arguments[@"serviceUUID"];
-    NSString* characteristicUUID = methodData.arguments[@"characteristicUUID"];
-    NSString* transactionId = methodData.arguments[@"transactionId"];
-    [_manager monitorCharacteristicForDevice:deviceId serviceUUID:serviceUUID characteristicUUID:characteristicUUID transactionId:transactionId
-                                     resolve:^(id _Nullable characteristic) {
-                                         result(nil);
-                                     } reject:^(NSString * _Nullable code, NSString * _Nullable message, NSError * _Nullable error) {
-                                         result([FlutterError errorWithCode:code message:message details:@"writeCharacteristicForDevice method"]);
-                                     }];
+// MARK: - MBA Methods - Known / Connected devices
+
+- (void)devices:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_adapter devices:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIERS]
+              resolve:[self resolveForKnownConnectedDevices:result]
+               reject:[self rejectForFlutterResult:result]];
 }
 
-@end
-
-
-@implementation ScanDevicesHandler
-- (FlutterError*)onListenWithArguments:(id)arguments eventSink:(FlutterEventSink)eventSink {
-    self.scanDevicesSink = eventSink;
-    return nil;
+- (void)connectedDevices:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_adapter connectedDevices:call.arguments[ARGUMENT_KEY_UUIDS]
+                       resolve:[self resolveForKnownConnectedDevices:result]
+                        reject:[self rejectForFlutterResult:result]];
 }
 
-- (FlutterError*)onCancelWithArguments:(id)arguments {
-    self.scanDevicesSink = nil;
-    return nil;
+// MARK: - MBA Methods - MTU
+
+- (void)requestMTUForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_adapter requestMTUForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
+                              mtu:[call.arguments[ARGUMENT_KEY_MTU] integerValue]
+                    transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                          resolve:[self resolveForRequestMTUForDevice:result]
+                           reject:[self rejectForFlutterResult:result]];
 }
 
-- (void) handleScanDevice : (BleDataScanResultMessage*) scanResultMessage {
-    if (self.scanDevicesSink != nil) {
-        self.scanDevicesSink([FlutterStandardTypedData typedDataWithBytes:[scanResultMessage data]]);
+// MARK: - MBA Methods - RSSI
+
+- (void)readRSSIForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_adapter readRSSIForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
+                  transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                        resolve:[self resolveForReadRSSIForDevice:result]
+                         reject:[self rejectForFlutterResult:result]];
+}
+
+// MARK: - MBA Methods - Cancel transaction
+
+- (void)cancelTransaction:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_adapter cancelTransaction:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]];
+    result(nil);
+}
+
+// MARK: - MBA Methods - BleClientManagerDelegate implementation
+
+- (void)dispatchEvent:(NSString * _Nonnull)name value:(id _Nonnull)value {
+    if ([BleEvent.restoreStateEvent isEqualToString:name]) {
+        [self.restoreStateStreamHandler onRestoreEvent:value];
+    } else if ([BleEvent.stateChangeEvent isEqualToString:name]) {
+        [self.adapterStateStreamHandler onNewAdapterState:value];
+    } else if ([BleEvent.scanEvent isEqualToString:name]) {
+        [self.scanningStreamHandler onScanResult:(NSArray*)value];
+    } else if ([BleEvent.connectingEvent isEqualToString:name]) {
+        [self.connectionStateStreamHandler onConnectingEvent:(NSString *)value];
+    } else if ([BleEvent.connectedEvent isEqualToString:name]) {
+        [self.connectionStateStreamHandler onConnectedEvent:(NSString *)value];
+    } else if ([BleEvent.disconnectionEvent isEqualToString:name]) {
+        [self.connectionStateStreamHandler onDisconnectedEvent:(NSArray *)value];
+    } else if ([BleEvent.readEvent isEqualToString:name]) {
+        [self.monitorCharacteristicStreamHandler onReadEvent:value];
     }
 }
-@end
 
-@implementation BluetoothStateHandler
-- (FlutterError*)onListenWithArguments:(id)arguments eventSink:(FlutterEventSink)eventSink {
-    self.bluetoothStateSink = eventSink;
-    return nil;
+// MARK: - Utility methods
+
+- (Resolve)resolveForCancelConnection:(FlutterResult)result {
+    return ^(id response) {
+        result(nil);
+    };
 }
 
-- (FlutterError*)onCancelWithArguments:(id)arguments {
-    self.bluetoothStateSink = nil;
-    return nil;
+- (Resolve)resolveForServicesForDevice:(FlutterResult)result {
+    return ^(NSArray *servicesArray) {
+        result([ServiceResponseConverter jsonStringFromServicesResponse:servicesArray]);
+    };
 }
 
-- (void) handleBluetoothState : (BleDataBluetoothStateMessage) bleDataBluetoothStateMessage {
-    if (self.bluetoothStateSink != nil) {
-        self.bluetoothStateSink(@(bleDataBluetoothStateMessage));
-    }
-}
-@end
-
-@implementation DeviceConnectionChangeHandler
-- (FlutterError*)onListenWithArguments:(id)arguments eventSink:(FlutterEventSink)eventSink {
-    self.deviceConnectionChangeStateSink = eventSink;
-    return nil;
+- (Resolve)resolveForCharacteristicsForService:(FlutterResult)result {
+    return ^(NSArray *characteristicsArray) {
+        result([CharacteristicResponseConverter jsonStringFromCharacteristicsResponse:characteristicsArray]);
+    };
 }
 
-- (FlutterError*)onCancelWithArguments:(id)arguments {
-    self.deviceConnectionChangeStateSink = nil;
-    return nil;
+- (Resolve)resolveForCharacteristics:(FlutterResult)result serviceUuid:(NSString *)serviceUuid {
+    return ^(NSArray *servicesArray) {
+
+        NSDictionary *matchingService = nil;
+        for (NSDictionary *service in [ServiceResponseConverter servicesFromServicesResponse:servicesArray]) {
+            if ([[service valueForKey:@"serviceUuid"] isEqualToString:serviceUuid]) {
+                matchingService = service;
+                break;
+            }
+        }
+
+        if (matchingService == nil) {
+            result([FlutterError errorWithCode:@"-1" message:@"Service not found" details:nil]);
+            return;
+        }
+
+        Resolve resolve = ^(NSArray* characteristicsArray) {
+            result([CharacteristicResponseConverter jsonStringFromCharacteristicsResponse:characteristicsArray
+                                                                                  service:matchingService]);
+        };
+
+        [_adapter characteristicsForService:[[matchingService valueForKey:@"serviceId"] doubleValue]
+                            resolve:resolve
+                             reject:[self rejectForFlutterResult:result]];
+    };
 }
 
-- (void) handleDeviceConnectionState : (BleDataBleDeviceMessage*) bleDataBleDeviceMessage {
-    if (self.deviceConnectionChangeStateSink != nil) {
-        self.deviceConnectionChangeStateSink([FlutterStandardTypedData typedDataWithBytes:[bleDataBleDeviceMessage data]]);
-    }
-}
-@end
-
-@implementation MonitorCharacteristicHandler
-- (FlutterError*)onListenWithArguments:(id)arguments eventSink:(FlutterEventSink)eventSink {
-    self.monitorCharacteristicHandlerSink = eventSink;
-    return nil;
+- (Resolve)resolveForReadWriteCharacteristic:(FlutterResult)result
+                               transactionId:(NSString *)transactionId {
+    return ^(NSDictionary *characteristicResponse) {
+        result([CharacteristicResponseConverter jsonStringFromCharacteristicResponse:characteristicResponse
+                                                                       transactionId:transactionId]);
+    };
 }
 
-- (FlutterError*)onCancelWithArguments:(id)arguments {
-    self.monitorCharacteristicHandlerSink = nil;
-    return nil;
+- (Resolve)resolveForMonitorCharacteristic:(FlutterResult)result {
+    return ^(id response) {
+        result(nil);
+    };
 }
 
-- (void) handleMonitorCharacteristic : (BleDataMonitorCharacteristicMessage*) bleDataMonitorCharacteristicMessage {
-    if (self.monitorCharacteristicHandlerSink != nil) {
-        self.monitorCharacteristicHandlerSink([FlutterStandardTypedData typedDataWithBytes:[bleDataMonitorCharacteristicMessage data]]);
-    }
+- (Resolve)resolveForKnownConnectedDevices:(FlutterResult)result {
+    return ^(NSArray *peripheralsResponse) {
+        result([PeripheralResponseConverter jsonStringFromPeripheralResponse:peripheralsResponse]);
+    };
 }
+
+- (Resolve)resolveForRequestMTUForDevice:(FlutterResult)result {
+    return ^(NSDictionary *peripheral) {
+        result([peripheral objectForKey:@"mtu"]);
+    };
+}
+
+- (Resolve)resolveForReadRSSIForDevice:(FlutterResult)result {
+    return ^(NSDictionary *peripheral) {
+        result([peripheral objectForKey:@"rssi"]);
+    };
+}
+
+- (Reject)rejectForFlutterResult:(FlutterResult)result {
+    return ^(NSString *code, NSString *message, NSError *error) {
+        result([FlutterErrorFactory flutterErrorFromJSONString:message]);
+    };
+}
+
+- (NSString *)base64encodedStringFromBytes:(FlutterStandardTypedData *)bytes {
+    return [bytes.data base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+}
+
 @end

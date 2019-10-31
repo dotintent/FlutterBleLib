@@ -1,23 +1,34 @@
+import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_ble_lib_example/ui/ble_devices_screen.dart';
-import 'package:flutter_ble_lib_example/ui/screen_on_boarding.dart';
-import 'package:flutter_ble_lib_example/ui/screen_names.dart' as ScreenNames;
+import 'package:flutter_ble_lib_example/devices_list/devices_bloc_provider.dart';
+import 'package:flutter_ble_lib_example/devices_list/devices_list_view.dart';
 
-const Color polideaColor =  const Color.fromRGBO(25, 159, 217, 1.0);
+import 'device_details/device_detail_view.dart';
+import 'device_details/devices_details_bloc_provider.dart';
+
 void main() {
-  runApp(new MaterialApp(
-    home: new OnBoardingPager(),
-    theme: new ThemeData(
-      canvasColor: polideaColor,
-      iconTheme: new IconThemeData(color: Colors.white),
-      accentColor: Colors.pinkAccent,
-      brightness: Brightness.dark,
-    ),
-    routes: <String, WidgetBuilder>{
-      ScreenNames.bleDevicesScreen: (
-          BuildContext context) => new BleDevicesScreen(),
-    },
-  ));
+  Fimber.plantTree(DebugTree());
+  runApp(MyApp());
 }
 
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
+class MyApp extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        title: 'FlutterBleLib example',
+        theme: new ThemeData(
+          primaryColor: new Color(0xFF0A3D91),
+          accentColor: new Color(0xFFCC0000),
+        ),
+        initialRoute: "/",
+        routes: <String, WidgetBuilder>{
+          "/": (context) => DevicesBlocProvider(child: DevicesListScreen()),
+          "/details": (context) => DeviceDetailsBlocProvider(child: DeviceDetailsView()),
+        },
+        navigatorObservers: [routeObserver],
+      );
+  }
+}
