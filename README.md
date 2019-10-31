@@ -1,6 +1,6 @@
 [![Frontside](https://img.shields.io/static/v1?label=Facilitated%20by&message=frontside.io&color=blue)](#facilitated-by-frontside)
 [![Build Status](https://travis-ci.org/Polidea/FlutterBleLib.svg?branch=master)](https://travis-ci.org/Polidea/FlutterBleLib)
-[![pub package](https://img.shields.io/pub/v/flutter_ble_lib.svg)](https://pub.dev/packages/flutter_ble_lib)
+[![pub package](https://img.shields.io/pub/vpre/flutter_ble_lib.svg)](https://pub.dev/packages/flutter_ble_lib)
 
 <p align="center">
   <img
@@ -22,7 +22,7 @@ which runs on [RxAndroidBle](https://github.com/Polidea/RxAndroidBle)
 Along with the library there is [BLE Simulator](https://github.com/Polidea/blemulator_flutter) released.
 
 ## Usage
-To use this plugin, add `flutter_ble_lib` as a [dependency in your pubspec.yaml file](https://pub.dev/packages/flutter_ble_lib#-installing-tab-).
+To use this plugin, add `flutter_ble_lib` as a [dependency in your pubspec.yaml file](https://pub.dev/packages/flutter_ble_lib/versions/2.0.0-dev.4).
 
 ## Overview
 The library is organised around a few base entities, which are:
