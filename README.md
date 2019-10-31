@@ -22,7 +22,6 @@ which runs on [RxAndroidBle](https://github.com/Polidea/RxAndroidBle)
 This library supports [BLEmulator](https://github.com/Polidea/blemulator_flutter), the BLE simulator. 
 The simulation allows one to develop without physical smartphone or BLE peripheral and use one's production BLE–related code in automated testing.
 
-
 ## Usage
 To use this plugin, add `flutter_ble_lib` as a [dependency in your pubspec.yaml file](https://pub.dev/packages/flutter_ble_lib/versions/2.0.0-dev.4).
 
