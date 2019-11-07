@@ -28,7 +28,7 @@ class PeripheralTestOperations {
           .catchError((error) {
         BleError bleError = error as BleError;
         return logError("Cancelled operation caught an error: "
-            "\nerror code ${bleError.errorCode},"
+            "\nerror code ${bleError.errorCode.value},"
             "\nreason: ${bleError.reason}");
       });
       log("Operation to cancel started: discover all"
