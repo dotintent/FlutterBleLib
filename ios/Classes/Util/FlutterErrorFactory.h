@@ -4,4 +4,7 @@
 
 + (FlutterError *)flutterErrorFromJSONString:(NSString *)jsonString;
 
++ (FlutterError *)flutterErrorFromJSONString:(NSString *)jsonString
+                           withTransactionId:(NSString *)transactionId;
+
 @end
