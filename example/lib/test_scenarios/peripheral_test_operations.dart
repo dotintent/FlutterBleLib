@@ -502,7 +502,7 @@ class PeripheralTestOperations {
     try {
       await testedFunction();
     } on BleError catch (e) {
-      logError("BleError caught: ${e.errorCode} ${e.reason}");
+      logError("BleError caught: ${e.errorCode.value} ${e.reason}");
     } catch (e) {
       logError("${e.runtimeType}: $e");
     }
