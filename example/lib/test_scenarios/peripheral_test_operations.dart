@@ -28,7 +28,7 @@ class PeripheralTestOperations {
           .catchError((error) {
         BleError bleError = error as BleError;
         return logError("Cancelled operation caught an error: "
-            "\nerror code ${bleError.errorCode},"
+            "\nerror code ${bleError.errorCode.value},"
             "\nreason: ${bleError.reason}");
       });
       log("Operation to cancel started: discover all"
@@ -502,7 +502,7 @@ class PeripheralTestOperations {
     try {
       await testedFunction();
     } on BleError catch (e) {
-      logError("BleError caught: ${e.errorCode} ${e.reason}");
+      logError("BleError caught: ${e.errorCode.value} ${e.reason}");
     } catch (e) {
       logError("${e.runtimeType}: $e");
     }
