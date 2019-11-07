@@ -27,7 +27,8 @@
                 characteristicEventSink([CharacteristicResponseConverter jsonStringFromCharacteristicResponse:readResult[1]
                                                                                                 transactionId:readResult[2]]);
             } else {
-                characteristicEventSink([FlutterErrorFactory flutterErrorFromJSONString:readResult[0]]);
+                characteristicEventSink([FlutterErrorFactory flutterErrorFromJSONString:readResult[0]
+                                                                      withTransactionId:readResult[2]]);
             }
         }
     }
