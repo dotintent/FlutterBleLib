@@ -7,7 +7,7 @@ enum LogLevel { none, verbose, debug, info, warning, error }
 abstract class BleManager {
   static BleManager _instance;
 
-  static BleManager getInstance() {
+  factory BleManager() {
     if (_instance == null) {
       _instance = InternalBleManager();
     }
@@ -27,11 +27,11 @@ abstract class BleManager {
   Stream<ScanResult> startPeripheralScan({
     int scanMode = ScanMode.lowPower,
     int callbackType = CallbackType.allMatches,
-    List<String> uuids,
+    List<String> uuids = const [],
     bool allowDuplicates = false,
   });
 
-  Future<void> stopDeviceScan();
+  Future<void> stopPeripheralScan();
 
   Future<void> setLogLevel(LogLevel logLevel);
 
@@ -45,9 +45,9 @@ abstract class BleManager {
 
   Stream<BluetoothState> observeBluetoothState({bool emitCurrentValue = true});
 
-  Future<List<Peripheral>> knownDevices(List<String> peripheralIdentifiers);
+  Future<List<Peripheral>> knownPeripherals(List<String> peripheralIdentifiers);
 
-  Future<List<Peripheral>> connectedDevices(List<String> serviceUUIDs);
+  Future<List<Peripheral>> connectedPeripherals(List<String> serviceUUIDs);
 }
 
 enum BluetoothState {

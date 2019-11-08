@@ -1,7 +1,7 @@
 part of test_scenarios;
 
 class SensorTagTestWithScanAndConnectionScenario implements TestScenario {
-  BleManager bleManager = BleManager.getInstance();
+  BleManager bleManager = BleManager();
   bool deviceConnectionAttempted = false;
 
   Future<void> runTestScenario(Logger log, Logger logError) async {
@@ -27,7 +27,7 @@ class SensorTagTestWithScanAndConnectionScenario implements TestScenario {
         log("Sensor Tag found!");
         deviceConnectionAttempted = true;
         log("Stopping device scan...");
-        await bleManager.stopDeviceScan();
+        await bleManager.stopPeripheralScan();
         return _tryToConnect(scanResult.peripheral, log, logError);
       }
     }, onError: (error) {

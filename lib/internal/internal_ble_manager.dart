@@ -52,13 +52,13 @@ class InternalBleManager
   Stream<ScanResult> startPeripheralScan({
     int scanMode = ScanMode.lowPower,
     int callbackType = CallbackType.allMatches,
-    List<String> uuids,
+    List<String> uuids = const [],
     bool allowDuplicates = false,
   }) =>
-      _bleLib.startDeviceScan(scanMode, callbackType, uuids ?? [], allowDuplicates);
+      _bleLib.startDeviceScan(scanMode, callbackType, uuids, allowDuplicates);
 
   @override
-  Future<void> stopDeviceScan() => _bleLib.stopDeviceScan();
+  Future<void> stopPeripheralScan() => _bleLib.stopDeviceScan();
 
   @override
   Future<void> connectToPeripheral(
@@ -156,12 +156,12 @@ class InternalBleManager
   }
 
   @override
-  Future<List<Peripheral>> knownDevices(List<String> peripheralIdentifiers) {
+  Future<List<Peripheral>> knownPeripherals(List<String> peripheralIdentifiers) {
     return _bleLib.knownDevices(peripheralIdentifiers ?? []);
   }
 
   @override
-  Future<List<Peripheral>> connectedDevices(List<String> serviceUUIDs) {
+  Future<List<Peripheral>> connectedPeripherals(List<String> serviceUUIDs) {
     return _bleLib.connectedDevices(serviceUUIDs ?? []);
   }
 

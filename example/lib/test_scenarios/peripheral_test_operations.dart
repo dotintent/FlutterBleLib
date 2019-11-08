@@ -432,12 +432,12 @@ class PeripheralTestOperations {
   Future<void> fetchConnectedDevice() async {
     await _runWithErrorHandling(() async {
       log("Fetch connected devices with no service specified");
-      List<Peripheral> peripherals = await bleManager.connectedDevices([]);
+      List<Peripheral> peripherals = await bleManager.connectedPeripherals([]);
       peripherals.forEach((peripheral) => log("\t${peripheral.toString()}"));
       log("Device fetched");
       log("Fetch connected devices with temperature service");
       peripherals = await bleManager
-          .connectedDevices([SensorTagTemperatureUuids.temperatureService]);
+          .connectedPeripherals([SensorTagTemperatureUuids.temperatureService]);
       peripherals.forEach((peripheral) => log("\t${peripheral.toString()}"));
       log("Device fetched");
     });
@@ -446,11 +446,11 @@ class PeripheralTestOperations {
   Future<void> fetchKnownDevice() async {
     await _runWithErrorHandling(() async {
       log("Fetch known devices with no IDs specified");
-      List<Peripheral> peripherals = await bleManager.knownDevices([]);
+      List<Peripheral> peripherals = await bleManager.knownPeripherals([]);
       peripherals.forEach((peripheral) => log("\t${peripheral.toString()}"));
       log("Device fetched");
       log("Fetch known devices with one known device's ID specified");
-      peripherals = await bleManager.knownDevices([peripheral.identifier]);
+      peripherals = await bleManager.knownPeripherals([peripheral.identifier]);
       peripherals.forEach((peripheral) => log("\t${peripheral.toString()}"));
       log("Device fetched");
     });

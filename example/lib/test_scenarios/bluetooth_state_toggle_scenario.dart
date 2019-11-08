@@ -5,7 +5,7 @@ class BluetoothStateTestScenario implements TestScenario {
 
   @override
   Future<void> runTestScenario(Logger log, Logger errorLogger) async {
-    BleManager bleManager = BleManager.getInstance();
+    BleManager bleManager = BleManager();
 
     log("SCENARIO WON'T WORK IF BLUETOOTH IS ENABLED");
     log("Waiting 10 seconds for user to turn BT off");
