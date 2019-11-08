@@ -1,7 +1,7 @@
 part of test_scenarios;
 
 class SensorTagTestWithScanAndConnectionScenario implements TestScenario {
-  BleManager bleManager = BleManager.getInstance();
+  BleManager bleManager = BleManager();
   bool deviceConnectionAttempted = false;
 
   Future<void> runTestScenario(Logger log, Logger logError) async {

@@ -7,7 +7,7 @@ enum LogLevel { none, verbose, debug, info, warning, error }
 abstract class BleManager {
   static BleManager _instance;
 
-  static BleManager getInstance() {
+  factory BleManager() {
     if (_instance == null) {
       _instance = InternalBleManager();
     }
