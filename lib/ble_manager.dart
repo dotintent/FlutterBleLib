@@ -27,7 +27,7 @@ abstract class BleManager {
   Stream<ScanResult> startPeripheralScan({
     int scanMode = ScanMode.lowPower,
     int callbackType = CallbackType.allMatches,
-    List<String> uuids,
+    List<String> uuids = const [],
     bool allowDuplicates = false,
   });
 

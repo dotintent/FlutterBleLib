@@ -52,10 +52,10 @@ class InternalBleManager
   Stream<ScanResult> startPeripheralScan({
     int scanMode = ScanMode.lowPower,
     int callbackType = CallbackType.allMatches,
-    List<String> uuids,
+    List<String> uuids = const [],
     bool allowDuplicates = false,
   }) =>
-      _bleLib.startDeviceScan(scanMode, callbackType, uuids ?? [], allowDuplicates);
+      _bleLib.startDeviceScan(scanMode, callbackType, uuids, allowDuplicates);
 
   @override
   Future<void> stopPeripheralScan() => _bleLib.stopDeviceScan();
