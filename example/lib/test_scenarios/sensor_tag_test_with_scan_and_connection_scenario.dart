@@ -27,7 +27,7 @@ class SensorTagTestWithScanAndConnectionScenario implements TestScenario {
         log("Sensor Tag found!");
         deviceConnectionAttempted = true;
         log("Stopping device scan...");
-        await bleManager.stopDeviceScan();
+        await bleManager.stopPeripheralScan();
         return _tryToConnect(scanResult.peripheral, log, logError);
       }
     }, onError: (error) {
