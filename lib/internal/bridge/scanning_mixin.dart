@@ -1,8 +1,12 @@
 part of internal_bridge_lib;
 
 mixin ScanningMixin on FlutterBLE {
-  final Stream<dynamic> _scanEvents =
-      const EventChannel(ChannelName.scanningEvents).receiveBroadcastStream();
+  Stream<dynamic> _scanEvents;
+
+  void _prepareScanEventsStream() {
+    _scanEvents =
+        const EventChannel(ChannelName.scanningEvents).receiveBroadcastStream();
+  }
 
   Stream<ScanResult> startDeviceScan(
     int scanMode,
@@ -19,6 +23,11 @@ mixin ScanningMixin on FlutterBLE {
         ArgumentName.allowDuplicates: allowDuplicates,
       },
     );
+
+    if (_scanEvents == null) {
+      _prepareScanEventsStream();
+    }
+
     yield* _scanEvents.handleError(
       (errorJson) {
         throw BleError.fromJson(jsonDecode(errorJson.details));
@@ -32,6 +41,7 @@ mixin ScanningMixin on FlutterBLE {
 
   Future<void> stopDeviceScan() async {
     await _methodChannel.invokeMethod(MethodName.stopDeviceScan);
+    _scanEvents = null;
     return;
   }
 }

@@ -47,7 +47,7 @@ class DevicesBloc {
     _bleManager.createClient(
           restoreStateIdentifier: "example-restore-state-identifier",
           restoreStateAction: (peripherals) {
-            peripherals.forEach((peripheral) {
+            peripherals?.forEach((peripheral) {
               Fimber.d("Restored peripheral: ${peripheral.name}");
             });
           }
@@ -84,7 +84,7 @@ class DevicesBloc {
 
   Future<void> refresh() async {
     _scanSubscription.cancel();
-    await _bleManager.stopDeviceScan();
+    await _bleManager.stopPeripheralScan();
     bleDevices.clear();
     _visibleDevicesController.add(bleDevices.sublist(0));
     startScan();

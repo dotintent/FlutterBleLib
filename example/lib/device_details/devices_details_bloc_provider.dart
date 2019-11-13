@@ -12,7 +12,7 @@ class DeviceDetailsBlocProvider extends InheritedWidget {
     Key key,
     DeviceDetailsBloc deviceDetailsBloc,
     Widget child,
-  })  : deviceDetailsBloc = deviceDetailsBloc ?? DeviceDetailsBloc(DeviceRepository(), BleManager.getInstance()),
+  })  : deviceDetailsBloc = deviceDetailsBloc ?? DeviceDetailsBloc(DeviceRepository(), BleManager()),
         super(key: key, child: child);
 
   @override

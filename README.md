@@ -1,3 +1,7 @@
+[![Frontside](https://img.shields.io/static/v1?label=Facilitated%20by&message=frontside.io&color=blue)](#facilitated-by-frontside)
+[![Build Status](https://travis-ci.org/Polidea/FlutterBleLib.svg?branch=master)](https://travis-ci.org/Polidea/FlutterBleLib)
+[![pub package](https://img.shields.io/pub/vpre/flutter_ble_lib.svg)](https://pub.dev/packages/flutter_ble_lib)
+
 <p align="center">
   <img
     alt="FlutterBLE library logo"
@@ -8,13 +12,18 @@
 </p>
 
 # FlutterBleLib
-A library for your all your Bluetooth Low Energy needs in Flutter. Internally utilises Polidea's 
+
+A library for all your Bluetooth Low Energy needs in Flutter. Internally utilises Polidea's 
 [MultiPlatformBleAdapter](https://github.com/Polidea/MultiPlatformBleAdapter), 
 which runs on [RxAndroidBle](https://github.com/Polidea/RxAndroidBle)
  and [RxBluetoothKit](https://github.com/Polidea/RxBluetoothKit).
 
-## Configuration and installation
-TBD
+## BLE Simulator
+This library supports [BLEmulator](https://github.com/Polidea/blemulator_flutter), the BLE simulator. 
+The simulation allows one to develop without physical smartphone or BLE peripheral and use one's production BLE–related code in automated testing.
+
+## Usage
+To use this plugin, add `flutter_ble_lib` as a [dependency in your pubspec.yaml file](https://pub.dev/packages/flutter_ble_lib/versions/2.0.0-dev.4).
 
 ## Overview
 The library is organised around a few base entities, which are:
@@ -150,6 +159,9 @@ characteristic.write(Uint8List.fromList([0]), false); //returns void
 
 Monitoring or reading a characteristic from _Peripheral_/_Service_ level 
  return _CharacteristicWithValue_ object, which is _Characteristic_ with additional `Uint8List value` property.
+ 
+## Facilitated by Frontside 
+[Frontside](https://github.com/thefrontside) provided architectural advice and financial support for this library on behalf of [Resideo](https://github.com/resideo). 
 
 ## Maintained by
 This library is maintained by [Polidea](http://www.polidea.com)

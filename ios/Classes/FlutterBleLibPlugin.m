@@ -7,12 +7,12 @@
 #import "ScanningStreamHandler.h"
 #import "ConnectionStateStreamHandler.h"
 #import "MonitorCharacteristicStreamHandler.h"
-#import "ArgumentValidator.h"
+#import "ArgumentHandler.h"
 #import "FlutterErrorFactory.h"
-#import "JSONStringifier.h"
 #import "CommonTypes.h"
 #import "CharacteristicResponseConverter.h"
 #import "PeripheralResponseConverter.h"
+#import "ServiceResponseConverter.h"
 
 @import MultiplatformBleAdapter;
 
@@ -135,7 +135,7 @@
 
 - (void)createClient:(FlutterMethodCall *)call result:(FlutterResult)result {
     _adapter = [BleAdapterFactory getNewAdapterWithQueue:dispatch_get_main_queue()
-                                    restoreIdentifierKey:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_RESTORE_STATE_IDENTIFIER]]];
+                                    restoreIdentifierKey:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_RESTORE_STATE_IDENTIFIER]]];
     _adapter.delegate = self;
     result(nil);
 }
@@ -152,13 +152,13 @@
 // MARK: - MBA Methods - BT state monitoring
 
 - (void)enable:(FlutterMethodCall *)call result:(FlutterResult)result {
-    [_adapter enable:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+    [_adapter enable:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
              resolve:result
               reject:[self rejectForFlutterResult:result]];
 }
 
 - (void)disable:(FlutterMethodCall *)call result:(FlutterResult)result {
-    [_adapter disable:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+    [_adapter disable:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
               resolve:result
                reject:[self rejectForFlutterResult:result]];
 }
@@ -172,8 +172,8 @@
 
 - (void)startDeviceScan:(FlutterMethodCall *)call result:(FlutterResult)result {
     NSArray* expectedArguments = [NSArray arrayWithObjects:ARGUMENT_KEY_ALLOW_DUPLICATES, nil];
-    [_adapter startDeviceScan:[ArgumentValidator validStringArrayOrNil:call.arguments[ARGUMENT_KEY_UUIDS]]
-                      options:[ArgumentValidator validDictionaryOrNil:expectedArguments in:call.arguments]];
+    [_adapter startDeviceScan:[ArgumentHandler stringArrayOrNil:call.arguments[ARGUMENT_KEY_UUIDS]]
+                      options:[ArgumentHandler dictionaryOrNil:expectedArguments in:call.arguments]];
     result(nil);
 }
 
@@ -188,7 +188,7 @@
 - (void)connectToDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
     NSArray* expectedArguments = [NSArray arrayWithObjects:ARGUMENT_KEY_TIMEOUT_MILLIS, nil];
     [_adapter connectToDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
-                      options:[ArgumentValidator validDictionaryOrNil:expectedArguments in:call.arguments]
+                      options:[ArgumentHandler dictionaryOrNil:expectedArguments in:call.arguments]
                       resolve:result
                        reject:[self rejectForFlutterResult:result]];
 }
@@ -247,7 +247,7 @@
 
 - (void)discoverAllServicesAndCharacteristicsForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
     [_adapter discoverAllServicesAndCharacteristicsForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
-                                               transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                                               transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
                                                      resolve:result
                                                       reject:[self rejectForFlutterResult:result]];
 }
@@ -271,26 +271,26 @@
     [_adapter readCharacteristicForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
                               serviceUUID:call.arguments[ARGUMENT_KEY_SERVICE_UUID]
                        characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
-                            transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                            transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
                                   resolve:[self resolveForReadWriteCharacteristic:result
-                                                                    transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]]
+                                                                    transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]]
                                    reject:[self rejectForFlutterResult:result]];
 }
 
 - (void)readCharacteristicForService:(FlutterMethodCall *)call result:(FlutterResult)result {
     [_adapter readCharacteristicForService:[call.arguments[ARGUMENT_KEY_SERVICE_ID] doubleValue]
                         characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
-                             transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                             transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
                                    resolve:[self resolveForReadWriteCharacteristic:result
-                                                                     transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]]
+                                                                     transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]]
                                     reject:[self rejectForFlutterResult:result]];
 }
 
 - (void)readCharacteristic:(FlutterMethodCall *)call result:(FlutterResult)result {
     [_adapter readCharacteristic:[call.arguments[ARGUMENT_KEY_CHARACTERISTIC_IDENTIFIER] doubleValue]
-                   transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                   transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
                          resolve:[self resolveForReadWriteCharacteristic:result
-                                                           transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]]
+                                                           transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]]
                           reject:[self rejectForFlutterResult:result]];
 }
 
@@ -300,9 +300,9 @@
                         characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
                                valueBase64:[self base64encodedStringFromBytes:call.arguments[ARGUMENT_KEY_VALUE]]
                                   response:(BOOL)call.arguments[ARGUMENT_KEY_WITH_RESPONSE]
-                             transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                             transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
                                    resolve:[self resolveForReadWriteCharacteristic:result
-                                                                     transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]]
+                                                                     transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]]
                                     reject:[self rejectForFlutterResult:result]];
 }
 
@@ -311,9 +311,9 @@
                          characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
                                 valueBase64:[self base64encodedStringFromBytes:call.arguments[ARGUMENT_KEY_VALUE]]
                                    response:(BOOL)call.arguments[ARGUMENT_KEY_WITH_RESPONSE]
-                              transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                              transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
                                     resolve:[self resolveForReadWriteCharacteristic:result
-                                                                      transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]]
+                                                                      transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]]
                                      reject:[self rejectForFlutterResult:result]];
 }
 
@@ -321,9 +321,9 @@
     [_adapter writeCharacteristic:[call.arguments[ARGUMENT_KEY_CHARACTERISTIC_IDENTIFIER] doubleValue]
                       valueBase64:[self base64encodedStringFromBytes:call.arguments[ARGUMENT_KEY_VALUE]]
                          response:(BOOL)call.arguments[ARGUMENT_KEY_WITH_RESPONSE]
-                    transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                    transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
                           resolve:[self resolveForReadWriteCharacteristic:result
-                                                            transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]]
+                                                            transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]]
                            reject:[self rejectForFlutterResult:result]];
 }
 
@@ -331,7 +331,7 @@
     [_adapter monitorCharacteristicForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
                                  serviceUUID:call.arguments[ARGUMENT_KEY_SERVICE_UUID]
                           characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
-                               transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                               transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
                                      resolve:[self resolveForMonitorCharacteristic:result]
                                       reject:[self rejectForFlutterResult:result]];
 }
@@ -339,7 +339,7 @@
 - (void)monitorCharacteristicForService:(FlutterMethodCall *)call result:(FlutterResult)result {
     [_adapter monitorCharacteristicForService:[call.arguments[ARGUMENT_KEY_SERVICE_ID] doubleValue]
                            characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
-                                transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                                transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
                                       resolve:[self resolveForMonitorCharacteristic:result]
                                        reject:[self rejectForFlutterResult:result]];
 
@@ -347,7 +347,7 @@
 
 - (void)monitorCharacteristic:(FlutterMethodCall *)call result:(FlutterResult)result {
     [_adapter monitorCharacteristic:[call.arguments[ARGUMENT_KEY_CHARACTERISTIC_IDENTIFIER] doubleValue]
-                      transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                      transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
                             resolve:[self resolveForMonitorCharacteristic:result]
                              reject:[self rejectForFlutterResult:result]];
 }
@@ -371,7 +371,7 @@
 - (void)requestMTUForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
     [_adapter requestMTUForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
                               mtu:[call.arguments[ARGUMENT_KEY_MTU] integerValue]
-                    transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                    transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
                           resolve:[self resolveForRequestMTUForDevice:result]
                            reject:[self rejectForFlutterResult:result]];
 }
@@ -380,7 +380,7 @@
 
 - (void)readRSSIForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
     [_adapter readRSSIForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
-                  transactionId:[ArgumentValidator validStringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                  transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
                         resolve:[self resolveForReadRSSIForDevice:result]
                          reject:[self rejectForFlutterResult:result]];
 }
@@ -422,16 +422,13 @@
 
 - (Resolve)resolveForServicesForDevice:(FlutterResult)result {
     return ^(NSArray *servicesArray) {
-        result([JSONStringifier jsonStringFromJSONObject:[self arrayReplacingKeys:@[@[@"id", @"serviceId"],
-                                                                                    @[@"uuid", @"serviceUuid"]]
-                                                                          inArray:servicesArray]]);
+        result([ServiceResponseConverter jsonStringFromServicesResponse:servicesArray]);
     };
 }
 
 - (Resolve)resolveForCharacteristicsForService:(FlutterResult)result {
     return ^(NSArray *characteristicsArray) {
-        result([JSONStringifier jsonStringFromJSONObject:[self arrayReplacingKeys:@[@[@"uuid", @"characteristicUuid"]]
-                                                                          inArray:characteristicsArray]]);
+        result([CharacteristicResponseConverter jsonStringFromCharacteristicsResponse:characteristicsArray]);
     };
 }
 
@@ -439,8 +436,7 @@
     return ^(NSArray *servicesArray) {
 
         NSDictionary *matchingService = nil;
-        for (NSDictionary *service in [self arrayReplacingKeys:@[@[@"id", @"serviceId"], @[@"uuid", @"serviceUuid"]]
-                                                       inArray:servicesArray]) {
+        for (NSDictionary *service in [ServiceResponseConverter servicesFromServicesResponse:servicesArray]) {
             if ([[service valueForKey:@"serviceUuid"] isEqualToString:serviceUuid]) {
                 matchingService = service;
                 break;
@@ -453,15 +449,11 @@
         }
 
         Resolve resolve = ^(NSArray* characteristicsArray) {
-            NSMutableDictionary *resultDictionary = [[NSMutableDictionary alloc] init];
-            [resultDictionary addEntriesFromDictionary:matchingService];
-            [resultDictionary setObject:[self arrayReplacingKeys:@[@[@"uuid", @"characteristicUuid"]]
-                                                         inArray:characteristicsArray]
-                                 forKey:@"characteristics"];
-            result([JSONStringifier jsonStringFromJSONObject:resultDictionary]);
+            result([CharacteristicResponseConverter jsonStringFromCharacteristicsResponse:characteristicsArray
+                                                                                  service:matchingService]);
         };
 
-        [_adapter characteristicsForService:[[matchingService valueForKey:@"id"] doubleValue]
+        [_adapter characteristicsForService:[[matchingService valueForKey:@"serviceId"] doubleValue]
                             resolve:resolve
                              reject:[self rejectForFlutterResult:result]];
     };
@@ -503,20 +495,6 @@
     return ^(NSString *code, NSString *message, NSError *error) {
         result([FlutterErrorFactory flutterErrorFromJSONString:message]);
     };
-}
-
-- (NSArray *)arrayReplacingKeys:(NSArray<NSArray<NSString *> *> *)keys inArray:(NSArray *)servicesArray {
-    NSMutableArray *newArray = [[NSMutableArray alloc] init];
-    for (NSDictionary *dictionary in servicesArray) {
-        NSMutableDictionary *newDictionary = [[NSMutableDictionary alloc] init];
-        for (NSArray *keyPair in keys) {
-            [newDictionary addEntriesFromDictionary:dictionary];
-            [newDictionary setObject:[dictionary objectForKey:keyPair[0]] forKey:keyPair[1]];
-            [newDictionary removeObjectForKey:keyPair[0]];
-        }
-        [newArray addObject:newDictionary];
-    }
-    return newArray;
 }
 
 - (NSString *)base64encodedStringFromBytes:(FlutterStandardTypedData *)bytes {
