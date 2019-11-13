@@ -8,7 +8,6 @@ import 'package:flutter_ble_lib/internal/bridge/internal_bridge_lib.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
-import '../../json/characteristic_monitoring_json.dart';
 import '../../mock/mock_peripheral.dart';
 import '../../json/ble_error_jsons.dart';
 
