@@ -269,4 +269,20 @@ class CharacteristicWithValueAndTransactionId extends CharacteristicWithValue {
     this.transactionId = transactionId;
     return this;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      super == other &&
+          other is CharacteristicWithValueAndTransactionId &&
+          runtimeType == other.runtimeType &&
+          transactionId == other.transactionId;
+
+  @override
+  int get hashCode => super.hashCode ^ transactionId.hashCode;
+
+  @override
+  String toString() =>
+      super.toString() +
+      ' CharacteristicWithValueAndTransactionId{transactionId: $transactionId}';
 }
