@@ -52,7 +52,7 @@ public class DeviceConnectionDelegate extends CallDelegate {
                         call.<Boolean>argument(ArgumentKey.IS_AUTO_CONNECT),
                         call.<Integer>argument(ArgumentKey.REQUEST_MTU),
                         call.<Boolean>argument(ArgumentKey.REFRESH_GATT),
-                        call.<Long>argument(ArgumentKey.TIMEOUT_MILLIS),
+                        getLongArgument(call, ArgumentKey.TIMEOUT_MILLIS),
                         result);
                 return;
             case MethodName.IS_DEVICE_CONNECTED:
@@ -66,6 +66,21 @@ public class DeviceConnectionDelegate extends CallDelegate {
                 return;
             default:
                 throw new IllegalArgumentException(call.method + " cannot be handled by this delegate");
+        }
+    }
+
+    /**
+     * While Dart specifies an arbitrarily sized integer, for performance reasons the
+     * Dart VM has three different internal integer representations: smi (rhymes with pie), mint,
+     * and bigint. Each representation is used to hold different ranges of integer numbers
+     * There is now way to determine if the value passed from dart is an Integer or Long
+     * thus it must be checked
+     */
+    private Long getLongArgument(@NonNull MethodCall call, String timeoutMillis) {
+        try {
+            return call.<Integer>argument(timeoutMillis).longValue();
+        } catch (ClassCastException exception) {
+            return call.<Long>argument(timeoutMillis);
         }
     }
 
