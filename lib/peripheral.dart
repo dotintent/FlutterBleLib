@@ -30,10 +30,9 @@ class Peripheral {
           timeout: timeout);
 
   Stream<PeripheralConnectionState> observeConnectionState(
-          {bool emitCurrentValue = false,
-          bool completeOnDisconnect = false}) =>
-      _manager.observePeripheralConnectionState(identifier, emitCurrentValue, completeOnDisconnect);
-
+          {bool emitCurrentValue = false, bool completeOnDisconnect = false}) =>
+      _manager.observePeripheralConnectionState(
+          identifier, emitCurrentValue, completeOnDisconnect);
 
   Future<bool> isConnected() => _manager.isPeripheralConnected(identifier);
 
@@ -83,6 +82,31 @@ class Peripheral {
         withResponse,
         transactionId,
       );
+
+  Future<List<Descriptor>> descriptorsForCharacteristic(
+    String serviceUuid,
+    String characteristicUuid,
+  ) =>
+      _manager.descriptorsForPeripheral(this, serviceUuid, characteristicUuid);
+
+  Future<DescriptorWithValue> readDescriptor(
+    String serviceUuid,
+    String characteristicUuid,
+    String descriptorUuid, {
+    String transactionId,
+  }) =>
+      _manager.readDescriptorForPeripheral(
+          this, serviceUuid, characteristicUuid, descriptorUuid, transactionId);
+
+  Future<Descriptor> writeDescriptor(
+    String serviceUuid,
+    String characteristicUuid,
+    String descriptorUuid,
+    Uint8List value, {
+    String transactionId,
+  }) =>
+      _manager.writeDescriptorForPeripheral(this, serviceUuid, characteristicUuid,
+          descriptorUuid, value, transactionId);
 
   Stream<CharacteristicWithValue> monitorCharacteristic(
     String serviceUUID,

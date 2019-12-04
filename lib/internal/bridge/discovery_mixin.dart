@@ -69,4 +69,84 @@ mixin DiscoveryMixin on FlutterBLE {
       return Characteristic.fromJson(characteristicJson, service, _manager);
     }).toList();
   }
+
+  Future<List<Descriptor>> descriptorsForPeripheral(
+      Peripheral peripheral,
+      String serviceUuid,
+      String characteristicUuid,
+      ) async {
+    String jsonString = await _methodChannel
+        .invokeMethod(MethodName.descriptorsForDevice, <String, dynamic>{
+      ArgumentName.deviceIdentifier: peripheral.identifier,
+      ArgumentName.serviceUuid: serviceUuid,
+      ArgumentName.characteristicUuid: characteristicUuid,
+    }).catchError(
+          (errorJson) => Future.error(
+        BleError.fromJson(jsonDecode(errorJson.details)),
+      ),
+    );
+
+    Map<String, dynamic> jsonObject = jsonDecode(jsonString);
+
+    Service service = Service.fromJson(jsonObject, peripheral, _manager);
+    Characteristic characteristic =
+    Characteristic.fromJson(jsonObject, service, _manager);
+
+    List<Map<String, dynamic>> jsonDescriptors =
+    (jsonObject["descriptors"] as List<dynamic>).cast();
+
+    return jsonDescriptors
+        .map((jsonDescriptor) =>
+        Descriptor.fromJson(jsonDescriptor, characteristic, _manager))
+        .toList();
+  }
+
+  Future<List<Descriptor>> descriptorsForService(
+      Service service,
+      String characteristicUuid,
+      ) async {
+    String jsonString = await _methodChannel
+        .invokeMethod(MethodName.descriptorsForDevice, <String, dynamic>{
+      ArgumentName.serviceIdentifier: service._id,
+      ArgumentName.characteristicUuid: characteristicUuid,
+    }).catchError(
+          (errorJson) => Future.error(
+        BleError.fromJson(jsonDecode(errorJson.details)),
+      ),
+    );
+
+    Map<String, dynamic> jsonObject = jsonDecode(jsonString);
+
+    Characteristic characteristic =
+    Characteristic.fromJson(jsonObject, service, _manager);
+
+    List<Map<String, dynamic>> jsonDescriptors =
+    (jsonObject["descriptors"] as List<dynamic>).cast();
+
+    return jsonDescriptors
+        .map((jsonDescriptor) =>
+        Descriptor.fromJson(jsonDescriptor, characteristic, _manager))
+        .toList();
+  }
+
+  Future<List<Descriptor>> descriptorsForCharacteristic(
+      Characteristic characteristic,
+      ) async {
+    String jsonString = await _methodChannel
+        .invokeMethod(MethodName.descriptorsForDevice, <String, dynamic>{
+      ArgumentName.characteristicIdentifier: characteristic._id,
+    }).catchError(
+          (errorJson) => Future.error(
+        BleError.fromJson(jsonDecode(errorJson.details)),
+      ),
+    );
+
+    List<Map<String, dynamic>> jsonDescriptors =
+    (jsonDecode(jsonString) as List<dynamic>).cast();
+
+    return jsonDescriptors
+        .map((jsonDescriptor) =>
+        Descriptor.fromJson(jsonDescriptor, characteristic, _manager))
+        .toList();
+  }
 }

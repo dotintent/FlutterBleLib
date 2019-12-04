@@ -63,6 +63,22 @@ class Characteristic extends InternalCharacteristic {
         transactionId,
       );
 
+  Future<List<Descriptor>> descriptors() =>
+      _manager.descriptorsForCharacteristic(this);
+
+  Future<DescriptorWithValue> readDescriptor(
+    String descriptorUuid, {
+    String transactionId,
+  }) =>
+      _manager.readDescriptorForCharacteristic(this, descriptorUuid, transactionId);
+
+  Future<Descriptor> writeDescriptor(
+    String descriptorUuid,
+    Uint8List value, {
+    String transactionId,
+  }) =>
+      _manager.writeDescriptorForCharacteristic(this, descriptorUuid, value, transactionId);
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -90,13 +106,15 @@ class Characteristic extends InternalCharacteristic {
 
   @override
   String toString() {
-    return 'Characteristic{service: $service, _manager: $_manager, uuid: $uuid, isReadable: $isReadable, isWritableWithResponse: $isWritableWithResponse, isWritableWithoutResponse: $isWritableWithoutResponse, isNotifiable: $isNotifiable, isIndicatable: $isIndicatable}';
+    return 'Characteristic{service: $service,'
+        ' _manager: $_manager,'
+        ' uuid: $uuid,'
+        ' isReadable: $isReadable,'
+        ' isWritableWithResponse: $isWritableWithResponse,'
+        ' isWritableWithoutResponse: $isWritableWithoutResponse,'
+        ' isNotifiable: $isNotifiable,'
+        ' isIndicatable: $isIndicatable}';
   }
-
-}
-
-mixin WithValue on Characteristic {
-  Uint8List value;
 }
 
 class CharacteristicWithValue extends Characteristic with WithValue {
@@ -122,6 +140,7 @@ class CharacteristicWithValue extends Characteristic with WithValue {
 
   @override
   String toString() {
-    return super.toString() + ' CharacteristicWithValue{value = ${value.toString()}';
+    return super.toString() +
+        ' CharacteristicWithValue{value = ${value.toString()}';
   }
 }

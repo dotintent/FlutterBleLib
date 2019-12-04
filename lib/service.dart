@@ -32,8 +32,10 @@ class Service extends InternalService {
       _manager.writeCharacteristicForService(peripheral, this,
           characteristicUUID, bytes, withResponse, transactionId);
 
-  Future<CharacteristicWithValue> readCharacteristic(String characteristicUUID,
-          {String transactionId}) =>
+  Future<CharacteristicWithValue> readCharacteristic(
+    String characteristicUUID, {
+    String transactionId,
+  }) =>
       _manager.readCharacteristicForService(
         peripheral,
         this,
@@ -52,6 +54,40 @@ class Service extends InternalService {
         transactionId,
       );
 
+  Future<List<Descriptor>> descriptorsForCharacteristic(
+    String characteristicUuid,
+  ) =>
+      _manager.descriptorsForService(
+        this,
+        characteristicUuid,
+      );
+
+  Future<DescriptorWithValue> readDescriptor(
+    String characteristicUuid,
+    String descriptorUuid, {
+    String transactionId,
+  }) =>
+      _manager.readDescriptorForService(
+        this,
+        characteristicUuid,
+        descriptorUuid,
+        transactionId,
+      );
+
+  Future<Descriptor> writeDescriptor(
+    String characteristicUuid,
+    String descriptorUuid,
+    Uint8List value, {
+    String transactionId,
+  }) =>
+      _manager.writeDescriptorForService(
+        this,
+        characteristicUuid,
+        descriptorUuid,
+        value,
+        transactionId,
+      );
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -67,6 +103,4 @@ class Service extends InternalService {
   String toString() {
     return 'Service{peripheralId: ${peripheral.identifier}, uuid: $uuid}';
   }
-
-
 }
