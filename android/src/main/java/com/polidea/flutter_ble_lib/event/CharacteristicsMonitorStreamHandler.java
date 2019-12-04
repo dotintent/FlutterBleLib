@@ -32,9 +32,9 @@ public class CharacteristicsMonitorStreamHandler implements EventChannel.StreamH
         }
     }
 
-    synchronized public void onError(BleError error) {
+    synchronized public void onError(BleError error, String transactionId) {
         if (eventSink != null) {
-            eventSink.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error));
+            eventSink.error(String.valueOf(error.errorCode.code), error.reason, bleErrorJsonConverter.toJson(error, transactionId));
         }
     }
 }

@@ -396,7 +396,7 @@ public class CharacteristicsDelegate extends CallDelegate {
                                     );
                                 } catch (JSONException e) {
                                     e.printStackTrace();
-                                    characteristicsMonitorStreamHandler.onError(BleErrorFactory.fromThrowable(e));
+                                    characteristicsMonitorStreamHandler.onError(BleErrorFactory.fromThrowable(e), transactionId);
                                 }
                             }
                         });
@@ -407,7 +407,7 @@ public class CharacteristicsDelegate extends CallDelegate {
                         mainThreadHandler.post(new Runnable() {
                             @Override
                             public void run() {
-                                characteristicsMonitorStreamHandler.onError(error);
+                                characteristicsMonitorStreamHandler.onError(error, transactionId);
                             }
                         });
                     }
@@ -437,7 +437,7 @@ public class CharacteristicsDelegate extends CallDelegate {
                                     );
                                 } catch (JSONException e) {
                                     e.printStackTrace();
-                                    characteristicsMonitorStreamHandler.onError(BleErrorFactory.fromThrowable(e));
+                                    characteristicsMonitorStreamHandler.onError(BleErrorFactory.fromThrowable(e), transactionId);
                                 }
                             }
                         });
@@ -448,7 +448,7 @@ public class CharacteristicsDelegate extends CallDelegate {
                         mainThreadHandler.post(new Runnable() {
                             @Override
                             public void run() {
-                                characteristicsMonitorStreamHandler.onError(error);
+                                characteristicsMonitorStreamHandler.onError(error, transactionId);
                             }
                         });
                     }
@@ -476,7 +476,7 @@ public class CharacteristicsDelegate extends CallDelegate {
                                     );
                                 } catch (JSONException e) {
                                     e.printStackTrace();
-                                    characteristicsMonitorStreamHandler.onError(BleErrorFactory.fromThrowable(e));
+                                    characteristicsMonitorStreamHandler.onError(BleErrorFactory.fromThrowable(e), transactionId);
                                 }
                             }
                         });
@@ -487,7 +487,7 @@ public class CharacteristicsDelegate extends CallDelegate {
                         mainThreadHandler.post(new Runnable() {
                             @Override
                             public void run() {
-                                characteristicsMonitorStreamHandler.onError(error);
+                                characteristicsMonitorStreamHandler.onError(error, transactionId);
                             }
                         });
                     }
