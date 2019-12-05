@@ -26,7 +26,7 @@ import io.flutter.plugin.common.MethodChannel;
 
 public class DeviceConnectionDelegate extends CallDelegate {
 
-    private static  List<String> supportedMethods = Arrays.asList(
+    private static List<String> supportedMethods = Arrays.asList(
             MethodName.CONNECT_TO_DEVICE,
             MethodName.IS_DEVICE_CONNECTED,
             MethodName.OBSERVE_CONNECTION_STATE,
@@ -73,14 +73,15 @@ public class DeviceConnectionDelegate extends CallDelegate {
      * While Dart specifies an arbitrarily sized integer, for performance reasons the
      * Dart VM has three different internal integer representations: smi (rhymes with pie), mint,
      * and bigint. Each representation is used to hold different ranges of integer numbers
-     * There is now way to determine if the value passed from dart is an Integer or Long
+     * There is no way to determine if the value passed from dart is an Integer or Long
      * thus it must be checked
      */
-    private Long getLongArgument(@NonNull MethodCall call, String timeoutMillis) {
+    private Long getLongArgument(@NonNull MethodCall call, String argumentName) {
         try {
-            return call.<Integer>argument(timeoutMillis).longValue();
+            Integer unwrappedValue = call.<Integer>argument(argumentName);
+            return unwrappedValue != null ? unwrappedValue.longValue() : null;
         } catch (ClassCastException exception) {
-            return call.<Long>argument(timeoutMillis);
+            return call.<Long>argument(argumentName);
         }
     }
 
