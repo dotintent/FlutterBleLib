@@ -2,7 +2,7 @@ package com.polidea.flutter_ble_lib.delegate;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.polidea.flutter_ble_lib.BleErrorFactory;
 import com.polidea.flutter_ble_lib.SafeMainThreadResolver;

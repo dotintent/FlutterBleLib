@@ -1,6 +1,6 @@
 package com.polidea.flutter_ble_lib.delegate;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.polidea.flutter_ble_lib.constant.ArgumentKey;
 import com.polidea.flutter_ble_lib.constant.MethodName;

@@ -1,6 +1,6 @@
 package com.polidea.flutter_ble_lib.delegate;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.polidea.flutter_ble_lib.MultiCharacteristicsResponse;
 import com.polidea.flutter_ble_lib.SafeMainThreadResolver;
