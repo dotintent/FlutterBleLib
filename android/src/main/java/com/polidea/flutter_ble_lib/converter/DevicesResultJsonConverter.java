@@ -1,6 +1,6 @@
 package com.polidea.flutter_ble_lib.converter;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import android.util.Log;
 
 import com.polidea.multiplatformbleadapter.Device;
