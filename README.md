@@ -2,14 +2,7 @@
 [![Build Status](https://travis-ci.org/Polidea/FlutterBleLib.svg?branch=master)](https://travis-ci.org/Polidea/FlutterBleLib)
 [![pub package](https://img.shields.io/pub/vpre/flutter_ble_lib.svg)](https://pub.dev/packages/flutter_ble_lib)
 
-<p align="center">
-  <img
-    alt="FlutterBLE library logo"
-    src="site/flutter-ble-lib-logo.png"
-    height="300"
-    style="margin-top: 20px; margin-bottom: 20px;"
-  />
-</p>
+![Flutter BLE library logo](site/flutter-ble-lib-logo.png)
 
 # FlutterBleLib
 
