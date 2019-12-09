@@ -107,7 +107,7 @@ public class DiscoveryDelegate extends CallDelegate {
 
     private void getCharacteristics(String deviceId, final String serviceUuid, final MethodChannel.Result result) {
         try {
-            Service[] services = adapter.getServicesForDevice(deviceId);
+            List<Service> services = adapter.getServicesForDevice(deviceId);
             Service foundService = null;
             for (final Service service : services) {
                 if (service.getUuid().equals(UUID.fromString(serviceUuid))) {
@@ -121,7 +121,7 @@ public class DiscoveryDelegate extends CallDelegate {
                 return;
             }
 
-            Characteristic[] characteristics = adapter.getCharacteristicsForService(foundService.getId());
+            List<Characteristic> characteristics = adapter.getCharacteristicsForService(foundService.getId());
             MultiCharacteristicsResponse characteristicsResponse = new MultiCharacteristicsResponse(characteristics, foundService);
             String json = multiCharacteristicsResponseJsonConverter.toJson(characteristicsResponse);
             result.success(json);
@@ -136,7 +136,7 @@ public class DiscoveryDelegate extends CallDelegate {
 
     private void getServices(String deviceId, final MethodChannel.Result result) {
         try {
-            Service[] services = adapter.getServicesForDevice(deviceId);
+            List<Service> services = adapter.getServicesForDevice(deviceId);
             result.success(serviceJsonConverter.toJson(services));
         } catch (BleError error) {
             error.printStackTrace();
@@ -149,7 +149,7 @@ public class DiscoveryDelegate extends CallDelegate {
 
     private void getCharacteristicsForService(Integer serviceId, final MethodChannel.Result result) {
         try {
-            Characteristic[] characteristics = adapter.getCharacteristicsForService(serviceId);
+            List<Characteristic> characteristics = adapter.getCharacteristicsForService(serviceId);
             result.success(characteristicJsonConverter.toJson(characteristics));
         } catch (BleError error) {
             error.printStackTrace();
