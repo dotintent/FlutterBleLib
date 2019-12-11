@@ -32,7 +32,7 @@ Using that instance you then obtain an instance of _Peripheral_,
  All operations passing the Dart-native bridge are asynchronous,
   hence all operations in the plugin return either Future or Stream.
 
-For more informations, see [REFERENCE](https://github.com/Polidea/FlutterBleLib/blob/readme/REFERENCE.md).
+For more informations, see [REFERENCE](https://github.com/Polidea/FlutterBleLib/blob/master/REFERENCE.md).
 
 ### Initialising
 ```dart
@@ -110,10 +110,11 @@ peripheral.discoverAllServicesAndCharacteristics(transactionId: "discovery");
 bleManager.cancelTransaction("discovery");
 ```
 
-If no _transactionId_ has been specified, it is _null_. Each new operation with the same _transactionId_
-will cause the previous to be cancelled with error, if it hasn't finished yet.
+Each new operation with the same _transactionId_ will cause the previous one to be cancelled with error, if it hasn't finished yet.
+If _transactionId_ is set to null or it isn't specified at all, the library sets unique integer _transactionId_ to such operation.
 
-**NOTE: _null_ is a valid transactionId, which means every operation with default transactionId will cancel any ongoing operation with default _transactionId_.**
+**NOTE:
+Do not to set _transactionId_ as integers since they are reserved by the library.**
 
 ### Obtaining characteristics
 

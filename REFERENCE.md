@@ -99,6 +99,8 @@ Some of the asynchronous operations done by the library do not have a complement
 **IMPORTANT**
 The cancelled operation will still be completed (perhaps with error), but the user will not be notified about its result.
 
+_(Read more about [transactions](https://github.com/Polidea/FlutterBleLib/#transactions))_
+
 # Peripheral
 Object representing a peripheral. Allows for managing connection, discovery and serves as a shortcut to characteristic operations, if the user knows the UUIDs of both service and characteristic.
 All of the following methods belong to Peripheral instance.
@@ -235,8 +237,6 @@ Contains following boolean properties:
 * `isNotifiable`
 * `isIndicatable`
 
-If no `transactionId` has been specified, then it defaults to `null`. 
-**IMPORTANT** If previous operation with specified `transactionId` has not yet finished, it will be cancelled immediately.
 
 All of the following methods belong to Characteristic instance.
 
