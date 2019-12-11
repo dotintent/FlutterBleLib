@@ -29,8 +29,13 @@ class Service extends InternalService {
     bool withResponse, {
     String transactionId,
   }) =>
-      _manager.writeCharacteristicForService(peripheral, this,
-          characteristicUUID, bytes, withResponse, transactionId);
+      _manager.writeCharacteristicForService(
+          peripheral,
+          this,
+          characteristicUUID,
+          bytes,
+          withResponse,
+          transactionId ?? TransactionIdGenerator.getNextId());
 
   Future<CharacteristicWithValue> readCharacteristic(String characteristicUUID,
           {String transactionId}) =>
@@ -38,7 +43,7 @@ class Service extends InternalService {
         peripheral,
         this,
         characteristicUUID,
-        transactionId,
+        transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
   Stream<CharacteristicWithValue> monitorCharacteristic(
@@ -49,7 +54,7 @@ class Service extends InternalService {
         peripheral,
         this,
         characteristicUUID,
-        transactionId,
+        transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
   @override
@@ -67,6 +72,4 @@ class Service extends InternalService {
   String toString() {
     return 'Service{peripheralId: ${peripheral.identifier}, uuid: $uuid}';
   }
-
-
 }

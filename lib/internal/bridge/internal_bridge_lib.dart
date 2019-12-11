@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 import 'package:flutter_ble_lib/internal/constants.dart';
 import 'package:flutter_ble_lib/internal/containers.dart';
+import 'package:flutter_ble_lib/internal/util/transaction_id_generator.dart';
 import 'package:flutter_ble_lib/internal/util/transformers.dart';
 
 import '../managers_for_classes.dart';
