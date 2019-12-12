@@ -16,6 +16,7 @@ const monitorCharacteristicEventChannelName =
     flutterBleLibMethodChannelName + '/monitorCharacteristic';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   FlutterBleLib bleLib;
   Peripheral peripheral = PeripheralMock();
   MethodChannel methodChannel = MethodChannel(flutterBleLibMethodChannelName);
