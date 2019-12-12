@@ -114,7 +114,7 @@ Each new operation with the same _transactionId_ will cause the previous one to 
 If _transactionId_ is set to null or it isn't specified at all, the library sets unique integer _transactionId_ to such operation.
 
 **NOTE:
-Do not to set _transactionId_ as integers since they are reserved by the library.**
+Do not to set integers as _transactionId_ as they are used by the library.**
 
 ### Obtaining characteristics
 
