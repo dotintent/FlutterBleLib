@@ -160,6 +160,8 @@ Monitoring or reading a characteristic from _Peripheral_/_Service_ level
 ## Maintained by
 This library is maintained by [Polidea](http://www.polidea.com)
 
+[Contact us](https://www.polidea.com/project/?utm_source=Github&utm_medium=Npaid&utm_campaign=Kontakt&utm_term=Code&utm_content=GH_NOP_KKT_COD_FBLE001)
+
 [Learn more about Polidea's BLE services](https://www.polidea.com/services/ble).
 
 #### Maintainers
