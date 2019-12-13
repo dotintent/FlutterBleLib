@@ -1,4 +1,3 @@
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_ble_lib/internal/util/transaction_id_generator.dart';
 
@@ -7,8 +6,12 @@ void main() {
     expect(TransactionIdGenerator.getNextId(), isNotNull);
   });
 
-  test("should increment id on next invocation", () {
-    int previousId = int.parse(TransactionIdGenerator.getNextId());
-    expect(TransactionIdGenerator.getNextId(), equals((previousId + 1).toString()));
+  test("should always return unique values", () {
+    List<String> generatedIds = [];
+    for (var i = 0; i < 1000; i++) {
+      var generatedId = TransactionIdGenerator.getNextId();
+      expect(generatedIds, isNot(contains(generatedId)));
+      generatedIds.add(generatedId);
+    }
   });
 }
