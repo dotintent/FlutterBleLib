@@ -121,6 +121,7 @@ class CharacteristicWithValue extends Characteristic with WithValue {
 
   @override
   String toString() {
-    return super.toString() + ' CharacteristicWithValue{value = ${value.toString()}';
+    return super.toString() +
+        ' CharacteristicWithValue{value = ${value.toString()}';
   }
 }
