@@ -45,7 +45,8 @@ class InternalBleManager
   Future<BluetoothState> bluetoothState() => _bleLib.state();
 
   @override
-  Stream<BluetoothState> observeBluetoothState({bool emitCurrentValue = true}) =>
+  Stream<BluetoothState> observeBluetoothState(
+          {bool emitCurrentValue = true}) =>
       _bleLib.observeBluetoothState(emitCurrentValue);
 
   @override
@@ -73,12 +74,11 @@ class InternalBleManager
 
   @override
   Stream<PeripheralConnectionState> observePeripheralConnectionState(
-    String peripheralIdentifier,
-    bool emitCurrentValue,
-    bool completeOnDisconnect
-  ) {
-
-    var streamTransformer = StreamTransformer<PeripheralConnectionState, PeripheralConnectionState>.fromHandlers(
+      String peripheralIdentifier,
+      bool emitCurrentValue,
+      bool completeOnDisconnect) {
+    var streamTransformer = StreamTransformer<PeripheralConnectionState,
+            PeripheralConnectionState>.fromHandlers(
         handleData: (PeripheralConnectionState data, EventSink sink) {
           sink.add(data);
           if (data == PeripheralConnectionState.disconnected) {
@@ -90,7 +90,7 @@ class InternalBleManager
         },
         handleDone: (EventSink sink) => sink.close());
 
-    var stream =  _bleLib.observePeripheralConnectionState(
+    var stream = _bleLib.observePeripheralConnectionState(
         peripheralIdentifier, emitCurrentValue);
     if (completeOnDisconnect) {
       return stream.transform(streamTransformer);
@@ -156,7 +156,8 @@ class InternalBleManager
   }
 
   @override
-  Future<List<Peripheral>> knownPeripherals(List<String> peripheralIdentifiers) {
+  Future<List<Peripheral>> knownPeripherals(
+      List<String> peripheralIdentifiers) {
     return _bleLib.knownDevices(peripheralIdentifiers ?? []);
   }
 
