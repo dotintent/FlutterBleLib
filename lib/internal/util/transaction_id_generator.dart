@@ -1,5 +1,5 @@
 abstract class TransactionIdGenerator {
-  static int _id;
+  static int _id = 0;
 
   static String getNextId() {
     _id++;
