@@ -40,20 +40,20 @@ class Peripheral {
       _manager.disconnectOrCancelPeripheralConnection(identifier);
 
   Future<void> discoverAllServicesAndCharacteristics({String transactionId}) =>
-      _manager.discoverAllServicesAndCharacteristics(this, transactionId);
+      _manager.discoverAllServicesAndCharacteristics(
+          this, transactionId ?? TransactionIdGenerator.getNextId());
 
   Future<List<Service>> services() => _manager.services(this);
 
   Future<List<Characteristic>> characteristics(String servicedUuid) =>
       _manager.characteristics(this, servicedUuid);
 
-  Future<int> rssi({String transactionId}) {
-    return _manager.rssi(this, transactionId);
-  }
+  Future<int> rssi({String transactionId}) =>
+      _manager.rssi(this, transactionId ?? TransactionIdGenerator.getNextId());
 
-  Future<int> requestMtu(int mtu, {String transactionId}) {
-    return _manager.requestMtu(this, mtu, transactionId);
-  }
+  Future<int> requestMtu(int mtu, {String transactionId}) =>
+      _manager.requestMtu(
+          this, mtu, transactionId ?? TransactionIdGenerator.getNextId());
 
   Future<CharacteristicWithValue> readCharacteristic(
     String serviceUUID,
@@ -64,7 +64,7 @@ class Peripheral {
         this,
         serviceUUID,
         characteristicUUID,
-        transactionId,
+        transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
   Future<Characteristic> writeCharacteristic(
@@ -80,7 +80,7 @@ class Peripheral {
         characteristicUUID,
         bytes,
         withResponse,
-        transactionId,
+        transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
   Future<List<Descriptor>> descriptorsForCharacteristic(
@@ -117,7 +117,7 @@ class Peripheral {
         this,
         serviceUUID,
         characteristicUUID,
-        transactionId,
+        transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
   @override

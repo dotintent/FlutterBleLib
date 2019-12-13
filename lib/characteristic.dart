@@ -40,7 +40,7 @@ class Characteristic extends InternalCharacteristic {
       _manager.readCharacteristicForIdentifier(
         service.peripheral,
         this,
-        transactionId,
+        transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
   Future<void> write(
@@ -53,14 +53,14 @@ class Characteristic extends InternalCharacteristic {
         this,
         bytes,
         withResponse,
-        transactionId,
+        transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
   Stream<Uint8List> monitor({String transactionId}) =>
       _manager.monitorCharacteristicForIdentifier(
         service.peripheral,
         this,
-        transactionId,
+        transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
   Future<List<Descriptor>> descriptors() =>

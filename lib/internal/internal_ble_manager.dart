@@ -36,11 +36,11 @@ class InternalBleManager
 
   @override
   Future<void> enableRadio({String transactionId}) =>
-      _bleLib.enableRadio(transactionId);
+      _bleLib.enableRadio(transactionId ?? TransactionIdGenerator.getNextId());
 
   @override
   Future<void> disableRadio({String transactionId}) =>
-      _bleLib.disableRadio(transactionId);
+      _bleLib.disableRadio(transactionId ?? TransactionIdGenerator.getNextId());
 
   @override
   Future<BluetoothState> bluetoothState() => _bleLib.state();
