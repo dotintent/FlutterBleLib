@@ -2,14 +2,7 @@
 [![Build Status](https://travis-ci.org/Polidea/FlutterBleLib.svg?branch=master)](https://travis-ci.org/Polidea/FlutterBleLib)
 [![pub package](https://img.shields.io/pub/vpre/flutter_ble_lib.svg)](https://pub.dev/packages/flutter_ble_lib)
 
-<p align="center">
-  <img
-    alt="FlutterBLE library logo"
-    src="site/flutter-ble-lib-logo.png"
-    height="300"
-    style="margin-top: 20px; margin-bottom: 20px;"
-  />
-</p>
+![Flutter BLE library logo](site/flutter-ble-lib-logo.png)
 
 # FlutterBleLib
 
@@ -39,7 +32,7 @@ Using that instance you then obtain an instance of _Peripheral_,
  All operations passing the Dart-native bridge are asynchronous,
   hence all operations in the plugin return either Future or Stream.
 
-For more informations, see [REFERENCE](https://github.com/Polidea/FlutterBleLib/blob/readme/REFERENCE.md).
+For more informations, see [REFERENCE](https://github.com/Polidea/FlutterBleLib/blob/master/REFERENCE.md).
 
 ### Initialising
 ```dart
@@ -117,10 +110,11 @@ peripheral.discoverAllServicesAndCharacteristics(transactionId: "discovery");
 bleManager.cancelTransaction("discovery");
 ```
 
-If no _transactionId_ has been specified, it is _null_. Each new operation with the same _transactionId_
-will cause the previous to be cancelled with error, if it hasn't finished yet.
+Each new operation with the same _transactionId_ will cause the previous one to be cancelled with error, if it hasn't finished yet.
+If _transactionId_ is set to null or it isn't specified at all, the library sets unique integer _transactionId_ to such operation.
 
-**NOTE: _null_ is a valid transactionId, which means every operation with default transactionId will cancel any ongoing operation with default _transactionId_.**
+**NOTE:
+Do not to set integers as _transactionId_ as they are used by the library.**
 
 ### Obtaining characteristics
 
@@ -165,6 +159,8 @@ Monitoring or reading a characteristic from _Peripheral_/_Service_ level
 
 ## Maintained by
 This library is maintained by [Polidea](http://www.polidea.com)
+
+[Contact us](https://www.polidea.com/project/?utm_source=Github&utm_medium=Npaid&utm_campaign=Kontakt&utm_term=Code&utm_content=GH_NOP_KKT_COD_FBLE001)
 
 [Learn more about Polidea's BLE services](https://www.polidea.com/services/ble).
 

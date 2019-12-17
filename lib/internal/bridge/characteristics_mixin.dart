@@ -167,9 +167,9 @@ mixin CharacteristicsMixin on FlutterBLE {
                   transactionId ?? "", characteristic.transactionId ?? ""),
         )
         .map((characteristicWithValue) => characteristicWithValue.value)
-        .transform(CancelOnErrorStreamTransformer())
         .handleError((errorJson) =>
-            _throwErrorIfMatchesWithTransactionId(errorJson, transactionId));
+            _throwErrorIfMatchesWithTransactionId(errorJson, transactionId))
+        .transform(CancelOnErrorStreamTransformer());
   }
 
   Stream<CharacteristicWithValue> monitorCharacteristicForDevice(
@@ -196,9 +196,9 @@ mixin CharacteristicsMixin on FlutterBLE {
             equalsIgnoreAsciiCase(serviceUuid, characteristic.service.uuid) &&
             equalsIgnoreAsciiCase(
                 transactionId ?? "", characteristic.transactionId ?? ""))
-        .transform(CancelOnErrorStreamTransformer())
         .handleError((errorJson) =>
-            _throwErrorIfMatchesWithTransactionId(errorJson, transactionId));
+            _throwErrorIfMatchesWithTransactionId(errorJson, transactionId))
+        .transform(CancelOnErrorStreamTransformer());
   }
 
   Stream<CharacteristicWithValue> monitorCharacteristicForService(
@@ -228,9 +228,9 @@ mixin CharacteristicsMixin on FlutterBLE {
               equalsIgnoreAsciiCase(
                   transactionId ?? "", characteristic.transactionId ?? ""),
         )
-        .transform(CancelOnErrorStreamTransformer())
         .handleError((errorJson) =>
-            _throwErrorIfMatchesWithTransactionId(errorJson, transactionId));
+            _throwErrorIfMatchesWithTransactionId(errorJson, transactionId))
+        .transform(CancelOnErrorStreamTransformer());
   }
 
   CharacteristicWithValueAndTransactionId
