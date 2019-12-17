@@ -40,7 +40,7 @@ class Characteristic extends InternalCharacteristic {
       _manager.readCharacteristicForIdentifier(
         service.peripheral,
         this,
-        transactionId,
+        transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
   Future<void> write(
@@ -53,14 +53,14 @@ class Characteristic extends InternalCharacteristic {
         this,
         bytes,
         withResponse,
-        transactionId,
+        transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
   Stream<Uint8List> monitor({String transactionId}) =>
       _manager.monitorCharacteristicForIdentifier(
         service.peripheral,
         this,
-        transactionId,
+        transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
   @override
@@ -92,7 +92,6 @@ class Characteristic extends InternalCharacteristic {
   String toString() {
     return 'Characteristic{service: $service, _manager: $_manager, uuid: $uuid, isReadable: $isReadable, isWritableWithResponse: $isWritableWithResponse, isWritableWithoutResponse: $isWritableWithoutResponse, isNotifiable: $isNotifiable, isIndicatable: $isIndicatable}';
   }
-
 }
 
 mixin WithValue on Characteristic {
@@ -122,6 +121,7 @@ class CharacteristicWithValue extends Characteristic with WithValue {
 
   @override
   String toString() {
-    return super.toString() + ' CharacteristicWithValue{value = ${value.toString()}';
+    return super.toString() +
+        ' CharacteristicWithValue{value = ${value.toString()}';
   }
 }

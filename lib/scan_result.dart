@@ -41,13 +41,16 @@ class AdvertisementData {
   List<String> solicitedServiceUUIDs;
 
   AdvertisementData._fromJson(Map<String, dynamic> json)
-      : manufacturerData = _decodeBase64OrNull(_ScanResultMetadata.manufacturerData),
-        serviceData = _getServiceDataOrNull(json[_ScanResultMetadata.serviceData]),
-        serviceUUIDs = _mapToListOfStringsOrNull(json[_ScanResultMetadata.serviceUuids]),
+      : manufacturerData =
+            _decodeBase64OrNull(_ScanResultMetadata.manufacturerData),
+        serviceData =
+            _getServiceDataOrNull(json[_ScanResultMetadata.serviceData]),
+        serviceUUIDs =
+            _mapToListOfStringsOrNull(json[_ScanResultMetadata.serviceUuids]),
         localName = json[_ScanResultMetadata.localName],
         txPowerLevel = json[_ScanResultMetadata.txPowerLevel],
-        solicitedServiceUUIDs =
-            _mapToListOfStringsOrNull(json[_ScanResultMetadata.solicitedServiceUuids]);
+        solicitedServiceUUIDs = _mapToListOfStringsOrNull(
+            json[_ScanResultMetadata.solicitedServiceUuids]);
 
   static Map<String, Int8List> _getServiceDataOrNull(
       Map<String, dynamic> serviceData) {

@@ -103,5 +103,3 @@ abstract class NativeConnectionState {
   static const String disconnecting = "disconnecting";
   static const String disconnected = "disconnected";
 }
-
-

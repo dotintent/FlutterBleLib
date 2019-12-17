@@ -2,7 +2,8 @@ part of internal_bridge_lib;
 
 mixin BluetoothStateMixin on FlutterBLE {
   final Stream<dynamic> _adapterStateChanges =
-      const EventChannel(ChannelName.adapterStateChanges).receiveBroadcastStream();
+      const EventChannel(ChannelName.adapterStateChanges)
+          .receiveBroadcastStream();
 
   Future<void> enableRadio(String transactionId) async {
     await _methodChannel.invokeMethod(

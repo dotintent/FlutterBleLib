@@ -19,7 +19,8 @@ class FlutterBleLib extends FlutterBLE
         DevicesMixin,
         CharacteristicsMixin {
   final Stream<dynamic> _restoreStateEvents =
-      const EventChannel(ChannelName.stateRestoreEvents).receiveBroadcastStream();
+      const EventChannel(ChannelName.stateRestoreEvents)
+          .receiveBroadcastStream();
 
   void registerManager(InternalBleManager manager) {
     _manager = manager;
@@ -32,7 +33,7 @@ class FlutterBleLib extends FlutterBLE
             return null;
           else {
             List<Map<String, dynamic>> restoredPeripheralsJson =
-              (jsonDecode(jsonString) as List<dynamic>).cast();
+                (jsonDecode(jsonString) as List<dynamic>).cast();
             return restoredPeripheralsJson
                 .map((peripheralJson) =>
                     Peripheral.fromJson(peripheralJson, _manager))
