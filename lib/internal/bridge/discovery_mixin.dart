@@ -106,7 +106,7 @@ mixin DiscoveryMixin on FlutterBLE {
       String characteristicUuid,
       ) async {
     String jsonString = await _methodChannel
-        .invokeMethod(MethodName.descriptorsForDevice, <String, dynamic>{
+        .invokeMethod(MethodName.descriptorsForService, <String, dynamic>{
       ArgumentName.serviceIdentifier: service._id,
       ArgumentName.characteristicUuid: characteristicUuid,
     }).catchError(
@@ -133,7 +133,7 @@ mixin DiscoveryMixin on FlutterBLE {
       Characteristic characteristic,
       ) async {
     String jsonString = await _methodChannel
-        .invokeMethod(MethodName.descriptorsForDevice, <String, dynamic>{
+        .invokeMethod(MethodName.descriptorsForCharacteristic, <String, dynamic>{
       ArgumentName.characteristicIdentifier: characteristic._id,
     }).catchError(
           (errorJson) => Future.error(

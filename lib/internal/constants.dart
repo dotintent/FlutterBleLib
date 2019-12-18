@@ -26,7 +26,7 @@ abstract class MethodName {
   static const String characteristicsForService = "characteristicsForService";
   static const String descriptorsForDevice = "descriptorsForDevice";
   static const String descriptorsForService = "descriptorsForService";
-  static const String descriptorsForCharacteristic = "descriptors";
+  static const String descriptorsForCharacteristic = "descriptorsForCharacteristic";
 
   static const String setLogLevel = "setLogLevel";
   static const String logLevel = "logLevel";
