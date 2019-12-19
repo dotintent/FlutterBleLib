@@ -71,17 +71,17 @@ mixin DiscoveryMixin on FlutterBLE {
   }
 
   Future<List<Descriptor>> descriptorsForPeripheral(
-      Peripheral peripheral,
-      String serviceUuid,
-      String characteristicUuid,
-      ) async {
+    Peripheral peripheral,
+    String serviceUuid,
+    String characteristicUuid,
+  ) async {
     String jsonString = await _methodChannel
         .invokeMethod(MethodName.descriptorsForDevice, <String, dynamic>{
       ArgumentName.deviceIdentifier: peripheral.identifier,
       ArgumentName.serviceUuid: serviceUuid,
       ArgumentName.characteristicUuid: characteristicUuid,
     }).catchError(
-          (errorJson) => Future.error(
+      (errorJson) => Future.error(
         BleError.fromJson(jsonDecode(errorJson.details)),
       ),
     );
@@ -90,27 +90,27 @@ mixin DiscoveryMixin on FlutterBLE {
 
     Service service = Service.fromJson(jsonObject, peripheral, _manager);
     Characteristic characteristic =
-    Characteristic.fromJson(jsonObject, service, _manager);
+        Characteristic.fromJson(jsonObject, service, _manager);
 
     List<Map<String, dynamic>> jsonDescriptors =
-    (jsonObject["descriptors"] as List<dynamic>).cast();
+        (jsonObject["descriptors"] as List<dynamic>).cast();
 
     return jsonDescriptors
         .map((jsonDescriptor) =>
-        Descriptor.fromJson(jsonDescriptor, characteristic, _manager))
+            Descriptor.fromJson(jsonDescriptor, characteristic, _manager))
         .toList();
   }
 
   Future<List<Descriptor>> descriptorsForService(
-      Service service,
-      String characteristicUuid,
-      ) async {
+    Service service,
+    String characteristicUuid,
+  ) async {
     String jsonString = await _methodChannel
         .invokeMethod(MethodName.descriptorsForService, <String, dynamic>{
       ArgumentName.serviceIdentifier: service._id,
       ArgumentName.characteristicUuid: characteristicUuid,
     }).catchError(
-          (errorJson) => Future.error(
+      (errorJson) => Future.error(
         BleError.fromJson(jsonDecode(errorJson.details)),
       ),
     );
@@ -118,35 +118,36 @@ mixin DiscoveryMixin on FlutterBLE {
     Map<String, dynamic> jsonObject = jsonDecode(jsonString);
 
     Characteristic characteristic =
-    Characteristic.fromJson(jsonObject, service, _manager);
+        Characteristic.fromJson(jsonObject, service, _manager);
 
     List<Map<String, dynamic>> jsonDescriptors =
-    (jsonObject["descriptors"] as List<dynamic>).cast();
+        (jsonObject["descriptors"] as List<dynamic>).cast();
 
     return jsonDescriptors
         .map((jsonDescriptor) =>
-        Descriptor.fromJson(jsonDescriptor, characteristic, _manager))
+            Descriptor.fromJson(jsonDescriptor, characteristic, _manager))
         .toList();
   }
 
   Future<List<Descriptor>> descriptorsForCharacteristic(
-      Characteristic characteristic,
-      ) async {
-    String jsonString = await _methodChannel
-        .invokeMethod(MethodName.descriptorsForCharacteristic, <String, dynamic>{
+    Characteristic characteristic,
+  ) async {
+    String jsonString = await _methodChannel.invokeMethod(
+        MethodName.descriptorsForCharacteristic, <String, dynamic>{
       ArgumentName.characteristicIdentifier: characteristic._id,
     }).catchError(
-          (errorJson) => Future.error(
+      (errorJson) => Future.error(
         BleError.fromJson(jsonDecode(errorJson.details)),
       ),
     );
 
-    List<Map<String, dynamic>> jsonDescriptors =
-    (jsonDecode(jsonString) as List<dynamic>).cast();
+    Map<String, dynamic> json = jsonDecode(jsonString);
 
+    List<Map<String, dynamic>> jsonDescriptors =
+        (json["descriptors"] as List<dynamic>).cast();
     return jsonDescriptors
         .map((jsonDescriptor) =>
-        Descriptor.fromJson(jsonDescriptor, characteristic, _manager))
+            Descriptor.fromJson(jsonDescriptor, characteristic, _manager))
         .toList();
   }
 }

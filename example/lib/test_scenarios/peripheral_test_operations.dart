@@ -40,27 +40,63 @@ class PeripheralTestOperations {
     });
   }
 
-  Future<void> discovery() async {
-    await _runWithErrorHandling(() async {
-      await peripheral.discoverAllServicesAndCharacteristics();
-      List<Service> services = await peripheral.services();
-      log("PRINTING SERVICES for \n${peripheral.name}");
-      services.forEach((service) => log("Found service \n${service.uuid}"));
-      Service service = services.first;
-      log("PRINTING CHARACTERISTICS FOR SERVICE \n${service.uuid}");
+  Future<void> discovery() async => await _runWithErrorHandling(() async {
+        await peripheral.discoverAllServicesAndCharacteristics();
+        List<Service> services = await peripheral.services();
+        log("PRINTING SERVICES for \n${peripheral.name}");
+        services.forEach((service) => log("Found service \n${service.uuid}"));
+        Service service = services.first;
+        log("PRINTING CHARACTERISTICS FOR SERVICE \n${service.uuid}");
 
-      List<Characteristic> characteristics = await service.characteristics();
-      characteristics.forEach((characteristic) {
-        log("${characteristic.uuid}");
+        List<Characteristic> characteristics = await service.characteristics();
+        characteristics.forEach((characteristic) {
+          log("${characteristic.uuid}");
+        });
+
+        log("PRINTING CHARACTERISTICS FROM \nPERIPHERAL for the same service");
+        List<Characteristic> characteristicFromPeripheral =
+            await peripheral.characteristics(service.uuid);
+        characteristicFromPeripheral.forEach((characteristic) =>
+            log("Found characteristic \n ${characteristic.uuid}"));
+
+        //------------ descriptors
+        List<Descriptor> descriptors;
+
+        var printDescriptors = () => descriptors.forEach((descriptor) {
+              log("Descriptor: ${descriptor.uuid}");
+            });
+
+        log("Using IR Temperature service/IR Temperature Data "
+            "characteristic for following descriptor tests");
+        log("PRINTING DESCRIPTORS FOR PERIPHERAL");
+
+        descriptors = await peripheral.descriptorsForCharacteristic(
+            SensorTagTemperatureUuids.temperatureService,
+            SensorTagTemperatureUuids.temperatureDataCharacteristic);
+
+        printDescriptors();
+        descriptors = null;
+
+        log("PRINTING DESCRIPTORS FOR SERVICE");
+        Service chosenService = services.firstWhere((elem) =>
+            elem.uuid ==
+            SensorTagTemperatureUuids.temperatureService.toLowerCase());
+
+        descriptors = await chosenService.descriptorsForCharacteristic(
+            SensorTagTemperatureUuids.temperatureDataCharacteristic);
+
+        printDescriptors();
+        descriptors = null;
+
+        List<Characteristic> temperatureCharacteristics =
+            await chosenService.characteristics();
+        Characteristic chosenCharacteristic = temperatureCharacteristics.first;
+
+        log("PRINTING DESCRIPTORS FOR CHARACTERISTIC");
+        descriptors = await chosenCharacteristic.descriptors();
+
+        printDescriptors();
       });
-
-      log("PRINTING CHARACTERISTICS FROM \nPERIPHERAL for the same service");
-      List<Characteristic> characteristicFromPeripheral =
-          await peripheral.characteristics(service.uuid);
-      characteristicFromPeripheral.forEach((characteristic) =>
-          log("Found characteristic \n ${characteristic.uuid}"));
-    });
-  }
 
   Future<void> testReadingRssi() async {
     await _runWithErrorHandling(() async {

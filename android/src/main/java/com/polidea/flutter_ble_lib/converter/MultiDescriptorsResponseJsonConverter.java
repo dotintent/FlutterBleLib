@@ -23,17 +23,19 @@ public class MultiDescriptorsResponseJsonConverter implements JsonConverter<List
     @Override
     public String toJson(List<Descriptor> descriptors) throws JSONException {
         JSONObject root = new JSONObject();
+        JSONArray array = new JSONArray();
         if (descriptors.size() > 0) {
             root.put(Metadata.SERVICE_ID, descriptors.get(0).getServiceId());
             root.put(Metadata.SERVICE_UUID, descriptors.get(0).getServiceUuid());
             root.put(Metadata.CHARACTERISTIC_ID, descriptors.get(0).getCharacteristicId());
             root.put(Metadata.CHARACTERISTIC_UUID, descriptors.get(0).getCharacteristicUuid());
-            JSONArray array = new JSONArray();
+
             for (Descriptor descriptor : descriptors) {
                 array.put(descriptorJsonConverter.toJsonObject(descriptor));
             }
-            root.put(Metadata.DESCRIPTORS, array);
+
         }
+        root.put(Metadata.DESCRIPTORS, array);
 
         return root.toString();
     }
