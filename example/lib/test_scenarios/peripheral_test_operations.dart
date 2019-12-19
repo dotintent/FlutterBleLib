@@ -492,6 +492,207 @@ class PeripheralTestOperations {
     });
   }
 
+  Future<void> readDescriptorForPeripheral() async =>
+      _runWithErrorHandling(() async {
+        log("READ DESCRIPTOR FOR PERIPHERAL");
+        log("Reading value...");
+        Uint8List value = await peripheral
+            .readDescriptor(
+              SensorTagTemperatureUuids.temperatureService,
+              SensorTagTemperatureUuids.temperatureDataCharacteristic,
+              SensorTagTemperatureUuids.characteristicUserDescriptionDescriptor,
+            )
+            .then((descriptorWithValue) => descriptorWithValue.value);
+        log("Value $value read!");
+      });
+
+  Future<void> readDescriptorForService() async =>
+      _runWithErrorHandling(() async {
+        log("READ DESCRIPTOR FOR SERVICE");
+
+        log("Fetching service");
+        List<Service> services = await peripheral.services();
+        Service chosenService = services.firstWhere((elem) =>
+            elem.uuid ==
+            SensorTagTemperatureUuids.temperatureService.toLowerCase());
+
+        log("Reading value...");
+        Uint8List value = await chosenService
+            .readDescriptor(
+              SensorTagTemperatureUuids.temperatureDataCharacteristic,
+              SensorTagTemperatureUuids.characteristicUserDescriptionDescriptor,
+            )
+            .then((descriptorWithValue) => descriptorWithValue.value);
+        log("Value $value read!");
+      });
+
+  Future<void> readDescriptorForCharacteristic() async =>
+      _runWithErrorHandling(() async {
+        log("READ DESCRIPTOR FOR CHARACTERISTIC");
+
+        log("Fetching service");
+        List<Service> services = await peripheral.services();
+        Service chosenService = services.firstWhere((elem) =>
+            elem.uuid ==
+            SensorTagTemperatureUuids.temperatureService.toLowerCase());
+
+        log("Fetching characteristic");
+        List<Characteristic> temperatureCharacteristics =
+            await chosenService.characteristics();
+        Characteristic chosenCharacteristic = temperatureCharacteristics.first;
+
+        log("Reading value...");
+        Uint8List value = await chosenCharacteristic
+            .readDescriptor(
+              SensorTagTemperatureUuids.characteristicUserDescriptionDescriptor,
+            )
+            .then((descriptorWithValue) => descriptorWithValue.value);
+        log("Value $value read!");
+      });
+
+  Future<void> readDescriptor() async => _runWithErrorHandling(() async {
+        log("READ DESCRIPTOR FOR DESCRIPTOR");
+
+        log("Fetching service");
+        List<Service> services = await peripheral.services();
+        Service chosenService = services.firstWhere((elem) =>
+            elem.uuid ==
+            SensorTagTemperatureUuids.temperatureService.toLowerCase());
+
+        log("Fetching characteristic");
+        List<Characteristic> temperatureCharacteristics =
+            await chosenService.characteristics();
+        Characteristic chosenCharacteristic = temperatureCharacteristics.first;
+
+        log("Fetching descriptor");
+        List<Descriptor> descriptors = await chosenCharacteristic.descriptors();
+        Descriptor chosenDescriptor = descriptors.firstWhere((elem) =>
+            elem.uuid ==
+            SensorTagTemperatureUuids.characteristicUserDescriptionDescriptor);
+
+        log("Reading value...");
+        Uint8List value = await chosenDescriptor.read();
+        log("Value $value read!");
+      });
+
+  Future<void> writeDescriptorForPeripheral({bool enable = false}) async =>
+      _runWithErrorHandling(() async {
+        log("WRITE DESCRIPTOR FOR PERIPHERAL");
+        log("Writing value...");
+        Descriptor value = await peripheral.writeDescriptor(
+          SensorTagTemperatureUuids.temperatureService,
+          SensorTagTemperatureUuids.temperatureDataCharacteristic,
+          SensorTagTemperatureUuids.characteristicUserDescriptionDescriptor,
+          Uint8List.fromList([0, enable ? 1 : 0, 0, 0]),
+        );
+        log("Descriptor $value written to!");
+      });
+
+  Future<void> writeDescriptorForService({bool enable = false}) async =>
+      _runWithErrorHandling(() async {
+        log("WRITE DESCRIPTOR FOR PERIPHERAL");
+
+        log("Fetching service");
+        List<Service> services = await peripheral.services();
+        Service chosenService = services.firstWhere((elem) =>
+            elem.uuid ==
+            SensorTagTemperatureUuids.temperatureService.toLowerCase());
+
+        log("Writing value...");
+        Descriptor value = await chosenService.writeDescriptor(
+          SensorTagTemperatureUuids.temperatureDataCharacteristic,
+          SensorTagTemperatureUuids.characteristicUserDescriptionDescriptor,
+          Uint8List.fromList([0, enable ? 1 : 0, 0, 0]),
+        );
+        log("Descriptor $value written to!");
+      });
+
+  Future<void> writeDescriptorForCharacteristic({bool enable = false}) async =>
+      _runWithErrorHandling(() async {
+        log("WRITE DESCRIPTOR FOR PERIPHERAL");
+
+        log("Fetching service");
+        List<Service> services = await peripheral.services();
+        Service chosenService = services.firstWhere((elem) =>
+            elem.uuid ==
+            SensorTagTemperatureUuids.temperatureService.toLowerCase());
+
+        log("Fetching characteristic");
+        List<Characteristic> temperatureCharacteristics =
+            await chosenService.characteristics();
+        Characteristic chosenCharacteristic = temperatureCharacteristics.first;
+
+        log("Writing value...");
+        Descriptor value = await chosenCharacteristic.writeDescriptor(
+          SensorTagTemperatureUuids.characteristicUserDescriptionDescriptor,
+          Uint8List.fromList([0, enable ? 1 : 0, 0, 0]),
+        );
+        log("Descriptor $value written to!");
+      });
+
+  Future<void> writeDescriptor({bool enable = false}) async =>
+      _runWithErrorHandling(() async {
+        log("WRITE DESCRIPTOR FOR PERIPHERAL");
+
+        log("Fetching service");
+        List<Service> services = await peripheral.services();
+        Service chosenService = services.firstWhere((elem) =>
+            elem.uuid ==
+            SensorTagTemperatureUuids.temperatureService.toLowerCase());
+
+        log("Fetching characteristic");
+        List<Characteristic> temperatureCharacteristics =
+            await chosenService.characteristics();
+        Characteristic chosenCharacteristic = temperatureCharacteristics.first;
+
+        log("Fetching descriptor");
+        List<Descriptor> descriptors = await chosenCharacteristic.descriptors();
+        Descriptor chosenDescriptor = descriptors.firstWhere((elem) =>
+            elem.uuid ==
+            SensorTagTemperatureUuids.characteristicUserDescriptionDescriptor);
+
+        log("Writing value...");
+        await chosenDescriptor.write(
+          Uint8List.fromList([0, enable ? 1 : 0, 0, 0]),
+        );
+        log("Descriptor $chosenDescriptor written to!");
+      });
+
+  Future<void> readWriteDescriptorForPeripheral() async =>
+      _runWithErrorHandling(() async {
+        await readDescriptorForPeripheral();
+        await writeDescriptorForPeripheral(enable: true);
+        await readDescriptorForPeripheral();
+        await writeDescriptorForPeripheral(enable: false);
+        await readDescriptorForPeripheral();
+      });
+
+  Future<void> readWriteDescriptorForService() async =>
+      _runWithErrorHandling(() async {
+        await readDescriptorForService();
+        await writeDescriptorForService(enable: true);
+        await readDescriptorForService();
+        await writeDescriptorForService(enable: false);
+        await readDescriptorForService();
+      });
+
+  Future<void> readWriteDescriptorForCharacteristic() async =>
+      _runWithErrorHandling(() async {
+        await readDescriptorForCharacteristic();
+        await writeDescriptorForCharacteristic(enable: true);
+        await readDescriptorForCharacteristic();
+        await writeDescriptorForCharacteristic(enable: false);
+        await readDescriptorForCharacteristic();
+      });
+
+  Future<void> readWriteDescriptor() async => _runWithErrorHandling(() async {
+        await readDescriptor();
+        await writeDescriptor(enable: true);
+        await readDescriptor();
+        await writeDescriptor(enable: false);
+        await readDescriptor();
+      });
+
   void _startMonitoringTemperature(
       Stream<Uint8List> characteristicUpdates, Function log) async {
     await monitoringStreamSubscription?.cancel();
@@ -536,7 +737,12 @@ class PeripheralTestOperations {
 
   Future<void> _runWithErrorHandling(TestedFunction testedFunction) async {
     try {
-      await testedFunction();
+      await testedFunction().catchError(
+        (e, st) {
+          logError("${e.runtimeType}: $e");
+        },
+        test: (error) => !(error is BleError),
+      );
     } on BleError catch (e) {
       logError("BleError caught: ${e.errorCode.value} ${e.reason}");
     } catch (e) {
