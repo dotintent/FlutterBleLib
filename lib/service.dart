@@ -76,7 +76,7 @@ class Service extends InternalService {
         this,
         characteristicUuid,
         descriptorUuid,
-        transactionId,
+        transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
   Future<Descriptor> writeDescriptor(
@@ -90,7 +90,7 @@ class Service extends InternalService {
         characteristicUuid,
         descriptorUuid,
         value,
-        transactionId,
+        transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
   @override

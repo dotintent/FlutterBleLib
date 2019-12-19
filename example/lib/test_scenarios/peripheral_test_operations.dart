@@ -737,12 +737,7 @@ class PeripheralTestOperations {
 
   Future<void> _runWithErrorHandling(TestedFunction testedFunction) async {
     try {
-      await testedFunction().catchError(
-        (e, st) {
-          logError("${e.runtimeType}: $e");
-        },
-        test: (error) => !(error is BleError),
-      );
+      await testedFunction();
     } on BleError catch (e) {
       logError("BleError caught: ${e.errorCode.value} ${e.reason}");
     } catch (e) {

@@ -22,10 +22,17 @@ class Descriptor extends InternalDescriptor {
   }
 
   Future<Uint8List> read({String transactionId}) =>
-      _manager.readDescriptorForIdentifier(this, transactionId);
+      _manager.readDescriptorForIdentifier(
+        this,
+        transactionId ?? TransactionIdGenerator.getNextId(),
+      );
 
   Future<void> write(Uint8List value, {String transactionId}) =>
-      _manager.writeDescriptorForIdentifier(this, value, transactionId);
+      _manager.writeDescriptorForIdentifier(
+        this,
+        value,
+        transactionId ?? TransactionIdGenerator.getNextId(),
+      );
 }
 
 class DescriptorWithValue extends Descriptor with WithValue {

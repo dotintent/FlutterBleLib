@@ -70,14 +70,23 @@ class Characteristic extends InternalCharacteristic {
     String descriptorUuid, {
     String transactionId,
   }) =>
-      _manager.readDescriptorForCharacteristic(this, descriptorUuid, transactionId);
+      _manager.readDescriptorForCharacteristic(
+        this,
+        descriptorUuid,
+        transactionId ?? TransactionIdGenerator.getNextId(),
+      );
 
   Future<Descriptor> writeDescriptor(
     String descriptorUuid,
     Uint8List value, {
     String transactionId,
   }) =>
-      _manager.writeDescriptorForCharacteristic(this, descriptorUuid, value, transactionId);
+      _manager.writeDescriptorForCharacteristic(
+        this,
+        descriptorUuid,
+        value,
+        transactionId ?? TransactionIdGenerator.getNextId(),
+      );
 
   @override
   bool operator ==(Object other) =>
