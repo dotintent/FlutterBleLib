@@ -10,7 +10,7 @@ mixin DescriptorsMixin on FlutterBLE {
   ) =>
       _methodChannel
           .invokeMethod(
-            MethodName.readCharacteristicForDevice,
+            MethodName.readDescriptorForDevice,
             <String, dynamic>{
               ArgumentName.deviceIdentifier: peripheral.identifier,
               ArgumentName.serviceUuid: serviceUuid,
@@ -38,7 +38,7 @@ mixin DescriptorsMixin on FlutterBLE {
   ) =>
       _methodChannel
           .invokeMethod(
-            MethodName.readCharacteristicForDevice,
+            MethodName.readDescriptorForService,
             <String, dynamic>{
               ArgumentName.serviceIdentifier: service._id,
               ArgumentName.characteristicUuid: characteristicUuid,
@@ -62,7 +62,7 @@ mixin DescriptorsMixin on FlutterBLE {
   ) =>
       _methodChannel
           .invokeMethod(
-            MethodName.readCharacteristicForDevice,
+            MethodName.readDescriptorForCharacteristic,
             <String, dynamic>{
               ArgumentName.characteristicIdentifier: characteristic._id,
               ArgumentName.descriptorUuid: descriptorUuid,
@@ -83,7 +83,7 @@ mixin DescriptorsMixin on FlutterBLE {
   ) =>
       _methodChannel
           .invokeMethod(
-            MethodName.readCharacteristicForDevice,
+            MethodName.readDescriptorForIdentifier,
             <String, dynamic>{
               ArgumentName.descriptorIdentifier: descriptor._id,
               ArgumentName.transactionId: transactionId,
@@ -136,7 +136,7 @@ mixin DescriptorsMixin on FlutterBLE {
   ) =>
       _methodChannel
           .invokeMethod(
-            MethodName.writeDescriptorForDevice,
+            MethodName.writeDescriptorForService,
             <String, dynamic>{
               ArgumentName.serviceIdentifier: service._id,
               ArgumentName.characteristicUuid: characteristicUuid,
@@ -161,7 +161,7 @@ mixin DescriptorsMixin on FlutterBLE {
   ) =>
       _methodChannel
           .invokeMethod(
-            MethodName.writeDescriptorForDevice,
+            MethodName.writeDescriptorForCharacteristic,
             <String, dynamic>{
               ArgumentName.characteristicIdentifier: characteristic._id,
               ArgumentName.descriptorUuid: descriptorUuid,
@@ -181,7 +181,7 @@ mixin DescriptorsMixin on FlutterBLE {
     String transactionId,
   ) =>
       _methodChannel.invokeMethod(
-        MethodName.writeDescriptorForDevice,
+        MethodName.writeDescriptorForIdentifier,
         <String, dynamic>{
           ArgumentName.descriptorIdentifier: descriptor._id,
           ArgumentName.value: value,
