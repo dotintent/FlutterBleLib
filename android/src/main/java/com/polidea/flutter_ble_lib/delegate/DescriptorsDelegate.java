@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.polidea.flutter_ble_lib.SafeMainThreadResolver;
 import com.polidea.flutter_ble_lib.constant.ArgumentKey;
 import com.polidea.flutter_ble_lib.constant.MethodName;
+import com.polidea.flutter_ble_lib.converter.BleErrorJsonConverter;
 import com.polidea.flutter_ble_lib.converter.DescriptorJsonConverter;
 import com.polidea.multiplatformbleadapter.BleAdapter;
 import com.polidea.multiplatformbleadapter.Descriptor;
@@ -37,7 +38,7 @@ public class DescriptorsDelegate extends CallDelegate {
     );
 
     private BleAdapter bleAdapter;
-    private ErrorConverter errorConverter = new ErrorConverter();
+    private BleErrorJsonConverter errorConverter = new BleErrorJsonConverter();
     private DescriptorJsonConverter descriptorJsonConverter = new DescriptorJsonConverter();
 
     public DescriptorsDelegate(BleAdapter bleAdapter) {
@@ -125,7 +126,7 @@ public class DescriptorsDelegate extends CallDelegate {
         }
     }
 
-    private SafeMainThreadResolver<Descriptor> createMainThreadResolverForResult(final MethodChannel.Result result) {
+    private SafeMainThreadResolver<Descriptor> createMainThreadResolverForResult(final MethodChannel.Result result, final String transactionId) {
         return new SafeMainThreadResolver<>(
                 new OnSuccessCallback<Descriptor>() {
                     @Override
@@ -143,7 +144,8 @@ public class DescriptorsDelegate extends CallDelegate {
                     public void onError(BleError error) {
                         result.error(
                                 String.valueOf(error.errorCode.code),
-                                error.reason, errorConverter.toError(error)
+                                error.reason,
+                                errorConverter.toJson(error, transactionId)
                         );
                     }
                 }
@@ -154,7 +156,7 @@ public class DescriptorsDelegate extends CallDelegate {
             final int descriptorId,
             final String transactionId,
             final MethodChannel.Result result) {
-        final SafeMainThreadResolver<Descriptor> safeMainThreadResolver = createMainThreadResolverForResult(result);
+        final SafeMainThreadResolver<Descriptor> safeMainThreadResolver = createMainThreadResolverForResult(result, transactionId);
 
         bleAdapter.readDescriptor(
                 descriptorId,
@@ -169,7 +171,7 @@ public class DescriptorsDelegate extends CallDelegate {
             final String descriptorUuid,
             final String transactionId,
             final MethodChannel.Result result) {
-        final SafeMainThreadResolver<Descriptor> safeMainThreadResolver = createMainThreadResolverForResult(result);
+        final SafeMainThreadResolver<Descriptor> safeMainThreadResolver = createMainThreadResolverForResult(result, transactionId);
 
         bleAdapter.readDescriptorForCharacteristic(
                 characteristicId,
@@ -186,7 +188,7 @@ public class DescriptorsDelegate extends CallDelegate {
             final String descriptorUuid,
             final String transactionId,
             final MethodChannel.Result result) {
-        final SafeMainThreadResolver<Descriptor> safeMainThreadResolver = createMainThreadResolverForResult(result);
+        final SafeMainThreadResolver<Descriptor> safeMainThreadResolver = createMainThreadResolverForResult(result, transactionId);
 
         bleAdapter.readDescriptorForService(
                 serviceId,
@@ -205,7 +207,7 @@ public class DescriptorsDelegate extends CallDelegate {
             final String descriptorUuid,
             final String transactionId,
             final MethodChannel.Result result) {
-        final SafeMainThreadResolver<Descriptor> safeMainThreadResolver = createMainThreadResolverForResult(result);
+        final SafeMainThreadResolver<Descriptor> safeMainThreadResolver = createMainThreadResolverForResult(result, transactionId);
 
         bleAdapter.readDescriptorForDevice(
                 deviceId,
@@ -223,7 +225,7 @@ public class DescriptorsDelegate extends CallDelegate {
             final byte[] value,
             final String transactionId,
             final MethodChannel.Result result) {
-        final SafeMainThreadResolver<Descriptor> safeMainThreadResolver = createMainThreadResolverForResult(result);
+        final SafeMainThreadResolver<Descriptor> safeMainThreadResolver = createMainThreadResolverForResult(result, transactionId);
 
         bleAdapter.writeDescriptor(
                 descriptorId,
@@ -240,7 +242,7 @@ public class DescriptorsDelegate extends CallDelegate {
             final byte[] value,
             final String transactionId,
             final MethodChannel.Result result) {
-        final SafeMainThreadResolver<Descriptor> safeMainThreadResolver = createMainThreadResolverForResult(result);
+        final SafeMainThreadResolver<Descriptor> safeMainThreadResolver = createMainThreadResolverForResult(result, transactionId);
 
         bleAdapter.writeDescriptorForCharacteristic(
                 characteristicId,
@@ -259,7 +261,7 @@ public class DescriptorsDelegate extends CallDelegate {
             final byte[] value,
             final String transactionId,
             final MethodChannel.Result result) {
-        final SafeMainThreadResolver<Descriptor> safeMainThreadResolver = createMainThreadResolverForResult(result);
+        final SafeMainThreadResolver<Descriptor> safeMainThreadResolver = createMainThreadResolverForResult(result, transactionId);
 
         bleAdapter.writeDescriptorForService(
                 serviceId,
@@ -280,7 +282,7 @@ public class DescriptorsDelegate extends CallDelegate {
             final byte[] value,
             final String transactionId,
             final MethodChannel.Result result) {
-        final SafeMainThreadResolver<Descriptor> safeMainThreadResolver = createMainThreadResolverForResult(result);
+        final SafeMainThreadResolver<Descriptor> safeMainThreadResolver = createMainThreadResolverForResult(result, transactionId);
 
         bleAdapter.writeDescriptorForDevice(
                 deviceId,

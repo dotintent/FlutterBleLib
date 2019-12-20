@@ -189,6 +189,15 @@ mixin DescriptorsMixin on FlutterBLE {
         },
       ).catchError(_handleError);
 
-  Future<void> _handleError(Object jsonError, [dynamic stacktrace]) =>
-      Future.error(BleError.fromJson(jsonDecode(jsonError)));
+  Future<void> _handleError(
+    Object error, [
+    dynamic stacktrace,
+  ]) =>
+      Future.error(
+        BleError.fromJson(
+          jsonDecode(
+            (error as PlatformException).details,
+          ),
+        ),
+      );
 }
