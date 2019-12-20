@@ -757,6 +757,9 @@ class PeripheralTestOperations {
     } on BleError catch (e) {
       logError("BleError caught: ${e.errorCode.value} ${e.reason}");
     } catch (e) {
+      if (e is Error) {
+        debugPrintStack(stackTrace: e.stackTrace);
+      }
       logError("${e.runtimeType}: $e");
     }
   }

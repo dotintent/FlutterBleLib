@@ -41,6 +41,6 @@ class DescriptorWithValue extends Descriptor with WithValue {
     Characteristic characteristic,
     ManagerForDescriptor manager,
   ) : super.fromJson(jsonObject, characteristic, manager) {
-    value = jsonObject[_DescriptorMetadata.value];
+    value = base64Decode(jsonObject[_DescriptorMetadata.value]);
   }
 }
