@@ -6,16 +6,16 @@ PODS:
   - MultiplatformBleAdapter (0.0.4)
 
 DEPENDENCIES:
-  - Flutter (from `.symlinks/flutter/ios-release`)
+  - Flutter (from `.symlinks/flutter/ios`)
   - flutter_ble_lib (from `.symlinks/plugins/flutter_ble_lib/ios`)
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  https://github.com/CocoaPods/Specs.git:
     - MultiplatformBleAdapter
 
 EXTERNAL SOURCES:
   Flutter:
-    :path: ".symlinks/flutter/ios-release"
+    :path: ".symlinks/flutter/ios"
   flutter_ble_lib:
     :path: ".symlinks/plugins/flutter_ble_lib/ios"
 
@@ -26,4 +26,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 7fb83752f59ead6285236625b82473f90b1cb932
 
-COCOAPODS: 1.7.5
+COCOAPODS: 1.8.4
