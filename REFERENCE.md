@@ -113,9 +113,13 @@ All of the following methods belong to Peripheral instance.
           Duration timeout});
 ```
 Attempts to connect to the peripheral.
+
 `autoConnect` waits for device to be discoverable before attempting connection; Android-specific. [See more](https://github.com/Polidea/RxAndroidBle#auto-connect) 
-`requestMtu` defaults to 23.
+
+`requestMtu` defaults to 0, which means the library won't set it. Valid values according to BLE specification are between 23 and 512. **IMPORTANT** can be requested only once: if you pass this argument, then every call to`requestMtu()` will fail. 
+
 `refreshGatt` forces GATT to refresh its cache; Android-specific.
+
 If connection has not been established by `timeout`, the operation fails. `timeout` defaults to 30 seconds.
 ```dart
   Stream<PeripheralConnectionState> observeConnectionState(
@@ -165,7 +169,10 @@ Reads current RSSI if the device is connected.
   }
 ```
 Request peripheral to set a different MTU. On iOS only returns the current value.
-Return the MTU set by peripheral after request.
+Returns the MTU set by peripheral after the request.
+
+MTU can be requested only once in the lifetime of the connection, meaning this call will fail if it was set prior by either passing a valid value to `connect(requestMtu: int)` or calling this function.
+
 ## Characteristic convenience methods
 Finds first service with specified UUID and first characteristic
  in said service with specified UUID and then performs the requested operation.
