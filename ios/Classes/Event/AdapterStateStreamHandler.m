@@ -19,14 +19,10 @@
     }
 }
 
-- (void)onNewAdapterState:(NSArray *)bluetoothAdapterState {
+- (void)onNewAdapterState:(NSString *)bluetoothAdapterState {
     @synchronized (self) {
         if (adapterStateSink != nil) {
-            if (bluetoothAdapterState[0] == [NSNull null]) {
-                adapterStateSink(bluetoothAdapterState[1]);
-            } else {
-                adapterStateSink([FlutterErrorFactory flutterErrorFromJSONString:bluetoothAdapterState[0]]);
-            }
+            adapterStateSink(bluetoothAdapterState);
         }
     }
 }
