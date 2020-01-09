@@ -116,7 +116,7 @@ Attempts to connect to the peripheral.
 
 `autoConnect` waits for device to be discoverable before attempting connection; Android-specific. [See more](https://github.com/Polidea/RxAndroidBle#auto-connect) 
 
-`requestMtu` defaults to 0, which means the library won't set it. Valid values according to BLE specification are between 23 and 512. **IMPORTANT** can be requested only once: if you pass this argument, then every call to`requestMtu()` will fail. 
+`requestMtu` defaults to 0, which means the library won't set it. Valid values according to BLE specification are between 23 and 512. **IMPORTANT** can be requested only once: if you pass this argument, then every call to `requestMtu()` will fail. 
 
 `refreshGatt` forces GATT to refresh its cache; Android-specific.
 
