@@ -42,7 +42,7 @@ class AdvertisementData {
 
   AdvertisementData._fromJson(Map<String, dynamic> json)
       : manufacturerData =
-            _decodeBase64OrNull(_ScanResultMetadata.manufacturerData),
+            _decodeBase64OrNull(json[_ScanResultMetadata.manufacturerData]),
         serviceData =
             _getServiceDataOrNull(json[_ScanResultMetadata.serviceData]),
         serviceUUIDs =
