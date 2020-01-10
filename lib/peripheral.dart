@@ -6,8 +6,6 @@ abstract class _PeripheralMetadata {
 }
 
 class Peripheral {
-  static const int _minimumMtu = 23;
-
   ManagerForPeripheral _manager;
 
   String name;
@@ -20,7 +18,7 @@ class Peripheral {
 
   Future<void> connect(
           {bool isAutoConnect = false,
-          int requestMtu = _minimumMtu,
+          int requestMtu = 0,
           bool refreshGatt = false,
           Duration timeout}) =>
       _manager.connectToPeripheral(identifier,
