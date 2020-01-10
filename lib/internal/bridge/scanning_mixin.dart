@@ -14,10 +14,6 @@ mixin ScanningMixin on FlutterBLE {
     List<String> uuids,
     bool allowDuplicates,
   ) async* {
-    if (_scanEvents == null) {
-      _prepareScanEventsStream();
-    }
-
     _methodChannel.invokeMethod(
       MethodName.startDeviceScan,
       <String, dynamic>{
@@ -27,6 +23,10 @@ mixin ScanningMixin on FlutterBLE {
         ArgumentName.allowDuplicates: allowDuplicates,
       },
     );
+
+    if (_scanEvents == null) {
+      _prepareScanEventsStream();
+    }
 
     yield* _scanEvents.handleError(
       (errorJson) {
