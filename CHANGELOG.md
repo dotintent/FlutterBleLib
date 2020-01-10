@@ -1,3 +1,11 @@
+## 2.1.0
+
+* **BREAKING** ScanResult.AdvertisementData.ManufacturerData has changed type from Int8List to Uint8List
+* Fix issue with invalid value of manufacturer data in scan results
+* Fix issue with initialising plugin from a service without an active activity
+* Update README with information about permissions
+* Fix issue with default value of MTU when connecting to a peripheral on Android
+
 ## 2.0.1
 
 * Fix issue with automatically generated transaction IDs.
