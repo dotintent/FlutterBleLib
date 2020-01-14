@@ -5,6 +5,7 @@
 * Fix issue with initialising plugin from a service without an active activity
 * Update README with information about permissions
 * Fix issue with default value of MTU when connecting to a peripheral on Android
+* Fix issue where a few notifications right after start of monitoring a characteristic could get lost
 
 ## 2.0.1
 
