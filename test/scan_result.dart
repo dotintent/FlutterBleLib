@@ -8,12 +8,15 @@ void main() {
   group("Test manufacturer data deserialization:", () {
     void testManufacturerDataDeserialization(Uint8List manufacturerData) {
       test("$manufacturerData is deserialized correctly", () {
-        Uint8List manufacturerData = Uint8List.fromList([0, 1, 2]);
+        //given
         String serializedScanResult =
             _createJsonScanResult(manufacturerData: manufacturerData);
 
+        //when
         ScanResult scanResult =
             ScanResult.fromJson(jsonDecode(serializedScanResult), null);
+
+        //then
         expect(scanResult.advertisementData.manufacturerData,
             equals(manufacturerData));
       });
@@ -27,21 +30,26 @@ void main() {
   group("Test service data deserialization", () {
     void testServiceDataDeserialization(Map<String, Uint8List> serviceData) {
       test("$serviceData is deserialized correctly", () {
+        //given
         String serializedScanResult =
             _createJsonScanResult(serviceData: serviceData);
 
+        //when
         ScanResult scanResult =
             ScanResult.fromJson(jsonDecode(serializedScanResult), null);
+
+        //then
         expect(scanResult.advertisementData.serviceData, equals(serviceData));
       });
     }
 
     testServiceDataDeserialization({
-      "1": Uint8List.fromList([0, 1, 2]),
-      "2": Uint8List.fromList([0, 0, 0, 0, 0]),
+      "uuid1": Uint8List.fromList([0, 1, 2]),
+      "uuid2": Uint8List.fromList([0, 0, 0, 0, 0]),
     });
 
     testServiceDataDeserialization(null);
+    testServiceDataDeserialization({});
   });
 }
 
@@ -58,13 +66,21 @@ String _createJsonScanResult({
   int txPowerLevel,
   List<String> solicitedServiceUuids,
 }) {
+
+  String serializedManufacturerData;
+  if (manufacturerData != null) {
+    serializedManufacturerData = "\"${base64Encode(manufacturerData)}\"";
+  } else {
+    serializedManufacturerData = "null";
+  }
+
   return "{"
       "\"id\": \"$id\","
       "\"name\": \"$name\","
       "\"rssi\": $rssi,"
       "\"isConnectable\": $isConnectable,"
       "\"overflowServiceUuids\": ${_jsonizeList(overflowServiceUuids)},"
-      "\"manufacturerData\": \"${manufacturerData != null ? base64Encode(manufacturerData) : ""}\","
+      "\"manufacturerData\": $serializedManufacturerData,"
       "\"serviceData\": ${_jsonizeMap(serviceData)},"
       "\"serviceUuids\": ${_jsonizeList(serviceUuids)},"
       "\"localName\": \"$localName\","
