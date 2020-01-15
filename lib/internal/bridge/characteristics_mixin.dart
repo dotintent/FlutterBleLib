@@ -155,7 +155,7 @@ mixin CharacteristicsMixin on FlutterBLE {
           },
         );
 
-    bool Function(CharacteristicWithValueAndTransactionId) filter =
+    bool Function(CharacteristicWithValueAndTransactionId) characteristicFilter =
         (characteristic) =>
             characteristic._id == characteristicIdentifier &&
             equalsIgnoreAsciiCase(
@@ -163,7 +163,7 @@ mixin CharacteristicsMixin on FlutterBLE {
 
     return _createMonitoringStream(
       startMonitoring,
-      filter,
+      characteristicFilter,
       peripheral,
       transactionId,
     ).map((characteristicWithValue) => characteristicWithValue.value);
@@ -185,7 +185,7 @@ mixin CharacteristicsMixin on FlutterBLE {
           },
         );
 
-    bool Function(CharacteristicWithValueAndTransactionId) filter =
+    bool Function(CharacteristicWithValueAndTransactionId) characteristicsFilter =
         (characteristic) =>
             equalsIgnoreAsciiCase(characteristicUUID, characteristic.uuid) &&
             equalsIgnoreAsciiCase(serviceUuid, characteristic.service.uuid) &&
@@ -194,7 +194,7 @@ mixin CharacteristicsMixin on FlutterBLE {
 
     return _createMonitoringStream(
       startMonitoring,
-      filter,
+      characteristicsFilter,
       peripheral,
       transactionId,
     );
@@ -215,7 +215,7 @@ mixin CharacteristicsMixin on FlutterBLE {
           },
         );
 
-    bool Function(CharacteristicWithValueAndTransactionId) filter =
+    bool Function(CharacteristicWithValueAndTransactionId) characteristicFilter =
         (characteristic) =>
             equalsIgnoreAsciiCase(characteristicUUID, characteristic.uuid) &&
             serviceIdentifier == characteristic.service._id &&
@@ -224,7 +224,7 @@ mixin CharacteristicsMixin on FlutterBLE {
 
     return _createMonitoringStream(
       startMonitoring,
-      filter,
+      characteristicFilter,
       peripheral,
       transactionId,
     );
