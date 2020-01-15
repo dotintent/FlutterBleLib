@@ -155,8 +155,8 @@ mixin CharacteristicsMixin on FlutterBLE {
           },
         );
 
-    bool Function(CharacteristicWithValueAndTransactionId) characteristicFilter =
-        (characteristic) =>
+    bool Function(CharacteristicWithValueAndTransactionId)
+        characteristicFilter = (characteristic) =>
             characteristic._id == characteristicIdentifier &&
             equalsIgnoreAsciiCase(
                 transactionId ?? "", characteristic.transactionId ?? "");
@@ -185,8 +185,8 @@ mixin CharacteristicsMixin on FlutterBLE {
           },
         );
 
-    bool Function(CharacteristicWithValueAndTransactionId) characteristicsFilter =
-        (characteristic) =>
+    bool Function(CharacteristicWithValueAndTransactionId)
+        characteristicsFilter = (characteristic) =>
             equalsIgnoreAsciiCase(characteristicUUID, characteristic.uuid) &&
             equalsIgnoreAsciiCase(serviceUuid, characteristic.service.uuid) &&
             equalsIgnoreAsciiCase(
@@ -215,8 +215,8 @@ mixin CharacteristicsMixin on FlutterBLE {
           },
         );
 
-    bool Function(CharacteristicWithValueAndTransactionId) characteristicFilter =
-        (characteristic) =>
+    bool Function(CharacteristicWithValueAndTransactionId)
+        characteristicFilter = (characteristic) =>
             equalsIgnoreAsciiCase(characteristicUUID, characteristic.uuid) &&
             serviceIdentifier == characteristic.service._id &&
             equalsIgnoreAsciiCase(
@@ -256,7 +256,9 @@ mixin CharacteristicsMixin on FlutterBLE {
       },
     );
 
-    streamController.addStream(stream, cancelOnError: true);
+    streamController
+        .addStream(stream, cancelOnError: true)
+        .then((_) => streamController?.close());
 
     return streamController.stream;
   }
