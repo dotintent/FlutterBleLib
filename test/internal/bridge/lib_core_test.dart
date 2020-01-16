@@ -207,19 +207,19 @@ void main() {
   });
 
   test(
-    "Monitoring transaction is cancelled after unsubscribing from monitoring stream",
+    "Monitoring transaction is cancelled after unsubscribing all subscribers from monitoring stream",
     () async {
       //given
-      Stream<Uint8List> monitoringStream = bleLib
-          .monitorCharacteristicForIdentifier(peripheral, 1, "1");
-      StreamSubscription subscription = monitoringStream
-          .listen((_) {});
+      Stream<Uint8List> monitoringStream =
+          bleLib.monitorCharacteristicForIdentifier(peripheral, 1, "1");
+      StreamSubscription subscription = monitoringStream.listen((_) {});
 
       StreamSubscription subscription1 = monitoringStream.listen((_) {});
 
       int calledCount = 0;
       methodChannel.setMockMethodCallHandler((call) {
-        if (call.method == MethodName.cancelTransaction) {
+        if (call.method == MethodName.cancelTransaction &&
+            call.arguments[ArgumentName.transactionId] == "1") {
           calledCount++;
         }
         return Future.value("");
@@ -231,6 +231,58 @@ void main() {
 
       //then
       expect(calledCount, 1);
+    },
+  );
+
+  test(
+    "Monitoring transaction is cancelled after unsubscribing the only subscriber from monitoring stream",
+    () async {
+      //given
+      Stream<Uint8List> monitoringStream =
+          bleLib.monitorCharacteristicForIdentifier(peripheral, 1, "1");
+      StreamSubscription subscription = monitoringStream.listen((_) {});
+
+      int calledCount = 0;
+      methodChannel.setMockMethodCallHandler((call) {
+        if (call.method == MethodName.cancelTransaction &&
+            call.arguments[ArgumentName.transactionId] == "1") {
+          calledCount++;
+        }
+        return Future.value("");
+      });
+
+      //when
+      await subscription.cancel();
+
+      //then
+      expect(calledCount, 1);
+    },
+  );
+
+  test(
+    "Monitoring transaction is not cancelled after unsubscribing only one subscriber from monitoring stream",
+    () async {
+      //given
+      Stream<Uint8List> monitoringStream =
+          bleLib.monitorCharacteristicForIdentifier(peripheral, 1, "1");
+      StreamSubscription subscription = monitoringStream.listen((_) {});
+
+      StreamSubscription subscription1 = monitoringStream.listen((_) {});
+
+      int calledCount = 0;
+      methodChannel.setMockMethodCallHandler((call) {
+        if (call.method == MethodName.cancelTransaction &&
+            call.arguments[ArgumentName.transactionId] == "1") {
+          calledCount++;
+        }
+        return Future.value("");
+      });
+
+      //when
+      await subscription.cancel();
+
+      //then
+      expect(calledCount, 0);
     },
   );
 }
