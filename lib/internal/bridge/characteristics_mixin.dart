@@ -251,7 +251,6 @@ mixin CharacteristicsMixin on FlutterBLE {
     streamController = StreamController.broadcast(
       onListen: onListen,
       onCancel: () {
-        streamController?.close();
         cancelTransaction(transactionId);
       },
     );
