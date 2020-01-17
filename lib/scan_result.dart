@@ -33,8 +33,8 @@ class ScanResult {
 }
 
 class AdvertisementData {
-  Int8List manufacturerData;
-  Map<String, Int8List> serviceData;
+  Uint8List manufacturerData;
+  Map<String, Uint8List> serviceData;
   List<String> serviceUUIDs;
   String localName;
   int txPowerLevel;
@@ -42,7 +42,7 @@ class AdvertisementData {
 
   AdvertisementData._fromJson(Map<String, dynamic> json)
       : manufacturerData =
-            _decodeBase64OrNull(_ScanResultMetadata.manufacturerData),
+            _decodeBase64OrNull(json[_ScanResultMetadata.manufacturerData]),
         serviceData =
             _getServiceDataOrNull(json[_ScanResultMetadata.serviceData]),
         serviceUUIDs =
@@ -52,16 +52,16 @@ class AdvertisementData {
         solicitedServiceUUIDs = _mapToListOfStringsOrNull(
             json[_ScanResultMetadata.solicitedServiceUuids]);
 
-  static Map<String, Int8List> _getServiceDataOrNull(
+  static Map<String, Uint8List> _getServiceDataOrNull(
       Map<String, dynamic> serviceData) {
     return serviceData?.map(
-      (key, value) => MapEntry(key, Int8List.fromList(base64Decode(value))),
+      (key, value) => MapEntry(key, base64Decode(value)),
     );
   }
 
-  static Int8List _decodeBase64OrNull(String base64Value) {
+  static Uint8List _decodeBase64OrNull(String base64Value) {
     if (base64Value != null)
-      return Int8List.fromList(base64.decode(base64Value));
+      return base64.decode(base64Value);
     else
       return null;
   }
