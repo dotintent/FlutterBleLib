@@ -147,29 +147,26 @@ mixin CharacteristicsMixin on FlutterBLE {
     int characteristicIdentifier,
     String transactionId,
   ) {
-    _methodChannel.invokeMethod(
-      MethodName.monitorCharacteristicForIdentifier,
-      <String, dynamic>{
-        ArgumentName.characteristicIdentifier: characteristicIdentifier,
-        ArgumentName.transactionId: transactionId,
-      },
-    );
-    return _characteristicsMonitoringEvents
-        .map(
-          (rawJsonValue) =>
-              _parseCharacteristicWithValueWithTransactionIdResponse(
-                  peripheral, rawJsonValue),
-        )
-        .where(
-          (characteristic) =>
-              characteristic._id == characteristicIdentifier &&
-              equalsIgnoreAsciiCase(
-                  transactionId ?? "", characteristic.transactionId ?? ""),
-        )
-        .map((characteristicWithValue) => characteristicWithValue.value)
-        .handleError((errorJson) =>
-            _throwErrorIfMatchesWithTransactionId(errorJson, transactionId))
-        .transform(CancelOnErrorStreamTransformer());
+    void Function() startMonitoring = () => _methodChannel.invokeMethod(
+          MethodName.monitorCharacteristicForIdentifier,
+          <String, dynamic>{
+            ArgumentName.characteristicIdentifier: characteristicIdentifier,
+            ArgumentName.transactionId: transactionId,
+          },
+        );
+
+    bool Function(CharacteristicWithValueAndTransactionId)
+        characteristicFilter = (characteristic) =>
+            characteristic._id == characteristicIdentifier &&
+            equalsIgnoreAsciiCase(
+                transactionId ?? "", characteristic.transactionId ?? "");
+
+    return _createMonitoringStream(
+      startMonitoring,
+      characteristicFilter,
+      peripheral,
+      transactionId,
+    ).map((characteristicWithValue) => characteristicWithValue.value);
   }
 
   Stream<CharacteristicWithValue> monitorCharacteristicForDevice(
@@ -178,27 +175,29 @@ mixin CharacteristicsMixin on FlutterBLE {
     String characteristicUUID,
     String transactionId,
   ) {
-    _methodChannel.invokeMethod(
-      MethodName.monitorCharacteristicForDevice,
-      <String, dynamic>{
-        ArgumentName.deviceIdentifier: peripheral.identifier,
-        ArgumentName.serviceUuid: serviceUuid,
-        ArgumentName.characteristicUuid: characteristicUUID,
-        ArgumentName.transactionId: transactionId,
-      },
-    );
-    return _characteristicsMonitoringEvents
-        .map((rawJsonValue) =>
-            _parseCharacteristicWithValueWithTransactionIdResponse(
-                peripheral, rawJsonValue))
-        .where((characteristic) =>
+    void Function() startMonitoring = () => _methodChannel.invokeMethod(
+          MethodName.monitorCharacteristicForDevice,
+          <String, dynamic>{
+            ArgumentName.deviceIdentifier: peripheral.identifier,
+            ArgumentName.serviceUuid: serviceUuid,
+            ArgumentName.characteristicUuid: characteristicUUID,
+            ArgumentName.transactionId: transactionId,
+          },
+        );
+
+    bool Function(CharacteristicWithValueAndTransactionId)
+        characteristicsFilter = (characteristic) =>
             equalsIgnoreAsciiCase(characteristicUUID, characteristic.uuid) &&
             equalsIgnoreAsciiCase(serviceUuid, characteristic.service.uuid) &&
             equalsIgnoreAsciiCase(
-                transactionId ?? "", characteristic.transactionId ?? ""))
-        .handleError((errorJson) =>
-            _throwErrorIfMatchesWithTransactionId(errorJson, transactionId))
-        .transform(CancelOnErrorStreamTransformer());
+                transactionId ?? "", characteristic.transactionId ?? "");
+
+    return _createMonitoringStream(
+      startMonitoring,
+      characteristicsFilter,
+      peripheral,
+      transactionId,
+    );
   }
 
   Stream<CharacteristicWithValue> monitorCharacteristicForService(
@@ -207,30 +206,58 @@ mixin CharacteristicsMixin on FlutterBLE {
     String characteristicUUID,
     String transactionId,
   ) {
-    _methodChannel.invokeMethod(
-      MethodName.monitorCharacteristicForService,
-      <String, dynamic>{
-        ArgumentName.serviceIdentifier: serviceIdentifier,
-        ArgumentName.characteristicUuid: characteristicUUID,
-        ArgumentName.transactionId: transactionId,
-      },
+    void Function() startMonitoring = () => _methodChannel.invokeMethod(
+          MethodName.monitorCharacteristicForService,
+          <String, dynamic>{
+            ArgumentName.serviceIdentifier: serviceIdentifier,
+            ArgumentName.characteristicUuid: characteristicUUID,
+            ArgumentName.transactionId: transactionId,
+          },
+        );
+
+    bool Function(CharacteristicWithValueAndTransactionId)
+        characteristicFilter = (characteristic) =>
+            equalsIgnoreAsciiCase(characteristicUUID, characteristic.uuid) &&
+            serviceIdentifier == characteristic.service._id &&
+            equalsIgnoreAsciiCase(
+                transactionId ?? "", characteristic.transactionId ?? "");
+
+    return _createMonitoringStream(
+      startMonitoring,
+      characteristicFilter,
+      peripheral,
+      transactionId,
     );
-    return _characteristicsMonitoringEvents
+  }
+
+  Stream<CharacteristicWithValue> _createMonitoringStream(
+    void Function() onListen,
+    bool Function(CharacteristicWithValueAndTransactionId) filter,
+    Peripheral peripheral,
+    String transactionId,
+  ) {
+    Stream<CharacteristicWithValue> stream = _characteristicsMonitoringEvents
         .map(
           (rawJsonValue) =>
               _parseCharacteristicWithValueWithTransactionIdResponse(
                   peripheral, rawJsonValue),
         )
-        .where(
-          (characteristic) =>
-              equalsIgnoreAsciiCase(characteristicUUID, characteristic.uuid) &&
-              serviceIdentifier == characteristic.service._id &&
-              equalsIgnoreAsciiCase(
-                  transactionId ?? "", characteristic.transactionId ?? ""),
-        )
+        .where(filter)
         .handleError((errorJson) =>
             _throwErrorIfMatchesWithTransactionId(errorJson, transactionId))
         .transform(CancelOnErrorStreamTransformer());
+
+    StreamController<CharacteristicWithValue> streamController =
+        StreamController.broadcast(
+      onListen: onListen,
+      onCancel: () => cancelTransaction(transactionId),
+    );
+
+    streamController
+        .addStream(stream, cancelOnError: true)
+        .then((_) => streamController?.close());
+
+    return streamController.stream;
   }
 
   CharacteristicWithValueAndTransactionId

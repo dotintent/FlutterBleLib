@@ -1,3 +1,4 @@
+import 'dart:async';
 @Timeout(const Duration(milliseconds: 500))
 import 'dart:convert';
 import 'dart:typed_data';
@@ -5,6 +6,7 @@ import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 import 'package:flutter_ble_lib/internal/bridge/internal_bridge_lib.dart';
+import 'package:flutter_ble_lib/internal/constants.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
@@ -203,4 +205,84 @@ void main() {
         transactionId: "2")));
     await emitStreamCompletion();
   });
+
+  test(
+    "Monitoring transaction is cancelled after unsubscribing all subscribers from monitoring stream",
+    () async {
+      //given
+      Stream<Uint8List> monitoringStream =
+          bleLib.monitorCharacteristicForIdentifier(peripheral, 1, "1");
+      StreamSubscription subscription = monitoringStream.listen((_) {});
+
+      StreamSubscription subscription1 = monitoringStream.listen((_) {});
+
+      int calledCount = 0;
+      methodChannel.setMockMethodCallHandler((call) {
+        if (call.method == MethodName.cancelTransaction &&
+            call.arguments[ArgumentName.transactionId] == "1") {
+          calledCount++;
+        }
+        return Future.value("");
+      });
+
+      //when
+      await subscription.cancel();
+      await subscription1.cancel();
+
+      //then
+      expect(calledCount, 1);
+    },
+  );
+
+  test(
+    "Monitoring transaction is cancelled after unsubscribing the only subscriber from monitoring stream",
+    () async {
+      //given
+      Stream<Uint8List> monitoringStream =
+          bleLib.monitorCharacteristicForIdentifier(peripheral, 1, "1");
+      StreamSubscription subscription = monitoringStream.listen((_) {});
+
+      int calledCount = 0;
+      methodChannel.setMockMethodCallHandler((call) {
+        if (call.method == MethodName.cancelTransaction &&
+            call.arguments[ArgumentName.transactionId] == "1") {
+          calledCount++;
+        }
+        return Future.value("");
+      });
+
+      //when
+      await subscription.cancel();
+
+      //then
+      expect(calledCount, 1);
+    },
+  );
+
+  test(
+    "Monitoring transaction is not cancelled after unsubscribing only one subscriber from monitoring stream",
+    () async {
+      //given
+      Stream<Uint8List> monitoringStream =
+          bleLib.monitorCharacteristicForIdentifier(peripheral, 1, "1");
+      StreamSubscription subscription = monitoringStream.listen((_) {});
+
+      StreamSubscription subscription1 = monitoringStream.listen((_) {});
+
+      int calledCount = 0;
+      methodChannel.setMockMethodCallHandler((call) {
+        if (call.method == MethodName.cancelTransaction &&
+            call.arguments[ArgumentName.transactionId] == "1") {
+          calledCount++;
+        }
+        return Future.value("");
+      });
+
+      //when
+      await subscription.cancel();
+
+      //then
+      expect(calledCount, 0);
+    },
+  );
 }

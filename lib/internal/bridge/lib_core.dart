@@ -5,6 +5,12 @@ abstract class FlutterBLE {
 
   final MethodChannel _methodChannel =
       const MethodChannel(ChannelName.flutterBleLib);
+
+  Future<void> cancelTransaction(String transactionId) async {
+    await _methodChannel.invokeMethod(MethodName.cancelTransaction,
+        <String, String>{ArgumentName.transactionId: transactionId});
+    return;
+  }
 }
 
 class FlutterBleLib extends FlutterBLE
@@ -53,12 +59,6 @@ class FlutterBleLib extends FlutterBLE
 
   Future<void> destroyClient() async {
     await _methodChannel.invokeMethod(MethodName.destroyClient);
-    return;
-  }
-
-  Future<void> cancelTransaction(String transactionId) async {
-    await _methodChannel.invokeMethod(MethodName.cancelTransaction,
-        <String, String>{ArgumentName.transactionId: transactionId});
     return;
   }
 }
