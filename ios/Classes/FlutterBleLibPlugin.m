@@ -265,7 +265,7 @@
                          reject:[self rejectForFlutterResult:result]];
 }
 
-// MARK: - MBA Methods - Characteristics observation
+// MARK: - MBA Methods - Characteristics operations
 
 - (void)readCharacteristicForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
     [_adapter readCharacteristicForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
@@ -350,6 +350,12 @@
                       transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
                             resolve:[self resolveForMonitorCharacteristic:result]
                              reject:[self rejectForFlutterResult:result]];
+}
+
+// MARK: - MBA Method - Descriptor operations
+
+- (void)readDescriptorForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_adapter readDescriptorForDevice:<#(id)#> result:<#(id)#>]
 }
 
 // MARK: - MBA Methods - Known / Connected devices
