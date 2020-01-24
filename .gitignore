@@ -12,3 +12,5 @@ example/android/res/values/strings_en.arb
 res/values/strings_en.arb
 lib/generated/
 example/lib/generated/
+example/.flutter-plugins-dependencies
+.dart_tool/

@@ -34,6 +34,8 @@ Using that instance you then obtain an instance of _Peripheral_,
 
 For more informations, see [REFERENCE](https://github.com/Polidea/FlutterBleLib/blob/master/REFERENCE.md).
 
+**Notice:** this library will not handle any permissions for you. To be able to scan for peripherals on Android you need `ACCESS_FINE_LOCATION` [according to Android Developer Guide](https://developer.android.com/guide/topics/connectivity/bluetooth-le#permissions). 
+
 ### Initialising
 ```dart
 BleManager bleManager = BleManager();

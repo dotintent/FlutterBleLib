@@ -61,7 +61,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
         final EventChannel connectionStateChannel = new EventChannel(registrar.messenger(), ChannelName.CONNECTION_STATE_CHANGE_EVENTS);
         final EventChannel characteristicMonitorChannel = new EventChannel(registrar.messenger(), ChannelName.MONITOR_CHARACTERISTIC);
 
-        final FlutterBleLibPlugin plugin = new FlutterBleLibPlugin(registrar.activity().getApplicationContext());
+        final FlutterBleLibPlugin plugin = new FlutterBleLibPlugin(registrar.context());
 
         channel.setMethodCallHandler(plugin);
 
