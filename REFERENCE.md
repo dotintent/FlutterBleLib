@@ -34,10 +34,11 @@ Releases native resources. Should be called once there's no further need for BLE
     bool allowDuplicates,
   });
 ```
-Returns a stream of objects containing advertisement data of the peripheral and the peripheral itself.
 `scanMode` and `callbackType` are Android-specific. [More information in Android documentation](https://developer.android.com/reference/android/bluetooth/le/ScanSettings)
 `allowDuplicates` is iOS-specific. [More information in iOS documentation](https://developer.apple.com/documentation/corebluetooth/cbcentralmanagerscanoptionallowduplicateskey)
 `uuids` is used to filter peripherals to only return those containing services with specified UUIDs.
+
+Returns a stream of objects containing advertisement data of the peripheral and the peripheral itself called `ScanResult`. The object has two iOS-only fields: `isConnectable` and `overflowServiceUuids`. 
 
 ```dart
   Future<void> stopDeviceScan();
