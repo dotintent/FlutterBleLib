@@ -1,3 +1,7 @@
+## 2.2.0
+
+* **NEW** operations on descriptors
+
 ## 2.1.0
 
 * **BREAKING** ScanResult.AdvertisementData.ManufacturerData has changed type from Int8List to Uint8List

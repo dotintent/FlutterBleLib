@@ -98,6 +98,12 @@
         [self characteristicsForService:call result:result];
     } else if ([METHOD_NAME_GET_CHARACTERISTICS isEqualToString:call.method]) {
         [self characteristics:call result:result];
+    } else if ([METHOD_NAME_GET_DESCRIPTORS_FOR_DEVICE isEqualToString:call.method]) {
+        [self descriptorsForDevice:call result:result];
+    } else if ([METHOD_NAME_GET_DESCRIPTORS_FOR_SERVICE isEqualToString:call.method]) {
+        [self descriptorsForService:call result:result];
+    } else if ([METHOD_NAME_GET_DESCRIPTORS_FOR_CHARACTERISTIC isEqualToString:call.method]) {
+        [self descriptorsForCharacteristic:call result:result];
     } else if ([METHOD_NAME_READ_CHARACTERISTIC_FOR_DEVICE isEqualToString:call.method]) {
         [self readCharacteristicForDevice:call result:result];
     } else if ([METHOD_NAME_READ_CHARACTERISTIC_FOR_SERVICE isEqualToString:call.method]) {
@@ -116,6 +122,22 @@
         [self monitorCharacteristicForService:call result:result];
     } else if ([METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_IDENTIFIER isEqualToString:call.method]) {
         [self monitorCharacteristic:call result:result];
+    } else if ([METHOD_NAME_READ_DESCRIPTOR_FOR_DEVICE isEqualToString:call.method]) {
+        [self readDescriptorForDevice:call result:result];
+    } else if ([METHOD_NAME_READ_DESCRIPTOR_FOR_SERVICE isEqualToString:call.method]) {
+        [self readDescriptorForService:call result:result];
+    } else if ([METHOD_NAME_READ_DESCRIPTOR_FOR_CHARACTERISTIC isEqualToString:call.method]) {
+        [self readDescriptorForCharacteristic:call result:result];
+    } else if ([METHOD_NAME_READ_DESCRIPTOR_FOR_IDENTIFIER isEqualToString:call.method]) {
+        [self readDescriptorForIdentifier:call result:result];
+    } else if ([METHOD_NAME_WRITE_DESCRIPTOR_FOR_DEVICE isEqualToString:call.method]) {
+        [self writeDescriptorForDevice:call result:result];
+    } else if ([METHOD_NAME_WRITE_DESCRIPTOR_FOR_SERVICE isEqualToString:call.method]) {
+        [self writeDescriptorForService:call result:result];
+    } else if ([METHOD_NAME_WRITE_DESCRIPTOR_FOR_CHARACTERISTIC isEqualToString:call.method]) {
+        [self writeDescriptorForCharacteristic:call result:result];
+    } else if ([METHOD_NAME_WRITE_DESCRIPTOR_FOR_IDENTIFIER isEqualToString:call.method]) {
+        [self writeDescriptorForIdentifier:call result:result];
     } else if ([METHOD_NAME_GET_KNOWN_DEVICES isEqualToString:call.method]) {
         [self devices:call result:result];
     } else if ([METHOD_NAME_GET_CONNECTED_DEVICES isEqualToString:call.method]) {
@@ -265,6 +287,27 @@
                          reject:[self rejectForFlutterResult:result]];
 }
 
+- (void)descriptorsForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_adapter descriptorsForDevice:call.arguments[ARGUMENT_KEY_DESCRIPTOR_IDENTIFIER]
+                       serviceUUID:call.arguments[ARGUMENT_KEY_SERVICE_UUID]
+                characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
+                           resolve:[self resolveForDescriptors:result] //TODO?
+                            reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)descriptorsForService:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_adapter descriptorsForService:[call.arguments[ARGUMENT_KEY_SERVICE_ID] doubleValue]
+                 characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
+                            resolve:[self resolveForDescriptors:result] //TODO?
+                             reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)descriptorsForCharacteristic:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_adapter descriptorsForCharacteristic:[call.arguments[ARGUMENT_KEY_CHARACTERISTIC_IDENTIFIER] doubleValue]
+                                   resolve:[self resolveForDescriptors:result] //TODO?
+                                    reject:[self rejectForFlutterResult:result]];
+}
+
 // MARK: - MBA Methods - Characteristics operations
 
 - (void)readCharacteristicForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -355,7 +398,75 @@
 // MARK: - MBA Method - Descriptor operations
 
 - (void)readDescriptorForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
-    [_adapter readDescriptorForDevice:<#(id)#> result:<#(id)#>]
+    [_adapter readDescriptorForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
+                          serviceUUID:call.arguments[ARGUMENT_KEY_SERVICE_UUID]
+                   characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
+                       descriptorUUID:call.arguments[ARGUMENT_KEY_DESCRIPTOR_UUID]
+                        transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                              resolve:[self resolveForReadWriteDescriptor:result]
+                               reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)readDescriptorForService:(FlutterMethodCall *)call result:(FlutterResult)result {
+    [_adapter readDescriptorForService:[call.arguments[ARGUMENT_KEY_SERVICE_ID] doubleValue]
+                    characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
+                        descriptorUUID:call.arguments[ARGUMENT_KEY_DESCRIPTOR_UUID]
+                         transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                               resolve:[self resolveForReadWriteDescriptor:result]
+                                reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)readDescriptorForCharacteristic:(FlutterMethodCall *) call result:(FlutterResult) result {
+    [_adapter readDescriptorForCharacteristic:[call.arguments[ARGUMENT_KEY_CHARACTERISTIC_IDENTIFIER] doubleValue]
+                               descriptorUUID:call.arguments[ARGUMENT_KEY_DESCRIPTOR_UUID]
+                                transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                                      resolve:[self resolveForReadWriteDescriptor:result]
+                                       reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)readDescriptorForIdentifier:(FlutterMethodCall *) call result:(FlutterResult) result {
+    [_adapter readDescriptor:[call.arguments[ARGUMENT_KEY_DESCRIPTOR_IDENTIFIER] doubleValue]
+               transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                     resolve:[self resolveForReadWriteDescriptor:result]
+                      reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)writeDescriptorForDevice:(FlutterMethodCall *) call result:(FlutterResult) result {
+    [_adapter writeDescriptorForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
+                           serviceUUID:call.arguments[ARGUMENT_KEY_SERVICE_UUID]
+                    characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
+                        descriptorUUID:call.arguments[ARGUMENT_KEY_DESCRIPTOR_UUID]
+                           valueBase64:[self base64encodedStringFromBytes:call.arguments[ARGUMENT_KEY_VALUE]]
+                         transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                               resolve:[self resolveForReadWriteDescriptor:result]
+                                reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)writeDescriptorForService:(FlutterMethodCall *) call result:(FlutterResult) result {
+    [_adapter writeDescriptorForService:[call.arguments[ARGUMENT_KEY_SERVICE_ID] doubleValue]
+                     characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
+                         descriptorUUID:call.arguments[ARGUMENT_KEY_DESCRIPTOR_UUID]
+                            valueBase64:[self base64encodedStringFromBytes:call.arguments[ARGUMENT_KEY_VALUE]]
+                          transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                                resolve:[self resolveForReadWriteDescriptor:result]
+                                 reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)writeDescriptorForCharacteristic:(FlutterMethodCall *) call result:(FlutterResult) result {
+    [_adapter writeDescriptorForCharacteristic:[call.arguments[ARGUMENT_KEY_CHARACTERISTIC_IDENTIFIER] doubleValue]
+                                descriptorUUID:call.arguments[ARGUMENT_KEY_DESCRIPTOR_UUID]
+                                   valueBase64:[self base64encodedStringFromBytes:call.arguments[ARGUMENT_KEY_VALUE]]
+                                 transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                                       resolve:[self resolveForReadWriteDescriptor:result]
+                                        reject:[self rejectForFlutterResult:result]];
+}
+
+- (void)writeDescriptorForIdentifier:(FlutterMethodCall *) call result:(FlutterResult) result {
+    [_adapter writeDescriptor:[call.arguments[ARGUMENT_KEY_DESCRIPTOR_IDENTIFIER] doubleValue]
+                  valueBase64:[self base64encodedStringFromBytes:call.arguments[ARGUMENT_KEY_VALUE]]
+                transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
+                      resolve:[self resolveForReadWriteDescriptor:result]
+                       reject:[self rejectForFlutterResult:result]];
 }
 
 // MARK: - MBA Methods - Known / Connected devices
@@ -420,6 +531,12 @@
 
 // MARK: - Utility methods
 
+- (Resolve)resolveForReadWriteDescriptor:(FlutterResult)result {
+    return ^(NSDictionary *descriptorResponse) {
+        result([DescriptorResponseConverter jsonStringFromDescriptorResponse:descriptorResponse]);
+    };
+}
+
 - (Resolve)resolveForCancelConnection:(FlutterResult)result {
     return ^(id response) {
         result(nil);
@@ -435,6 +552,12 @@
 - (Resolve)resolveForCharacteristicsForService:(FlutterResult)result {
     return ^(NSArray *characteristicsArray) {
         result([CharacteristicResponseConverter jsonStringFromCharacteristicsResponse:characteristicsArray]);
+    };
+}
+
+- (Resolve)resolveForDescriptors:(FlutterResult)result {
+    return ^(NSArray *descriptorsArray) {
+        result([DescriptorResponseConverter jsonStringFromDescriptorsResponse:descriptorsArray]);
     };
 }
 
