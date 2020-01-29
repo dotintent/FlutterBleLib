@@ -1,7 +1,6 @@
 @interface DescriptorResponseConverter : NSObject
 
-+ (NSString *)jsonStringFromDescriptorResponse:(NSDictionary *)response
-                           transactionId:(NSString *)transactionId;
++ (NSString *)jsonStringFromDescriptorResponse:(NSDictionary *)response;
 
 + (NSString *)jsonStringFromDescriptorsResponse:(NSArray *)descriptorsResponse;
 

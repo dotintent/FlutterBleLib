@@ -12,6 +12,7 @@
 #import "CommonTypes.h"
 #import "CharacteristicResponseConverter.h"
 #import "PeripheralResponseConverter.h"
+#import "DescriptorResponseConverter.h"
 #import "ServiceResponseConverter.h"
 
 @import MultiplatformBleAdapter;
@@ -288,23 +289,23 @@
 }
 
 - (void)descriptorsForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
-    [_adapter descriptorsForDevice:call.arguments[ARGUMENT_KEY_DESCRIPTOR_IDENTIFIER]
+    [_adapter descriptorsForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
                        serviceUUID:call.arguments[ARGUMENT_KEY_SERVICE_UUID]
                 characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
-                           resolve:[self resolveForDescriptors:result] //TODO?
+                           resolve:[self resolveForDescriptors:result]
                             reject:[self rejectForFlutterResult:result]];
 }
 
 - (void)descriptorsForService:(FlutterMethodCall *)call result:(FlutterResult)result {
     [_adapter descriptorsForService:[call.arguments[ARGUMENT_KEY_SERVICE_ID] doubleValue]
                  characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
-                            resolve:[self resolveForDescriptors:result] //TODO?
+                            resolve:[self resolveForDescriptors:result]
                              reject:[self rejectForFlutterResult:result]];
 }
 
 - (void)descriptorsForCharacteristic:(FlutterMethodCall *)call result:(FlutterResult)result {
     [_adapter descriptorsForCharacteristic:[call.arguments[ARGUMENT_KEY_CHARACTERISTIC_IDENTIFIER] doubleValue]
-                                   resolve:[self resolveForDescriptors:result] //TODO?
+                                   resolve:[self resolveForDescriptors:result]
                                     reject:[self rejectForFlutterResult:result]];
 }
 
