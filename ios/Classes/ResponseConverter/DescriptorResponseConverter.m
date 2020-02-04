@@ -26,7 +26,7 @@ const NSString *keyDescriptorResponseDescriptors = @"descriptors";
     return [JSONStringifier jsonStringFromJSONObject:result];
 }
 
-+ (NSString *)jsonStringFromDescriptorsResponse:(NSArray *)descriptorsResponse {
++ (NSString *)jsonStringFromMultipleDescriptorsResponse:(NSArray *)descriptorsResponse {
     if ([descriptorsResponse count] > 0) {
         NSMutableArray *descriptors = [[NSMutableArray alloc] init];
         for (NSDictionary *singleDescriptor in descriptorsResponse) {

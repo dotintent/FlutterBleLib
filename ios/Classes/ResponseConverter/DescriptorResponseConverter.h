@@ -2,6 +2,6 @@
 
 + (NSString *)jsonStringFromDescriptorResponse:(NSDictionary *)response;
 
-+ (NSString *)jsonStringFromDescriptorsResponse:(NSArray *)descriptorsResponse;
++ (NSString *)jsonStringFromMultipleDescriptorsResponse:(NSArray *)descriptorsResponse;
 
 @end

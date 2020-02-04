@@ -558,7 +558,7 @@
 
 - (Resolve)resolveForDescriptors:(FlutterResult)result {
     return ^(NSArray *descriptorsArray) {
-        result([DescriptorResponseConverter jsonStringFromDescriptorsResponse:descriptorsArray]);
+        result([DescriptorResponseConverter jsonStringFromMultipleDescriptorsResponse:descriptorsArray]);
     };
 }
 
