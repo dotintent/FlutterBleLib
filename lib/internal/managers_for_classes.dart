@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
-import 'package:flutter_ble_lib/internal/bridge/internal_bridge_lib.dart';
+import 'package:flutter_ble_lib/internal/_internal.dart';
 
 abstract class ManagerForPeripheral {
   Future<void> connectToPeripheral(String peripheralIdentifier,

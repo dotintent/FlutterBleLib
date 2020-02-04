@@ -1,4 +1,4 @@
-part of internal_bridge_lib;
+part of _internal;
 
 mixin RssiMixin on FlutterBLE {
   Future<int> rssi(Peripheral peripheral, String transactionId) async {

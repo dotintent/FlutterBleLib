@@ -1,4 +1,4 @@
-part of internal_bridge_lib;
+part of _internal;
 
 mixin ScanningMixin on FlutterBLE {
   Stream<dynamic> _scanEvents;
