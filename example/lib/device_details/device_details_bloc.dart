@@ -233,6 +233,8 @@ class DeviceDetailsBloc {
   }
 
   void dispose() async {
+    await connectionSubscription.cancel();
+
     await _deviceController.drain();
     _deviceController.close();
 
