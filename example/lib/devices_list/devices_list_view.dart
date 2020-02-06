@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_ble_lib_example/devices_list/hex_painter.dart';
+import 'package:permission_handler/permission_handler.dart';
+
 import 'package:flutter_ble_lib_example/model/ble_device.dart';
 
 import 'devices_bloc.dart';
 import 'devices_bloc_provider.dart';
-
+import 'hex_painter.dart';
 
 typedef DeviceTapListener = void Function();
 
@@ -20,6 +20,7 @@ class DevicesListScreen extends StatefulWidget {
 class DeviceListScreenState extends State<DevicesListScreen> {
   DevicesBloc _devicesBloc;
   StreamSubscription _appStateSubscription;
+  PermissionStatus _locationPermissionStatus = PermissionStatus.unknown;
 
   @override
   void didUpdateWidget(DevicesListScreen oldWidget) {
@@ -74,11 +75,10 @@ class DeviceListScreenState extends State<DevicesListScreen> {
       body: StreamBuilder<List<BleDevice>>(
         initialData: _devicesBloc.visibleDevices.value,
         stream: _devicesBloc.visibleDevices,
-        builder: (context, snapshot) =>
-          RefreshIndicator(
-            onRefresh: _devicesBloc.refresh,
-            child: DevicesList(_devicesBloc, snapshot.data),
-          ),
+        builder: (context, snapshot) => RefreshIndicator(
+          onRefresh: _devicesBloc.refresh,
+          child: DevicesList(_devicesBloc, snapshot.data),
+        ),
       ),
     );
   }
