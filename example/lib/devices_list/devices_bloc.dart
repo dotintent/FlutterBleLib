@@ -12,7 +12,8 @@ class DevicesBloc {
   BehaviorSubject<List<BleDevice>> _visibleDevicesController =
       BehaviorSubject<List<BleDevice>>.seeded(<BleDevice>[]);
 
-  StreamController<BleDevice> _devicePickerController = StreamController<BleDevice>();
+  StreamController<BleDevice> _devicePickerController =
+      StreamController<BleDevice>();
 
   StreamSubscription<ScanResult> _scanSubscription;
   StreamSubscription _devicePickerSubscription;
@@ -25,7 +26,8 @@ class DevicesBloc {
   DeviceRepository _deviceRepository;
   BleManager _bleManager;
 
-  Stream<BleDevice> get pickedDevice => _deviceRepository.pickedDevice.skipWhile((bleDevice) => bleDevice == null);
+  Stream<BleDevice> get pickedDevice => _deviceRepository.pickedDevice
+      .skipWhile((bleDevice) => bleDevice == null);
 
   DevicesBloc(this._deviceRepository, this._bleManager);
 
@@ -44,34 +46,36 @@ class DevicesBloc {
   void init() {
     Fimber.d("Init devices bloc");
     bleDevices.clear();
-    _bleManager.createClient(
-          restoreStateIdentifier: "example-restore-state-identifier",
-          restoreStateAction: (peripherals) {
-            peripherals?.forEach((peripheral) {
-              Fimber.d("Restored peripheral: ${peripheral.name}");
-            });
-          }
-        )
+    _bleManager
+        .createClient(
+            restoreStateIdentifier: "example-restore-state-identifier",
+            restoreStateAction: (peripherals) {
+              peripherals?.forEach((peripheral) {
+                Fimber.d("Restored peripheral: ${peripheral.name}");
+              });
+            })
         .then((it) => startScan())
         .catchError((e) => Fimber.d("Couldn't create BLE client", ex: e));
 
     if (_visibleDevicesController.isClosed) {
-      _visibleDevicesController = BehaviorSubject<List<BleDevice>>.seeded(<BleDevice>[]);
+      _visibleDevicesController =
+          BehaviorSubject<List<BleDevice>>.seeded(<BleDevice>[]);
     }
 
     if (_devicePickerController.isClosed) {
       _devicePickerController = StreamController<BleDevice>();
     }
 
-
     Fimber.d(" listen to _devicePickerController.stream");
-    _devicePickerSubscription = _devicePickerController.stream.listen(_handlePickedDevice);
+    _devicePickerSubscription =
+        _devicePickerController.stream.listen(_handlePickedDevice);
   }
 
   void startScan() {
     Fimber.d("Ble client created");
-    _scanSubscription = _bleManager.startPeripheralScan().listen((ScanResult scanResult) {
-      var bleDevice = BleDevice.notConnected(scanResult.peripheral.name, scanResult.peripheral.identifier, scanResult.peripheral);
+    _scanSubscription =
+        _bleManager.startPeripheralScan().listen((ScanResult scanResult) {
+      var bleDevice = BleDevice(scanResult);
       if (scanResult.advertisementData.localName != null &&
           !bleDevices.contains(bleDevice)) {
         Fimber.d(
