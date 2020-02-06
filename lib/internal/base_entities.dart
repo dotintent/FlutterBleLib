@@ -11,3 +11,13 @@ class InternalCharacteristic {
 
   InternalCharacteristic(this._id);
 }
+
+class InternalDescriptor {
+  int _id;
+
+  InternalDescriptor(this._id);
+}
+
+mixin WithValue {
+  Uint8List value;
+}

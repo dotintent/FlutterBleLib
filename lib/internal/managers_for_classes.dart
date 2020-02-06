@@ -4,8 +4,13 @@ import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 import 'package:flutter_ble_lib/internal/bridge/internal_bridge_lib.dart';
 
 abstract class ManagerForPeripheral {
-  Future<void> connectToPeripheral(String peripheralIdentifier,
-      {bool isAutoConnect, int requestMtu, bool refreshGatt, Duration timeout});
+  Future<void> connectToPeripheral(
+    String peripheralIdentifier, {
+    bool isAutoConnect,
+    int requestMtu,
+    bool refreshGatt,
+    Duration timeout,
+  });
 
   Future<bool> isPeripheralConnected(String peripheralIdentifier);
 
@@ -13,9 +18,10 @@ abstract class ManagerForPeripheral {
       String peripheralIdentifier);
 
   Stream<PeripheralConnectionState> observePeripheralConnectionState(
-      String peripheralIdentifier,
-      bool emitCurrentValue,
-      bool completeOnDisconnect);
+    String peripheralIdentifier,
+    bool emitCurrentValue,
+    bool completeOnDisconnect,
+  );
 
   Future<void> discoverAllServicesAndCharacteristics(
       Peripheral peripheral, String transactionId);
@@ -23,11 +29,20 @@ abstract class ManagerForPeripheral {
   Future<List<Service>> services(Peripheral peripheral);
 
   Future<List<Characteristic>> characteristics(
-      Peripheral peripheral, String serviceUuid);
+    Peripheral peripheral,
+    String serviceUuid,
+  );
 
-  Future<int> rssi(Peripheral peripheral, String transactionId);
+  Future<int> rssi(
+    Peripheral peripheral,
+    String transactionId,
+  );
 
-  Future<void> requestMtu(Peripheral peripheral, int mtu, String transactionId);
+  Future<void> requestMtu(
+    Peripheral peripheral,
+    int mtu,
+    String transactionId,
+  );
 
   Future<CharacteristicWithValue> readCharacteristicForDevice(
     Peripheral peripheral,
@@ -48,6 +63,29 @@ abstract class ManagerForPeripheral {
     Peripheral peripheral,
     String serviceUUID,
     String characteristicUUID,
+    String transactionId,
+  );
+
+  Future<List<Descriptor>> descriptorsForPeripheral(
+    Peripheral peripheral,
+    String serviceUuid,
+    String characteristicUuid,
+  );
+
+  Future<DescriptorWithValue> readDescriptorForPeripheral(
+    Peripheral peripheral,
+    String serviceUuid,
+    String characteristicUuid,
+    String descriptorUuid,
+    String transactionId,
+  );
+
+  Future<Descriptor> writeDescriptorForPeripheral(
+    Peripheral peripheral,
+    String serviceUuid,
+    String characteristicUuid,
+    String descriptorUuid,
+    Uint8List bytes,
     String transactionId,
   );
 }
@@ -77,6 +115,26 @@ abstract class ManagerForService {
     String characteristicUUID,
     String transactionId,
   );
+
+  Future<List<Descriptor>> descriptorsForService(
+    Service service,
+    String characteristicUuid,
+  );
+
+  Future<DescriptorWithValue> readDescriptorForService(
+    Service service,
+    String characteristicUuid,
+    String descriptorUuid,
+    String transactionId,
+  );
+
+  Future<Descriptor> writeDescriptorForService(
+    Service service,
+    String characteristicUuid,
+    String descriptorUuid,
+    Uint8List bytes,
+    String transactionId,
+  );
 }
 
 abstract class ManagerForCharacteristic {
@@ -97,6 +155,36 @@ abstract class ManagerForCharacteristic {
   Stream<Uint8List> monitorCharacteristicForIdentifier(
     Peripheral peripheral,
     InternalCharacteristic characteristic,
+    String transactionId,
+  );
+
+  Future<List<Descriptor>> descriptorsForCharacteristic(
+    Characteristic characteristic,
+  );
+
+  Future<DescriptorWithValue> readDescriptorForCharacteristic(
+    Characteristic characteristic,
+    String descriptorUuid,
+    String transactionId,
+  );
+
+  Future<Descriptor> writeDescriptorForCharacteristic(
+    Characteristic characteristic,
+    String descriptorUuid,
+    Uint8List value,
+    String transactionId,
+  );
+}
+
+abstract class ManagerForDescriptor {
+  Future<Uint8List> readDescriptorForIdentifier(
+    Descriptor descriptor,
+    String transactionId,
+  );
+
+  Future<void> writeDescriptorForIdentifier(
+    Descriptor descriptor,
+    Uint8List bytes,
     String transactionId,
   );
 }

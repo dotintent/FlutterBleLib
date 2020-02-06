@@ -22,6 +22,9 @@ NSString * const ARGUMENT_KEY_CHARACTERISTIC_IDENTIFIER = @"characteristicIdenti
 NSString * const ARGUMENT_KEY_VALUE = @"value";
 NSString * const ARGUMENT_KEY_WITH_RESPONSE = @"withResponse";
 
+NSString * const ARGUMENT_KEY_DESCRIPTOR_UUID = @"descriptorUuid";
+NSString * const ARGUMENT_KEY_DESCRIPTOR_IDENTIFIER = @"descriptorIdentifier";
+
 NSString * const ARGUMENT_KEY_MTU = @"mtu";
 
 NSString * const ARGUMENT_KEY_DEVICE_IDENTIFIERS = @"deviceIdentifiers";

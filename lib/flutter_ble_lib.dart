@@ -12,6 +12,7 @@ import 'internal/managers_for_classes.dart';
 part 'error/ble_error.dart';
 part 'ble_manager.dart';
 part 'characteristic.dart';
+part 'descriptor.dart';
 part 'peripheral.dart';
 part 'scan_result.dart';
 part 'service.dart';

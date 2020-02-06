@@ -1,3 +1,8 @@
+## 2.2.0
+
+* **NEW** operations on descriptors
+* **BREAKING FOR BLEMULATOR** BLEmulator versions lower than 1.1.0 are not supported from this release
+
 ## 2.1.0
 
 * **BREAKING** ScanResult.AdvertisementData.ManufacturerData has changed type from Int8List to Uint8List

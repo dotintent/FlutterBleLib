@@ -1,13 +1,12 @@
 library test_scenarios;
 
 import 'dart:async';
-import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:flutter/widgets.dart';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 
 import '../sensor_tag_config.dart';
-import 'package:flutter_ble_lib/internal/constants.dart';
 
 part 'base.dart';
 part 'sensor_tag_test_with_scan_and_connection_scenario.dart';

@@ -6,6 +6,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
 public class ServiceJsonConverter implements JsonConverter<Service> {
 
     private interface Metadata {
@@ -18,7 +20,7 @@ public class ServiceJsonConverter implements JsonConverter<Service> {
         return toJsonObject(service).toString();
     }
 
-    public String toJson(Service[] services) throws JSONException {
+    public String toJson(List<Service> services) throws JSONException {
         JSONArray array = new JSONArray();
         for (Service service : services) {
             array.put(toJsonObject(service));

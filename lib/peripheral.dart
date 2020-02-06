@@ -82,6 +82,42 @@ class Peripheral {
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
+  Future<List<Descriptor>> descriptorsForCharacteristic(
+    String serviceUuid,
+    String characteristicUuid,
+  ) =>
+      _manager.descriptorsForPeripheral(this, serviceUuid, characteristicUuid);
+
+  Future<DescriptorWithValue> readDescriptor(
+    String serviceUuid,
+    String characteristicUuid,
+    String descriptorUuid, {
+    String transactionId,
+  }) =>
+      _manager.readDescriptorForPeripheral(
+        this,
+        serviceUuid,
+        characteristicUuid,
+        descriptorUuid,
+        transactionId ?? TransactionIdGenerator.getNextId(),
+      );
+
+  Future<Descriptor> writeDescriptor(
+    String serviceUuid,
+    String characteristicUuid,
+    String descriptorUuid,
+    Uint8List value, {
+    String transactionId,
+  }) =>
+      _manager.writeDescriptorForPeripheral(
+        this,
+        serviceUuid,
+        characteristicUuid,
+        descriptorUuid,
+        value,
+        transactionId ?? TransactionIdGenerator.getNextId(),
+      );
+
   Stream<CharacteristicWithValue> monitorCharacteristic(
     String serviceUUID,
     String characteristicUUID, {
