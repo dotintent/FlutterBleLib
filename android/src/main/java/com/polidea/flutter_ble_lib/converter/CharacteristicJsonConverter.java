@@ -7,6 +7,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
 public class CharacteristicJsonConverter implements JsonConverter<Characteristic> {
 
     private interface Metadata {
@@ -25,11 +27,11 @@ public class CharacteristicJsonConverter implements JsonConverter<Characteristic
         return toJsonObject(characteristic).toString();
     }
 
-    public String toJson(Characteristic[] characteristics) throws JSONException {
+    public String toJson(List<Characteristic> characteristics) throws JSONException {
         return toJsonArray(characteristics).toString();
     }
 
-    public JSONArray toJsonArray(Characteristic[] characteristics) throws JSONException {
+    public JSONArray toJsonArray(List<Characteristic> characteristics) throws JSONException {
         JSONArray jsonArray = new JSONArray();
         for (Characteristic characteristic : characteristics) {
             jsonArray.put(toJsonObject(characteristic));

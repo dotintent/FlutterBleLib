@@ -23,7 +23,8 @@ class FlutterBleLib extends FlutterBLE
         MtuMixin,
         BluetoothStateMixin,
         DevicesMixin,
-        CharacteristicsMixin {
+        CharacteristicsMixin,
+        DescriptorsMixin {
   final Stream<dynamic> _restoreStateEvents =
       const EventChannel(ChannelName.stateRestoreEvents)
           .receiveBroadcastStream();

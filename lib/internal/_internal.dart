@@ -25,6 +25,8 @@ part 'bridge/characteristics_mixin.dart';
 
 part 'bridge/device_connection_mixin.dart';
 
+part 'bridge/descriptors_mixin.dart';
+
 part 'bridge/device_rssi_mixin.dart';
 
 part 'bridge/devices_mixin.dart';

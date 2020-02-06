@@ -9,7 +9,7 @@ import com.polidea.multiplatformbleadapter.errors.BleError;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class SafeMainThreadResolver<T> {
+public class SafeMainThreadResolver<T> implements OnSuccessCallback<T>, OnErrorCallback {
 
     private OnErrorCallback onErrorCallback = null;
     private OnSuccessCallback<T> onSuccessCallback = null;

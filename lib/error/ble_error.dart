@@ -92,6 +92,7 @@ class BleErrorCode {
   static const int DescriptorNotFound = 503;
   static const int DescriptorsNotDiscovered = 504;
   static const int DescriptorInvalidDataFormat = 505;
+  static const int DescriptorWriteNotAllowed = 506;
 
   static const int ScanStartFailed = 600;
   static const int LocationServicesDisabled = 601;
