@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:fimber/fimber.dart';
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import 'package:flutter_ble_lib_example/model/ble_device.dart';
 
@@ -20,7 +19,6 @@ class DevicesListScreen extends StatefulWidget {
 class DeviceListScreenState extends State<DevicesListScreen> {
   DevicesBloc _devicesBloc;
   StreamSubscription _appStateSubscription;
-  PermissionStatus _locationPermissionStatus = PermissionStatus.unknown;
 
   @override
   void didUpdateWidget(DevicesListScreen oldWidget) {
