@@ -112,6 +112,5 @@ class DevicesBloc {
     await _checkPermissions()
         .then((_) => _startScan())
         .catchError((e) => Fimber.d("Couldn't refresh", ex: e));
-    ;
   }
 }
