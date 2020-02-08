@@ -1,4 +1,4 @@
-part of internal_bridge_lib;
+part of _internal;
 
 mixin DevicesMixin on FlutterBLE {
   Future<List<Peripheral>> knownDevices(

@@ -1,4 +1,4 @@
-library internal_bridge_lib;
+library _internal;
 
 import 'dart:async';
 import 'dart:convert';
@@ -13,30 +13,30 @@ import 'package:flutter_ble_lib/internal/containers.dart';
 import 'package:flutter_ble_lib/internal/util/transaction_id_generator.dart';
 import 'package:flutter_ble_lib/internal/util/transformers.dart';
 
-import '../managers_for_classes.dart';
+import 'managers_for_classes.dart';
 
-part '../base_entities.dart';
+part 'base_entities.dart';
 
-part '../internal_ble_manager.dart';
+part 'internal_ble_manager.dart';
 
-part 'bluetooth_state_mixin.dart';
+part 'bridge/bluetooth_state_mixin.dart';
 
-part 'characteristics_mixin.dart';
+part 'bridge/characteristics_mixin.dart';
 
-part 'descriptors_mixin.dart';
+part 'bridge/device_connection_mixin.dart';
 
-part 'device_connection_mixin.dart';
+part 'bridge/descriptors_mixin.dart';
 
-part 'device_rssi_mixin.dart';
+part 'bridge/device_rssi_mixin.dart';
 
-part 'devices_mixin.dart';
+part 'bridge/devices_mixin.dart';
 
-part 'discovery_mixin.dart';
+part 'bridge/discovery_mixin.dart';
 
-part 'lib_core.dart';
+part 'bridge/lib_core.dart';
 
-part 'log_level_mixin.dart';
+part 'bridge/log_level_mixin.dart';
 
-part 'mtu_mixin.dart';
+part 'bridge/mtu_mixin.dart';
 
-part 'scanning_mixin.dart';
+part 'bridge/scanning_mixin.dart';
