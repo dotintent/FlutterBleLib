@@ -28,11 +28,6 @@ _android_job_template: &android_job_template
       - "android-sdk-preview-license-52d11cd2"
       - "android-sdk-license-.+"
       - "google-gdk-license-.+"
-    before_install:
-      - touch $HOME/.android/repositories.cfg
-      - yes | sdkmanager "platforms;android-29"
-      - yes | sdkmanager "build-tools;29.0.5"
-
   env:
     global:
       - GRADLE_OPTS="-Xms128m"
@@ -44,6 +39,10 @@ _android_job_template: &android_job_template
       - $HOME/.m2
       - $HOME/.gradle/caches/
       - $HOME/.gradle/wrapper/
+  before_install:
+    - touch $HOME/.android/repositories.cfg
+    - yes | sdkmanager "platforms;android-29"
+    - yes | sdkmanager "build-tools;29.0.5"
   before_script:
     - git clone https://github.com/flutter/flutter.git -b stable
     - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
