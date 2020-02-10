@@ -21,8 +21,8 @@ _android_job_template: &android_job_template
   android:
     components:
       - tools
-      - build-tools-28.0.3
-      - android-28
+      - build-tools-29.0.5
+      - android-29
       - extra-android-m2repository
     licenses:
       - 'android-sdk-license-.+'
