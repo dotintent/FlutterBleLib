@@ -29,7 +29,10 @@ _android_job_template: &android_job_template
       - "android-sdk-license-.+"
       - "google-gdk-license-.+"
     before_install:
+      - touch $HOME/.android/repositories.cfg
       - yes | sdkmanager "platforms;android-29"
+      - yes | sdkmanager "build-tools;29.0.5"
+
   env:
     global:
       - GRADLE_OPTS="-Xms128m"
