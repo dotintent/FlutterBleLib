@@ -28,6 +28,8 @@ _android_job_template: &android_job_template
       - "android-sdk-preview-license-52d11cd2"
       - "android-sdk-license-.+"
       - "google-gdk-license-.+"
+    before_install:
+      - yes | sdkmanager "platforms;android-29"
   env:
     global:
       - GRADLE_OPTS="-Xms128m"
