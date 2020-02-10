@@ -24,8 +24,6 @@ class DeviceDetailsBloc {
 
   Observable<List<DebugLog>> get logs => _logsController.stream;
 
-  StreamSubscription connectionSubscription;
-
   Stream<BleDevice> get disconnectedDevice => _deviceRepository.pickedDevice
       .skipWhile((bleDevice) => bleDevice != null);
 
@@ -47,8 +45,10 @@ class DeviceDetailsBloc {
       var now = DateTime.now();
       _logs.insert(
           0,
-          DebugLog('${now.hour}:${now.minute}:${now.second}.${now.millisecond}',
-              text));
+          DebugLog(
+            '${now.hour}:${now.minute}:${now.second}.${now.millisecond}',
+            text,
+          ));
       Fimber.d(text);
       _logsController.add(_logs);
     };
@@ -233,8 +233,6 @@ class DeviceDetailsBloc {
   }
 
   void dispose() async {
-    await connectionSubscription.cancel();
-
     await _deviceController.drain();
     _deviceController.close();
 

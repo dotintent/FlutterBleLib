@@ -84,7 +84,7 @@ class DevicesBloc {
       _locationPermissionStatus = permissionStatus[PermissionGroup.location];
 
       if (_locationPermissionStatus != PermissionStatus.granted) {
-        return Future.error("Location permission not granted");
+        return Future.error(Exception("Location permission not granted"));
       }
     }
   }
