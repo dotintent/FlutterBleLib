@@ -39,7 +39,7 @@ For more informations, see [REFERENCE](https://github.com/Polidea/FlutterBleLib/
 ### Initialising
 ```dart
 BleManager bleManager = BleManager();
-bleManager.createClient(); //ready to go!
+await bleManager.createClient(); //ready to go!
 // your peripheral logic
 bleManager.destroyClient(); //remember to release native resources when you're done!
 ```
