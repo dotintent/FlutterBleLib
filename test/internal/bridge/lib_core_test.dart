@@ -33,20 +33,20 @@ void main() {
   });
 
   Future<void> emitPlatformError(String errorJson) =>
-      defaultBinaryMessenger.handlePlatformMessage(
+      ServicesBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
           monitorCharacteristicEventChannelName,
           const StandardMethodCodec()
               .encodeErrorEnvelope(code: "irrelevant", details: errorJson),
           (ByteData data) {});
 
   Future<void> emitMonitoringEvent(String eventJson) =>
-      defaultBinaryMessenger.handlePlatformMessage(
+      ServicesBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
           monitorCharacteristicEventChannelName,
           const StandardMethodCodec().encodeSuccessEnvelope(eventJson),
           (ByteData data) {});
 
   Future<void> emitStreamCompletion() =>
-      defaultBinaryMessenger.handlePlatformMessage(
+      ServicesBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
         monitorCharacteristicEventChannelName,
         null,
         (ByteData data) {},

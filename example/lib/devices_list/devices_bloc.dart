@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:fimber/fimber.dart';
 import 'package:flutter_ble_lib_example/model/ble_device.dart';
 import 'package:flutter_ble_lib_example/repository/device_repository.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:rxdart/rxdart.dart';
 
 class DevicesBloc {
   final List<BleDevice> bleDevices = <BleDevice>[];
@@ -12,7 +14,8 @@ class DevicesBloc {
   BehaviorSubject<List<BleDevice>> _visibleDevicesController =
       BehaviorSubject<List<BleDevice>>.seeded(<BleDevice>[]);
 
-  StreamController<BleDevice> _devicePickerController = StreamController<BleDevice>();
+  StreamController<BleDevice> _devicePickerController =
+      StreamController<BleDevice>();
 
   StreamSubscription<ScanResult> _scanSubscription;
   StreamSubscription _devicePickerSubscription;
@@ -24,8 +27,10 @@ class DevicesBloc {
 
   DeviceRepository _deviceRepository;
   BleManager _bleManager;
+  PermissionStatus _locationPermissionStatus = PermissionStatus.unknown;
 
-  Stream<BleDevice> get pickedDevice => _deviceRepository.pickedDevice.skipWhile((bleDevice) => bleDevice == null);
+  Stream<BleDevice> get pickedDevice => _deviceRepository.pickedDevice
+      .skipWhile((bleDevice) => bleDevice == null);
 
   DevicesBloc(this._deviceRepository, this._bleManager);
 
@@ -44,34 +49,51 @@ class DevicesBloc {
   void init() {
     Fimber.d("Init devices bloc");
     bleDevices.clear();
-    _bleManager.createClient(
-          restoreStateIdentifier: "example-restore-state-identifier",
-          restoreStateAction: (peripherals) {
-            peripherals?.forEach((peripheral) {
-              Fimber.d("Restored peripheral: ${peripheral.name}");
-            });
-          }
-        )
-        .then((it) => startScan())
-        .catchError((e) => Fimber.d("Couldn't create BLE client", ex: e));
+    _bleManager
+        .createClient(
+            restoreStateIdentifier: "example-restore-state-identifier",
+            restoreStateAction: (peripherals) {
+              peripherals?.forEach((peripheral) {
+                Fimber.d("Restored peripheral: ${peripheral.name}");
+              });
+            })
+        .catchError((e) => Fimber.d("Couldn't create BLE client", ex: e))
+        .then((_) => _checkPermissions())
+        .catchError((e) => Fimber.d("Permission check error", ex: e))
+        .then((_) => _startScan());
 
     if (_visibleDevicesController.isClosed) {
-      _visibleDevicesController = BehaviorSubject<List<BleDevice>>.seeded(<BleDevice>[]);
+      _visibleDevicesController =
+          BehaviorSubject<List<BleDevice>>.seeded(<BleDevice>[]);
     }
 
     if (_devicePickerController.isClosed) {
       _devicePickerController = StreamController<BleDevice>();
     }
 
-
     Fimber.d(" listen to _devicePickerController.stream");
-    _devicePickerSubscription = _devicePickerController.stream.listen(_handlePickedDevice);
+    _devicePickerSubscription =
+        _devicePickerController.stream.listen(_handlePickedDevice);
   }
 
-  void startScan() {
+  Future<void> _checkPermissions() async {
+    if (Platform.isAndroid) {
+      var permissionStatus = await PermissionHandler()
+          .requestPermissions([PermissionGroup.location]);
+
+      _locationPermissionStatus = permissionStatus[PermissionGroup.location];
+
+      if (_locationPermissionStatus != PermissionStatus.granted) {
+        return Future.error(Exception("Location permission not granted"));
+      }
+    }
+  }
+
+  void _startScan() {
     Fimber.d("Ble client created");
-    _scanSubscription = _bleManager.startPeripheralScan().listen((ScanResult scanResult) {
-      var bleDevice = BleDevice.notConnected(scanResult.peripheral.name, scanResult.peripheral.identifier, scanResult.peripheral);
+    _scanSubscription =
+        _bleManager.startPeripheralScan().listen((ScanResult scanResult) {
+      var bleDevice = BleDevice(scanResult);
       if (scanResult.advertisementData.localName != null &&
           !bleDevices.contains(bleDevice)) {
         Fimber.d(
@@ -87,6 +109,8 @@ class DevicesBloc {
     await _bleManager.stopPeripheralScan();
     bleDevices.clear();
     _visibleDevicesController.add(bleDevices.sublist(0));
-    startScan();
+    await _checkPermissions()
+        .then((_) => _startScan())
+        .catchError((e) => Fimber.d("Couldn't refresh", ex: e));
   }
 }

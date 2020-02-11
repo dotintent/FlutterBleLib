@@ -24,8 +24,6 @@ class DeviceDetailsBloc {
 
   Observable<List<DebugLog>> get logs => _logsController.stream;
 
-  StreamSubscription connectionSubscription;
-
   Stream<BleDevice> get disconnectedDevice => _deviceRepository.pickedDevice
       .skipWhile((bleDevice) => bleDevice != null);
 
@@ -38,22 +36,25 @@ class DeviceDetailsBloc {
     _deviceController = BehaviorSubject<BleDevice>.seeded(device);
 
     _connectionStateController =
-        BehaviorSubject<PeripheralConnectionState>.seeded(device.isConnected
-            ? PeripheralConnectionState.connected
-            : PeripheralConnectionState.disconnected);
+        BehaviorSubject<PeripheralConnectionState>.seeded(
+            PeripheralConnectionState.disconnected);
 
     _logsController = PublishSubject<List<DebugLog>>();
 
     log = (text) {
       var now = DateTime.now();
-      _logs.insert(0, DebugLog('${now.hour}:${now.minute}:${now.second}.${now.millisecond}', text));
+      _logs.insert(
+          0,
+          DebugLog(
+            '${now.hour}:${now.minute}:${now.second}.${now.millisecond}',
+            text,
+          ));
       Fimber.d(text);
       _logsController.add(_logs);
     };
 
     logError = (text) {
-      _logs.insert(0,
-          DebugLog(DateTime.now().toString(), "ERROR: $text"));
+      _logs.insert(0, DebugLog(DateTime.now().toString(), "ERROR: $text"));
       Fimber.e(text);
       _logsController.add(_logs);
     };
@@ -111,7 +112,6 @@ class DeviceDetailsBloc {
           .fetchKnownDevice();
     });
   }
-
 
   void readCharacteristicForPeripheral() {
     _clearLogs();
@@ -215,7 +215,8 @@ class DeviceDetailsBloc {
       var peripheral = bleDevice.peripheral;
 
       peripheral
-          .observeConnectionState(emitCurrentValue: true, completeOnDisconnect: true)
+          .observeConnectionState(
+              emitCurrentValue: true, completeOnDisconnect: true)
           .listen((connectionState) {
         log('Observed new connection state: \n$connectionState');
         _connectionStateController.add(connectionState);
@@ -232,7 +233,6 @@ class DeviceDetailsBloc {
   }
 
   void dispose() async {
-    _deviceController.value?.abandon();
     await _deviceController.drain();
     _deviceController.close();
 
