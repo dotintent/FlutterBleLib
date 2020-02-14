@@ -17,6 +17,6 @@ A new flutter plugin project.
   s.dependency 'Flutter'
   s.dependency 'MultiplatformBleAdapter', '0.1.3'
 
-  s.ios.deployment_target = '10.0'
+  s.ios.deployment_target = '8.0'
 end
 
