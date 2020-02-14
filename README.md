@@ -22,7 +22,49 @@ To use this plugin, add `flutter_ble_lib` as a [dependency in your pubspec.yaml 
 
 ## Android
 
+Set `minSDKVersion` in `[project]/android/app/build.gradle` file to 18.
+
+```gradle
+defaultConfig {
+  ...
+  // Set min SDK version to 18
+  minSdkVersion 18
+  targetSdkVersion 28
+  ...
+}
+```
+
+Add `tools:replace="android:label"` rule to `<application>` element in main `AndroidManifest.xml` file.
+
+```xml
+<application
+  android:name="io.flutter.app.FlutterApplication"
+  android:label="your_app"
+  android:icon="@mipmap/ic_launcher"
+  tools:replace="android:label">
+  ...
+</application>
+```
+
+Add `BLUETOOTH` and `ACCESS_FINE_LOCATION` permissions in main `AndroidManifest.xml` file.
+
+```xml
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.your_app">
+  <uses-permission android:name="android.permission.BLUETOOTH"/>
+  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+  ...
+</manifest>
+```
+
 ## iOS
+
+In Xcode, set iOS Deployment Target (`IPHONEOS_DEPLOYMENT_TARGET`) to 10.0.
+
+<img src="site/xcode-ios-deployment-target.png" width="575" border="1"/>
+
+Add [Privacy - Bluetooth Always Usage Description](https://developer.apple.com/documentation/bundleresources/information_property_list/nsbluetoothalwaysusagedescription) key to `[project]/ios/Runner/Info.plist` file.
 
 # Overview
 
