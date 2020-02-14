@@ -284,7 +284,7 @@
 - (void)characteristics:(FlutterMethodCall *)call result:(FlutterResult)result {
     [_adapter characteristicsForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
                        serviceUUID:call.arguments[ARGUMENT_KEY_SERVICE_UUID]
-                           resolve:[self resolveForCharacteristicsForService:result]
+                           resolve:[self resolveForCharacteristics:result]
                             reject:[self rejectForFlutterResult:result]];
 }
 
@@ -553,6 +553,12 @@
 - (Resolve)resolveForCharacteristicsForService:(FlutterResult)result {
     return ^(NSArray *characteristicsArray) {
         result([CharacteristicResponseConverter jsonStringFromCharacteristicsResponse:characteristicsArray]);
+    };
+}
+
+- (Resolve)resolveForCharacteristics:(FlutterResult)result {
+    return ^(NSArray* characteristicsArray) {
+        result([CharacteristicResponseConverter jsonStringWithServiceFromCharacteristicsResponse:characteristicsArray]);
     };
 }
 
