@@ -4,14 +4,14 @@
 
 ![Flutter BLE library logo](site/flutter-ble-lib-logo.png)
 
-## FlutterBleLib
+# FlutterBleLib
 
 A library for all your Bluetooth Low Energy needs in Flutter. Internally utilises Polidea's
 [MultiPlatformBleAdapter](https://github.com/Polidea/MultiPlatformBleAdapter),
 which runs on [RxAndroidBle](https://github.com/Polidea/RxAndroidBle)
 and [RxBluetoothKit](https://github.com/Polidea/RxBluetoothKit).
 
-### BLE Simulator
+## BLE Simulator
 
 This library supports [BLEmulator](https://github.com/Polidea/blemulator_flutter), the BLE simulator.
 The simulation allows one to develop without physical smartphone or BLE peripheral and use one's production BLE–related code in automated testing.
