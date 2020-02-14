@@ -5,8 +5,7 @@
 
 + (NSString *)jsonStringFromCharacteristicsResponse:(NSArray *)characteristicsResponse;
 
-+ (NSString *)jsonStringFromCharacteristicsResponse:(NSArray *)characteristicsResponse
-                                            service:(NSDictionary *)service;
++ (NSString *)jsonStringWithServiceFromCharacteristicsResponse:(NSArray *)characteristicsResponse;
 
 + (NSArray *)characteristicsFromCharacteristicResponse:(NSArray *)characteristicsResponse;
 
