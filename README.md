@@ -66,9 +66,11 @@ In Xcode, set iOS Deployment Target (`IPHONEOS_DEPLOYMENT_TARGET`) to 10.0.
 
 Add [Privacy - Bluetooth Always Usage Description](https://developer.apple.com/documentation/bundleresources/information_property_list/nsbluetoothalwaysusagedescription) key to `[project]/ios/Runner/Info.plist` file.
 
-```plist
+```xml
+...
 <key>NSBluetoothAlwaysUsageDescription</key>
 <string>Your own description of the purpose.</string>
+...
 ```
 
 ## Usage
