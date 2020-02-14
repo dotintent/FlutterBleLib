@@ -16,7 +16,7 @@ and [RxBluetoothKit](https://github.com/Polidea/RxBluetoothKit).
 This library supports [BLEmulator](https://github.com/Polidea/blemulator_flutter), the BLE simulator.
 The simulation allows one to develop without physical smartphone or BLE peripheral and use one's production BLE–related code in automated testing.
 
-# Usage
+# Installation
 
 To use this plugin, add `flutter_ble_lib` as a [dependency in your pubspec.yaml file](https://pub.dev/packages/flutter_ble_lib/versions/2.1.0).
 
@@ -66,7 +66,7 @@ In Xcode, set iOS Deployment Target (`IPHONEOS_DEPLOYMENT_TARGET`) to 10.0.
 
 Add [Privacy - Bluetooth Always Usage Description](https://developer.apple.com/documentation/bundleresources/information_property_list/nsbluetoothalwaysusagedescription) key to `[project]/ios/Runner/Info.plist` file.
 
-# Overview
+# Usage
 
 The library is organised around a few base entities, which are:
 
@@ -86,7 +86,7 @@ For more informations, see [REFERENCE](https://github.com/Polidea/FlutterBleLib/
 
 **Notice:** this library will not handle any permissions for you. To be able to scan for peripherals on Android you need `ACCESS_FINE_LOCATION` [according to Android Developer Guide](https://developer.android.com/guide/topics/connectivity/bluetooth-le#permissions).
 
-### Initialising
+## Initialising
 
 ```dart
 BleManager bleManager = BleManager();
@@ -97,7 +97,7 @@ bleManager.destroyClient(); //remember to release native resources when you're d
 
 Following snippets assume the library has been initialised.
 
-### Handling Bluetooth adapter state
+## Handling Bluetooth adapter state
 
 ```dart
 enum BluetoothState {
@@ -119,7 +119,7 @@ bleManager.observeBluetoothState().listen((btState) {
 });
 ```
 
-### Scanning for peripherals
+## Scanning for peripherals
 
 ```dart
 bleManager.startPeripheralScan(
@@ -138,7 +138,7 @@ It filters the scan results to those that advertise a service with specified UUI
 
 **NOTE:** `isConnectable` and `overflowServiceUuids` fields of `ScanResult` are iOS-only and remain `null` on Android.
 
-### Connecting to peripheral
+## Connecting to peripheral
 
 First you must obtain a _ScanResult_ from _BleManager.startPeripheralScan()_.
 
@@ -156,7 +156,7 @@ await peripheral.disconnectOrCancelConnection();
 The snippet above starts observing the state of the connection to the peripheral,
 connects to it, checks if it's connected and then disconnects from it.
 
-### Transactions
+## Transactions
 
 Methods that do not have counterpart with opposite effect and are asynchronous accept
 `String transactionId` as an optional argument, to allow the user to cancel such an operation.
@@ -178,7 +178,7 @@ If _transactionId_ is set to null or it isn't specified at all, the library sets
 **NOTE:
 Do not to set integers as _transactionId_ as they are used by the library.**
 
-### Obtaining characteristics
+## Obtaining characteristics
 
 To be able to operate on the peripheral, discovery of its services and characteristics must be run first.
 
@@ -196,7 +196,7 @@ List<Characteristic> characteristics2 = await services.firstWhere(
 Objects representing characteristics have a unique identifer, so they point to one specific characteristic,
 even if there are multiple service/characteristic uuid matches.
 
-### Manipulating characteristics
+## Manipulating characteristics
 
 Below are 3 methods of writing to a characteristic, which all result in the same effect given
 there's only one service with specified UUID and only one characteristic with specified UUID.
@@ -219,7 +219,7 @@ characteristic.write(Uint8List.fromList([0]), false); //returns void
 Monitoring or reading a characteristic from _Peripheral_/_Service_ level
 return _CharacteristicWithValue_ object, which is _Characteristic_ with additional `Uint8List value` property.
 
-## Facilitated by Frontside
+# Facilitated by Frontside
 
 [Frontside](https://github.com/thefrontside) provided architectural advice and financial support for this library on behalf of [Resideo](https://github.com/resideo).
 
@@ -235,7 +235,7 @@ This library is maintained by [Polidea](https://www.polidea.com/?utm_source=Gith
 
 TBD
 
-## License
+# License
 
 Copyright 2019 Polidea Sp. z o.o
 
@@ -251,7 +251,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-## More from Polidea
+# More from Polidea
 
 Check out other Polidea's BLE libraries:
 
