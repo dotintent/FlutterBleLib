@@ -282,10 +282,10 @@
 }
 
 - (void)characteristics:(FlutterMethodCall *)call result:(FlutterResult)result {
-    [_adapter servicesForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
-                        resolve:[self resolveForCharacteristics:result
-                                                    serviceUuid:call.arguments[ARGUMENT_KEY_SERVICE_UUID]]
-                         reject:[self rejectForFlutterResult:result]];
+    [_adapter characteristicsForDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
+                       serviceUUID:call.arguments[ARGUMENT_KEY_SERVICE_UUID]
+                           resolve:[self resolveForCharacteristicsForService:result]
+                            reject:[self rejectForFlutterResult:result]];
 }
 
 - (void)descriptorsForDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
@@ -559,33 +559,6 @@
 - (Resolve)resolveForDescriptors:(FlutterResult)result {
     return ^(NSArray *descriptorsArray) {
         result([DescriptorResponseConverter jsonStringFromMultipleDescriptorsResponse:descriptorsArray]);
-    };
-}
-
-- (Resolve)resolveForCharacteristics:(FlutterResult)result serviceUuid:(NSString *)serviceUuid {
-    return ^(NSArray *servicesArray) {
-
-        NSDictionary *matchingService = nil;
-        for (NSDictionary *service in [ServiceResponseConverter servicesFromServicesResponse:servicesArray]) {
-            if ([[service valueForKey:@"serviceUuid"] isEqualToString:serviceUuid]) {
-                matchingService = service;
-                break;
-            }
-        }
-
-        if (matchingService == nil) {
-            result([FlutterError errorWithCode:@"-1" message:@"Service not found" details:nil]);
-            return;
-        }
-
-        Resolve resolve = ^(NSArray* characteristicsArray) {
-            result([CharacteristicResponseConverter jsonStringFromCharacteristicsResponse:characteristicsArray
-                                                                                  service:matchingService]);
-        };
-
-        [_adapter characteristicsForService:[[matchingService valueForKey:@"serviceId"] doubleValue]
-                            resolve:resolve
-                             reject:[self rejectForFlutterResult:result]];
     };
 }
 
