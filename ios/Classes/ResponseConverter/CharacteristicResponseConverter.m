@@ -40,14 +40,14 @@ const NSString *keyCharacteristics = @"characteristics";
 
 + (NSString *)jsonStringWithServiceFromCharacteristicsResponse:(NSArray *)characteristicsResponse {
     NSArray *characteristics = [self characteristicsFromCharacteristicResponse:characteristicsResponse];
-    double serviceId;
+    id serviceId;
     id serviceUuid;
 
     if (characteristicsResponse.count == 0) {
-        serviceId = -1;
+        serviceId = [NSNumber numberWithInt:-1];
         serviceUuid = [NSNull null];
     } else {
-        serviceId = [[characteristicsResponse.firstObject objectForKey:CHARACTERISTIC_RESPONSE_SERVICE_ID] doubleValue];
+        serviceId = [characteristicsResponse.firstObject objectForKey:CHARACTERISTIC_RESPONSE_SERVICE_ID];
         serviceUuid = [characteristicsResponse.firstObject objectForKey:CHARACTERISTIC_RESPONSE_SERVICE_UUID];
     }
 
