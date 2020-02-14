@@ -1,7 +1,6 @@
 package com.polidea.flutter_ble_lib;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.polidea.flutter_ble_lib.constant.ArgumentKey;
@@ -32,6 +31,7 @@ import com.polidea.multiplatformbleadapter.errors.BleError;
 import java.util.LinkedList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;

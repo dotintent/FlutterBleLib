@@ -1,23 +1,16 @@
 package com.polidea.flutter_ble_lib.delegate;
 
-import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.polidea.flutter_ble_lib.SafeMainThreadResolver;
 import com.polidea.flutter_ble_lib.constant.ArgumentKey;
 import com.polidea.flutter_ble_lib.constant.MethodName;
-import com.polidea.flutter_ble_lib.converter.BleErrorJsonConverter;
-import com.polidea.flutter_ble_lib.event.ConnectionStateStreamHandler;
 import com.polidea.multiplatformbleadapter.BleAdapter;
-import com.polidea.multiplatformbleadapter.OnErrorCallback;
-import com.polidea.multiplatformbleadapter.OnSuccessCallback;
-import com.polidea.multiplatformbleadapter.errors.BleError;
 import com.polidea.multiplatformbleadapter.errors.BleErrorCode;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 
