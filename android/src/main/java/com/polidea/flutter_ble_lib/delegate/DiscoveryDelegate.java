@@ -134,22 +134,24 @@ public class DiscoveryDelegate extends CallDelegate {
 
     private void getCharacteristics(String deviceId, final String serviceUuid, final MethodChannel.Result result) {
         try {
-            List<Service> services = adapter.getServicesForDevice(deviceId);
-            Service foundService = null;
-            for (final Service service : services) {
-                if (service.getUuid().equals(UUID.fromString(serviceUuid))) {
-                    foundService = service;
-                    break;
-                }
+            List<Characteristic> characteristics = adapter.getCharacteristicsForDevice(deviceId, serviceUuid);
+
+            MultiCharacteristicsResponse characteristicsResponse;
+
+            if (characteristics.size() == 0) {
+                characteristicsResponse = new MultiCharacteristicsResponse(
+                        characteristics,
+                        -1,
+                        null
+                );
+            } else {
+                characteristicsResponse = new MultiCharacteristicsResponse(
+                        characteristics,
+                        characteristics.get(0).getServiceID(),
+                        characteristics.get(0).getServiceUUID()
+                );
             }
 
-            if (foundService == null) {
-                result.error("UnknownServiceException", "Service not found", "Unknown service UUID " + serviceUuid);
-                return;
-            }
-
-            List<Characteristic> characteristics = adapter.getCharacteristicsForService(foundService.getId());
-            MultiCharacteristicsResponse characteristicsResponse = new MultiCharacteristicsResponse(characteristics, foundService);
             String json = multiCharacteristicsResponseJsonConverter.toJson(characteristicsResponse);
             result.success(json);
         } catch (BleError error) {
