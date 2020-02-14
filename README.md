@@ -64,7 +64,7 @@ Add `BLUETOOTH` and `ACCESS_FINE_LOCATION` permissions in main `AndroidManifest.
 
 In Xcode, set iOS Deployment Target (`IPHONEOS_DEPLOYMENT_TARGET`) to 10.0.
 
-<img src="site/xcode-ios-deployment-target.png" width="575"/>
+<img src="site/xcode-ios-deployment-target.png" width="743"/>
 
 Add [Privacy - Bluetooth Always Usage Description](https://developer.apple.com/documentation/bundleresources/information_property_list/nsbluetoothalwaysusagedescription) key to `[project]/ios/Runner/Info.plist` file.
 
