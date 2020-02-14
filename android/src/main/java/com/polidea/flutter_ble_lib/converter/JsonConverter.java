@@ -1,8 +1,8 @@
 package com.polidea.flutter_ble_lib.converter;
 
-import android.support.annotation.Nullable;
-
 import org.json.JSONException;
+
+import androidx.annotation.Nullable;
 
 public interface JsonConverter<T> {
 
