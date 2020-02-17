@@ -2,8 +2,8 @@ PODS:
   - Flutter (1.0.0)
   - flutter_ble_lib (2.1.0):
     - Flutter
-    - MultiplatformBleAdapter (= 0.1.3)
-  - MultiplatformBleAdapter (0.1.3)
+    - MultiplatformBleAdapter (= 0.1.4)
+  - MultiplatformBleAdapter (0.1.4)
   - "permission_handler (4.2.0+hotfix.3)":
     - Flutter
 
@@ -26,10 +26,10 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  flutter_ble_lib: c806e8068abc7e71d910852e227e9972080cf488
-  MultiplatformBleAdapter: edd1e768925ab61637cb178bd465eb12952ec981
+  flutter_ble_lib: b2cf6d76a88368075db66966d782630318c6e67d
+  MultiplatformBleAdapter: 1ef6e0c8d11f753c56cbad1654b36c8e24142648
   permission_handler: 40520ab8ad1bb78a282b832464e995ec87f77ec6
 
 PODFILE CHECKSUM: 7fb83752f59ead6285236625b82473f90b1cb932
 
-COCOAPODS: 1.8.3
+COCOAPODS: 1.8.4
