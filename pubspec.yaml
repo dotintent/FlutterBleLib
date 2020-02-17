@@ -5,6 +5,8 @@ homepage: https://github.com/Polidea/FlutterBleLib
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
+  # Flutter versions prior to 1.10 did not support the flutter.plugin.platforms map.
+  flutter: ">=1.10.0 <2.0.0"
 
 dependencies:
   collection: ^1.14.11
