@@ -77,6 +77,11 @@ class DevicesBloc {
   }
 
   Future<void> _checkPermissions() async {
+    _bleManager
+        .observeBluetoothState(emitCurrentValue: true)
+        .listen((bluetoothState) {
+      if (bluetoothState == BluetoothState.POWERED_ON) {}
+    });
     if (Platform.isAndroid) {
       var permissionStatus = await PermissionHandler()
           .requestPermissions([PermissionGroup.location]);
@@ -86,7 +91,23 @@ class DevicesBloc {
       if (_locationPermissionStatus != PermissionStatus.granted) {
         return Future.error(Exception("Location permission not granted"));
       }
+    } else if (Platform.isIOS) {
+      /// On iOS the user will be asked to allow Bluetooth permission by
+      /// the system. Once it is granted, the Bluetooth state will change from
+      /// UNKNOWN to POWERED_ON.
+      await _waitForBluetoothPoweredOn();
     }
+  }
+
+  Future<void> _waitForBluetoothPoweredOn() async {
+    Completer completer = Completer();
+    _bleManager
+        .observeBluetoothState(emitCurrentValue: true)
+        .listen((bluetoothState) {
+      if (bluetoothState == BluetoothState.POWERED_ON && !completer.isCompleted)
+        completer.complete();
+    });
+    return completer.future;
   }
 
   void _startScan() {
