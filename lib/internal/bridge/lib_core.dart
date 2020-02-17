@@ -1,4 +1,4 @@
-part of internal_bridge_lib;
+part of _internal;
 
 abstract class FlutterBLE {
   InternalBleManager _manager;
@@ -23,7 +23,8 @@ class FlutterBleLib extends FlutterBLE
         MtuMixin,
         BluetoothStateMixin,
         DevicesMixin,
-        CharacteristicsMixin {
+        CharacteristicsMixin,
+        DescriptorsMixin {
   final Stream<dynamic> _restoreStateEvents =
       const EventChannel(ChannelName.stateRestoreEvents)
           .receiveBroadcastStream();

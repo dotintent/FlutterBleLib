@@ -38,11 +38,24 @@ const NSString *keyCharacteristics = @"characteristics";
     return [JSONStringifier jsonStringFromJSONObject:result];
 }
 
-+ (NSString *)jsonStringFromCharacteristicsResponse:(NSArray *)characteristicsResponse
-                                            service:(NSDictionary *)service {
-    NSMutableDictionary *result = [[NSMutableDictionary alloc] initWithDictionary:service];
-    [result setObject:[self characteristicsFromCharacteristicResponse:characteristicsResponse]
-               forKey:keyCharacteristics];
++ (NSString *)jsonStringWithServiceFromCharacteristicsResponse:(NSArray *)characteristicsResponse {
+    NSArray *characteristics = [self characteristicsFromCharacteristicResponse:characteristicsResponse];
+    id serviceId;
+    id serviceUuid;
+
+    if (characteristicsResponse.count == 0) {
+        serviceId = [NSNumber numberWithInt:-1];
+        serviceUuid = [NSNull null];
+    } else {
+        serviceId = [characteristicsResponse.firstObject objectForKey:CHARACTERISTIC_RESPONSE_SERVICE_ID];
+        serviceUuid = [characteristicsResponse.firstObject objectForKey:CHARACTERISTIC_RESPONSE_SERVICE_UUID];
+    }
+
+    NSDictionary *result = [[NSDictionary alloc] initWithObjectsAndKeys:
+                            characteristics, keyCharacteristics,
+                            serviceId, keyServiceID,
+                            serviceUuid, keyServiceUUID,
+                            nil];
     return [JSONStringifier jsonStringFromJSONObject:result];
 
 }

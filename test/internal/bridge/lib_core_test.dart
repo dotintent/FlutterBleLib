@@ -5,7 +5,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
-import 'package:flutter_ble_lib/internal/bridge/internal_bridge_lib.dart';
+import 'package:flutter_ble_lib/internal/_internal.dart';
 import 'package:flutter_ble_lib/internal/constants.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
@@ -33,20 +33,20 @@ void main() {
   });
 
   Future<void> emitPlatformError(String errorJson) =>
-      defaultBinaryMessenger.handlePlatformMessage(
+      ServicesBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
           monitorCharacteristicEventChannelName,
           const StandardMethodCodec()
               .encodeErrorEnvelope(code: "irrelevant", details: errorJson),
           (ByteData data) {});
 
   Future<void> emitMonitoringEvent(String eventJson) =>
-      defaultBinaryMessenger.handlePlatformMessage(
+      ServicesBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
           monitorCharacteristicEventChannelName,
           const StandardMethodCodec().encodeSuccessEnvelope(eventJson),
           (ByteData data) {});
 
   Future<void> emitStreamCompletion() =>
-      defaultBinaryMessenger.handlePlatformMessage(
+      ServicesBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
         monitorCharacteristicEventChannelName,
         null,
         (ByteData data) {},
@@ -267,7 +267,7 @@ void main() {
           bleLib.monitorCharacteristicForIdentifier(peripheral, 1, "1");
       StreamSubscription subscription = monitoringStream.listen((_) {});
 
-      StreamSubscription subscription1 = monitoringStream.listen((_) {});
+      monitoringStream.listen((_) {});
 
       int calledCount = 0;
       methodChannel.setMockMethodCallHandler((call) {

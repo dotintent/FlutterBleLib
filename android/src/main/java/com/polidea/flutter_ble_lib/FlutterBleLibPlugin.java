@@ -1,7 +1,6 @@
 package com.polidea.flutter_ble_lib;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.polidea.flutter_ble_lib.constant.ArgumentKey;
@@ -10,6 +9,7 @@ import com.polidea.flutter_ble_lib.constant.MethodName;
 import com.polidea.flutter_ble_lib.delegate.BluetoothStateDelegate;
 import com.polidea.flutter_ble_lib.delegate.CallDelegate;
 import com.polidea.flutter_ble_lib.delegate.CharacteristicsDelegate;
+import com.polidea.flutter_ble_lib.delegate.DescriptorsDelegate;
 import com.polidea.flutter_ble_lib.delegate.DeviceConnectionDelegate;
 import com.polidea.flutter_ble_lib.delegate.DevicesDelegate;
 import com.polidea.flutter_ble_lib.delegate.LogLevelDelegate;
@@ -31,6 +31,7 @@ import com.polidea.multiplatformbleadapter.errors.BleError;
 import java.util.LinkedList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -86,6 +87,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
         delegates.add(new MtuDelegate(bleAdapter));
         delegates.add(new CharacteristicsDelegate(bleAdapter, characteristicsMonitorStreamHandler));
         delegates.add(new DevicesDelegate(bleAdapter));
+        delegates.add(new DescriptorsDelegate(bleAdapter));
     }
 
     @Override

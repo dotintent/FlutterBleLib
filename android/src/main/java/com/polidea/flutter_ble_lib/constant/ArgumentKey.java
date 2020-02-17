@@ -21,6 +21,8 @@ public interface ArgumentKey {
     String SERVICE_IDENTIFIER = "serviceId";
     String CHARACTERISTIC_UUID = "characteristicUuid";
     String CHARACTERISTIC_IDENTIFIER = "characteristicIdentifier";
+    String DESCRIPTOR_UUID = "descriptorUuid";
+    String DESCRIPTOR_IDENTIFIER = "descriptorIdentifier";
     String VALUE = "value";
     String WITH_RESPONSE = "withResponse";
 

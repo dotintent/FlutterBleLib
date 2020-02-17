@@ -37,8 +37,10 @@ class Service extends InternalService {
           withResponse,
           transactionId ?? TransactionIdGenerator.getNextId());
 
-  Future<CharacteristicWithValue> readCharacteristic(String characteristicUUID,
-          {String transactionId}) =>
+  Future<CharacteristicWithValue> readCharacteristic(
+    String characteristicUUID, {
+    String transactionId,
+  }) =>
       _manager.readCharacteristicForService(
         peripheral,
         this,
@@ -54,6 +56,40 @@ class Service extends InternalService {
         peripheral,
         this,
         characteristicUUID,
+        transactionId ?? TransactionIdGenerator.getNextId(),
+      );
+
+  Future<List<Descriptor>> descriptorsForCharacteristic(
+    String characteristicUuid,
+  ) =>
+      _manager.descriptorsForService(
+        this,
+        characteristicUuid,
+      );
+
+  Future<DescriptorWithValue> readDescriptor(
+    String characteristicUuid,
+    String descriptorUuid, {
+    String transactionId,
+  }) =>
+      _manager.readDescriptorForService(
+        this,
+        characteristicUuid,
+        descriptorUuid,
+        transactionId ?? TransactionIdGenerator.getNextId(),
+      );
+
+  Future<Descriptor> writeDescriptor(
+    String characteristicUuid,
+    String descriptorUuid,
+    Uint8List value, {
+    String transactionId,
+  }) =>
+      _manager.writeDescriptorForService(
+        this,
+        characteristicUuid,
+        descriptorUuid,
+        value,
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
 

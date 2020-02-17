@@ -20,6 +20,9 @@ NSString * const METHOD_NAME_DISCOVER_ALL_SERVICES_AND_CHARACTERISTICS = @"disco
 NSString * const METHOD_NAME_GET_SERVICES = @"services";
 NSString * const METHOD_NAME_GET_CHARACTERISTICS = @"characteristics";
 NSString * const METHOD_NAME_GET_CHARACTERISTICS_FOR_SERVICE = @"characteristicsForService";
+NSString * const METHOD_NAME_GET_DESCRIPTORS_FOR_DEVICE = @"descriptorsForDevice";
+NSString * const METHOD_NAME_GET_DESCRIPTORS_FOR_SERVICE = @"descriptorsForService";
+NSString * const METHOD_NAME_GET_DESCRIPTORS_FOR_CHARACTERISTIC = @"descriptorsForCharacteristic";
 
 NSString * const METHOD_NAME_LOG_LEVEL = @"logLevel";
 NSString * const METHOD_NAME_SET_LOG_LEVEL = @"setLogLevel";
@@ -42,3 +45,13 @@ NSString * const METHOD_NAME_WRITE_CHARACTERISTIC_FOR_SERVICE = @"writeCharacter
 NSString * const METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_IDENTIFIER = @"monitorCharacteristicForIdentifier";
 NSString * const METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_DEVICE = @"monitorCharacteristicForDevice";
 NSString * const METHOD_NAME_MONITOR_CHARACTERISTIC_FOR_SERVICE = @"monitorCharacteristicForService";
+
+NSString * const METHOD_NAME_READ_DESCRIPTOR_FOR_IDENTIFIER = @"readDescriptorForIdentifier";
+NSString * const METHOD_NAME_READ_DESCRIPTOR_FOR_CHARACTERISTIC = @"readDescriptorForCharacteristic";
+NSString * const METHOD_NAME_READ_DESCRIPTOR_FOR_SERVICE = @"readDescriptorForService";
+NSString * const METHOD_NAME_READ_DESCRIPTOR_FOR_DEVICE = @"readDescriptorForDevice";
+
+NSString * const METHOD_NAME_WRITE_DESCRIPTOR_FOR_IDENTIFIER = @"writeDescriptorForIdentifier";
+NSString * const METHOD_NAME_WRITE_DESCRIPTOR_FOR_CHARACTERISTIC = @"writeDescriptorForCharacteristic";
+NSString * const METHOD_NAME_WRITE_DESCRIPTOR_FOR_SERVICE = @"writeDescriptorForService";
+NSString * const METHOD_NAME_WRITE_DESCRIPTOR_FOR_DEVICE = @"writeDescriptorForDevice";

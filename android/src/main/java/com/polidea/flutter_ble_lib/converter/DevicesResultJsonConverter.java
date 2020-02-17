@@ -1,6 +1,5 @@
 package com.polidea.flutter_ble_lib.converter;
 
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.polidea.multiplatformbleadapter.Device;
@@ -8,6 +7,8 @@ import com.polidea.multiplatformbleadapter.Device;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import androidx.annotation.Nullable;
 
 public class DevicesResultJsonConverter implements JsonConverter<Device[]> {
 

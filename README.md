@@ -39,7 +39,7 @@ For more informations, see [REFERENCE](https://github.com/Polidea/FlutterBleLib/
 ### Initialising
 ```dart
 BleManager bleManager = BleManager();
-bleManager.createClient(); //ready to go!
+await bleManager.createClient(); //ready to go!
 // your peripheral logic
 bleManager.destroyClient(); //remember to release native resources when you're done!
 ```
@@ -80,6 +80,8 @@ bleManager.startPeripheralScan(
 
 The snippet above starts peripheral scan and stops it after receiving first result. 
 It filters the scan results to those that advertise a service with specified UUID.
+
+**NOTE:** `isConnectable` and `overflowServiceUuids` fields of `ScanResult` are iOS-only and remain `null` on Android.
 
 ### Connecting to peripheral
 First you must obtain a _ScanResult_ from _BleManager.startPeripheralScan()_.

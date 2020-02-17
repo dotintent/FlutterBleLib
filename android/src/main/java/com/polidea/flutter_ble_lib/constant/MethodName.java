@@ -23,6 +23,9 @@ public interface MethodName {
     String GET_SERVICES = "services";
     String GET_CHARACTERISTICS = "characteristics";
     String GET_CHARACTERISTICS_FOR_SERVICE = "characteristicsForService";
+    String GET_DESCRIPTORS_FOR_DEVICE = "descriptorsForDevice";
+    String GET_DESCRIPTORS_FOR_CHARACTERISTIC = "descriptorsForCharacteristic";
+    String GET_DESCRIPTORS_FOR_SERVICE = "descriptorsForService";
 
     String LOG_LEVEL = "logLevel";
     String SET_LOG_LEVEL = "setLogLevel";
@@ -45,4 +48,14 @@ public interface MethodName {
     String MONITOR_CHARACTERISTIC_FOR_IDENTIFIER = "monitorCharacteristicForIdentifier";
     String MONITOR_CHARACTERISTIC_FOR_DEVICE = "monitorCharacteristicForDevice";
     String MONITOR_CHARACTERISTIC_FOR_SERVICE = "monitorCharacteristicForService";
+
+    String READ_DESCRIPTOR_FOR_IDENTIFIER = "readDescriptorForIdentifier";
+    String READ_DESCRIPTOR_FOR_CHARACTERISTIC = "readDescriptorForCharacteristic";
+    String READ_DESCRIPTOR_FOR_SERVICE = "readDescriptorForService";
+    String READ_DESCRIPTOR_FOR_DEVICE = "readDescriptorForDevice";
+
+    String WRITE_DESCRIPTOR_FOR_IDENTIFIER = "writeDescriptorForIdentifier";
+    String WRITE_DESCRIPTOR_FOR_CHARACTERISTIC = "writeDescriptorForCharacteristic";
+    String WRITE_DESCRIPTOR_FOR_SERVICE = "writeDescriptorForService";
+    String WRITE_DESCRIPTOR_FOR_DEVICE = "writeDescriptorForDevice";
 }

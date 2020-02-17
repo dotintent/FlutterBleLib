@@ -19,8 +19,8 @@ class ScanResult {
   Peripheral peripheral;
   int rssi;
   int mtu;
-  bool isConnectable;
-  List<String> overflowServiceUUIDs;
+  bool isConnectable; //iOS only
+  List<String> overflowServiceUUIDs; //iOS only
   AdvertisementData advertisementData;
 
   ScanResult.fromJson(Map<String, dynamic> json, ManagerForPeripheral manager)
