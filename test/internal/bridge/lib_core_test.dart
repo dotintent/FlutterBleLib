@@ -267,7 +267,7 @@ void main() {
           bleLib.monitorCharacteristicForIdentifier(peripheral, 1, "1");
       StreamSubscription subscription = monitoringStream.listen((_) {});
 
-      StreamSubscription subscription1 = monitoringStream.listen((_) {});
+      monitoringStream.listen((_) {});
 
       int calledCount = 0;
       methodChannel.setMockMethodCallHandler((call) {
