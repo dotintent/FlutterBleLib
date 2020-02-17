@@ -2,6 +2,9 @@
 
 * **NEW** operations on descriptors
 * **BREAKING FOR BLEMULATOR** BLEmulator versions lower than 1.1.0 are not supported from this release
+* Support for AndroidX
+* Support for Swift 5
+* Lower iOS deployment target to 8.0
 
 ## 2.1.0
 
