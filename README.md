@@ -18,7 +18,7 @@ The simulation allows one to develop without physical smartphone or BLE peripher
 
 ## Installation
 
-To use this plugin, add `flutter_ble_lib` as a [dependency in your pubspec.yaml file](https://pub.dev/packages/flutter_ble_lib/versions/2.1.0).
+To use this plugin, add `flutter_ble_lib` as a [dependency in your pubspec.yaml file](https://flutter.dev/docs/development/packages-and-plugins/using-packages).
 
 ### Android
 
