@@ -97,11 +97,15 @@ class DevicesBloc {
 
   Future<void> _waitForBluetoothPoweredOn() async {
     Completer completer = Completer();
-    _bleManager
+    StreamSubscription<BluetoothState> subscription;
+    subscription = _bleManager
         .observeBluetoothState(emitCurrentValue: true)
-        .listen((bluetoothState) {
-      if (bluetoothState == BluetoothState.POWERED_ON && !completer.isCompleted)
+        .listen((bluetoothState) async {
+      if (bluetoothState == BluetoothState.POWERED_ON &&
+          !completer.isCompleted) {
+        await subscription.cancel();
         completer.complete();
+      }
     });
     return completer.future;
   }
