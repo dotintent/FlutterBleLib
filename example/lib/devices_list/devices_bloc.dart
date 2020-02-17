@@ -92,9 +92,10 @@ class DevicesBloc {
         return Future.error(Exception("Location permission not granted"));
       }
     } else if (Platform.isIOS) {
-      /// On iOS the user will be asked to allow Bluetooth permission by
+      /// On iOS the user will be asked to allow Bluetooth access by
       /// the system. Once it is granted, the Bluetooth state will change from
-      /// UNKNOWN to POWERED_ON.
+      /// UNKNOWN to POWERED_ON. The following function will block the thread
+      /// until it happens.
       await _waitForBluetoothPoweredOn();
     }
   }
