@@ -77,11 +77,6 @@ class DevicesBloc {
   }
 
   Future<void> _checkPermissions() async {
-    _bleManager
-        .observeBluetoothState(emitCurrentValue: true)
-        .listen((bluetoothState) {
-      if (bluetoothState == BluetoothState.POWERED_ON) {}
-    });
     if (Platform.isAndroid) {
       var permissionStatus = await PermissionHandler()
           .requestPermissions([PermissionGroup.location]);
