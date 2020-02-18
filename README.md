@@ -34,20 +34,6 @@ defaultConfig {
 }
 ```
 
-Add `BLUETOOTH` and `ACCESS_FINE_LOCATION` permissions in main `AndroidManifest.xml` file.
-
-```xml
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.your_app">
-
-  <uses-permission android:name="android.permission.BLUETOOTH"/>
-  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-
-  ...
-</manifest>
-```
-
 ### iOS
 
 Go to `[project]/ios` directory and run `pod install`.
