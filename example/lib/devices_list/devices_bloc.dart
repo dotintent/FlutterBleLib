@@ -59,8 +59,8 @@ class DevicesBloc {
             })
         .catchError((e) => Fimber.d("Couldn't create BLE client", ex: e))
         .then((_) => _checkPermissions())
-        .then((_) => _waitForBluetoothPoweredOn())
         .catchError((e) => Fimber.d("Permission check error", ex: e))
+        .then((_) => _waitForBluetoothPoweredOn())
         .then((_) => _startScan());
 
     if (_visibleDevicesController.isClosed) {
