@@ -34,18 +34,6 @@ defaultConfig {
 }
 ```
 
-Add `tools:replace="android:label"` rule to `<application>` element in main `AndroidManifest.xml` file.
-
-```xml
-<application
-  android:name="io.flutter.app.FlutterApplication"
-  android:label="your_app"
-  android:icon="@mipmap/ic_launcher"
-  tools:replace="android:label">
-  ...
-</application>
-```
-
 Add `BLUETOOTH` and `ACCESS_FINE_LOCATION` permissions in main `AndroidManifest.xml` file.
 
 ```xml
