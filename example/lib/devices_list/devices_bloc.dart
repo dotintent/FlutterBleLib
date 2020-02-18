@@ -59,6 +59,7 @@ class DevicesBloc {
             })
         .catchError((e) => Fimber.d("Couldn't create BLE client", ex: e))
         .then((_) => _checkPermissions())
+        .then((_) => _waitForBluetoothPoweredOn())
         .catchError((e) => Fimber.d("Permission check error", ex: e))
         .then((_) => _startScan());
 
@@ -87,12 +88,6 @@ class DevicesBloc {
         return Future.error(Exception("Location permission not granted"));
       }
     }
-
-    /// On iOS the user will be asked to allow Bluetooth access by
-    /// the system. Once it is granted, the Bluetooth state will change from
-    /// UNKNOWN to POWERED_ON. The following function will block the thread
-    /// until it happens.
-    await _waitForBluetoothPoweredOn();
   }
 
   Future<void> _waitForBluetoothPoweredOn() async {
