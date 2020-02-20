@@ -17,6 +17,8 @@ dependencies:
   rxdart: ^0.22.0
   fimber: ^0.1.10
 
+  permission_handler: ^4.2.0+hotfix.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
