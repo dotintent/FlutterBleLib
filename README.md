@@ -27,12 +27,12 @@ Set `minSDKVersion` in `[project]/android/app/build.gradle` file to 18.
 ```gradle
 defaultConfig {
   ...
-  // Set min SDK version to 18
   minSdkVersion 18
-  targetSdkVersion 28
   ...
 }
 ```
+
+Support for Bluetooth Low Energy has been added in API 18, hence the library requires `minSDKVersion` to be set to 18. If BLE is not core to your application, [you can override it](https://stackoverflow.com/questions/27335889/how-do-i-ignore-minsdkversion-of-library-in-android-studio) and handle support detection in your code.
 
 ### iOS
 
