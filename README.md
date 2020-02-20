@@ -34,6 +34,8 @@ defaultConfig {
 
 Support for Bluetooth Low Energy has been added in API 18, hence the library requires `minSDKVersion` to be set to 18. If BLE is not core to your application, [you can override it](https://stackoverflow.com/questions/27335889/how-do-i-ignore-minsdkversion-of-library-in-android-studio) and handle support detection in your code.
 
+**Notice:** You don't need to add any additional permissions related to BLE because they are already declared in our manifest. However, you still need to request location permission at runtime, which you can implement with [permission_handler](https://pub.dev/packages/permission_handler) package. See [our example](https://github.com/Polidea/FlutterBleLib/tree/master/example) for reference.
+
 ### iOS
 
 Go to `[project]/ios` directory and run `pod install`.
