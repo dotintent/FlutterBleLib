@@ -34,7 +34,7 @@ defaultConfig {
 
 Support for Bluetooth Low Energy has been added in API 18, hence the library requires `minSDKVersion` to be set to 18. If BLE is not core to your application, [you can override it](https://stackoverflow.com/questions/27335889/how-do-i-ignore-minsdkversion-of-library-in-android-studio) and handle support detection in your code.
 
-**Notice:** You don't need to add any permissions related to BLE to the `AndroidManifest.xml`, because they are already declared in the library's native module. However, you still need to request `ACCESS_FINE_LOCATION` permission at runtime to be able to scan for peripheral. See [example's code](https://github.com/Polidea/FlutterBleLib/blob/develop/example/lib/devices_list/devices_bloc.dart#L80) and [example's pubspec](https://github.com/Polidea/FlutterBleLib/blob/develop/example/pubspec.yaml#L20).
+**Notice:** You don't need to add any permissions related to BLE to the `AndroidManifest.xml`, because they are already declared in the library's native module. However, you still need to request `ACCESS_FINE_LOCATION` permission at runtime to be able to scan for peripheral. See [example's code](https://github.com/Polidea/FlutterBleLib/blob/202c6fe48300be207f80567ca4bee5b6fbc83eb5/example/lib/devices_list/devices_bloc.dart#L80) and [example's pubspec](https://github.com/Polidea/FlutterBleLib/blob/202c6fe48300be207f80567ca4bee5b6fbc83eb5/example/pubspec.yaml#L20).
 
 ### iOS
 
