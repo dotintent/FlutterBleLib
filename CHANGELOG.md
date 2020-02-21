@@ -1,3 +1,10 @@
+## 2.2.1
+
+* Hide private APIs
+* Add setup instructions to README
+* Add missing descriptor operations information to README
+* Moved permission_handler dependency to its place in example
+
 ## 2.2.0
 
 * **NEW** operations on descriptors
