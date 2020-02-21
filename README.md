@@ -57,6 +57,7 @@ The library is organised around a few base entities, which are:
 - **Peripheral**
 - **Service**
 - **Characteristic**
+* **Descriptor**
 
 You have to create an instance _BleManager_ and initialise underlying native resources.
 Using that instance you then obtain an instance of _Peripheral_,
@@ -199,12 +200,18 @@ service.writeCharacteristic(
 characteristic.write(Uint8List.fromList([0]), false); //returns void
 ```
 
-Monitoring or reading a characteristic from _Peripheral_/_Service_ level
+Monitoring or reading a characteristic from _Peripheral_/_Service_ level 
 return _CharacteristicWithValue_ object, which is _Characteristic_ with additional `Uint8List value` property.
+ 
+ ### Descriptor operations
+ 
+List of descriptors from a single characteristic can be obtained in a similar fashion to a list of characteristics from a single service, either from Peripheral, Service or Characteristic object.
+Descriptors can be read/written from Peripheral, Service or Characteristic by supplying necessary UUIDs, or from Descriptor object.
 
-## Facilitated by Frontside
-
-[Frontside](https://github.com/thefrontside) provided architectural advice and financial support for this library on behalf of [Resideo](https://github.com/resideo).
+**Note:** to enable monitoring of characteristic you should use `characteristic.monitor()` or `(peripheral/service).monitorCharacteristic()` instead of changing the value of the underlying descriptor yourself.
+ 
+## Facilitated by Frontside 
+[Frontside](https://github.com/thefrontside) provided architectural advice and financial support for this library on behalf of [Resideo](https://github.com/resideo). 
 
 ## Maintained by
 
