@@ -1,4 +1,4 @@
-/// Library for handling Bluetooth Low Energy functionality
+/// Library for handling Bluetooth Low Energy functionality.
 ///
 /// The library is organised around a few base entities, which are:
 /// - [BleManager]
@@ -7,9 +7,10 @@
 /// - [Characteristic]
 /// - [Descriptor]
 ///
-/// You have to create an instance _BleManager_ and initialise underlying native
-/// resources. Using that instance you then obtain an instance of _Peripheral_,
-/// which can be used to run operations on the corresponding peripheral.
+/// You have to create an instance of [BleManager] and initialise underlying
+/// native resources. Using that instance you then obtain an instance of
+/// [Peripheral], which can be used to run operations on the corresponding
+/// peripheral.
 ///
 /// All operations passing the Dart-native bridge are asynchronous,
 /// hence all operations in the plugin return either Future or Stream.
@@ -18,7 +19,7 @@
 /// service discovery process on peripherals, manipulating characteristics
 /// and descriptors.
 ///
-/// You can also listen to changes of Bluetooth adapter's state
+/// You can also listen to changes of Bluetooth adapter's state.
 ///
 /// ```dart
 /// BleManager bleManager = BleManager();
