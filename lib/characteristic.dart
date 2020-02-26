@@ -143,6 +143,8 @@ class Characteristic extends InternalCharacteristic {
       isNotifiable.hashCode ^
       isIndicatable.hashCode;
 
+  /// Returns a string representation of this characteristic in a format that
+  /// contains all its properties and [Service].
   @override
   String toString() {
     return 'Characteristic{service: $service,'

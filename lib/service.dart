@@ -144,7 +144,7 @@ class Service extends InternalService {
   @override
   int get hashCode => peripheral.hashCode ^ _manager.hashCode ^ uuid.hashCode;
 
-  /// Returns a string representation of this object in a format that exposes
+  /// Returns a string representation of this service in a format that exposes
   /// [Peripheral.identifier] and [uuid].
   @override
   String toString() {
