@@ -12,7 +12,7 @@ class Service extends InternalService {
 
   ManagerForService _manager;
 
-  /// The UUID of the service.
+  /// The UUID of this service.
   String uuid;
 
   /// Deserializes [Service] from JSON for [peripheral] with
@@ -27,7 +27,7 @@ class Service extends InternalService {
     _manager = managerForService;
   }
 
-  /// Returns a list of [Characteristic]s of the service.
+  /// Returns a list of [Characteristic]s of this service.
   Future<List<Characteristic>> characteristics() =>
       _manager.characteristicsForService(this);
 
