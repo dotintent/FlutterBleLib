@@ -15,14 +15,26 @@ abstract class _ScanResultMetadata {
   static const String overflowServiceUuids = "overflowServiceUUIDs";
 }
 
+/// An item returned by [BleManager] during scanning.
 class ScanResult {
   Peripheral peripheral;
+
+  /// Signal strength of the device in dBm.
   int rssi;
+
+  /// The size of the data unit within an ATT packet.
   int mtu;
-  bool isConnectable; //iOS only
-  List<String> overflowServiceUUIDs; //iOS only
+
+  /// An indicator whether the device is connectable (iOS only).
+  bool isConnectable;
+
+  /// A list of UUIDs found in the overflow area of the advertisement data (iOS only).
+  List<String> overflowServiceUUIDs;
+
+  /// A packet of data advertised by the device.
   AdvertisementData advertisementData;
 
+  /// Deserializes [ScanResult] from JSON.
   ScanResult.fromJson(Map<String, dynamic> json, ManagerForPeripheral manager)
       : peripheral = Peripheral.fromJson(json, manager),
         rssi = json[_ScanResultMetadata.rssi],
