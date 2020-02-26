@@ -4,7 +4,7 @@ abstract class _PeripheralMetadata {
   static const name = "name";
   static const identifier = "id";
 }
-
+/// Device instance represents BLE peripheral
 class Peripheral {
   static const int NO_MTU_NEGOTIATION = 0;
   ManagerForPeripheral _manager;
@@ -17,6 +17,22 @@ class Peripheral {
         name = json[_PeripheralMetadata.name],
         identifier = json[_PeripheralMetadata.identifier];
 
+  /// Connects to the Device.
+  ///
+  /// Optional [isAutoConnect] controls whether to directly connect to the
+  /// remote device (false) or to automatically connect as soon as the
+  /// remote device becomes available (true). [Android only]
+  /// Optional [requestMtu] size will be negotiated to this value. It is not
+  /// guaranteed to get it after connection is successful. 0 passed as
+  /// Optional [requestMtu] means that the MTU will not be negotiated
+  /// Passing true as [refreshGatt] leads reset services cache. This option may
+  /// be useful when a peripheral's firmware was updated and it's
+  /// services/characteristics were added/removed/altered. [Android only]
+  /// Optional [timeout] is used to define time after connection is
+  /// automatically timed out. In case of race condition were connection
+  /// is established right after timeout event, device will be disconnected
+  /// immediately. Time out may happen earlier then specified due to OS
+  /// specific behavior.
   Future<void> connect(
           {bool isAutoConnect = false,
           int requestMtu = NO_MTU_NEGOTIATION,
@@ -33,27 +49,49 @@ class Peripheral {
       _manager.observePeripheralConnectionState(
           identifier, emitCurrentValue, completeOnDisconnect);
 
+  /// Check connection state of the Device.
   Future<bool> isConnected() => _manager.isPeripheralConnected(identifier);
 
+  /// Disconnects from Device if it's connected or cancels pending connection.
   Future<void> disconnectOrCancelConnection() =>
       _manager.disconnectOrCancelPeripheralConnection(identifier);
 
+  /// Discovers all Services, Characteristics and Descriptors for Device.
+  ///
+  /// Optional [transactionId] could be used to cancel operation.
   Future<void> discoverAllServicesAndCharacteristics({String transactionId}) =>
       _manager.discoverAllServicesAndCharacteristics(
           this, transactionId ?? TransactionIdGenerator.getNextId());
 
+  /// List of discovered Services for the Device.
   Future<List<Service>> services() => _manager.services(this);
 
+  /// List of discovered Characteristics for given Service.
+  ///
+  /// [servicedUuid] must be specified and characteristics only for that
+  /// service are returned.
   Future<List<Characteristic>> characteristics(String servicedUuid) =>
       _manager.characteristics(this, servicedUuid);
 
+  /// Reads RSSI for the device.
+  ///
+  /// Optional [transactionId] could be used to cancel operation.
   Future<int> rssi({String transactionId}) =>
       _manager.rssi(this, transactionId ?? TransactionIdGenerator.getNextId());
 
+  /// Request new MTU value for this device. This function currently is not
+  /// doing anything on iOS platform as MTU exchange is done automatically.
+  ///
+  /// Given [mtu] will be negotiated and the actual value is returned as future.
+  /// Optional [transactionId] could be used to cancel operation.
   Future<int> requestMtu(int mtu, {String transactionId}) =>
       _manager.requestMtu(
           this, mtu, transactionId ?? TransactionIdGenerator.getNextId());
 
+  /// Read characteristic value.
+  ///
+  /// Returns value of characteristic with [characteristicUUID] for service with
+  /// [serviceUUID]. Optional [transactionId] could be used to cancel operation.
   Future<CharacteristicWithValue> readCharacteristic(
     String serviceUUID,
     String characteristicUUID, {
@@ -66,6 +104,10 @@ class Peripheral {
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
+  /// Write Characteristic value.
+  ///
+  /// Writes [bytes] to characteristic with [characteristicUUID] for service with
+  /// [serviceUUID]. Optional [transactionId] could be used to cancel operation.
   Future<Characteristic> writeCharacteristic(
     String serviceUUID,
     String characteristicUUID,
