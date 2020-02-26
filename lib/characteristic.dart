@@ -17,12 +17,12 @@ abstract class _CharacteristicMetadata {
 /// value. The properties of a characteristic determine how you can use
 /// a characteristic’s value, and how you access the descriptors.
 class Characteristic extends InternalCharacteristic {
-  /// The service to which this characteristic belongs.
+  /// The [Service] to which this characteristic belongs.
   Service service;
 
   ManagerForCharacteristic _manager;
 
-  /// The UUID of the characteristic.
+  /// The UUID of this characteristic.
   String uuid;
 
   /// True if this characteristic can be read.
@@ -90,7 +90,7 @@ class Characteristic extends InternalCharacteristic {
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
-  /// Returns a list of [Descriptor]s of this characteristics.
+  /// Returns a list of [Descriptor]s of this characteristic.
   Future<List<Descriptor>> descriptors() =>
       _manager.descriptorsForCharacteristic(this);
 
@@ -156,6 +156,7 @@ class Characteristic extends InternalCharacteristic {
   }
 }
 
+/// Represents a [Characteristic] with its value.
 class CharacteristicWithValue extends Characteristic with WithValue {
   CharacteristicWithValue.fromJson(
     Map<String, dynamic> jsonObject,
