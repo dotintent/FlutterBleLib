@@ -15,7 +15,7 @@ abstract class _ScanResultMetadata {
   static const String overflowServiceUuids = "overflowServiceUUIDs";
 }
 
-/// An item returned by [BleManager] during scanning.
+/// The type of items returned by [BleManager] during scanning.
 class ScanResult {
   Peripheral peripheral;
 
@@ -44,14 +44,31 @@ class ScanResult {
         advertisementData = AdvertisementData._fromJson(json);
 }
 
+/// A container for BLE advertisement data with convenient accessors for
+/// common items.
 class AdvertisementData {
+  /// The manufacturer data of the device.
   Uint8List manufacturerData;
+
+  /// A dictionary that contains service-specific advertisement data.
   Map<String, Uint8List> serviceData;
+
+  /// A list of service UUIDs.
   List<String> serviceUUIDs;
+
+  /// The local name of the device.
+  ///
+  /// It is usually the same as [Peripheral.name] but sometimes one of them or
+  /// both can be [null].
   String localName;
+
+  /// The transmit power of the device.
   int txPowerLevel;
+
+  /// A list of solicited service UUIDs.
   List<String> solicitedServiceUUIDs;
 
+  /// Deserializes [AdvertisementData] from JSON.
   AdvertisementData._fromJson(Map<String, dynamic> json)
       : manufacturerData =
             _decodeBase64OrNull(json[_ScanResultMetadata.manufacturerData]),
