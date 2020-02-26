@@ -11,16 +11,35 @@ abstract class _CharacteristicMetadata {
   static const String value = "value";
 }
 
+/// A characteristic of a local peripheral's [Service].
+///
+/// It contains a single value and any number of [Descriptor]s describing that
+/// value. The properties of a characteristic determine how you can use
+/// a characteristic’s value, and how you access the descriptors.
 class Characteristic extends InternalCharacteristic {
+  /// The service to which this characteristic belongs.
   Service service;
+
   ManagerForCharacteristic _manager;
+
+  /// The UUID of the characteristic.
   String uuid;
+
+  /// True if this characteristic can be read.
   bool isReadable;
+
+  /// True if this characteristic can be written with resposne.
   bool isWritableWithResponse;
+
+  /// True if this characteristic can be written without resposne.
   bool isWritableWithoutResponse;
+
+  /// True if this characteristic can be monitored.
   bool isNotifiable;
+
   bool isIndicatable;
 
+  /// Deserializes characteristic from JSON for [service] with [manager].
   Characteristic.fromJson(Map<String, dynamic> jsonObject, Service service,
       ManagerForCharacteristic manager)
       : super(jsonObject[_CharacteristicMetadata.id]) {
@@ -36,6 +55,9 @@ class Characteristic extends InternalCharacteristic {
     isIndicatable = jsonObject[_CharacteristicMetadata.isIndicatable];
   }
 
+  /// Reads the value of this characteristic.
+  ///
+  /// The value can be read only if [isReadable] is `true`.
   Future<Uint8List> read({String transactionId}) =>
       _manager.readCharacteristicForIdentifier(
         service.peripheral,
@@ -43,6 +65,10 @@ class Characteristic extends InternalCharacteristic {
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
+  /// Writes the value of this characteristic.
+  ///
+  /// The value can be written only if [isWritableWithResponse] or
+  /// [isWritableWithoutResponse] is `true`.
   Future<void> write(
     Uint8List bytes,
     bool withResponse, {
@@ -56,6 +82,7 @@ class Characteristic extends InternalCharacteristic {
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
+  /// Returns a [Stream] of values emitted by this characteristic.
   Stream<Uint8List> monitor({String transactionId}) =>
       _manager.monitorCharacteristicForIdentifier(
         service.peripheral,
@@ -63,9 +90,11 @@ class Characteristic extends InternalCharacteristic {
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
+  /// Returns a list of [Descriptor]s of this characteristics.
   Future<List<Descriptor>> descriptors() =>
       _manager.descriptorsForCharacteristic(this);
 
+  /// Reads the value of a [Descriptor] identified by [descriptorUuid].
   Future<DescriptorWithValue> readDescriptor(
     String descriptorUuid, {
     String transactionId,
@@ -76,6 +105,7 @@ class Characteristic extends InternalCharacteristic {
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
+  /// Writes the [value] of a [Descriptor] identified by [descriptorUuid].
   Future<Descriptor> writeDescriptor(
     String descriptorUuid,
     Uint8List value, {
