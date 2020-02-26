@@ -5,7 +5,7 @@ abstract class _ServiceMetadata {
   static const String id = "serviceId";
 }
 
-/// A collection of [Characteristic] and associated behaviors.
+/// A collection of [Characteristic]s and associated behaviors.
 class Service extends InternalService {
   /// The peripheral to which this service belongs.
   Peripheral peripheral;
@@ -27,14 +27,16 @@ class Service extends InternalService {
     _manager = managerForService;
   }
 
-  /// Returns a list of characteristics of the service.
+  /// Returns a list of [Characteristic]s of the service.
   Future<List<Characteristic>> characteristics() =>
       _manager.characteristicsForService(this);
 
   /// Writes the value in [bytes] of a [Characteristic] identified by
   /// [characteristicUUID].
   ///
-  ///  It returns a [Future] that completes with the [Characteristic].
+  /// It returns a [Future] that completes with the [Characteristic]. Only
+  /// [Characteristic] where [Characteristic.isWritableWithResponse] or
+  /// [Characteristic.isWritableWithoutResponse] is `true` can be written.
   Future<Characteristic> writeCharacteristic(
     String characteristicUUID,
     Uint8List bytes,
@@ -53,7 +55,8 @@ class Service extends InternalService {
   ///
   /// It returns a [Future] that completes with [CharacteristicWithValue],
   /// which is just a [Characteristic] but with an additonal `value`
-  /// property of type [Uint8List].
+  /// property of type [Uint8List]. Only [Characteristic] where
+  /// [Characteristic.isReadable] is `true` can be read.
   Future<CharacteristicWithValue> readCharacteristic(
     String characteristicUUID, {
     String transactionId,
@@ -68,10 +71,10 @@ class Service extends InternalService {
   /// Returns a [Stream] of values emitted by a [Characteristic] identified by
   /// [characteristicUUID].
   ///
-  /// Just like the [readCharacteristic()] method, values are emitted as
+  /// Just like [readCharacteristic()] method, values are emitted as
   /// [CharacteristicWithValue] objects, which are the same as [Characteristic]
   /// but with an additonal `value` property of type [Uint8List]. Only
-  /// [Characteristic] with [Characteristic.isNotifiable] set as `true` can be
+  /// [Characteristic] where [Characteristic.isNotifiable] is `true` can be
   /// monitored.
   Stream<CharacteristicWithValue> monitorCharacteristic(
     String characteristicUUID, {
@@ -84,7 +87,7 @@ class Service extends InternalService {
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
-  /// Returns a list of descriptors of a [Characteristic] identified by
+  /// Returns a list of [Descriptor]s of a [Characteristic] identified by
   /// [characteristicUuid].
   Future<List<Descriptor>> descriptorsForCharacteristic(
     String characteristicUuid,
