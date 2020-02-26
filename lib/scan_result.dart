@@ -59,7 +59,7 @@ class AdvertisementData {
   /// The local name of the device.
   ///
   /// It is usually the same as [Peripheral.name] but sometimes one of them or
-  /// both can be [null].
+  /// both can be `null`.
   String localName;
 
   /// The transmit power of the device.
