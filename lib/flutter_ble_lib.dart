@@ -13,7 +13,7 @@
 /// peripheral.
 ///
 /// All operations passing the Dart-native bridge are asynchronous,
-/// hence all operations in the plugin return either Future or Stream.
+/// hence all operations in the plugin return either [Future] or [Stream].
 ///
 /// The library handles scanning for peripherals, connecting to peripherals,
 /// service discovery process on peripherals, manipulating characteristics
