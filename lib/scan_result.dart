@@ -18,18 +18,17 @@ abstract class _ScanResultMetadata {
 class ScanResult {
   Peripheral peripheral;
 
-  /// Signal strength of the device in dBm.
+  /// Signal strength of the peripheral in dBm.
   int rssi;
-  /// An indicator whether the device is connectable (iOS only).
+  /// An indicator whether the peripheral is connectable (iOS only).
   bool isConnectable;
 
   /// A list of UUIDs found in the overflow area of the advertisement data (iOS only).
   List<String> overflowServiceUUIDs;
 
-  /// A packet of data advertised by the device.
+  /// A packet of data advertised by the peripheral.
   AdvertisementData advertisementData;
 
-  /// Deserializes [ScanResult] from JSON.
   ScanResult.fromJson(Map<String, dynamic> json, ManagerForPeripheral manager)
       : peripheral = Peripheral.fromJson(json, manager),
         rssi = json[_ScanResultMetadata.rssi],
@@ -38,10 +37,10 @@ class ScanResult {
         advertisementData = AdvertisementData._fromJson(json);
 }
 
-/// A container for BLE advertisement data with convenient accessors for
-/// common items.
+/// Data advertised by the [Peripheral]: power level, local name,
+/// manufacturer's data, advertised [Service]s
 class AdvertisementData {
-  /// The manufacturer data of the device.
+  /// The manufacturer data of the peripheral.
   Uint8List manufacturerData;
 
   /// A dictionary that contains service-specific advertisement data.
@@ -50,19 +49,16 @@ class AdvertisementData {
   /// A list of service UUIDs.
   List<String> serviceUUIDs;
 
-  /// The local name of the device.
-  ///
-  /// It may be the same as [Peripheral.name] but sometimes one of them or
-  /// both are `null`.
+  /// The local name of the [Peripheral]. Might be different than
+  /// [Peripheral.name].
   String localName;
 
-  /// The transmit power of the device.
+  /// The transmit power of the peripheral.
   int txPowerLevel;
 
   /// A list of solicited service UUIDs.
   List<String> solicitedServiceUUIDs;
 
-  /// Deserializes [AdvertisementData] from JSON.
   AdvertisementData._fromJson(Map<String, dynamic> json)
       : manufacturerData =
             _decodeBase64OrNull(json[_ScanResultMetadata.manufacturerData]),
