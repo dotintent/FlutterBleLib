@@ -19,5 +19,6 @@ class InternalDescriptor {
 }
 
 mixin WithValue {
+  /// The value of this object.
   Uint8List value;
 }
