@@ -12,6 +12,9 @@ class Peripheral {
   String name;
   String identifier;
 
+  /// Creates Peripheral from JSON
+  ///
+  /// Creates peripheral from [json] and initializes it with [manager]
   Peripheral.fromJson(Map<String, dynamic> json, ManagerForPeripheral manager)
       : _manager = manager,
         name = json[_PeripheralMetadata.name],
@@ -44,6 +47,9 @@ class Peripheral {
           refreshGatt: refreshGatt,
           timeout: timeout);
 
+  /// Observe connection state
+  ///
+  /// Returns stream of [PeripheralConnectionState]
   Stream<PeripheralConnectionState> observeConnectionState(
           {bool emitCurrentValue = false, bool completeOnDisconnect = false}) =>
       _manager.observePeripheralConnectionState(
@@ -124,12 +130,22 @@ class Peripheral {
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
+  /// Fetch list of Descriptors
+  ///
+  /// Returns list of discovered Descriptors for given [serviceUuid] in specified
+  /// characteristic with [characteristicUuid]
   Future<List<Descriptor>> descriptorsForCharacteristic(
     String serviceUuid,
     String characteristicUuid,
   ) =>
       _manager.descriptorsForPeripheral(this, serviceUuid, characteristicUuid);
 
+  /// Read descriptor value
+  ///
+  /// Returns Descriptor object matching specified [serviceUuid],
+  /// [characteristicUuid] and [descriptorUuid]. Latest value of Descriptor will
+  /// be stored inside returned object. Optional [transactionId] could be used
+  /// to cancel operation.
   Future<DescriptorWithValue> readDescriptor(
     String serviceUuid,
     String characteristicUuid,
@@ -144,6 +160,11 @@ class Peripheral {
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
+  /// Write Descriptor value.
+  ///
+  /// Write [value] to Descriptor specified by [serviceUuid],
+  /// [characteristicUuid] and [descriptorUuid]. Returns Descriptor which saved
+  /// passed value. Optional [transactionId] could be used to cancel operation.
   Future<Descriptor> writeDescriptor(
     String serviceUuid,
     String characteristicUuid,
@@ -160,6 +181,13 @@ class Peripheral {
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
+  /// Monitor value changes of a Characteristic.
+  ///
+  /// Emits [CharacteristicWithValue] for every observed change of the
+  /// characteristic specified by [serviceUUID] and [characteristicUUID]
+  /// If notifications are enabled they will be used in favour of indications.
+  /// Optional [transactionId] could be used to cancel operation. Unsubscribe
+  /// from the stream cancels monitoring.
   Stream<CharacteristicWithValue> monitorCharacteristic(
     String serviceUUID,
     String characteristicUUID, {
@@ -178,6 +206,7 @@ class Peripheral {
   }
 }
 
+/// Enum covers all possible connection state
 enum PeripheralConnectionState {
   connecting,
   connected,
