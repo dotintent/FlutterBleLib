@@ -19,6 +19,8 @@
 /// service discovery process on peripherals, manipulating characteristics
 /// and descriptors.
 ///
+/// Bonding is handled transparently by the platform's operating system.
+///
 /// You can also listen to changes of Bluetooth adapter's state.
 ///
 /// ```dart

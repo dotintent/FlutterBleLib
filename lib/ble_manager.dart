@@ -41,10 +41,12 @@ abstract class BleManager {
     return _instance;
   }
 
-  /// Cancels transaction's return, resulting in [BleError] being returned
+  /// Cancels transaction's return, resulting in [BleError] with
+  /// [BleError.errorCode] set to [BleErrorCode.OperationCancelled] being returned
   /// from transaction's Future.
   ///
-  /// It's not possible to cancel the operation itself, eg. writing to
+  /// The operation might be cancelled if it hadn't yet started or be run
+  /// normally, eg. writing to
   /// characteristic, but you can dismiss awaiting for the result if,
   /// for example, the result is no longer useful due to user's actions.
   Future<void> cancelTransaction(String transactionId);

@@ -11,7 +11,7 @@ abstract class _CharacteristicMetadata {
   static const String value = "value";
 }
 
-/// A characteristic of a local peripheral's [Service].
+/// Representation of a single GATT Characteristic nested inside a [Service].
 ///
 /// It contains a single value and any number of [Descriptor]s describing that
 /// value. The properties of a characteristic determine how you can use
@@ -39,7 +39,6 @@ class Characteristic extends InternalCharacteristic {
   /// True if this characteristic can be monitored via indications.
   bool isIndicatable;
 
-  /// Deserializes characteristic from JSON for [service] with [manager].
   Characteristic.fromJson(Map<String, dynamic> jsonObject, Service service,
       ManagerForCharacteristic manager)
       : super(jsonObject[_CharacteristicMetadata.id]) {
@@ -65,10 +64,11 @@ class Characteristic extends InternalCharacteristic {
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
-  /// Writes the value of this characteristic.
+  /// Writes to the value of this characteristic.
   ///
   /// The value can be written only if [isWritableWithResponse] or
-  /// [isWritableWithoutResponse] is `true`.
+  /// [isWritableWithoutResponse] is `true` and argument [withResponse] is
+  /// set accordingly.
   Future<void> write(
     Uint8List bytes,
     bool withResponse, {
@@ -82,7 +82,14 @@ class Characteristic extends InternalCharacteristic {
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
-  /// Returns a [Stream] of values emitted by this characteristic.
+  /// Returns a [Stream] of notifications/indications emitted by this
+  /// characteristic.
+  ///
+  /// Library chooses notifications over indications, if both are supported.
+  ///
+  /// Subscribing to the returned object enables the notifications/indications
+  /// on the peripheral. Cancelling the last subscription disables the
+  /// notifications/indications on this characteristic.
   Stream<Uint8List> monitor({String transactionId}) =>
       _manager.monitorCharacteristicForIdentifier(
         service.peripheral,
@@ -159,6 +166,9 @@ class Characteristic extends InternalCharacteristic {
 }
 
 /// [Characteristic] extended with [value] property.
+///
+/// This type is created to support chaining of operations on the characteristic
+/// when it was first read from [Peripheral] or [Service].
 class CharacteristicWithValue extends Characteristic with WithValue {
   CharacteristicWithValue.fromJson(
     Map<String, dynamic> jsonObject,
