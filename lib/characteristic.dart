@@ -34,9 +34,9 @@ class Characteristic extends InternalCharacteristic {
   /// True if this characteristic can be written without resposne.
   bool isWritableWithoutResponse;
 
-  /// True if this characteristic can be monitored.
+  /// True if this characteristic can be monitored via notifications.
   bool isNotifiable;
-
+  /// True if this characteristic can be monitored via indications.
   bool isIndicatable;
 
   /// Deserializes characteristic from JSON for [service] with [manager].
