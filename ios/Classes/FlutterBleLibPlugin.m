@@ -607,7 +607,7 @@
 }
 
 - (NSString *)base64encodedStringFromBytes:(FlutterStandardTypedData *)bytes {
-    return [bytes.data base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+    return [bytes.data base64EncodedStringWithOptions:0];
 }
 
 @end

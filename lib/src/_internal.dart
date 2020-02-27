@@ -8,10 +8,10 @@ import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
-import 'package:flutter_ble_lib/internal/_constants.dart';
-import 'package:flutter_ble_lib/internal/_containers.dart';
-import 'package:flutter_ble_lib/internal/util/_transaction_id_generator.dart';
-import 'package:flutter_ble_lib/internal/util/_transformers.dart';
+import 'package:flutter_ble_lib/src/_constants.dart';
+import 'package:flutter_ble_lib/src/_containers.dart';
+import 'package:flutter_ble_lib/src/util/_transaction_id_generator.dart';
+import 'package:flutter_ble_lib/src/util/_transformers.dart';
 
 import '_managers_for_classes.dart';
 

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_ble_lib/internal/util/_transaction_id_generator.dart';
+import 'package:flutter_ble_lib/src/util/_transaction_id_generator.dart';
 
 void main() {
   test("should be able to generate an id", () {
