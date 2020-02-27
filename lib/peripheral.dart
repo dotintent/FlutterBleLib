@@ -4,7 +4,15 @@ abstract class _PeripheralMetadata {
   static const name = "name";
   static const identifier = "id";
 }
-/// Device instance represents BLE peripheral
+
+/// Representation of a unique peripheral
+///
+/// This class allows for managing the connection, discovery,
+/// retrieving [Service]s, [Characteristic]s and [Descriptor]s and has
+/// convenience methods for manipulation of the latter two.
+///
+/// Only [connect()], [observeConnectionState()], [isConnected()] and
+/// [disconnectOrCancelConnection()] can be used if peripheral is not connected.
 class Peripheral {
   static const int NO_MTU_NEGOTIATION = 0;
   ManagerForPeripheral _manager;
@@ -12,29 +20,33 @@ class Peripheral {
   String name;
   String identifier;
 
-  /// Creates Peripheral from JSON
-  ///
-  /// Creates peripheral from [json] and initializes it with [manager]
   Peripheral.fromJson(Map<String, dynamic> json, ManagerForPeripheral manager)
       : _manager = manager,
         name = json[_PeripheralMetadata.name],
         identifier = json[_PeripheralMetadata.identifier];
 
-  /// Connects to the Device.
+  /// Connects to the peripheral.
   ///
   /// Optional [isAutoConnect] controls whether to directly connect to the
-  /// remote device (false) or to automatically connect as soon as the
-  /// remote device becomes available (true). [Android only]
+  /// remote peripheral (`false`) or to automatically connect as soon as the
+  /// remote peripheral becomes available (true). (Android only)
+  ///
   /// Optional [requestMtu] size will be negotiated to this value. It is not
-  /// guaranteed to get it after connection is successful. 0 passed as
+  /// guaranteed to get it after connection is successful. (Android only)
+  /// iOS by default requests about 186 MTU size and there's nothing anyone can
+  /// do about it.
+  /// **NOTE**: if MTU has been request on this step, then there's no way
+  /// to retrieve it's value later on.
+  ///
   /// Optional [requestMtu] means that the MTU will not be negotiated
-  /// Passing true as [refreshGatt] leads reset services cache. This option may
+  /// Passing `true` as [refreshGatt] leads reset services cache. This option may
   /// be useful when a peripheral's firmware was updated and it's
-  /// services/characteristics were added/removed/altered. [Android only]
+  /// services/characteristics were added/removed/altered. (Android only)
+  ///
   /// Optional [timeout] is used to define time after connection is
   /// automatically timed out. In case of race condition were connection
-  /// is established right after timeout event, device will be disconnected
-  /// immediately. Time out may happen earlier then specified due to OS
+  /// is established right after timeout event, peripheral will be disconnected
+  /// immediately. Timeout may happen earlier then specified due to OS
   /// specific behavior.
   Future<void> connect(
           {bool isAutoConnect = false,
@@ -47,57 +59,73 @@ class Peripheral {
           refreshGatt: refreshGatt,
           timeout: timeout);
 
-  /// Observe connection state
+  /// Returns a stream of [PeripheralConnectionState].
   ///
-  /// Returns stream of [PeripheralConnectionState]
+  /// By default this stream will never end, but this behaviour can be changed
+  /// by setting [completeOnDisconnect] to `true`.
   Stream<PeripheralConnectionState> observeConnectionState(
           {bool emitCurrentValue = false, bool completeOnDisconnect = false}) =>
       _manager.observePeripheralConnectionState(
           identifier, emitCurrentValue, completeOnDisconnect);
 
-  /// Returns whether peripheral is connected.
+  /// Returns whether this peripheral is connected.
   Future<bool> isConnected() => _manager.isPeripheralConnected(identifier);
 
-  /// Disconnects from this peripheral if it's connected or cancels pending connection.
+  /// Disconnects from this peripheral if it's connected or cancels pending
+  /// connection.
   Future<void> disconnectOrCancelConnection() =>
       _manager.disconnectOrCancelPeripheralConnection(identifier);
 
-  /// Discovers all Services, Characteristics and Descriptors for Device.
+  /// Discovers all [Service]s, [Characteristic]s and [Descriptor]s of this peripheral.
+  /// Must be done prior to any other operation concerning those.
   ///
   /// Optional [transactionId] could be used to cancel operation.
   Future<void> discoverAllServicesAndCharacteristics({String transactionId}) =>
       _manager.discoverAllServicesAndCharacteristics(
           this, transactionId ?? TransactionIdGenerator.getNextId());
 
-  /// List of discovered Services for the Device.
+  /// Returns a list of [Service]s of this peripheral.
+  ///
+  /// Will result in error if discovery was not done during this connection.
   Future<List<Service>> services() => _manager.services(this);
 
-  /// List of discovered Characteristics for given Service.
+  /// Returns a list of discovered [Characteristic]s of a [Service] identified
+  /// by [servicedUuid].
   ///
-  /// [servicedUuid] must be specified and characteristics only for that
+  /// [servicedUuid] must be specified as characteristics only for that
   /// service are returned.
+  ///
+  /// Will result in error if discovery was not done during this connection.
   Future<List<Characteristic>> characteristics(String servicedUuid) =>
       _manager.characteristics(this, servicedUuid);
 
-  /// Reads RSSI for the device.
+  /// Reads RSSI for the peripheral.
   ///
   /// Optional [transactionId] could be used to cancel operation.
   Future<int> rssi({String transactionId}) =>
       _manager.rssi(this, transactionId ?? TransactionIdGenerator.getNextId());
 
-  /// Request new MTU value for this device. This function currently is not
-  /// doing anything on iOS platform as MTU exchange is done automatically.
+  /// Requests new MTU value for current connection and return the negotiation
+  /// result on Android, reads MTU on iOS.
   ///
-  /// Given [mtu] will be negotiated and the actual value is returned as future.
+  /// This function currently is not doing anything on iOS platform as
+  /// MTU is requested automatically around 186.
+  ///
+  /// Peripheral will negotiate requested [mtu], meaning it might be actually
+  /// lower than the requested size.
   /// Optional [transactionId] could be used to cancel operation.
+  ///
+  /// If MTU has been requested in [connect()] this method will end with [BleError].
   Future<int> requestMtu(int mtu, {String transactionId}) =>
       _manager.requestMtu(
           this, mtu, transactionId ?? TransactionIdGenerator.getNextId());
 
-  /// Read characteristic value.
+  /// Reads value of [Characteristic] matching specified UUIDs.
   ///
   /// Returns value of characteristic with [characteristicUUID] for service with
   /// [serviceUUID]. Optional [transactionId] could be used to cancel operation.
+  ///
+  /// Will result in error if discovery was not done during this connection.
   Future<CharacteristicWithValue> readCharacteristic(
     String serviceUUID,
     String characteristicUUID, {
@@ -110,14 +138,16 @@ class Peripheral {
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
-  /// Write Characteristic value.
+  /// Writes value of [Characteristic] matching specified UUIDs.
   ///
-  /// Writes [bytes] to characteristic with [characteristicUUID] for service with
+  /// Writes [value] to characteristic with [characteristicUUID] for service with
   /// [serviceUUID]. Optional [transactionId] could be used to cancel operation.
+  ///
+  /// Will result in error if discovery was not done during this connection.
   Future<Characteristic> writeCharacteristic(
     String serviceUUID,
     String characteristicUUID,
-    Uint8List bytes,
+    Uint8List value,
     bool withResponse, {
     String transactionId,
   }) =>
@@ -125,27 +155,31 @@ class Peripheral {
         this,
         serviceUUID,
         characteristicUUID,
-        bytes,
+        value,
         withResponse,
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
-  /// Fetch list of Descriptors
+  /// Returns a list of [Descriptor]s for [Characteristic] matching specified UUIDs.
   ///
   /// Returns list of discovered Descriptors for given [serviceUuid] in specified
   /// characteristic with [characteristicUuid]
+  ///
+  /// Will result in error if discovery was not done during this connection.
   Future<List<Descriptor>> descriptorsForCharacteristic(
     String serviceUuid,
     String characteristicUuid,
   ) =>
       _manager.descriptorsForPeripheral(this, serviceUuid, characteristicUuid);
 
-  /// Read descriptor value
+  /// Reads value of [Descriptor] matching specified UUIDs.
   ///
   /// Returns Descriptor object matching specified [serviceUuid],
-  /// [characteristicUuid] and [descriptorUuid]. Latest value of Descriptor will
+  /// [characteristicUuid] and [descriptorUuid]. Latest value of the descriptor will
   /// be stored inside returned object. Optional [transactionId] could be used
   /// to cancel operation.
+  ///
+  /// Will result in error if discovery was not done during this connection.
   Future<DescriptorWithValue> readDescriptor(
     String serviceUuid,
     String characteristicUuid,
@@ -160,11 +194,13 @@ class Peripheral {
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
-  /// Write Descriptor value.
+  /// Writes value of [Descriptor] matching specified UUIDs.
   ///
   /// Write [value] to Descriptor specified by [serviceUuid],
   /// [characteristicUuid] and [descriptorUuid]. Returns Descriptor which saved
   /// passed value. Optional [transactionId] could be used to cancel operation.
+  ///
+  /// Will result in error if discovery was not done during this connection.
   Future<Descriptor> writeDescriptor(
     String serviceUuid,
     String characteristicUuid,
@@ -181,13 +217,16 @@ class Peripheral {
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
-  /// Monitor value changes of a Characteristic.
+  /// Returns a stream of notifications/indications from [Characteristic]
+  /// matching specified UUIDs.
   ///
   /// Emits [CharacteristicWithValue] for every observed change of the
   /// characteristic specified by [serviceUUID] and [characteristicUUID]
   /// If notifications are enabled they will be used in favour of indications.
-  /// Optional [transactionId] could be used to cancel operation. Unsubscribe
+  /// Optional [transactionId] could be used to cancel operation. Unsubscribing
   /// from the stream cancels monitoring.
+  ///
+  /// Will result in error if discovery was not done during this connection.
   Stream<CharacteristicWithValue> monitorCharacteristic(
     String serviceUUID,
     String characteristicUUID, {
