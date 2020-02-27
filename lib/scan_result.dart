@@ -4,7 +4,6 @@ abstract class _ScanResultMetadata {
   static const String id = "id";
   static const String name = "name";
   static const String rssi = "rssi";
-  static const String mtu = "mtu";
   static const String manufacturerData = "manufacturerData";
   static const String serviceData = "serviceData";
   static const String serviceUuids = "serviceUUIDs";
@@ -21,10 +20,6 @@ class ScanResult {
 
   /// Signal strength of the device in dBm.
   int rssi;
-
-  /// The size of the data unit within an ATT packet.
-  int mtu;
-
   /// An indicator whether the device is connectable (iOS only).
   bool isConnectable;
 
@@ -38,7 +33,6 @@ class ScanResult {
   ScanResult.fromJson(Map<String, dynamic> json, ManagerForPeripheral manager)
       : peripheral = Peripheral.fromJson(json, manager),
         rssi = json[_ScanResultMetadata.rssi],
-        mtu = json[_ScanResultMetadata.mtu],
         isConnectable = json[_ScanResultMetadata.isConnectable],
         overflowServiceUUIDs = json[_ScanResultMetadata.overflowServiceUuids],
         advertisementData = AdvertisementData._fromJson(json);
