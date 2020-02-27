@@ -1,3 +1,8 @@
+## 2.2.2
+
+* Fix issue with invalid characteristic value base64 coding when performing characteristic operations on iOS
+* Improve documentation
+
 ## 2.2.1
 
 * Hide private APIs

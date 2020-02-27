@@ -5,9 +5,14 @@ abstract class _ServiceMetadata {
   static const String id = "serviceId";
 }
 
+/// A collection of [Characteristic]s and associated behaviors.
 class Service extends InternalService {
+  /// [Peripheral] containing this service.
   Peripheral peripheral;
+
   ManagerForService _manager;
+
+  /// The UUID of this service.
   String uuid;
 
   Service.fromJson(
@@ -20,12 +25,23 @@ class Service extends InternalService {
     _manager = managerForService;
   }
 
+  /// Returns a list of [Characteristic]s of this service.
   Future<List<Characteristic>> characteristics() =>
       _manager.characteristicsForService(this);
 
+  /// Writes the [value] to the [Characteristic] identified by
+  /// [characteristicUUID].
+  ///
+  /// It returns a [Future] that completes with the [Characteristic] for the
+  /// convenience of chaining operations.
+  ///
+  /// Operation will succeed only if [Characteristic] where
+  /// [Characteristic.isWritableWithResponse] or
+  /// [Characteristic.isWritableWithoutResponse] is `true` and
+  /// [withResponse] is specified accordingly can be written to.
   Future<Characteristic> writeCharacteristic(
     String characteristicUUID,
-    Uint8List bytes,
+    Uint8List value,
     bool withResponse, {
     String transactionId,
   }) =>
@@ -33,10 +49,16 @@ class Service extends InternalService {
           peripheral,
           this,
           characteristicUUID,
-          bytes,
+          value,
           withResponse,
           transactionId ?? TransactionIdGenerator.getNextId());
 
+  /// Reads the value of a [Characteristic] identified by [characteristicUUID].
+  ///
+  /// It returns a [Future] that completes with [CharacteristicWithValue],
+  /// which is just a [Characteristic] but with an additonal `value`
+  /// property of type [Uint8List]. Only [Characteristic] where
+  /// [Characteristic.isReadable] is `true` can be read.
   Future<CharacteristicWithValue> readCharacteristic(
     String characteristicUUID, {
     String transactionId,
@@ -48,6 +70,14 @@ class Service extends InternalService {
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
+  /// Returns a [Stream] of values emitted by a [Characteristic] identified by
+  /// [characteristicUUID].
+  ///
+  /// Just like [readCharacteristic()] method, values are emitted as
+  /// [CharacteristicWithValue] objects, which are the same as [Characteristic]
+  /// but with an additonal `value` property of type [Uint8List]. Only
+  /// [Characteristic] where [Characteristic.isNotifiable] is `true` can be
+  /// monitored.
   Stream<CharacteristicWithValue> monitorCharacteristic(
     String characteristicUUID, {
     String transactionId,
@@ -59,6 +89,8 @@ class Service extends InternalService {
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
+  /// Returns a list of [Descriptor]s of a [Characteristic] identified by
+  /// [characteristicUuid].
   Future<List<Descriptor>> descriptorsForCharacteristic(
     String characteristicUuid,
   ) =>
@@ -67,6 +99,12 @@ class Service extends InternalService {
         characteristicUuid,
       );
 
+  /// Reads the value of a [Descriptor] identified by [descriptorUuid] of
+  /// a [Characteristic] identified by [characteristicUuid].
+  ///
+  /// It returns a [Future] that completes with [DescriptorWithValue],
+  /// which is just a [Descriptor] but with an additonal `value` property
+  /// of type [Uint8List].
   Future<DescriptorWithValue> readDescriptor(
     String characteristicUuid,
     String descriptorUuid, {
@@ -79,6 +117,10 @@ class Service extends InternalService {
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
+  /// Writes the [value] of a [Descriptor] identified by [descriptorUuid]
+  /// of a [Characteristic] identified by [characteristicUuid].
+  ///
+  /// It returns a [Future] that completes with the [Descriptor].
   Future<Descriptor> writeDescriptor(
     String characteristicUuid,
     String descriptorUuid,
@@ -104,6 +146,8 @@ class Service extends InternalService {
   @override
   int get hashCode => peripheral.hashCode ^ _manager.hashCode ^ uuid.hashCode;
 
+  /// Returns a string representation of this service in a format that exposes
+  /// [Peripheral.identifier] and [uuid].
   @override
   String toString() {
     return 'Service{peripheralId: ${peripheral.identifier}, uuid: $uuid}';

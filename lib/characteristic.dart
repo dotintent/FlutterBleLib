@@ -11,14 +11,32 @@ abstract class _CharacteristicMetadata {
   static const String value = "value";
 }
 
+/// Representation of a single GATT Characteristic nested inside a [Service].
+///
+/// It contains a single value and any number of [Descriptor]s describing that
+/// value. The properties of a characteristic determine how you can use
+/// a characteristic’s value, and how you access the descriptors.
 class Characteristic extends InternalCharacteristic {
+  /// The [Service] containing this characteristic.
   Service service;
+
   ManagerForCharacteristic _manager;
+
+  /// The UUID of this characteristic.
   String uuid;
+
+  /// True if this characteristic can be read.
   bool isReadable;
+
+  /// True if this characteristic can be written with resposne.
   bool isWritableWithResponse;
+
+  /// True if this characteristic can be written without resposne.
   bool isWritableWithoutResponse;
+
+  /// True if this characteristic can be monitored via notifications.
   bool isNotifiable;
+  /// True if this characteristic can be monitored via indications.
   bool isIndicatable;
 
   Characteristic.fromJson(Map<String, dynamic> jsonObject, Service service,
@@ -36,6 +54,9 @@ class Characteristic extends InternalCharacteristic {
     isIndicatable = jsonObject[_CharacteristicMetadata.isIndicatable];
   }
 
+  /// Reads the value of this characteristic.
+  ///
+  /// The value can be read only if [isReadable] is `true`.
   Future<Uint8List> read({String transactionId}) =>
       _manager.readCharacteristicForIdentifier(
         service.peripheral,
@@ -43,6 +64,11 @@ class Characteristic extends InternalCharacteristic {
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
+  /// Writes to the value of this characteristic.
+  ///
+  /// The value can be written only if [isWritableWithResponse] or
+  /// [isWritableWithoutResponse] is `true` and argument [withResponse] is
+  /// set accordingly.
   Future<void> write(
     Uint8List bytes,
     bool withResponse, {
@@ -56,6 +82,14 @@ class Characteristic extends InternalCharacteristic {
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
+  /// Returns a [Stream] of notifications/indications emitted by this
+  /// characteristic.
+  ///
+  /// Library chooses notifications over indications, if both are supported.
+  ///
+  /// Subscribing to the returned object enables the notifications/indications
+  /// on the peripheral. Cancelling the last subscription disables the
+  /// notifications/indications on this characteristic.
   Stream<Uint8List> monitor({String transactionId}) =>
       _manager.monitorCharacteristicForIdentifier(
         service.peripheral,
@@ -63,9 +97,11 @@ class Characteristic extends InternalCharacteristic {
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
+  /// Returns a list of [Descriptor]s of this characteristic.
   Future<List<Descriptor>> descriptors() =>
       _manager.descriptorsForCharacteristic(this);
 
+  /// Reads the value of a [Descriptor] identified by [descriptorUuid].
   Future<DescriptorWithValue> readDescriptor(
     String descriptorUuid, {
     String transactionId,
@@ -76,6 +112,7 @@ class Characteristic extends InternalCharacteristic {
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
+  /// Writes the [value] of a [Descriptor] identified by [descriptorUuid].
   Future<Descriptor> writeDescriptor(
     String descriptorUuid,
     Uint8List value, {
@@ -113,6 +150,8 @@ class Characteristic extends InternalCharacteristic {
       isNotifiable.hashCode ^
       isIndicatable.hashCode;
 
+  /// Returns a string representation of this characteristic in a format that
+  /// contains all its properties and [Service].
   @override
   String toString() {
     return 'Characteristic{service: $service,'
@@ -126,6 +165,10 @@ class Characteristic extends InternalCharacteristic {
   }
 }
 
+/// [Characteristic] extended with [value] property.
+///
+/// This type is created to support chaining of operations on the characteristic
+/// when it was first read from [Peripheral] or [Service].
 class CharacteristicWithValue extends Characteristic with WithValue {
   CharacteristicWithValue.fromJson(
     Map<String, dynamic> jsonObject,
