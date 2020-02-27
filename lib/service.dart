@@ -7,7 +7,7 @@ abstract class _ServiceMetadata {
 
 /// A collection of [Characteristic]s and associated behaviors.
 class Service extends InternalService {
-  /// The peripheral to which this service belongs.
+  /// [Peripheral] containing this service.
   Peripheral peripheral;
 
   ManagerForService _manager;
@@ -15,8 +15,6 @@ class Service extends InternalService {
   /// The UUID of this service.
   String uuid;
 
-  /// Deserializes [Service] from JSON for [peripheral] with
-  /// [managerForService].
   Service.fromJson(
     Map<String, dynamic> jsonObject,
     Peripheral peripheral,
@@ -31,15 +29,19 @@ class Service extends InternalService {
   Future<List<Characteristic>> characteristics() =>
       _manager.characteristicsForService(this);
 
-  /// Writes the value in [bytes] of a [Characteristic] identified by
+  /// Writes the [value] to the [Characteristic] identified by
   /// [characteristicUUID].
   ///
-  /// It returns a [Future] that completes with the [Characteristic]. Only
-  /// [Characteristic] where [Characteristic.isWritableWithResponse] or
-  /// [Characteristic.isWritableWithoutResponse] is `true` can be written.
+  /// It returns a [Future] that completes with the [Characteristic] for the
+  /// convenience of chaining operations.
+  ///
+  /// Operation will succeed only if [Characteristic] where
+  /// [Characteristic.isWritableWithResponse] or
+  /// [Characteristic.isWritableWithoutResponse] is `true` and
+  /// [withResponse] is specified accordingly can be written to.
   Future<Characteristic> writeCharacteristic(
     String characteristicUUID,
-    Uint8List bytes,
+    Uint8List value,
     bool withResponse, {
     String transactionId,
   }) =>
@@ -47,7 +49,7 @@ class Service extends InternalService {
           peripheral,
           this,
           characteristicUUID,
-          bytes,
+          value,
           withResponse,
           transactionId ?? TransactionIdGenerator.getNextId());
 
