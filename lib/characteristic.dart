@@ -17,7 +17,7 @@ abstract class _CharacteristicMetadata {
 /// value. The properties of a characteristic determine how you can use
 /// a characteristic’s value, and how you access the descriptors.
 class Characteristic extends InternalCharacteristic {
-  /// The [Service] to which this characteristic belongs.
+  /// The [Service] containing this characteristic.
   Service service;
 
   ManagerForCharacteristic _manager;
@@ -158,7 +158,7 @@ class Characteristic extends InternalCharacteristic {
   }
 }
 
-/// Represents a [Characteristic] with its value.
+/// [Characteristic] extended with [value] property.
 class CharacteristicWithValue extends Characteristic with WithValue {
   CharacteristicWithValue.fromJson(
     Map<String, dynamic> jsonObject,

@@ -55,10 +55,10 @@ class Peripheral {
       _manager.observePeripheralConnectionState(
           identifier, emitCurrentValue, completeOnDisconnect);
 
-  /// Check connection state of the Device.
+  /// Returns whether peripheral is connected.
   Future<bool> isConnected() => _manager.isPeripheralConnected(identifier);
 
-  /// Disconnects from Device if it's connected or cancels pending connection.
+  /// Disconnects from this peripheral if it's connected or cancels pending connection.
   Future<void> disconnectOrCancelConnection() =>
       _manager.disconnectOrCancelPeripheralConnection(identifier);
 

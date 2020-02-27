@@ -15,7 +15,7 @@ abstract class _ScanResultMetadata {
   static const String overflowServiceUuids = "overflowServiceUUIDs";
 }
 
-/// Type of items returned by [BleManager] during scanning.
+/// A scan result emitted by the scanning operation, containing [Peripheral] and [AdvertisementData].
 class ScanResult {
   Peripheral peripheral;
 
