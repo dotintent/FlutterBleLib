@@ -30,7 +30,7 @@ class Service extends InternalService {
       _manager.characteristicsForService(this);
 
   /// Writes the [value] to the [Characteristic] identified by
-  /// [characteristicUUID].
+  /// [characteristicUuid].
   ///
   /// It returns a [Future] that completes with the [Characteristic] for the
   /// convenience of chaining operations.
@@ -40,7 +40,7 @@ class Service extends InternalService {
   /// [Characteristic.isWritableWithoutResponse] is `true` and
   /// [withResponse] is specified accordingly can be written to.
   Future<Characteristic> writeCharacteristic(
-    String characteristicUUID,
+    String characteristicUuid,
     Uint8List value,
     bool withResponse, {
     String transactionId,
@@ -48,30 +48,30 @@ class Service extends InternalService {
       _manager.writeCharacteristicForService(
           peripheral,
           this,
-          characteristicUUID,
+          characteristicUuid,
           value,
           withResponse,
           transactionId ?? TransactionIdGenerator.getNextId());
 
-  /// Reads the value of a [Characteristic] identified by [characteristicUUID].
+  /// Reads the value of a [Characteristic] identified by [characteristicUuid].
   ///
   /// It returns a [Future] that completes with [CharacteristicWithValue],
   /// which is just a [Characteristic] but with an additonal `value`
   /// property of type [Uint8List]. Only [Characteristic] where
   /// [Characteristic.isReadable] is `true` can be read.
   Future<CharacteristicWithValue> readCharacteristic(
-    String characteristicUUID, {
+    String characteristicUuid, {
     String transactionId,
   }) =>
       _manager.readCharacteristicForService(
         peripheral,
         this,
-        characteristicUUID,
+        characteristicUuid,
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
   /// Returns a [Stream] of values emitted by a [Characteristic] identified by
-  /// [characteristicUUID].
+  /// [characteristicUuid].
   ///
   /// Just like [readCharacteristic()] method, values are emitted as
   /// [CharacteristicWithValue] objects, which are the same as [Characteristic]
@@ -79,13 +79,13 @@ class Service extends InternalService {
   /// [Characteristic] where [Characteristic.isNotifiable] is `true` can be
   /// monitored.
   Stream<CharacteristicWithValue> monitorCharacteristic(
-    String characteristicUUID, {
+    String characteristicUuid, {
     String transactionId,
   }) =>
       _manager.monitorCharacteristicForService(
         peripheral,
         this,
-        characteristicUUID,
+        characteristicUuid,
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
 

@@ -122,39 +122,39 @@ class Peripheral {
 
   /// Reads value of [Characteristic] matching specified UUIDs.
   ///
-  /// Returns value of characteristic with [characteristicUUID] for service with
-  /// [serviceUUID]. Optional [transactionId] could be used to cancel operation.
+  /// Returns value of characteristic with [characteristicUuid] for service with
+  /// [serviceUuid]. Optional [transactionId] could be used to cancel operation.
   ///
   /// Will result in error if discovery was not done during this connection.
   Future<CharacteristicWithValue> readCharacteristic(
-    String serviceUUID,
-    String characteristicUUID, {
+    String serviceUuid,
+    String characteristicUuid, {
     String transactionId,
   }) =>
       _manager.readCharacteristicForDevice(
         this,
-        serviceUUID,
-        characteristicUUID,
+        serviceUuid,
+        characteristicUuid,
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
 
   /// Writes value of [Characteristic] matching specified UUIDs.
   ///
-  /// Writes [value] to characteristic with [characteristicUUID] for service with
-  /// [serviceUUID]. Optional [transactionId] could be used to cancel operation.
+  /// Writes [value] to characteristic with [characteristicUuid] for service with
+  /// [serviceUuid]. Optional [transactionId] could be used to cancel operation.
   ///
   /// Will result in error if discovery was not done during this connection.
   Future<Characteristic> writeCharacteristic(
-    String serviceUUID,
-    String characteristicUUID,
+    String serviceUuid,
+    String characteristicUuid,
     Uint8List value,
     bool withResponse, {
     String transactionId,
   }) =>
       _manager.writeCharacteristicForDevice(
         this,
-        serviceUUID,
-        characteristicUUID,
+        serviceUuid,
+        characteristicUuid,
         value,
         withResponse,
         transactionId ?? TransactionIdGenerator.getNextId(),
@@ -221,21 +221,21 @@ class Peripheral {
   /// matching specified UUIDs.
   ///
   /// Emits [CharacteristicWithValue] for every observed change of the
-  /// characteristic specified by [serviceUUID] and [characteristicUUID]
+  /// characteristic specified by [serviceUuid] and [characteristicUuid]
   /// If notifications are enabled they will be used in favour of indications.
   /// Optional [transactionId] could be used to cancel operation. Unsubscribing
   /// from the stream cancels monitoring.
   ///
   /// Will result in error if discovery was not done during this connection.
   Stream<CharacteristicWithValue> monitorCharacteristic(
-    String serviceUUID,
-    String characteristicUUID, {
+    String serviceUuid,
+    String characteristicUuid, {
     String transactionId,
   }) =>
       _manager.monitorCharacteristicForDevice(
         this,
-        serviceUUID,
-        characteristicUUID,
+        serviceUuid,
+        characteristicUuid,
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
 

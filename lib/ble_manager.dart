@@ -42,7 +42,7 @@ abstract class BleManager {
   }
 
   /// Cancels transaction's return, resulting in [BleError] with
-  /// [BleError.errorCode] set to [BleErrorCode.OperationCancelled] being returned
+  /// [BleError.errorCode] set to [BleErrorCode.operationCancelled] being returned
   /// from transaction's Future.
   ///
   /// The operation might be cancelled if it hadn't yet started or be run
