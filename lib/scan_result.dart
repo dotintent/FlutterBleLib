@@ -20,11 +20,12 @@ class ScanResult {
 
   /// Signal strength of the peripheral in dBm.
   int rssi;
+
   /// An indicator whether the peripheral is connectable (iOS only).
   bool isConnectable;
 
   /// A list of UUIDs found in the overflow area of the advertisement data (iOS only).
-  List<String> overflowServiceUUIDs;
+  List<String> overflowServiceUuids;
 
   /// A packet of data advertised by the peripheral.
   AdvertisementData advertisementData;
@@ -33,7 +34,7 @@ class ScanResult {
       : peripheral = Peripheral.fromJson(json, manager),
         rssi = json[_ScanResultMetadata.rssi],
         isConnectable = json[_ScanResultMetadata.isConnectable],
-        overflowServiceUUIDs = json[_ScanResultMetadata.overflowServiceUuids],
+        overflowServiceUuids = json[_ScanResultMetadata.overflowServiceUuids],
         advertisementData = AdvertisementData._fromJson(json);
 }
 
@@ -47,7 +48,7 @@ class AdvertisementData {
   Map<String, Uint8List> serviceData;
 
   /// A list of service UUIDs.
-  List<String> serviceUUIDs;
+  List<String> serviceUuids;
 
   /// The local name of the [Peripheral]. Might be different than
   /// [Peripheral.name].
@@ -57,18 +58,18 @@ class AdvertisementData {
   int txPowerLevel;
 
   /// A list of solicited service UUIDs.
-  List<String> solicitedServiceUUIDs;
+  List<String> solicitedServiceUuids;
 
   AdvertisementData._fromJson(Map<String, dynamic> json)
       : manufacturerData =
             _decodeBase64OrNull(json[_ScanResultMetadata.manufacturerData]),
         serviceData =
             _getServiceDataOrNull(json[_ScanResultMetadata.serviceData]),
-        serviceUUIDs =
+        serviceUuids =
             _mapToListOfStringsOrNull(json[_ScanResultMetadata.serviceUuids]),
         localName = json[_ScanResultMetadata.localName],
         txPowerLevel = json[_ScanResultMetadata.txPowerLevel],
-        solicitedServiceUUIDs = _mapToListOfStringsOrNull(
+        solicitedServiceUuids = _mapToListOfStringsOrNull(
             json[_ScanResultMetadata.solicitedServiceUuids]);
 
   static Map<String, Uint8List> _getServiceDataOrNull(
