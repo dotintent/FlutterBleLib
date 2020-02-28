@@ -6,12 +6,12 @@ abstract class _ScanResultMetadata {
   static const String rssi = "rssi";
   static const String manufacturerData = "manufacturerData";
   static const String serviceData = "serviceData";
-  static const String serviceUuids = "serviceUuids";
+  static const String serviceUuids = "serviceUUIDs";
   static const String localName = "localName";
   static const String txPowerLevel = "txPowerLevel";
-  static const String solicitedServiceUuids = "solicitedServiceUuids";
+  static const String solicitedServiceUuids = "solicitedServiceUUIDs";
   static const String isConnectable = "isConnectable";
-  static const String overflowServiceUuids = "overflowServiceUuids";
+  static const String overflowServiceUuids = "overflowServiceUUIDs";
 }
 
 /// A scan result emitted by the scanning operation, containing [Peripheral] and [AdvertisementData].
