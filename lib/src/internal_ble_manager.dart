@@ -227,13 +227,13 @@ class InternalBleManager
   Future<void> writeCharacteristicForIdentifier(
           Peripheral peripheral,
           InternalCharacteristic characteristic,
-          Uint8List bytes,
+          Uint8List value,
           bool withResponse,
           String transactionId) =>
       _bleLib.writeCharacteristicForIdentifier(
         peripheral,
         characteristic._id,
-        bytes,
+        value,
         withResponse,
         transactionId,
       );
@@ -243,14 +243,14 @@ class InternalBleManager
           Peripheral peripheral,
           String serviceUuid,
           String characteristicUuid,
-          Uint8List bytes,
+          Uint8List value,
           bool withResponse,
           String transactionId) =>
       _bleLib.writeCharacteristicForDevice(
         peripheral,
         serviceUuid,
         characteristicUuid,
-        bytes,
+        value,
         withResponse,
         transactionId,
       );
@@ -260,14 +260,14 @@ class InternalBleManager
           Peripheral peripheral,
           InternalService service,
           String characteristicUuid,
-          Uint8List bytes,
+          Uint8List value,
           bool withResponse,
           String transactionId) =>
       _bleLib.writeCharacteristicForService(
         peripheral,
         service._id,
         characteristicUuid,
-        bytes,
+        value,
         withResponse,
         transactionId,
       );

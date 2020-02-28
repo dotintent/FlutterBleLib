@@ -75,7 +75,7 @@ mixin CharacteristicsMixin on FlutterBLE {
   Future<void> writeCharacteristicForIdentifier(
     Peripheral peripheral,
     int characteristicIdentifier,
-    Uint8List bytes,
+    Uint8List value,
     bool withResponse,
     String transactionId,
   ) =>
@@ -83,7 +83,7 @@ mixin CharacteristicsMixin on FlutterBLE {
         MethodName.writeCharacteristicForIdentifier,
         <String, dynamic>{
           ArgumentName.characteristicIdentifier: characteristicIdentifier,
-          ArgumentName.value: bytes,
+          ArgumentName.value: value,
           ArgumentName.withResponse: withResponse,
           ArgumentName.transactionId: transactionId,
         },
@@ -94,7 +94,7 @@ mixin CharacteristicsMixin on FlutterBLE {
           Peripheral peripheral,
           String serviceUuid,
           String characteristicUuid,
-          Uint8List bytes,
+          Uint8List value,
           bool withResponse,
           String transactionId) =>
       _methodChannel
@@ -104,7 +104,7 @@ mixin CharacteristicsMixin on FlutterBLE {
               ArgumentName.deviceIdentifier: peripheral.identifier,
               ArgumentName.serviceUuid: serviceUuid,
               ArgumentName.characteristicUuid: characteristicUuid,
-              ArgumentName.value: bytes,
+              ArgumentName.value: value,
               ArgumentName.withResponse: withResponse,
               ArgumentName.transactionId: transactionId,
             },
@@ -120,7 +120,7 @@ mixin CharacteristicsMixin on FlutterBLE {
     Peripheral peripheral,
     int serviceIdentifier,
     String characteristicUuid,
-    Uint8List bytes,
+    Uint8List value,
     bool withResponse,
     String transactionId,
   ) =>
@@ -130,7 +130,7 @@ mixin CharacteristicsMixin on FlutterBLE {
             <String, dynamic>{
               ArgumentName.serviceIdentifier: serviceIdentifier,
               ArgumentName.characteristicUuid: characteristicUuid,
-              ArgumentName.value: bytes,
+              ArgumentName.value: value,
               ArgumentName.withResponse: withResponse,
               ArgumentName.transactionId: transactionId,
             },

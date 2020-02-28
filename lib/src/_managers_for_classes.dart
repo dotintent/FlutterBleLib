@@ -56,7 +56,7 @@ abstract class ManagerForPeripheral {
       Peripheral peripheral,
       String serviceUuid,
       String characteristicUuid,
-      Uint8List bytes,
+      Uint8List value,
       bool withResponse,
       String transactionId);
 
@@ -86,7 +86,7 @@ abstract class ManagerForPeripheral {
     String serviceUuid,
     String characteristicUuid,
     String descriptorUuid,
-    Uint8List bytes,
+    Uint8List value,
     String transactionId,
   );
 }
@@ -105,7 +105,7 @@ abstract class ManagerForService {
     Peripheral peripheral,
     InternalService service,
     String characteristicUuid,
-    Uint8List bytes,
+    Uint8List value,
     bool withResponse,
     String transactionId,
   );
@@ -133,7 +133,7 @@ abstract class ManagerForService {
     Service service,
     String characteristicUuid,
     String descriptorUuid,
-    Uint8List bytes,
+    Uint8List value,
     String transactionId,
   );
 }
@@ -148,7 +148,7 @@ abstract class ManagerForCharacteristic {
   Future<void> writeCharacteristicForIdentifier(
     Peripheral peripheral,
     InternalCharacteristic characteristic,
-    Uint8List bytes,
+    Uint8List value,
     bool withResponse,
     String transactionId,
   );
@@ -185,7 +185,7 @@ abstract class ManagerForDescriptor {
 
   Future<void> writeDescriptorForIdentifier(
     Descriptor descriptor,
-    Uint8List bytes,
+    Uint8List value,
     String transactionId,
   );
 }
