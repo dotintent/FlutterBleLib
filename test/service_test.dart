@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
@@ -9,6 +8,8 @@ import 'package:test/test.dart';
 
 import 'mock/manager_mock.dart';
 import 'mock/mock_peripheral.dart';
+import 'test_util/characteristic_generator.dart';
+import 'test_util/descriptor_generator.dart';
 
 void main() {
   Peripheral peripheral = PeripheralMock();
@@ -16,42 +17,21 @@ void main() {
   ManagerForCharacteristic managerForCharacteristic =
       ManagerForCharacteristicMock();
   ManagerForDescriptor managerForDescriptor = ManagerForDescriptorMock();
+  CharacteristicGenerator characteristicGenerator =
+      CharacteristicGenerator(managerForCharacteristic);
+  DescriptorGenerator descriptorGenerator =
+      DescriptorGenerator(managerForDescriptor);
 
   Service service = Service.fromJson({
     "serviceId": 1,
     "serviceUuid": "testUuid",
   }, peripheral, managerForService);
 
-  Map<dynamic, dynamic> createRawCharacteristic(int seed) => <String, dynamic>{
-        "characteristicUuid": seed.toString(),
-        "id": seed,
-        "isReadable": seed % 2 == 0,
-        "isWritableWithResponse": seed % 2 == 0,
-        "isWritableWithoutResponse": seed % 2 == 0,
-        "isNotifiable": seed % 2 == 0,
-        "isIndicatable": seed % 2 == 0,
-        "value": base64Encode([seed])
-      };
-
   CharacteristicWithValue createCharacteristic(int seed) =>
-      CharacteristicWithValue.fromJson(
-        createRawCharacteristic(seed),
-        service,
-        managerForCharacteristic,
-      );
-
-  Map<dynamic, dynamic> createRawDescriptor(int seed) => <String, dynamic>{
-        "descriptorId": seed,
-        "descriptorUuid": seed.toString(),
-        "value": base64Encode([seed])
-      };
+      characteristicGenerator.create(seed, service);
 
   DescriptorWithValue createDescriptor(int seed) =>
-      DescriptorWithValue.fromJson(
-        createRawDescriptor(seed),
-        createCharacteristic(seed),
-        managerForDescriptor,
-      );
+      descriptorGenerator.create(seed, createCharacteristic(seed));
 
   test("characteristics returns characteristics provided by manager", () async {
     //given
