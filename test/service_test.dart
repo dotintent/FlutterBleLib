@@ -33,6 +33,15 @@ void main() {
   DescriptorWithValue createDescriptor(int seed) =>
       descriptorGenerator.create(seed, createCharacteristic(seed));
 
+  tearDown(() {
+    [
+      peripheral,
+      managerForService,
+      managerForCharacteristic,
+      managerForDescriptor,
+    ].forEach(clearInteractions);
+  });
+
   test("characteristics returns characteristics provided by manager", () async {
     //given
     when(managerForService.characteristicsForService(service))
