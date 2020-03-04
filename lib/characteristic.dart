@@ -21,6 +21,7 @@ class Characteristic extends InternalCharacteristic {
   Service service;
 
   ManagerForCharacteristic _manager;
+  TransactionIdGenerator _transactionIdGenerator;
 
   /// The UUID of this characteristic.
   String uuid;
@@ -41,9 +42,10 @@ class Characteristic extends InternalCharacteristic {
   bool isIndicatable;
 
   Characteristic.fromJson(Map<String, dynamic> jsonObject, Service service,
-      ManagerForCharacteristic manager)
+      ManagerForCharacteristic manager, {TransactionIdGenerator transactionIdGenerator = const TransactionIdGenerator()})
       : super(jsonObject[_CharacteristicMetadata.id]) {
     _manager = manager;
+    _transactionIdGenerator = transactionIdGenerator;
     this.service = service;
     uuid = jsonObject[_CharacteristicMetadata.uuid];
     isReadable = jsonObject[_CharacteristicMetadata.isReadable];
@@ -62,7 +64,7 @@ class Characteristic extends InternalCharacteristic {
       _manager.readCharacteristicForIdentifier(
         service.peripheral,
         this,
-        transactionId ?? TransactionIdGenerator.getNextId(),
+        transactionId ?? _transactionIdGenerator.getNextId(),
       );
 
   /// Writes to the value of this characteristic.
@@ -80,7 +82,7 @@ class Characteristic extends InternalCharacteristic {
         this,
         value,
         withResponse,
-        transactionId ?? TransactionIdGenerator.getNextId(),
+        transactionId ?? _transactionIdGenerator.getNextId(),
       );
 
   /// Returns a [Stream] of notifications/indications emitted by this
@@ -95,7 +97,7 @@ class Characteristic extends InternalCharacteristic {
       _manager.monitorCharacteristicForIdentifier(
         service.peripheral,
         this,
-        transactionId ?? TransactionIdGenerator.getNextId(),
+        transactionId ?? _transactionIdGenerator.getNextId(),
       );
 
   /// Returns a list of [Descriptor]s of this characteristic.
@@ -110,7 +112,7 @@ class Characteristic extends InternalCharacteristic {
       _manager.readDescriptorForCharacteristic(
         this,
         descriptorUuid,
-        transactionId ?? TransactionIdGenerator.getNextId(),
+        transactionId ?? _transactionIdGenerator.getNextId(),
       );
 
   /// Writes the [value] of a [Descriptor] identified by [descriptorUuid].
@@ -123,7 +125,7 @@ class Characteristic extends InternalCharacteristic {
         this,
         descriptorUuid,
         value,
-        transactionId ?? TransactionIdGenerator.getNextId(),
+        transactionId ?? _transactionIdGenerator.getNextId(),
       );
 
   @override

@@ -2,19 +2,22 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 import 'package:flutter_ble_lib/src/_managers_for_classes.dart';
+import 'package:flutter_ble_lib/src/util/_transaction_id_generator.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
 class ManagerForPeripheralMock extends Mock implements ManagerForPeripheral {}
 class ServiceMock extends Mock implements Service {}
 class CharacteristicMock extends Mock implements Characteristic {}
+class TransactionIdGeneratorMock extends Mock implements TransactionIdGenerator {}
 
 void main() {
 
   const PERIPHERAL_NAME = 'Peripheral name';
   const PERIPHERAL_ID = 'peripheral id';
 
-  ManagerForPeripheralMock managerForPeripheral = ManagerForPeripheralMock();
+  ManagerForPeripheralMock managerForPeripheral;
+  TransactionIdGeneratorMock transactionIdGeneratorMock;
   Peripheral peripheral;
 
   setUp(() {
@@ -22,7 +25,9 @@ void main() {
       'name': PERIPHERAL_NAME,
       'id' : PERIPHERAL_ID
     };
-    peripheral = Peripheral.fromJson(json, managerForPeripheral);
+    managerForPeripheral = ManagerForPeripheralMock();
+    transactionIdGeneratorMock = TransactionIdGeneratorMock();
+    peripheral = Peripheral.fromJson(json, managerForPeripheral, transactionIdGenerator: transactionIdGeneratorMock);
   });
 
   group("Connect", () {
@@ -126,13 +131,17 @@ void main() {
     });
 
     test("use generated transactionId", () async {
+      //given
+      var ids = ["1", "5"];
+      when(transactionIdGeneratorMock.getNextId()).thenAnswer((_) => ids.removeAt(0));
+
       //when
       await peripheral.discoverAllServicesAndCharacteristics();
       await peripheral.discoverAllServicesAndCharacteristics();
 
       //then
       verify(managerForPeripheral.discoverAllServicesAndCharacteristics(any, '1'));
-      verify(managerForPeripheral.discoverAllServicesAndCharacteristics(any, '2'));
+      verify(managerForPeripheral.discoverAllServicesAndCharacteristics(any, '5'));
     });
   });
 
@@ -181,13 +190,17 @@ void main() {
     });
 
     test("use generated transactionId", () async {
+      //given
+      var ids = ["4", "9"];
+      when(transactionIdGeneratorMock.getNextId()).thenAnswer((_) => ids.removeAt(0));
+
       //when
       await peripheral.rssi();
       await peripheral.rssi();
 
       //then
-      verify(managerForPeripheral.rssi(any, '1'));
-      verify(managerForPeripheral.rssi(any, '2'));
+      verify(managerForPeripheral.rssi(any, '4'));
+      verify(managerForPeripheral.rssi(any, '9'));
     });
   });
 

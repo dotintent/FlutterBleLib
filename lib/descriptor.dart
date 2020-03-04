@@ -8,6 +8,7 @@ abstract class _DescriptorMetadata {
 
 class Descriptor extends InternalDescriptor {
   ManagerForDescriptor _manager;
+  TransactionIdGenerator _transactionIdGenerator;
   Characteristic characteristic;
   String uuid;
 
@@ -15,8 +16,10 @@ class Descriptor extends InternalDescriptor {
     Map<String, dynamic> jsonObject,
     Characteristic characteristic,
     ManagerForDescriptor manager,
+    {TransactionIdGenerator transactionIdGenerator = const TransactionIdGenerator()}
   ) : super(jsonObject[_DescriptorMetadata.id]) {
     _manager = manager;
+    _transactionIdGenerator = transactionIdGenerator;
     this.characteristic = characteristic;
     uuid = jsonObject[_DescriptorMetadata.uuid];
   }
@@ -24,14 +27,14 @@ class Descriptor extends InternalDescriptor {
   Future<Uint8List> read({String transactionId}) =>
       _manager.readDescriptorForIdentifier(
         this,
-        transactionId ?? TransactionIdGenerator.getNextId(),
+        transactionId ?? _transactionIdGenerator.getNextId(),
       );
 
   Future<void> write(Uint8List value, {String transactionId}) =>
       _manager.writeDescriptorForIdentifier(
         this,
         value,
-        transactionId ?? TransactionIdGenerator.getNextId(),
+        transactionId ?? _transactionIdGenerator.getNextId(),
       );
 
   @override

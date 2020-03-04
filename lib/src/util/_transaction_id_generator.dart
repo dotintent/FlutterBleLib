@@ -1,7 +1,10 @@
-abstract class TransactionIdGenerator {
+class TransactionIdGenerator {
   static int _id = 0;
 
-  static String getNextId() {
+
+  const TransactionIdGenerator();
+
+  String getNextId() {
     _id++;
     return _id.toString();
   }
