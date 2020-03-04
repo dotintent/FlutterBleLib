@@ -55,26 +55,6 @@ void main() {
         ]));
   });
 
-  test("characteristics returns expected characteristics provided by manager",
-      () async {
-    //given
-    when(managerForService.readCharacteristicForService(
-            peripheral, service, "characteristicUuid", "123"))
-        .thenAnswer((_) => Future.value(createCharacteristic(0)));
-
-    //when
-    var characteristics = await service.characteristics();
-
-    //then
-    expect(
-        characteristics,
-        equals([
-          createCharacteristic(0),
-          createCharacteristic(1),
-          createCharacteristic(2),
-        ]));
-  });
-
   test("readCharacteristic returns expected characteristic", () async {
     //given
     when(managerForService.readCharacteristicForService(
@@ -89,7 +69,7 @@ void main() {
     expect(characteristic, equals(createCharacteristic(0)));
   });
 
-  test("readCharacteristic reads characteristic using manager", () async {
+  test("readCharacteristic reads characteristic using manager", () {
     //when
     service.readCharacteristic("123", transactionId: "456");
 
@@ -97,6 +77,19 @@ void main() {
     verify(
       managerForService.readCharacteristicForService(
           peripheral, service, "123", "456"),
+    );
+  });
+
+  test(
+      "readCharacteristic reads characteristic with generated transactionId using manager",
+      () {
+    //when
+    service.readCharacteristic("123", transactionId: null);
+
+    //then
+    verify(
+      managerForService.readCharacteristicForService(
+          peripheral, service, "123", argThat(isNotNull)),
     );
   });
 
@@ -114,13 +107,26 @@ void main() {
     expect(characteristic, equals(createDescriptor(0)));
   });
 
-  test("readDescriptor reads characteristic using manager", () async {
+  test("readDescriptor reads characteristic using manager", () {
     //when
-    service.readCharacteristic("123", transactionId: "456");
+    service.readDescriptor("123", "456", transactionId: "789");
 
     //then
     verify(
       managerForService.readDescriptorForService(service, "123", "456", "789"),
+    );
+  });
+
+  test(
+      "readDescriptor reads descriptor with generated transactionId using manager",
+      () {
+    //when
+    service.readDescriptor("123", "456", transactionId: null);
+
+    //then
+    verify(
+      managerForService.readDescriptorForService(
+          service, "123", "456", argThat(isNotNull)),
     );
   });
 
@@ -142,7 +148,7 @@ void main() {
     expect(characteristic, equals(createCharacteristic(0)));
   });
 
-  test("writeCharacteristic reads characteristic using manager", () async {
+  test("writeCharacteristic writes characteristic using manager", () {
     //when
     service.writeCharacteristic("123", Uint8List.fromList([1, 2, 3, 4]), false,
         transactionId: "456");
@@ -151,6 +157,20 @@ void main() {
     verify(
       managerForService.writeCharacteristicForService(peripheral, service,
           "123", Uint8List.fromList([1, 2, 3, 4]), false, "456"),
+    );
+  });
+
+  test(
+      "writeCharacteristic writes characteristic with generated transactionId using manager",
+      () {
+    //when
+    service.writeCharacteristic("123", Uint8List.fromList([1, 2, 3, 4]), false,
+        transactionId: null);
+
+    //then
+    verify(
+      managerForService.writeCharacteristicForService(peripheral, service,
+          "123", Uint8List.fromList([1, 2, 3, 4]), false, argThat(isNotNull)),
     );
   });
 
@@ -169,7 +189,7 @@ void main() {
     expect(characteristic, equals(createDescriptor(0)));
   });
 
-  test("writeDescriptor writes descriptor using manager", () async {
+  test("writeDescriptor writes descriptor using manager", () {
     //when
     service.writeDescriptor("123", "456", Uint8List.fromList([1, 2, 3, 4]),
         transactionId: "789");
@@ -181,7 +201,21 @@ void main() {
     );
   });
 
-  test("monitorCharacteristic streams expected characteristic", () async {
+  test(
+      "writeDescriptor writes descriptor with generated transactionId using manager",
+      () {
+    //when
+    service.writeDescriptor("123", "456", Uint8List.fromList([1, 2, 3, 4]),
+        transactionId: null);
+
+    //then
+    verify(
+      managerForService.writeDescriptorForService(service, "123", "456",
+          Uint8List.fromList([1, 2, 3, 4]), argThat(isNotNull)),
+    );
+  });
+
+  test("monitorCharacteristic streams expected characteristic", () {
     //given
     var streamController = StreamController<CharacteristicWithValue>();
     when(managerForService.monitorCharacteristicForService(
@@ -207,7 +241,7 @@ void main() {
         ]));
   });
 
-  test("monitorCharacteristic monitors characteristic using manager", () async {
+  test("monitorCharacteristic monitors characteristic using manager", () {
     //when
     service.monitorCharacteristic("123", transactionId: "456");
 
@@ -215,6 +249,19 @@ void main() {
     verify(
       managerForService.monitorCharacteristicForService(
           peripheral, service, "123", "456"),
+    );
+  });
+
+  test(
+      "monitorCharacteristic monitors characteristic with generated transactionId using manager",
+      () {
+    //when
+    service.monitorCharacteristic("123", transactionId: null);
+
+    //then
+    verify(
+      managerForService.monitorCharacteristicForService(
+          peripheral, service, "123", argThat(isNotNull)),
     );
   });
 }
