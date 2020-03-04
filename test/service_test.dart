@@ -64,6 +64,28 @@ void main() {
         ]));
   });
 
+  test("descriptorsForCharacteristic returns characteristics provided by manager", () async {
+    //given
+    when(managerForService.descriptorsForService(service, "123"))
+        .thenAnswer((_) => Future.value([
+      createDescriptor(0),
+      createDescriptor(1),
+      createDescriptor(2),
+    ]));
+
+    //when
+    var descriptors = await service.descriptorsForCharacteristic("123");
+
+    //then
+    expect(
+        descriptors,
+        equals([
+          createDescriptor(0),
+          createDescriptor(1),
+          createDescriptor(2),
+        ]));
+  });
+
   test("readCharacteristic returns expected characteristic", () async {
     //given
     when(managerForService.readCharacteristicForService(
