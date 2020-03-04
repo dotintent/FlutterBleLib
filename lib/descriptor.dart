@@ -33,6 +33,21 @@ class Descriptor extends InternalDescriptor {
         value,
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is Descriptor &&
+              runtimeType == other.runtimeType &&
+              _manager == other._manager &&
+              characteristic == other.characteristic &&
+              uuid == other.uuid;
+
+  @override
+  int get hashCode =>
+      _manager.hashCode ^
+      characteristic.hashCode ^
+      uuid.hashCode;
 }
 
 class DescriptorWithValue extends Descriptor with WithValue {
