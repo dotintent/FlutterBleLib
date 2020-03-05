@@ -10,7 +10,8 @@ abstract class BluetoothLowEnergyManager {
   Future<void> enableRadio();
   Future<void> disableRadio();
   
-  Future<void> cancelTransaction(String transactionId);
+  Future<void> cancelTransaction(String       const transactionId = "t1";
+);
 
   Future<void> setLogLevel(LogLevel logLevel);
   Future<LogLevel> logLevel();

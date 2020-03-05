@@ -10,7 +10,7 @@ class InternalBleManager
   FlutterBleLib _bleLib;
   TransactionIdGenerator _transactionIdGenerator;
 
-  InternalBleManager({TransactionIdGenerator transactionIdGenerator = const TransactionIdGenerator()}) {
+  InternalBleManager({TransactionIdGenerator transactionIdGenerator = TransactionIdGenerator.INSTANCE}) {
     _bleLib = FlutterBleLib();
     _bleLib.registerManager(this);
     _transactionIdGenerator = transactionIdGenerator;

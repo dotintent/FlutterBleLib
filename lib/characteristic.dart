@@ -41,9 +41,13 @@ class Characteristic extends InternalCharacteristic {
   /// True if this characteristic can be monitored via indications.
   bool isIndicatable;
 
-  Characteristic.fromJson(Map<String, dynamic> jsonObject, Service service,
-      ManagerForCharacteristic manager, {TransactionIdGenerator transactionIdGenerator = const TransactionIdGenerator()})
-      : super(jsonObject[_CharacteristicMetadata.id]) {
+  Characteristic.fromJson(
+    Map<String, dynamic> jsonObject,
+    Service service,
+    ManagerForCharacteristic manager, {
+    TransactionIdGenerator transactionIdGenerator =
+        TransactionIdGenerator.INSTANCE,
+  }) : super(jsonObject[_CharacteristicMetadata.id]) {
     _manager = manager;
     _transactionIdGenerator = transactionIdGenerator;
     this.service = service;

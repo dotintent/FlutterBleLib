@@ -21,7 +21,9 @@ class Peripheral {
   String name;
   String identifier;
 
-  Peripheral.fromJson(Map<String, dynamic> json, ManagerForPeripheral manager, {TransactionIdGenerator transactionIdGenerator = const TransactionIdGenerator()})
+  Peripheral.fromJson(Map<String, dynamic> json, ManagerForPeripheral manager,
+      {TransactionIdGenerator transactionIdGenerator =
+          TransactionIdGenerator.INSTANCE})
       : _manager = manager,
         name = json[_PeripheralMetadata.name],
         identifier = json[_PeripheralMetadata.identifier],

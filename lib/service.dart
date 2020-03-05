@@ -16,12 +16,11 @@ class Service extends InternalService {
   /// The UUID of this service.
   String uuid;
 
-  Service.fromJson(
-    Map<String, dynamic> jsonObject,
-    Peripheral peripheral,
-    ManagerForService managerForService,
-    {TransactionIdGenerator transactionIdGenerator = const TransactionIdGenerator()}
-  ) : super(jsonObject[_ServiceMetadata.id]) {
+  Service.fromJson(Map<String, dynamic> jsonObject, Peripheral peripheral,
+      ManagerForService managerForService,
+      {TransactionIdGenerator transactionIdGenerator =
+          TransactionIdGenerator.INSTANCE})
+      : super(jsonObject[_ServiceMetadata.id]) {
     this.peripheral = peripheral;
     uuid = jsonObject[_ServiceMetadata.uuid];
     _manager = managerForService;
