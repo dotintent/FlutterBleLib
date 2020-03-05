@@ -19,6 +19,11 @@ void main() {
 
   const PERIPHERAL_NAME = 'Peripheral name';
   const PERIPHERAL_ID = 'peripheral id';
+  const SERVICE_UUID = 's1';
+  const CHARACTERISTIC_UUID = 'c1';
+  const TRANSACTION_ID = 't1';
+  const DESCRIPTOR_UUID = "d1";
+
 
   ManagerForPeripheralMock managerForPeripheral;
   TransactionIdGeneratorMock transactionIdGeneratorMock;
@@ -128,14 +133,11 @@ void main() {
 
   group("Discovery", () {
     test("use given transactionId", () async {
-      //given
-      const transactionId = "86791384-";
-
       //when
-      await peripheral.discoverAllServicesAndCharacteristics(transactionId: transactionId);
+      await peripheral.discoverAllServicesAndCharacteristics(transactionId: TRANSACTION_ID);
 
       //then
-      verify(managerForPeripheral.discoverAllServicesAndCharacteristics(any, transactionId));
+      verify(managerForPeripheral.discoverAllServicesAndCharacteristics(any, TRANSACTION_ID));
     });
 
     test("use generated transactionId", () async {
@@ -171,11 +173,10 @@ void main() {
     test("should return characteristic for given service", () async {
       //given
       List<Characteristic> characteristics = [CharacteristicMock(), CharacteristicMock()];
-      const serviceUuid = "123uuid";
-      when(managerForPeripheral.characteristics(any, serviceUuid)).thenAnswer((_) => Future.value(characteristics));
+      when(managerForPeripheral.characteristics(any, SERVICE_UUID)).thenAnswer((_) => Future.value(characteristics));
 
       //when
-      List<Characteristic> fetchedCharacteristic = await peripheral.characteristics(serviceUuid);
+      List<Characteristic> fetchedCharacteristic = await peripheral.characteristics(SERVICE_UUID);
 
       //then
       expect(fetchedCharacteristic, characteristics);
@@ -212,17 +213,14 @@ void main() {
     test("should write value to characteristic", () async {
       //given
       CharacteristicWithValue mockedCharacteristicWithValue  = CharacteristicWithValueMock();
-      const serviceUuid = 's1';
-      const characteristicUuid = 'c1';
-      const transactionId = 't1';
       Uint8List value = Uint8List.fromList([1, 4, 9]);
       const withResponse = false;
 
-      when(managerForPeripheral.writeCharacteristicForDevice(any, serviceUuid, characteristicUuid, value, withResponse, transactionId))
+      when(managerForPeripheral.writeCharacteristicForDevice(any, SERVICE_UUID, CHARACTERISTIC_UUID, value, withResponse, TRANSACTION_ID))
           .thenAnswer((_) => Future.value(mockedCharacteristicWithValue));
 
       //when
-      CharacteristicWithValue characteristicWithValue = await peripheral.writeCharacteristic(serviceUuid, characteristicUuid, value, withResponse, transactionId: transactionId);
+      CharacteristicWithValue characteristicWithValue = await peripheral.writeCharacteristic(SERVICE_UUID, CHARACTERISTIC_UUID, value, withResponse, transactionId: TRANSACTION_ID);
 
       //then
       expect(characteristicWithValue, mockedCharacteristicWithValue);
@@ -249,14 +247,11 @@ void main() {
         CharacteristicWithValueMock(),
         CharacteristicWithValueMock()
       ];
-      const serviceUuid = 's1';
-      const characteristicUuid = 'c1';
-      const transactionId = 't1';
-      when(managerForPeripheral.monitorCharacteristicForDevice(any, serviceUuid, characteristicUuid, transactionId))
+      when(managerForPeripheral.monitorCharacteristicForDevice(any, SERVICE_UUID, CHARACTERISTIC_UUID, TRANSACTION_ID))
           .thenAnswer((_) => Stream.fromIterable(emittedValues));
 
       //when
-      Stream<CharacteristicWithValue> characteristicsStream =  peripheral.monitorCharacteristic(serviceUuid, characteristicUuid, transactionId: transactionId);
+      Stream<CharacteristicWithValue> characteristicsStream =  peripheral.monitorCharacteristic(SERVICE_UUID, CHARACTERISTIC_UUID, transactionId: TRANSACTION_ID);
 
       //then
       expect(characteristicsStream, emitsInOrder(emittedValues));
@@ -341,12 +336,10 @@ void main() {
     test("should return desriptors of characteristic", () async {
       //given
       List<Descriptor> descriptors = [DescriptorMock(), DescriptorMock()];
-      const serviceUuid = "123uuid";
-      const characteristicUuid = "c1";
-      when(managerForPeripheral.descriptorsForPeripheral(any, serviceUuid, characteristicUuid)).thenAnswer((_) => Future.value(descriptors));
+      when(managerForPeripheral.descriptorsForPeripheral(any, SERVICE_UUID, CHARACTERISTIC_UUID)).thenAnswer((_) => Future.value(descriptors));
 
       //when
-      List<Descriptor> fetchedDescriptors = await peripheral.descriptorsForCharacteristic(serviceUuid, characteristicUuid);
+      List<Descriptor> fetchedDescriptors = await peripheral.descriptorsForCharacteristic(SERVICE_UUID, CHARACTERISTIC_UUID);
 
       //then
       expect(fetchedDescriptors, descriptors);
@@ -355,15 +348,12 @@ void main() {
     test("should return Descriptor value", () async {
       //given
       DescriptorWithValue descriptorWithValue  = DescriptorWithValueMock();
-      const serviceUuid = "123uuid";
-      const characteristicUuid = "c1";
-      const descriptorUuid = "c1";
       const transactionId = "t1";
-      when(managerForPeripheral.readDescriptorForPeripheral(any, serviceUuid, characteristicUuid, descriptorUuid, transactionId))
+      when(managerForPeripheral.readDescriptorForPeripheral(any, SERVICE_UUID, CHARACTERISTIC_UUID, DESCRIPTOR_UUID, transactionId))
           .thenAnswer((_) => Future.value(descriptorWithValue));
 
       //when
-      DescriptorWithValueMock obtainedDescriptorWithValue = await peripheral.readDescriptor(serviceUuid, characteristicUuid, descriptorUuid, transactionId: transactionId);
+      DescriptorWithValueMock obtainedDescriptorWithValue = await peripheral.readDescriptor(SERVICE_UUID, CHARACTERISTIC_UUID, DESCRIPTOR_UUID, transactionId: transactionId);
 
       //then
       expect(obtainedDescriptorWithValue, descriptorWithValue);
@@ -386,17 +376,13 @@ void main() {
     test("should write value to descriptor", () async {
       //given
       DescriptorWithValue descriptorWithValue  = DescriptorWithValueMock();
-      const serviceUuid = "123uuid";
-      const characteristicUuid = "c1";
-      const descriptorUuid = "c1";
-      const transactionId = "t1";
       Uint8List value = Uint8List.fromList([1, 4, 9]);
 
-      when(managerForPeripheral.writeDescriptorForPeripheral(any, serviceUuid, characteristicUuid, descriptorUuid, value, transactionId))
+      when(managerForPeripheral.writeDescriptorForPeripheral(any, SERVICE_UUID, CHARACTERISTIC_UUID, DESCRIPTOR_UUID, value, TRANSACTION_ID))
           .thenAnswer((_) => Future.value(descriptorWithValue));
 
       //when
-      DescriptorWithValue obtainedDescriptorWithValue = await peripheral.writeDescriptor(serviceUuid, characteristicUuid, descriptorUuid, value, transactionId: transactionId);
+      DescriptorWithValue obtainedDescriptorWithValue = await peripheral.writeDescriptor(SERVICE_UUID, CHARACTERISTIC_UUID, DESCRIPTOR_UUID, value, transactionId: TRANSACTION_ID);
 
       //then
       expect(obtainedDescriptorWithValue, descriptorWithValue);
