@@ -174,7 +174,7 @@ class InternalBleManager
   }
 
   @override
-  Future<void> requestMtu(
+  Future<int> requestMtu(
       Peripheral peripheral, int mtu, String transactionId) {
     return _bleLib.requestMtu(peripheral, mtu, transactionId);
   }
