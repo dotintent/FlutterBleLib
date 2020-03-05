@@ -36,7 +36,9 @@ void main() {
     expect(value, equals(Uint8List.fromList([1, 2, 3, 4])));
   });
 
-  test("read reads descriptor's value using manager", () {
+  test(
+      "read invokes manager with expected params when transactionId is specified",
+      () {
     //when
     descriptor.read(transactionId: "456");
 
@@ -47,7 +49,7 @@ void main() {
   });
 
   test(
-      "read reads descriptor's value with generated transactionId using manager",
+      "read invokes manager with expected params when transactionId is not specified",
       () {
     //when
     descriptor.read(transactionId: null);
@@ -59,7 +61,9 @@ void main() {
     );
   });
 
-  test("write writes descriptor's value using manager", () {
+  test(
+      "write invokes manager with expected params when transactionId is specified",
+      () {
     //when
     descriptor.write(Uint8List.fromList([1, 2, 3, 4]), transactionId: "456");
 
@@ -71,7 +75,7 @@ void main() {
   });
 
   test(
-      "write writes descriptor's value with generated transactionId using manager",
+      "write invokes manager with expected params when transactionId is not specified",
       () {
     //when
     descriptor.write(Uint8List.fromList([1, 2, 3, 4]), transactionId: null);
