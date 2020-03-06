@@ -11,6 +11,6 @@ void main() {
     final secondInstanceOfBleManager = BleManager();
 
     //then
-    expect(secondInstanceOfBleManager, firstInstanceOfBlemanager);
+    expect(secondInstanceOfBleManager, same(firstInstanceOfBlemanager));
   });
 }
