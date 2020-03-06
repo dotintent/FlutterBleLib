@@ -6,8 +6,7 @@ import 'package:flutter_ble_lib/src/_managers_for_classes.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
-import 'mock/characteristic_mock.dart';
-import 'mock/manager_mock.dart';
+import 'mock/mocks.dart';
 import 'test_util/descriptor_generator.dart';
 
 void main() {
