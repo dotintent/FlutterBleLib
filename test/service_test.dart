@@ -138,7 +138,7 @@ void main() {
     expect(characteristic, equals(createDescriptor(0)));
   });
 
-  test("readDescriptor reads characteristic using manager", () {
+  test("readDescriptor reads descriptor using manager", () {
     //when
     service.readDescriptor("123", "456", transactionId: "789");
 
@@ -212,12 +212,12 @@ void main() {
         .thenAnswer((_) => Future.value(createDescriptor(0)));
 
     //when
-    var characteristic = await service.writeDescriptor(
+    var descriptor = await service.writeDescriptor(
         "123", "456", Uint8List.fromList([1, 2, 3, 4]),
         transactionId: "789");
 
     //then
-    expect(characteristic, equals(createDescriptor(0)));
+    expect(descriptor, equals(createDescriptor(0)));
   });
 
   test("writeDescriptor writes descriptor using manager", () {
