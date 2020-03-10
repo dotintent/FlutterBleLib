@@ -1,3 +1,7 @@
+## 2.2.3
+
+* Fix issue with duplicated or malformed notification values
+
 ## 2.2.2
 
 * Fix issue with invalid characteristic value base64 coding when performing characteristic operations on iOS
