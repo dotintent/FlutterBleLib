@@ -36,6 +36,7 @@ class Characteristic extends InternalCharacteristic {
 
   /// True if this characteristic can be monitored via notifications.
   bool isNotifiable;
+
   /// True if this characteristic can be monitored via indications.
   bool isIndicatable;
 
@@ -70,14 +71,14 @@ class Characteristic extends InternalCharacteristic {
   /// [isWritableWithoutResponse] is `true` and argument [withResponse] is
   /// set accordingly.
   Future<void> write(
-    Uint8List bytes,
+    Uint8List value,
     bool withResponse, {
     String transactionId,
   }) =>
       _manager.writeCharacteristicForIdentifier(
         service.peripheral,
         this,
-        bytes,
+        value,
         withResponse,
         transactionId ?? TransactionIdGenerator.getNextId(),
       );
