@@ -1,3 +1,7 @@
+## 2.2.4
+
+* Fix issue with characteristic write without response operation on iOS
+
 ## 2.2.3
 
 * Fix issue with duplicated or malformed notification values
