@@ -1,8 +1,13 @@
-abstract class TransactionIdGenerator {
+class TransactionIdGenerator {
   static int _id = 0;
+  static const TransactionIdGenerator INSTANCE = const TransactionIdGenerator._internal();
 
-  static String getNextId() {
+  String getNextId() {
     _id++;
     return _id.toString();
   }
+
+  const TransactionIdGenerator._internal();
 }
+
+

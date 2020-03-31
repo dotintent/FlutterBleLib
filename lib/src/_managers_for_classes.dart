@@ -39,7 +39,7 @@ abstract class ManagerForPeripheral {
     String transactionId,
   );
 
-  Future<void> requestMtu(
+  Future<int> requestMtu(
     Peripheral peripheral,
     int mtu,
     String transactionId,

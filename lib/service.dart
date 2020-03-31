@@ -11,18 +11,20 @@ class Service extends InternalService {
   Peripheral peripheral;
 
   ManagerForService _manager;
+  TransactionIdGenerator _transactionIdGenerator;
 
   /// The UUID of this service.
   String uuid;
 
-  Service.fromJson(
-    Map<String, dynamic> jsonObject,
-    Peripheral peripheral,
-    ManagerForService managerForService,
-  ) : super(jsonObject[_ServiceMetadata.id]) {
+  Service.fromJson(Map<String, dynamic> jsonObject, Peripheral peripheral,
+      ManagerForService managerForService,
+      {TransactionIdGenerator transactionIdGenerator =
+          TransactionIdGenerator.INSTANCE})
+      : super(jsonObject[_ServiceMetadata.id]) {
     this.peripheral = peripheral;
     uuid = jsonObject[_ServiceMetadata.uuid];
     _manager = managerForService;
+    _transactionIdGenerator = transactionIdGenerator;
   }
 
   /// Returns a list of [Characteristic]s of this service.
@@ -51,7 +53,7 @@ class Service extends InternalService {
           characteristicUuid,
           value,
           withResponse,
-          transactionId ?? TransactionIdGenerator.getNextId());
+          transactionId ?? _transactionIdGenerator.getNextId());
 
   /// Reads the value of a [Characteristic] identified by [characteristicUuid].
   ///
@@ -67,7 +69,7 @@ class Service extends InternalService {
         peripheral,
         this,
         characteristicUuid,
-        transactionId ?? TransactionIdGenerator.getNextId(),
+        transactionId ?? _transactionIdGenerator.getNextId(),
       );
 
   /// Returns a [Stream] of values emitted by a [Characteristic] identified by
@@ -86,7 +88,7 @@ class Service extends InternalService {
         peripheral,
         this,
         characteristicUuid,
-        transactionId ?? TransactionIdGenerator.getNextId(),
+        transactionId ?? _transactionIdGenerator.getNextId(),
       );
 
   /// Returns a list of [Descriptor]s of a [Characteristic] identified by
@@ -114,7 +116,7 @@ class Service extends InternalService {
         this,
         characteristicUuid,
         descriptorUuid,
-        transactionId ?? TransactionIdGenerator.getNextId(),
+        transactionId ?? _transactionIdGenerator.getNextId(),
       );
 
   /// Writes the [value] of a [Descriptor] identified by [descriptorUuid]
@@ -132,7 +134,7 @@ class Service extends InternalService {
         characteristicUuid,
         descriptorUuid,
         value,
-        transactionId ?? TransactionIdGenerator.getNextId(),
+        transactionId ?? _transactionIdGenerator.getNextId(),
       );
 
   @override

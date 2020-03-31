@@ -16,14 +16,18 @@ abstract class _PeripheralMetadata {
 class Peripheral {
   static const int NO_MTU_NEGOTIATION = 0;
   ManagerForPeripheral _manager;
+  TransactionIdGenerator _transactionIdGenerator;
 
   String name;
   String identifier;
 
-  Peripheral.fromJson(Map<String, dynamic> json, ManagerForPeripheral manager)
+  Peripheral.fromJson(Map<String, dynamic> json, ManagerForPeripheral manager,
+      {TransactionIdGenerator transactionIdGenerator =
+          TransactionIdGenerator.INSTANCE})
       : _manager = manager,
         name = json[_PeripheralMetadata.name],
-        identifier = json[_PeripheralMetadata.identifier];
+        identifier = json[_PeripheralMetadata.identifier],
+        _transactionIdGenerator = transactionIdGenerator;
 
   /// Connects to the peripheral.
   ///
@@ -82,7 +86,7 @@ class Peripheral {
   /// Optional [transactionId] could be used to cancel operation.
   Future<void> discoverAllServicesAndCharacteristics({String transactionId}) =>
       _manager.discoverAllServicesAndCharacteristics(
-          this, transactionId ?? TransactionIdGenerator.getNextId());
+          this, transactionId ?? _transactionIdGenerator.getNextId());
 
   /// Returns a list of [Service]s of this peripheral.
   ///
@@ -103,7 +107,7 @@ class Peripheral {
   ///
   /// Optional [transactionId] could be used to cancel operation.
   Future<int> rssi({String transactionId}) =>
-      _manager.rssi(this, transactionId ?? TransactionIdGenerator.getNextId());
+      _manager.rssi(this, transactionId ?? _transactionIdGenerator.getNextId());
 
   /// Requests new MTU value for current connection and return the negotiation
   /// result on Android, reads MTU on iOS.
@@ -118,7 +122,7 @@ class Peripheral {
   /// If MTU has been requested in [connect()] this method will end with [BleError].
   Future<int> requestMtu(int mtu, {String transactionId}) =>
       _manager.requestMtu(
-          this, mtu, transactionId ?? TransactionIdGenerator.getNextId());
+          this, mtu, transactionId ?? _transactionIdGenerator.getNextId());
 
   /// Reads value of [Characteristic] matching specified UUIDs.
   ///
@@ -135,7 +139,7 @@ class Peripheral {
         this,
         serviceUuid,
         characteristicUuid,
-        transactionId ?? TransactionIdGenerator.getNextId(),
+        transactionId ?? _transactionIdGenerator.getNextId(),
       );
 
   /// Writes value of [Characteristic] matching specified UUIDs.
@@ -157,7 +161,7 @@ class Peripheral {
         characteristicUuid,
         value,
         withResponse,
-        transactionId ?? TransactionIdGenerator.getNextId(),
+        transactionId ?? _transactionIdGenerator.getNextId(),
       );
 
   /// Returns a list of [Descriptor]s for [Characteristic] matching specified UUIDs.
@@ -191,7 +195,7 @@ class Peripheral {
         serviceUuid,
         characteristicUuid,
         descriptorUuid,
-        transactionId ?? TransactionIdGenerator.getNextId(),
+        transactionId ?? _transactionIdGenerator.getNextId(),
       );
 
   /// Writes value of [Descriptor] matching specified UUIDs.
@@ -214,7 +218,7 @@ class Peripheral {
         characteristicUuid,
         descriptorUuid,
         value,
-        transactionId ?? TransactionIdGenerator.getNextId(),
+        transactionId ?? _transactionIdGenerator.getNextId(),
       );
 
   /// Returns a stream of notifications/indications from [Characteristic]
@@ -236,7 +240,7 @@ class Peripheral {
         this,
         serviceUuid,
         characteristicUuid,
-        transactionId ?? TransactionIdGenerator.getNextId(),
+        transactionId ?? _transactionIdGenerator.getNextId(),
       );
 
   @override

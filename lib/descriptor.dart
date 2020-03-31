@@ -8,15 +8,17 @@ abstract class _DescriptorMetadata {
 
 class Descriptor extends InternalDescriptor {
   ManagerForDescriptor _manager;
+  TransactionIdGenerator _transactionIdGenerator;
   Characteristic characteristic;
   String uuid;
 
-  Descriptor.fromJson(
-    Map<String, dynamic> jsonObject,
-    Characteristic characteristic,
-    ManagerForDescriptor manager,
-  ) : super(jsonObject[_DescriptorMetadata.id]) {
+  Descriptor.fromJson(Map<String, dynamic> jsonObject,
+      Characteristic characteristic, ManagerForDescriptor manager,
+      {TransactionIdGenerator transactionIdGenerator =
+          TransactionIdGenerator.INSTANCE})
+      : super(jsonObject[_DescriptorMetadata.id]) {
     _manager = manager;
+    _transactionIdGenerator = transactionIdGenerator;
     this.characteristic = characteristic;
     uuid = jsonObject[_DescriptorMetadata.uuid];
   }
@@ -24,30 +26,28 @@ class Descriptor extends InternalDescriptor {
   Future<Uint8List> read({String transactionId}) =>
       _manager.readDescriptorForIdentifier(
         this,
-        transactionId ?? TransactionIdGenerator.getNextId(),
+        transactionId ?? _transactionIdGenerator.getNextId(),
       );
 
   Future<void> write(Uint8List value, {String transactionId}) =>
       _manager.writeDescriptorForIdentifier(
         this,
         value,
-        transactionId ?? TransactionIdGenerator.getNextId(),
+        transactionId ?? _transactionIdGenerator.getNextId(),
       );
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is Descriptor &&
-              runtimeType == other.runtimeType &&
-              _manager == other._manager &&
-              characteristic == other.characteristic &&
-              uuid == other.uuid;
+      other is Descriptor &&
+          runtimeType == other.runtimeType &&
+          _manager == other._manager &&
+          characteristic == other.characteristic &&
+          uuid == other.uuid;
 
   @override
   int get hashCode =>
-      _manager.hashCode ^
-      characteristic.hashCode ^
-      uuid.hashCode;
+      _manager.hashCode ^ characteristic.hashCode ^ uuid.hashCode;
 }
 
 class DescriptorWithValue extends Descriptor with WithValue {

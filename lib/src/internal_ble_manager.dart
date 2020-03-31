@@ -8,10 +8,12 @@ class InternalBleManager
         ManagerForCharacteristic,
         ManagerForDescriptor {
   FlutterBleLib _bleLib;
+  TransactionIdGenerator _transactionIdGenerator;
 
-  InternalBleManager() {
+  InternalBleManager({TransactionIdGenerator transactionIdGenerator = TransactionIdGenerator.INSTANCE}) {
     _bleLib = FlutterBleLib();
     _bleLib.registerManager(this);
+    _transactionIdGenerator = transactionIdGenerator;
   }
 
   @override
@@ -36,11 +38,11 @@ class InternalBleManager
 
   @override
   Future<void> enableRadio({String transactionId}) =>
-      _bleLib.enableRadio(transactionId ?? TransactionIdGenerator.getNextId());
+      _bleLib.enableRadio(transactionId ?? _transactionIdGenerator.getNextId());
 
   @override
   Future<void> disableRadio({String transactionId}) =>
-      _bleLib.disableRadio(transactionId ?? TransactionIdGenerator.getNextId());
+      _bleLib.disableRadio(transactionId ?? _transactionIdGenerator.getNextId());
 
   @override
   Future<BluetoothState> bluetoothState() => _bleLib.state();
@@ -172,7 +174,7 @@ class InternalBleManager
   }
 
   @override
-  Future<void> requestMtu(
+  Future<int> requestMtu(
       Peripheral peripheral, int mtu, String transactionId) {
     return _bleLib.requestMtu(peripheral, mtu, transactionId);
   }
