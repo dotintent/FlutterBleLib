@@ -1,6 +1,7 @@
 ## 2.2.4
 
-* Fix issue with characteristic write without response operation on iOS
+* Fix issue where `withResponse` argument was always true when writing to a characteristic on iOS
+* Remove unnecessary file that was interfering with analyzer
 
 ## 2.2.3
 
