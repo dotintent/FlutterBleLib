@@ -13,6 +13,10 @@ NSString * const ARGUMENT_KEY_REFRESH_GATT = @"refreshGatt";
 NSString * const ARGUMENT_KEY_TIMEOUT_MILLIS = @"timeoutMillis";
 NSString * const ARGUMENT_KEY_EMIT_CURRENT_VALUE = @"emitCurrentValue";
 
+NSString * const ARGUMENT_KEY_NOTIFY_ON_NOTIFICATION = @"notifyOnNotification";
+NSString * const ARGUMENT_KEY_NOTIFY_ON_DISCONNECTION = @"notifyOnDisconnection";
+NSString * const ARGUMENT_KEY_NOTIFY_ON_CONNECTION = @"notifyOnConnection";
+
 NSString * const ARGUMENT_KEY_LOG_LEVEL = @"logLevel";
 
 NSString * const ARGUMENT_KEY_SERVICE_UUID = @"serviceUuid";

@@ -69,9 +69,12 @@ class InternalBleManager
     int requestMtu,
     bool refreshGatt,
     Duration timeout,
+    bool isNotifyOnConnection,
+    bool isNotifyOnDisconnection,
+    bool isNotifyOnNotification,
   }) async =>
       _bleLib.connectToPeripheral(
-          identifier, isAutoConnect, requestMtu, refreshGatt, timeout);
+          identifier, isAutoConnect, requestMtu, refreshGatt, timeout, isNotifyOnConnection, isNotifyOnDisconnection, isNotifyOnNotification);
 
   @override
   Stream<PeripheralConnectionState> observePeripheralConnectionState(

@@ -52,12 +52,19 @@ class Peripheral {
           {bool isAutoConnect = false,
           int requestMtu = NO_MTU_NEGOTIATION,
           bool refreshGatt = false,
-          Duration timeout}) =>
+          Duration timeout,
+          bool isNotifyOnConnection = false,
+          bool isNotifyOnDisconnection = false,
+          bool isNotifyOnNotification = false}) =>
       _manager.connectToPeripheral(identifier,
           isAutoConnect: isAutoConnect,
           requestMtu: requestMtu,
           refreshGatt: refreshGatt,
-          timeout: timeout);
+          timeout: timeout,
+          isNotifyOnConnection: isNotifyOnNotification,
+          isNotifyOnDisconnection: isNotifyOnDisconnection,
+          isNotifyOnNotification: isNotifyOnNotification
+      );
 
   /// Returns a stream of [PeripheralConnectionState].
   ///

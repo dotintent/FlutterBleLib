@@ -209,11 +209,13 @@
 // MARK: - MBA Methods - Connection
 
 - (void)connectToDevice:(FlutterMethodCall *)call result:(FlutterResult)result {
-    NSArray* expectedArguments = [NSArray arrayWithObjects:ARGUMENT_KEY_TIMEOUT_MILLIS, nil];
+    NSArray* expectedArguments = [NSArray arrayWithObjects:ARGUMENT_KEY_TIMEOUT_MILLIS, ARGUMENT_KEY_NOTIFY_ON_NOTIFICATION, ARGUMENT_KEY_NOTIFY_ON_DISCONNECTION,  ARGUMENT_KEY_NOTIFY_ON_CONNECTION, nil];
+    NSDictionary* options = [ArgumentHandler dictionaryOrNil:expectedArguments in:call.arguments];
+    
     [_adapter connectToDevice:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]
-                      options:[ArgumentHandler dictionaryOrNil:expectedArguments in:call.arguments]
+                      options:options
                       resolve:result
-                       reject:[self rejectForFlutterResult:result]];
+                      reject:[self rejectForFlutterResult:result]];
 }
 
 - (void)cancelDeviceConnection:(FlutterMethodCall *)call result:(FlutterResult)result {

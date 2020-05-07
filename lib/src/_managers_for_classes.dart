@@ -11,6 +11,9 @@ abstract class ManagerForPeripheral {
     int requestMtu,
     bool refreshGatt,
     Duration timeout,
+    bool isNotifyOnConnection,
+    bool isNotifyOnDisconnection,
+    bool isNotifyOnNotification,
   });
 
   Future<bool> isPeripheralConnected(String peripheralIdentifier);
