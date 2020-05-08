@@ -69,6 +69,8 @@
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
     if ([METHOD_NAME_CREATE_CLIENT isEqualToString:call.method]) {
         [self createClient:call result:result];
+    } else if ([METHOD_NAME_DESTROY_CLIENT isEqualToString:call.method]) {
+        [self destroyClient]
     } else if ([METHOD_NAME_ENABLE_RADIO isEqualToString:call.method]) {
         [self enable:call result:result];
     } else if ([METHOD_NAME_DISABLE_RADIO isEqualToString:call.method]) {
