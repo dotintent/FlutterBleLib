@@ -108,12 +108,16 @@ abstract class BleManager {
   Future<LogLevel> logLevel();
 
   /// Enables Bluetooth on Android; NOOP on iOS.
+  /// Throws BleError with error code bluetoothStateChangeFailed = 105,
+  /// if the radio is already in the requested state.
   ///
   /// Passing optional [transactionId] lets you discard the result of this
   /// operation before it is finished.
   Future<void> enableRadio({String transactionId});
 
   /// Disables Bluetooth on Android; NOOP on iOS.
+  /// Throws BleError with error code bluetoothStateChangeFailed = 105,
+  /// if the radio is already in the requested state.
   ///
   /// Passing optional [transactionId] lets you discard the result of this
   /// operation before it is finished.
