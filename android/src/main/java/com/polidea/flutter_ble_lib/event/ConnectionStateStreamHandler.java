@@ -31,14 +31,12 @@ public class ConnectionStateStreamHandler implements EventChannel.StreamHandler 
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
-                    final String json = connectionStateChangeJsonConverter.toJson(connectionState);
-
                     synchronized (that) {
                         // Check again for null - by the time we get into this async runnable our eventSink
                         // may have been canceled
                         if (eventSink != null) {
                             try {
-                                eventSink.success(json);
+                                eventSink.success(connectionStateChangeJsonConverter.toJson(connectionState));
                             } catch (JSONException e) {
                                 eventSink.error("-1", e.getMessage(), e.getStackTrace());
                             }
