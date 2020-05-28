@@ -4,32 +4,37 @@ PODS:
     - Flutter
     - MultiplatformBleAdapter (= 0.1.5)
   - MultiplatformBleAdapter (0.1.5)
-  - "permission_handler (4.2.0+hotfix.3)":
+  - "permission_handler (4.4.0+hotfix.4)":
     - Flutter
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_ble_lib (from `.symlinks/plugins/flutter_ble_lib/ios`)
+  - MultiplatformBleAdapter (from `https://github.com/devVadimAlbul/MultiPlatformBleAdapter.git`, branch `feature/connect-options`)
   - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
-
-SPEC REPOS:
-  trunk:
-    - MultiplatformBleAdapter
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
   flutter_ble_lib:
     :path: ".symlinks/plugins/flutter_ble_lib/ios"
+  MultiplatformBleAdapter:
+    :branch: feature/connect-options
+    :git: https://github.com/devVadimAlbul/MultiPlatformBleAdapter.git
   permission_handler:
     :path: ".symlinks/plugins/permission_handler/ios"
+
+CHECKOUT OPTIONS:
+  MultiplatformBleAdapter:
+    :commit: db9cb2ff5ce6731cf017135ff899c287b4bec222
+    :git: https://github.com/devVadimAlbul/MultiPlatformBleAdapter.git
 
 SPEC CHECKSUMS:
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
   flutter_ble_lib: 20e79f0b1d78d921d9ed68ab4451e190029bc3d9
   MultiplatformBleAdapter: 3c4391d428382738a47662ae1f665a29ce78ff39
-  permission_handler: 40520ab8ad1bb78a282b832464e995ec87f77ec6
+  permission_handler: 8278954f2382902f63f00dd8828769c0bd6d511b
 
-PODFILE CHECKSUM: 1b66dae606f75376c5f2135a8290850eeb09ae83
+PODFILE CHECKSUM: dcf3fe9bdbec5b17c2addc228de1c35b86774192
 
-COCOAPODS: 1.8.4
+COCOAPODS: 1.9.1

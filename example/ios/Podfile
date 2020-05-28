@@ -62,6 +62,7 @@ target 'Runner' do
   end
 
   # Keep pod path relative so it can be checked into Podfile.lock.
+  pod 'MultiplatformBleAdapter', :git => 'https://github.com/devVadimAlbul/MultiPlatformBleAdapter.git', :branch => 'feature/connect-options'
   pod 'Flutter', :path => 'Flutter'
 
   # Plugin Pods
