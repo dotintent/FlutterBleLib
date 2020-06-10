@@ -60,6 +60,7 @@ class DevicesBloc {
         .catchError((e) => Fimber.d("Couldn't create BLE client", ex: e))
         .then((_) => _checkPermissions())
         .catchError((e) => Fimber.d("Permission check error", ex: e))
+        .then((_) => _waitForBluetoothPoweredOn())
         .then((_) => _startScan());
 
     if (_visibleDevicesController.isClosed) {
@@ -87,6 +88,21 @@ class DevicesBloc {
         return Future.error(Exception("Location permission not granted"));
       }
     }
+  }
+
+  Future<void> _waitForBluetoothPoweredOn() async {
+    Completer completer = Completer();
+    StreamSubscription<BluetoothState> subscription;
+    subscription = _bleManager
+        .observeBluetoothState(emitCurrentValue: true)
+        .listen((bluetoothState) async {
+      if (bluetoothState == BluetoothState.POWERED_ON &&
+          !completer.isCompleted) {
+        await subscription.cancel();
+        completer.complete();
+      }
+    });
+    return completer.future;
   }
 
   void _startScan() {

@@ -1,7 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
-import 'package:flutter_ble_lib/internal/_internal.dart';
+
+import '_internal.dart';
 
 abstract class ManagerForPeripheral {
   Future<void> connectToPeripheral(
@@ -47,22 +48,22 @@ abstract class ManagerForPeripheral {
   Future<CharacteristicWithValue> readCharacteristicForDevice(
     Peripheral peripheral,
     String serviceUuid,
-    String characteristicUUID,
+    String characteristicUuid,
     String transactionId,
   );
 
   Future<Characteristic> writeCharacteristicForDevice(
       Peripheral peripheral,
-      String serviceUUID,
-      String characteristicUUID,
-      Uint8List bytes,
+      String serviceUuid,
+      String characteristicUuid,
+      Uint8List value,
       bool withResponse,
       String transactionId);
 
   Stream<CharacteristicWithValue> monitorCharacteristicForDevice(
     Peripheral peripheral,
-    String serviceUUID,
-    String characteristicUUID,
+    String serviceUuid,
+    String characteristicUuid,
     String transactionId,
   );
 
@@ -85,7 +86,7 @@ abstract class ManagerForPeripheral {
     String serviceUuid,
     String characteristicUuid,
     String descriptorUuid,
-    Uint8List bytes,
+    Uint8List value,
     String transactionId,
   );
 }
@@ -96,15 +97,15 @@ abstract class ManagerForService {
   Future<CharacteristicWithValue> readCharacteristicForService(
     Peripheral peripheral,
     InternalService service,
-    String characteristicUUID,
+    String characteristicUuid,
     String transactionId,
   );
 
   Future<Characteristic> writeCharacteristicForService(
     Peripheral peripheral,
     InternalService service,
-    String characteristicUUID,
-    Uint8List bytes,
+    String characteristicUuid,
+    Uint8List value,
     bool withResponse,
     String transactionId,
   );
@@ -112,7 +113,7 @@ abstract class ManagerForService {
   Stream<CharacteristicWithValue> monitorCharacteristicForService(
     Peripheral peripheral,
     InternalService service,
-    String characteristicUUID,
+    String characteristicUuid,
     String transactionId,
   );
 
@@ -132,7 +133,7 @@ abstract class ManagerForService {
     Service service,
     String characteristicUuid,
     String descriptorUuid,
-    Uint8List bytes,
+    Uint8List value,
     String transactionId,
   );
 }
@@ -147,7 +148,7 @@ abstract class ManagerForCharacteristic {
   Future<void> writeCharacteristicForIdentifier(
     Peripheral peripheral,
     InternalCharacteristic characteristic,
-    Uint8List bytes,
+    Uint8List value,
     bool withResponse,
     String transactionId,
   );
@@ -184,7 +185,7 @@ abstract class ManagerForDescriptor {
 
   Future<void> writeDescriptorForIdentifier(
     Descriptor descriptor,
-    Uint8List bytes,
+    Uint8List value,
     String transactionId,
   );
 }

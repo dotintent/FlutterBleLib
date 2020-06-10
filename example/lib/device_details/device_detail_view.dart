@@ -71,7 +71,7 @@ class DeviceDetailsViewState extends State<DeviceDetailsView> {
         child: Scaffold(
             backgroundColor: Colors.grey[300],
             appBar: AppBar(
-              title: Text('Devicie Details'),
+              title: Text('Device Details'),
               bottom: TabBar(
                 tabs: [
                   Tab(icon: Icon(Icons.autorenew), text: "Automatic",),

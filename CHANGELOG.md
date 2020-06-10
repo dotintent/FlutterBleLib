@@ -1,3 +1,24 @@
+## 2.2.4
+
+* Fix issue where `withResponse` argument was always true when writing to a characteristic on iOS
+* Remove unnecessary file that was interfering with analyzer
+
+## 2.2.3
+
+* Fix issue with duplicated or malformed notification values
+
+## 2.2.2
+
+* Fix issue with invalid characteristic value base64 coding when performing characteristic operations on iOS
+* Improve documentation
+
+## 2.2.1
+
+* Hide private APIs
+* Add setup instructions to README
+* Add missing descriptor operations information to README
+* Moved permission_handler dependency to its place in example
+
 ## 2.2.0
 
 * **NEW** operations on descriptors
