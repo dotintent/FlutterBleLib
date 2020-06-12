@@ -14,6 +14,9 @@ abstract class ManagerForPeripheral {
     bool isNotifyOnConnection,
     bool isNotifyOnDisconnection,
     bool isNotifyOnNotification,
+    bool enableTransportBridging,
+    bool isRequiresANCS,
+    Duration startDelay
   });
 
   Future<bool> isPeripheralConnected(String peripheralIdentifier);

@@ -5,7 +5,7 @@ mixin DeviceConnectionMixin on FlutterBLE {
       const EventChannel(ChannelName.connectionStateChangeEvents)
           .receiveBroadcastStream();
 
-  Future<void> connectToPeripheral(String deviceIdentifier,
+  Future<void> connectToPeripheral({String deviceIdentifier,
       bool isAutoConnect,
       int requestMtu,
       bool refreshGatt,
@@ -13,7 +13,10 @@ mixin DeviceConnectionMixin on FlutterBLE {
       bool isNotifyOnConnection,
       bool isNotifyOnDisconnection,
       bool isNotifyOnNotification,
-      ) async {
+      bool enableTransportBridging,
+      bool isRequiresANCS,
+      Duration startDelay
+}) async {
     return await _methodChannel
         .invokeMethod(MethodName.connectToDevice, <String, dynamic>{
       ArgumentName.deviceIdentifier: deviceIdentifier,
@@ -23,7 +26,10 @@ mixin DeviceConnectionMixin on FlutterBLE {
       ArgumentName.timeoutMillis: timeout?.inMilliseconds,
       ArgumentName.notifyOnConnection: isNotifyOnConnection,
       ArgumentName.notifyOnDisconnection: isNotifyOnDisconnection,
-      ArgumentName.notifyOnNotification: isNotifyOnNotification
+      ArgumentName.notifyOnNotification: isNotifyOnNotification,
+      ArgumentName.enableTransportBridging: enableTransportBridging,
+      ArgumentName.requiresANCS: isRequiresANCS,
+      ArgumentName.startDelay: startDelay?.inSeconds
     }).catchError((errorJson) =>
             Future.error(BleError.fromJson(jsonDecode(errorJson.details))));
   }
