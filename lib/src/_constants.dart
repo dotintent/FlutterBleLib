@@ -115,6 +115,13 @@ abstract class ArgumentName {
   static const String mtu = "mtu";
 
   static const String deviceIdentifiers = "deviceIdentifiers";
+
+  static const String notifyOnNotification = "notifyOnNotification";
+  static const String notifyOnDisconnection = "notifyOnDisconnection";
+  static const String notifyOnConnection = "notifyOnConnection";
+  static const String enableTransportBridging = "enableTransportBridging";
+  static const String requiresANCS = "requiresANCS";
+  static const String startDelay = "startDelay";
 }
 
 abstract class NativeConnectionState {

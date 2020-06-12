@@ -48,16 +48,45 @@ class Peripheral {
   /// is established right after timeout event, peripheral will be disconnected
   /// immediately. Timeout may happen earlier then specified due to OS
   /// specific behavior.
+  ///
+  /// Optional params [isNotifyOnConnection], [isNotifyOnDisconnection], [isNotifyOnNotification]
+  /// is used for automatically notify app when this device connected/disconnected
+  /// or send notification about change its state (IOS only)
+  /// is used in background mode
+  ///
+  /// Optional [enableTransportBridging]  is indicating that the system will bring up classic
+  /// transport profiles when low energy transport for peripheral is connected (iOS 13.0 or more only)
+  ///
+  /// Optional [isRequiresANCS]  is indicating that the ANCS (Apple Notification Center Service)
+  /// is required for the peripheral is connected. (iOS 13.0 or more only)
+  ///
+  /// Optional [startDelay]  is indicating the number of seconds
+  /// for the system to wait before starting a connection. (iOS only)
+  ///
+  /// 
   Future<void> connect(
           {bool isAutoConnect = false,
           int requestMtu = NO_MTU_NEGOTIATION,
           bool refreshGatt = false,
-          Duration timeout}) =>
+          Duration timeout,
+          bool isNotifyOnConnection = false,
+          bool isNotifyOnDisconnection = false,
+          bool isNotifyOnNotification = false,
+          bool enableTransportBridging = false,
+          bool isRequiresANCS = false,
+          Duration startDelay}) =>
       _manager.connectToPeripheral(identifier,
           isAutoConnect: isAutoConnect,
           requestMtu: requestMtu,
           refreshGatt: refreshGatt,
-          timeout: timeout);
+          timeout: timeout,
+          isNotifyOnConnection: isNotifyOnConnection,
+          isNotifyOnDisconnection: isNotifyOnDisconnection,
+          isNotifyOnNotification: isNotifyOnNotification,
+          enableTransportBridging: enableTransportBridging,
+          isRequiresANCS: isRequiresANCS,
+          startDelay: startDelay
+      );
 
   /// Returns a stream of [PeripheralConnectionState].
   ///

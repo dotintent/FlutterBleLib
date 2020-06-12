@@ -142,9 +142,12 @@ All of the following methods belong to Peripheral instance.
 ```dart
   Future<void> connect(
           {bool isAutoConnect = false,
-          int requestMtu,
+          int requestMtu = NO_MTU_NEGOTIATION,
           bool refreshGatt = false,
-          Duration timeout});
+          Duration timeout,
+          bool isNotifyOnConnection = false,
+          bool isNotifyOnDisconnection = false,
+          bool isNotifyOnNotification = false});
 ```
 Attempts to connect to the peripheral.
 

@@ -224,7 +224,7 @@ class DeviceDetailsBloc {
 
       try {
         log("Connecting to ${peripheral.name}");
-        await peripheral.connect();
+        await peripheral.connect(isAutoConnect: true, isNotifyOnConnection: true, isNotifyOnDisconnection: true, isNotifyOnNotification: true,);
         log("Connected!");
       } on BleError catch (e) {
         logError(e.toString());
