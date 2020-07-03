@@ -10,11 +10,11 @@ mixin ScanningMixin on FlutterBLE {
       (errorJson) {
         throw BleError.fromJson(jsonDecode(errorJson.details));
       },
-      test: (error) => error is PlatformException,
-    ).map((scanResultJson) => ScanResult.fromJson(
-              jsonDecode(scanResultJson),
-              _manager,
-            ));
+      test: (error) => error is PlatformException
+    ).map(
+      (scanResultJson) =>
+          ScanResult.fromJson(jsonDecode(scanResultJson), _manager),
+    );
   }
 
   Stream<ScanResult> startDeviceScan(
@@ -28,18 +28,19 @@ mixin ScanningMixin on FlutterBLE {
     }
 
     StreamController<ScanResult> sc = StreamController.broadcast(
-        onListen: () => _methodChannel.invokeMethod(
-              MethodName.startDeviceScan,
-              <String, dynamic>{
-                ArgumentName.scanMode: scanMode,
-                ArgumentName.callbackType: callbackType,
-                ArgumentName.uuids: uuids,
-                ArgumentName.allowDuplicates: allowDuplicates,
-              },
-            ),
-        onCancel: () => stopDeviceScan());
+      onListen: () => _methodChannel.invokeMethod(
+        MethodName.startDeviceScan,
+        <String, dynamic>{
+          ArgumentName.scanMode: scanMode,
+          ArgumentName.callbackType: callbackType,
+          ArgumentName.uuids: uuids,
+          ArgumentName.allowDuplicates: allowDuplicates,
+        },
+      ),
+      onCancel: () => stopDeviceScan(),
+    );
 
-    sc.addStream(_scanEvents, cancelOnError: true).then((_) => sc?.close());
+    sc.addStream(_scanEvents, cancelOnError: true).then((_) => sc?.close(),);
 
     return sc.stream;
   }
