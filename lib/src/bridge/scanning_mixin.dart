@@ -7,14 +7,13 @@ mixin ScanningMixin on FlutterBLE {
     _scanEvents = const EventChannel(ChannelName.scanningEvents)
         .receiveBroadcastStream()
         .handleError(
-      (errorJson) {
-        throw BleError.fromJson(jsonDecode(errorJson.details));
-      },
-      test: (error) => error is PlatformException
-    ).map(
-      (scanResultJson) =>
-          ScanResult.fromJson(jsonDecode(scanResultJson), _manager),
-    );
+          (errorJson) => throw BleError.fromJson(jsonDecode(errorJson.details)),
+          test: (error) => error is PlatformException,
+        )
+        .map(
+          (scanResultJson) =>
+              ScanResult.fromJson(jsonDecode(scanResultJson), _manager),
+        );
   }
 
   Stream<ScanResult> startDeviceScan(
@@ -40,7 +39,7 @@ mixin ScanningMixin on FlutterBLE {
       onCancel: () => stopDeviceScan(),
     );
 
-    sc.addStream(_scanEvents, cancelOnError: true).then((_) => sc?.close(),);
+    sc.addStream(_scanEvents, cancelOnError: true).then((_) => sc?.close());
 
     return sc.stream;
   }
