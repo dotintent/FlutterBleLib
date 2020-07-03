@@ -38,9 +38,9 @@ mixin ScanningMixin on FlutterBLE {
               },
             ),
         onCancel: () =>
-            _methodChannel.invokeMethod(MethodName.stopDeviceScan));
+            stopDeviceScan();
 
-    sc.addStream(_scanEvents)
+    sc.addStream(_scanEvents, cancelOnError: true)
         .then((_) => sc?.close());
 
     return sc.stream;
