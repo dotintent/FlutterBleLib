@@ -26,7 +26,7 @@ mixin ScanningMixin on FlutterBLE {
       _prepareScanEventsStream();
     }
 
-    StreamController<ScanResult> sc = StreamController.broadcast(
+    StreamController<ScanResult> streamController = StreamController.broadcast(
       onListen: () => _methodChannel.invokeMethod(
         MethodName.startDeviceScan,
         <String, dynamic>{
@@ -39,9 +39,11 @@ mixin ScanningMixin on FlutterBLE {
       onCancel: () => stopDeviceScan(),
     );
 
-    sc.addStream(_scanEvents, cancelOnError: true).then((_) => sc?.close());
+    streamController
+        .addStream(_scanEvents, cancelOnError: true)
+        .then((_) => streamController?.close());
 
-    return sc.stream;
+    return streamController.stream;
   }
 
   Future<void> stopDeviceScan() async {
