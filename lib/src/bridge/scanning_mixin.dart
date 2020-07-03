@@ -1,42 +1,49 @@
 part of _internal;
 
 mixin ScanningMixin on FlutterBLE {
-  Stream<dynamic> _scanEvents;
+  Stream<ScanResult> _scanEvents;
 
   void _prepareScanEventsStream() {
     _scanEvents =
-        const EventChannel(ChannelName.scanningEvents).receiveBroadcastStream();
+        const EventChannel(ChannelName.scanningEvents).receiveBroadcastStream()
+            .handleError(
+              (errorJson) {
+            throw BleError.fromJson(jsonDecode(errorJson.details));
+          },
+          test: (error) => error is PlatformException,
+        ).map((scanResultJson) =>
+            ScanResult.fromJson(
+              jsonDecode(scanResultJson),
+              _manager,
+            ));
   }
 
-  Stream<ScanResult> startDeviceScan(
-    int scanMode,
-    int callbackType,
-    List<String> uuids,
-    bool allowDuplicates,
-  ) async* {
-    _methodChannel.invokeMethod(
-      MethodName.startDeviceScan,
-      <String, dynamic>{
-        ArgumentName.scanMode: scanMode,
-        ArgumentName.callbackType: callbackType,
-        ArgumentName.uuids: uuids,
-        ArgumentName.allowDuplicates: allowDuplicates,
-      },
-    );
-
+  Stream<ScanResult> startDeviceScan(int scanMode,
+      int callbackType,
+      List<String> uuids,
+      bool allowDuplicates,) {
     if (_scanEvents == null) {
       _prepareScanEventsStream();
     }
 
-    yield* _scanEvents.handleError(
-      (errorJson) {
-        throw BleError.fromJson(jsonDecode(errorJson.details));
-      },
-      test: (error) => error is PlatformException,
-    ).map((scanResultJson) => ScanResult.fromJson(
-          jsonDecode(scanResultJson),
-          _manager,
-        ));
+    StreamController<ScanResult> sc = StreamController.broadcast(
+        onListen: () =>
+            _methodChannel.invokeMethod(
+              MethodName.startDeviceScan,
+              <String, dynamic>{
+                ArgumentName.scanMode: scanMode,
+                ArgumentName.callbackType: callbackType,
+                ArgumentName.uuids: uuids,
+                ArgumentName.allowDuplicates: allowDuplicates,
+              },
+            ),
+        onCancel: () =>
+            _methodChannel.invokeMethod(MethodName.stopDeviceScan));
+
+    sc.addStream(_scanEvents)
+        .then((_) => sc?.close());
+
+    return sc.stream;
   }
 
   Future<void> stopDeviceScan() async {
