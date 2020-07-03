@@ -4,31 +4,31 @@ mixin ScanningMixin on FlutterBLE {
   Stream<ScanResult> _scanEvents;
 
   void _prepareScanEventsStream() {
-    _scanEvents =
-        const EventChannel(ChannelName.scanningEvents).receiveBroadcastStream()
-            .handleError(
-              (errorJson) {
-            throw BleError.fromJson(jsonDecode(errorJson.details));
-          },
-          test: (error) => error is PlatformException,
-        ).map((scanResultJson) =>
-            ScanResult.fromJson(
+    _scanEvents = const EventChannel(ChannelName.scanningEvents)
+        .receiveBroadcastStream()
+        .handleError(
+      (errorJson) {
+        throw BleError.fromJson(jsonDecode(errorJson.details));
+      },
+      test: (error) => error is PlatformException,
+    ).map((scanResultJson) => ScanResult.fromJson(
               jsonDecode(scanResultJson),
               _manager,
             ));
   }
 
-  Stream<ScanResult> startDeviceScan(int scanMode,
-      int callbackType,
-      List<String> uuids,
-      bool allowDuplicates,) {
+  Stream<ScanResult> startDeviceScan(
+    int scanMode,
+    int callbackType,
+    List<String> uuids,
+    bool allowDuplicates,
+  ) {
     if (_scanEvents == null) {
       _prepareScanEventsStream();
     }
 
     StreamController<ScanResult> sc = StreamController.broadcast(
-        onListen: () =>
-            _methodChannel.invokeMethod(
+        onListen: () => _methodChannel.invokeMethod(
               MethodName.startDeviceScan,
               <String, dynamic>{
                 ArgumentName.scanMode: scanMode,
@@ -37,11 +37,9 @@ mixin ScanningMixin on FlutterBLE {
                 ArgumentName.allowDuplicates: allowDuplicates,
               },
             ),
-        onCancel: () =>
-            stopDeviceScan();
+        onCancel: () => stopDeviceScan());
 
-    sc.addStream(_scanEvents, cancelOnError: true)
-        .then((_) => sc?.close());
+    sc.addStream(_scanEvents, cancelOnError: true).then((_) => sc?.close());
 
     return sc.stream;
   }
