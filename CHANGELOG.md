@@ -1,3 +1,7 @@
+## 2.2.6
+
+* Fixed scan quick failures not being reported to the listener (race condition in scanning_mixin.dart)
+
 ## 2.2.5
 
 * add missing handling of destroyClient call on iOS
