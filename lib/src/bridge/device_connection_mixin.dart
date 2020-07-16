@@ -39,16 +39,16 @@ mixin DeviceConnectionMixin on FlutterBLE {
           return PeripheralConnectionState.disconnecting;
         default:
           throw FormatException(
-              "Unrecognized value of device connection state. Value: $connectionStateString");
+              'Unrecognized value of device connection state. Value: $connectionStateString');
       }
     });
 
-    _methodChannel.invokeMethod(
+    unawaited(_methodChannel.invokeMethod(
         MethodName.observeConnectionState, <String, dynamic>{
       ArgumentName.deviceIdentifier: identifier,
       ArgumentName.emitCurrentValue: emitCurrentValue,
     }).catchError(
-        (errorJson) => throw BleError.fromJson(jsonDecode(errorJson.details)));
+        (errorJson) => throw BleError.fromJson(jsonDecode(errorJson.details))));
   }
 
   Future<bool> isPeripheralConnected(String peripheralIdentifier) async {
