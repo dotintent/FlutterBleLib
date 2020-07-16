@@ -15,7 +15,7 @@ abstract class _PeripheralMetadata {
 /// [disconnectOrCancelConnection()] can be used if peripheral is not connected.
 class Peripheral {
   static const int NO_MTU_NEGOTIATION = 0;
-  ManagerForPeripheral _manager;
+  final ManagerForPeripheral _manager;
 
   String name;
   String identifier;

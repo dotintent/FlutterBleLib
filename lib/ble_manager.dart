@@ -34,9 +34,7 @@ abstract class BleManager {
   static BleManager _instance;
 
   factory BleManager() {
-    if (_instance == null) {
-      _instance = InternalBleManager();
-    }
+    _instance ??= InternalBleManager();
 
     return _instance;
   }
