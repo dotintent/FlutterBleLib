@@ -7,14 +7,16 @@ mixin DeviceConnectionMixin on FlutterBLE {
 
   Future<void> connectToPeripheral(String deviceIdentifier, bool isAutoConnect,
       int requestMtu, bool refreshGatt, Duration timeout) async {
-    return await _methodChannel
-        .invokeMethod(MethodName.connectToDevice, <String, dynamic>{
-      ArgumentName.deviceIdentifier: deviceIdentifier,
-      ArgumentName.isAutoConnect: isAutoConnect,
-      ArgumentName.requestMtu: requestMtu,
-      ArgumentName.refreshGatt: refreshGatt,
-      ArgumentName.timeoutMillis: timeout?.inMilliseconds
-    }).catchError(
+    return await _methodChannel.invokeMethod(
+      MethodName.connectToDevice,
+      <String, dynamic>{
+        ArgumentName.deviceIdentifier: deviceIdentifier,
+        ArgumentName.isAutoConnect: isAutoConnect,
+        ArgumentName.requestMtu: requestMtu,
+        ArgumentName.refreshGatt: refreshGatt,
+        ArgumentName.timeoutMillis: timeout?.inMilliseconds
+      },
+    ).catchError(
       (errorJson) => Future.error(
         BleError.fromJson(jsonDecode(errorJson.details)),
       ),
@@ -24,11 +26,13 @@ mixin DeviceConnectionMixin on FlutterBLE {
   Stream<PeripheralConnectionState> observePeripheralConnectionState(
       String identifier, bool emitCurrentValue) {
     var controller = StreamController<String>(
-      onListen: () => _methodChannel
-          .invokeMethod(MethodName.observeConnectionState, <String, dynamic>{
-        ArgumentName.deviceIdentifier: identifier,
-        ArgumentName.emitCurrentValue: emitCurrentValue,
-      }).catchError(
+      onListen: () => _methodChannel.invokeMethod(
+        MethodName.observeConnectionState,
+        <String, dynamic>{
+          ArgumentName.deviceIdentifier: identifier,
+          ArgumentName.emitCurrentValue: emitCurrentValue,
+        },
+      ).catchError(
         (errorJson) => throw BleError.fromJson(jsonDecode(errorJson.details)),
       ),
     );
