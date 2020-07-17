@@ -1,8 +1,6 @@
 part of flutter_ble_lib;
 
 abstract class _ScanResultMetadata {
-  static const String id = "id";
-  static const String name = "name";
   static const String rssi = "rssi";
   static const String manufacturerData = "manufacturerData";
   static const String serviceData = "serviceData";
