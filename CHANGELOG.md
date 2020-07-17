@@ -1,3 +1,7 @@
+## 2.2.8
+
+* Formatted all sources according to dartfmt for consistency
+
 ## 2.2.7
 
 * Minor code style fixes. Adjusted device connection state monitoring.
