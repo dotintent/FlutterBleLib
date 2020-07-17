@@ -12,7 +12,6 @@ import 'package:flutter_ble_lib/src/_constants.dart';
 import 'package:flutter_ble_lib/src/_containers.dart';
 import 'package:flutter_ble_lib/src/util/_transaction_id_generator.dart';
 import 'package:flutter_ble_lib/src/util/_transformers.dart';
-import 'package:pedantic/pedantic.dart';
 
 import '_managers_for_classes.dart';
 
