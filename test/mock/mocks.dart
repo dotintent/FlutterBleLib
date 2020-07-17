@@ -4,7 +4,8 @@ import 'package:mockito/mockito.dart';
 
 class ManagerForServiceMock extends Mock implements ManagerForService {}
 
-class ManagerForCharacteristicMock extends Mock implements ManagerForCharacteristic {}
+class ManagerForCharacteristicMock extends Mock
+    implements ManagerForCharacteristic {}
 
 class ManagerForDescriptorMock extends Mock implements ManagerForDescriptor {}
 

@@ -1,9 +1,9 @@
 part of flutter_ble_lib;
 
 abstract class _DescriptorMetadata {
-  static const String uuid = "descriptorUuid";
-  static const String id = "descriptorId";
-  static const String value = "value";
+  static const String uuid = 'descriptorUuid';
+  static const String id = 'descriptorId';
+  static const String value = 'value';
 }
 
 class Descriptor extends InternalDescriptor {
@@ -37,17 +37,15 @@ class Descriptor extends InternalDescriptor {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is Descriptor &&
-              runtimeType == other.runtimeType &&
-              _manager == other._manager &&
-              characteristic == other.characteristic &&
-              uuid == other.uuid;
+      other is Descriptor &&
+          runtimeType == other.runtimeType &&
+          _manager == other._manager &&
+          characteristic == other.characteristic &&
+          uuid == other.uuid;
 
   @override
   int get hashCode =>
-      _manager.hashCode ^
-      characteristic.hashCode ^
-      uuid.hashCode;
+      _manager.hashCode ^ characteristic.hashCode ^ uuid.hashCode;
 }
 
 class DescriptorWithValue extends Descriptor with WithValue {
