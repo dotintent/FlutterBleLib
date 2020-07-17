@@ -1,3 +1,7 @@
+## 2.2.7
+
+* Minor code style fixes. Adjusted device connection state monitoring.
+
 ## 2.2.6
 
 * Fixed scan quick failures not being reported to the listener (race condition in scanning_mixin.dart)
