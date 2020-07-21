@@ -36,7 +36,7 @@ void main() {
     ].forEach(clearInteractions);
   });
 
-  test("descriptors returns descriptors provided by manager", () async {
+  test("descriptors returns a list of descriptors provided by manager", () async {
     //given
     when(managerForCharacteristic.descriptorsForCharacteristic(characteristic))
         .thenAnswer((_) => Future.value([
@@ -85,7 +85,7 @@ void main() {
   });
 
   test(
-      "read invokes manager with expected params when transactionId is not specified",
+      "read generates transactionId when it is not specified",
       () {
     //when
     characteristic.read();
@@ -98,7 +98,7 @@ void main() {
   });
 
   test(
-      "read invokes manager with unique transactionId when transactionId is not specified",
+      "read generates unique transactionId for each operation",
       () {
     //when
     characteristic.read();
@@ -165,7 +165,7 @@ void main() {
     expect(transactionIds[0], isNot(equals(transactionIds[1])));
   });
 
-  test("monitor streams expected values", () {
+  test("monitor emits expected values", () {
     //given
     var streamController = StreamController<Uint8List>();
     when(managerForCharacteristic.monitorCharacteristicForIdentifier(
