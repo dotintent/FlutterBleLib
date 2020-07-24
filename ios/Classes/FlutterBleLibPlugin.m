@@ -69,6 +69,8 @@
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
     if ([METHOD_NAME_CREATE_CLIENT isEqualToString:call.method]) {
         [self createClient:call result:result];
+    } else if ([METHOD_NAME_DESTROY_CLIENT isEqualToString:call.method]) {
+        [self destroyClient];
     } else if ([METHOD_NAME_ENABLE_RADIO isEqualToString:call.method]) {
         [self enable:call result:result];
     } else if ([METHOD_NAME_DISABLE_RADIO isEqualToString:call.method]) {
@@ -230,7 +232,7 @@
 }
 
 - (void)observeConnectionState:(FlutterMethodCall *)call result:(FlutterResult)result {
-    BOOL emitCurrentValue = (BOOL)call.arguments[ARGUMENT_KEY_EMIT_CURRENT_VALUE];
+    BOOL emitCurrentValue = ((NSNumber *)call.arguments[ARGUMENT_KEY_EMIT_CURRENT_VALUE]).boolValue;
     if (emitCurrentValue == YES) {
         Resolve resolve = ^(id isConnected) {
             if ((BOOL)isConnected == YES) {
@@ -343,7 +345,7 @@
                                serviceUUID:call.arguments[ARGUMENT_KEY_SERVICE_UUID]
                         characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
                                valueBase64:[self base64encodedStringFromBytes:call.arguments[ARGUMENT_KEY_VALUE]]
-                                  response:(BOOL)call.arguments[ARGUMENT_KEY_WITH_RESPONSE]
+                                  response:((NSNumber *)call.arguments[ARGUMENT_KEY_WITH_RESPONSE]).boolValue
                              transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
                                    resolve:[self resolveForReadWriteCharacteristic:result
                                                                      transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]]
@@ -354,7 +356,7 @@
     [_adapter writeCharacteristicForService:[call.arguments[ARGUMENT_KEY_SERVICE_ID] doubleValue]
                          characteristicUUID:call.arguments[ARGUMENT_KEY_CHARACTERISTIC_UUID]
                                 valueBase64:[self base64encodedStringFromBytes:call.arguments[ARGUMENT_KEY_VALUE]]
-                                   response:(BOOL)call.arguments[ARGUMENT_KEY_WITH_RESPONSE]
+                                   response:((NSNumber *)call.arguments[ARGUMENT_KEY_WITH_RESPONSE]).boolValue
                               transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
                                     resolve:[self resolveForReadWriteCharacteristic:result
                                                                       transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]]
@@ -364,7 +366,7 @@
 - (void)writeCharacteristic:(FlutterMethodCall *)call result:(FlutterResult)result {
     [_adapter writeCharacteristic:[call.arguments[ARGUMENT_KEY_CHARACTERISTIC_IDENTIFIER] doubleValue]
                       valueBase64:[self base64encodedStringFromBytes:call.arguments[ARGUMENT_KEY_VALUE]]
-                         response:(BOOL)call.arguments[ARGUMENT_KEY_WITH_RESPONSE]
+                         response:((NSNumber *)call.arguments[ARGUMENT_KEY_WITH_RESPONSE]).boolValue
                     transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]
                           resolve:[self resolveForReadWriteCharacteristic:result
                                                             transactionId:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_TRANSACTION_ID]]]

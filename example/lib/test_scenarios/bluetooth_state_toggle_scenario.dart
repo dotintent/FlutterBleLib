@@ -46,7 +46,8 @@ class BluetoothStateTestScenario implements TestScenario {
 
   void _observeRadioState(BleManager bleManager, Logger log) async {
     await _radioStateSubscription?.cancel();
-    _radioStateSubscription = bleManager.observeBluetoothState().listen((newState) {
+    _radioStateSubscription =
+        bleManager.observeBluetoothState().listen((newState) {
       log("New radio state: $newState");
     }, onError: (error) {
       log("Error while observing radio state. Error: $error");

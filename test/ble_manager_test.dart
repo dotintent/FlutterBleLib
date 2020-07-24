@@ -1,4 +1,3 @@
-
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 import 'package:test/test.dart';
 
@@ -11,6 +10,6 @@ void main() {
     final secondInstanceOfBleManager = BleManager();
 
     //then
-    expect(secondInstanceOfBleManager, firstInstanceOfBlemanager);
+    expect(secondInstanceOfBleManager, same(firstInstanceOfBlemanager));
   });
 }

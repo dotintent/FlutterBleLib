@@ -10,7 +10,6 @@ import 'package:flutter_ble_lib_example/device_details/view/manual_test_view.dar
 class DeviceDetailsView extends StatefulWidget {
   @override
   State<DeviceDetailsView> createState() => DeviceDetailsViewState();
-
 }
 
 class DeviceDetailsViewState extends State<DeviceDetailsView> {
@@ -37,12 +36,12 @@ class DeviceDetailsViewState extends State<DeviceDetailsView> {
     _deviceDetailsBloc.init();
     _appStateSubscription =
         _deviceDetailsBloc.disconnectedDevice.listen((bleDevice) async {
-          Fimber.d("navigate to details");
-          _onPause();
-          Navigator.pop(context);
-          _shouldRunOnResume = true;
-          Fimber.d("back from details");
-        });
+      Fimber.d("navigate to details");
+      _onPause();
+      Navigator.pop(context);
+      _shouldRunOnResume = true;
+      Fimber.d("back from details");
+    });
   }
 
   void _onPause() {
@@ -74,8 +73,14 @@ class DeviceDetailsViewState extends State<DeviceDetailsView> {
               title: Text('Device Details'),
               bottom: TabBar(
                 tabs: [
-                  Tab(icon: Icon(Icons.autorenew), text: "Automatic",),
-                  Tab(icon: Icon(Icons.settings), text: "Manual",),
+                  Tab(
+                    icon: Icon(Icons.autorenew),
+                    text: "Automatic",
+                  ),
+                  Tab(
+                    icon: Icon(Icons.settings),
+                    text: "Manual",
+                  ),
                 ],
               ),
             ),
