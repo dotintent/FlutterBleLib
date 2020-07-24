@@ -1,3 +1,7 @@
+## 2.2.9
+
+* Fixed issue with incorrectly typed Stream
+
 ## 2.2.8
 
 * Formatted all sources according to dartfmt for consistency
