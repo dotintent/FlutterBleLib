@@ -137,6 +137,11 @@ abstract class BleManager {
   ///
   /// If [serviceUUIDs] is empty, this will return an empty list.
   Future<List<Peripheral>> connectedPeripherals(List<String> serviceUUIDs);
+
+  /// Creates a peripheral which may not exist. Since the [peripheralId] might
+  /// be a UUID or a MAC address, depending on the platform, its format is
+  /// not validated.
+  Peripheral createUnsafePeripheral(String peripheralId, {String name});
 }
 
 /// State of the Bluetooth Adapter.

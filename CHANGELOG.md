@@ -1,3 +1,8 @@
+## 2.3.0
+
+* add `BleManager.createUnsafePeripheral()` to allow for connecting to known peripheral without launching scan first
+  **NOTE:** this change will not work with BLEmulator below 1.2.0
+
 ## 2.2.9
 
 * Fixed issue with incorrectly typed Stream

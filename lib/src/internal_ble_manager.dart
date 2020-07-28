@@ -63,6 +63,16 @@ class InternalBleManager
   Future<void> stopPeripheralScan() => _bleLib.stopDeviceScan();
 
   @override
+  Peripheral createUnsafePeripheral(String peripheralId, {String name}) {
+    const nameField = 'name';
+    const identifierField = 'id';
+    return Peripheral.fromJson({
+      nameField: name,
+      identifierField: peripheralId,
+    }, this);
+  }
+
+  @override
   Future<void> connectToPeripheral(
     String identifier, {
     bool isAutoConnect,
