@@ -37,15 +37,14 @@ mixin DeviceConnectionMixin on FlutterBLE {
       ),
     );
 
-    var sourceStream =
-        _peripheralConnectionStateChanges
-            .map((jsonString) =>
-                ConnectionStateContainer.fromJson(jsonDecode(jsonString)))
-            .where((connectionStateContainer) =>
-                connectionStateContainer.peripheralIdentifier == identifier)
-            .map((connectionStateContainer) =>
-                connectionStateContainer.connectionState)
-            .map((connectionStateString) {
+    var sourceStream = _peripheralConnectionStateChanges
+        .map((jsonString) =>
+            ConnectionStateContainer.fromJson(jsonDecode(jsonString)))
+        .where((connectionStateContainer) =>
+            connectionStateContainer.peripheralIdentifier == identifier)
+        .map((connectionStateContainer) =>
+            connectionStateContainer.connectionState)
+        .map((connectionStateString) {
       switch (connectionStateString.toLowerCase()) {
         case NativeConnectionState.connected:
           return PeripheralConnectionState.connected;
