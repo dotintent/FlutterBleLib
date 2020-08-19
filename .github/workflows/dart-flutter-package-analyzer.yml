@@ -23,9 +23,15 @@ jobs:
           # NB: "analysis" is the id set above. Replace it with the one you used if different.
           TOTAL: ${{ steps.analysis.outputs.total }}
           TOTAL_MAX: ${{ steps.analysis.outputs.total_max }}
+          ANALYSIS: ${{ steps.analysis.outputs.analysis }}
+          ANALYSIS_MAX=$(( steps.analysis.outputs.analysis_max ))
         run: |
-          if (( $TOTAL < 100 ))
+          if (( $ANALYSIS < $ANALYSIS_MAX ))
           then
-            echo Unacceptable score! Needs to be >=100.
+            echo Unacceptable analysis score! Needs to be maxed out!
             exit 1
+          elif (( $TOTAL < ($TOTAL_MAX - 10) ))
+          then
+            echo Unacceptable total score! Check dependencies and other factors!
+            exit 2
           fi
