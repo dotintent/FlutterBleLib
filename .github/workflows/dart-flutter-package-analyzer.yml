@@ -28,4 +28,5 @@ jobs:
           if (( $PERCENTAGE < 50 ))
           then
             echo Score too low!
-            exi
+            exit 1
+          fi
