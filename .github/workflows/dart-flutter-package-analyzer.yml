@@ -24,7 +24,7 @@ jobs:
           TOTAL: ${{ steps.analysis.outputs.total }}
           TOTAL_MAX: ${{ steps.analysis.outputs.total_max }}
           ANALYSIS: ${{ steps.analysis.outputs.analysis }}
-          ANALYSIS_MAX=$(( steps.analysis.outputs.analysis_max ))
+          ANALYSIS_MAX: $(( steps.analysis.outputs.analysis_max ))
         run: |
           if (( $ANALYSIS < $ANALYSIS_MAX ))
           then
