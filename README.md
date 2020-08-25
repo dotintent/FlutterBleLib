@@ -129,7 +129,8 @@ You can try to connect to a peripheral with known ID, be it previously scanned U
 ```dart
 Peripheral myPeripheral = bleManager.createUnsafePeripheral("< known id >");
 ```
-Once you have the instance of the peripheral, you may proceed with the connection.
+Once you have the instance of the peripheral, you may proceed with the connection. But keep in mind 
+that [Android may still not find the peripheral without scanning it first](https://stackoverflow.com/questions/43476369/android-save-ble-device-to-reconnect-after-app-close/43482099#43482099).
 
 ### Connecting to peripheral
 
