@@ -97,7 +97,7 @@ abstract class ArgumentName {
   static const String isAutoConnect = "isAutoConnect";
   static const String requestMtu = "requestMtu";
   static const String refreshGatt = "refreshGatt";
-  static const String timeoutMillis = "timeoutMillis";
+  static const String timeoutMillis = "timeout";
   static const String emitCurrentValue = "emitCurrentValue";
 
   static const String serviceUuid = "serviceUuid";
