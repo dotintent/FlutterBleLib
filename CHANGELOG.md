@@ -1,3 +1,7 @@
+## 2.3.1
+
+* Fix connection timeout on iOS
+
 ## 2.3.0
 
 * add `BleManager.createUnsafePeripheral()` to allow for connecting to known peripheral without launching scan first
