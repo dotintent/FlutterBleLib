@@ -35,18 +35,17 @@ class Peripheral {
   /// guaranteed to get it after connection is successful. (Android only)
   /// iOS by default requests about 186 MTU size and there's nothing anyone can
   /// do about it.
-  /// **NOTE**: if MTU has been request on this step, then there's no way
-  /// to retrieve it's value later on.
+  /// **NOTE**: if MTU has been requested on this step, then there's no way
+  /// to retrieve its value later on.
   ///
-  /// Optional [requestMtu] means that the MTU will not be negotiated
-  /// Passing `true` as [refreshGatt] leads reset services cache. This option may
+  /// Passing `true` as [refreshGatt] will reset services cache. This option may
   /// be useful when a peripheral's firmware was updated and it's
   /// services/characteristics were added/removed/altered. (Android only)
   ///
-  /// Optional [timeout] is used to define time after connection is
-  /// automatically timed out. In case of race condition were connection
+  /// Optional [timeout] is used to define delay after which the connection is
+  /// automatically cancelled. In case of race condition were connection
   /// is established right after timeout event, peripheral will be disconnected
-  /// immediately. Timeout may happen earlier then specified due to OS
+  /// immediately. Timeout may happen earlier than specified due to OS
   /// specific behavior.
   Future<void> connect(
           {bool isAutoConnect = false,
