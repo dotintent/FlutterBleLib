@@ -1,6 +1,7 @@
 ## 2.3.1
 
 * Fix connection timeout on iOS
+* Fix emitting current connection state on iOS
 
 ## 2.3.0
 

@@ -235,7 +235,7 @@
     BOOL emitCurrentValue = ((NSNumber *)call.arguments[ARGUMENT_KEY_EMIT_CURRENT_VALUE]).boolValue;
     if (emitCurrentValue == YES) {
         Resolve resolve = ^(id isConnected) {
-            if ((BOOL)isConnected == YES) {
+            if ([isConnected boolValue] == YES) {
                 [self.connectionStateStreamHandler onConnectedEvent:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]];
             } else {
                 [self.connectionStateStreamHandler emitDisconnectedEvent:call.arguments[ARGUMENT_KEY_DEVICE_IDENTIFIER]];
