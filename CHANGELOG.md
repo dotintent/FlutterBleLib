@@ -2,6 +2,9 @@
 
 * Fix connection timeout on iOS
 * Fix emitting current connection state on iOS
+* Update MBA to 0.1.7:
+    * Fix lack of disconnection event on iOS when connection fails to be established
+    * Fix not all errors being passed through onError callbacks on Android (thanks, @eliaslecomte)
 
 ## 2.3.0
 
