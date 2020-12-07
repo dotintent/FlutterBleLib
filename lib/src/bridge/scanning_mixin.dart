@@ -40,7 +40,11 @@ mixin ScanningMixin on FlutterBLE {
     );
 
     streamController
-        .addStream(_scanEvents, cancelOnError: true)
+        // When an error occurs, the native will end the stream, so there is no
+        // need to set cancelOnError to true. If set to true, it may cause the
+        // problem that the scan will be terminated immediately when the scan
+        // starts again after an error occurs.
+        .addStream(_scanEvents, cancelOnError: false)
         .then((_) => streamController?.close());
 
     return streamController.stream;
