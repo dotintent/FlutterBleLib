@@ -40,8 +40,8 @@ public class ScanningStreamHandler implements EventChannel.StreamHandler {
     }
 
     private EventChannel.EventSink scanResultsSink;
-    private ScanResultJsonConverter scanResultJsonConverter = new ScanResultJsonConverter();
-    private BleErrorJsonConverter bleErrorJsonConverter = new BleErrorJsonConverter();
+    private final ScanResultJsonConverter scanResultJsonConverter = new ScanResultJsonConverter();
+    private final BleErrorJsonConverter bleErrorJsonConverter = new BleErrorJsonConverter();
     private BleAdapter bleAdapter;
 
     synchronized public void attachAdapter(BleAdapter bleAdapter) {
@@ -49,32 +49,27 @@ public class ScanningStreamHandler implements EventChannel.StreamHandler {
     }
 
     synchronized public void detachAdapter() {
-        if (scanResultsSink != null) {
-            onError(scanResultsSink, new BleError(BleErrorCode.OperationCancelled, "detach adapter", null));
-        }
-        // There is no need to `stopDeviceScan`, bleAdapter will do it.
-        // bleAdapter.stopDeviceScan();
-        scanResultsSink = null;
+        cancelPreviousScanning("detach adapter");
         bleAdapter = null;
     }
 
-    synchronized public void stopDeviceScan(MethodChannel.Result result) {
+    private void cancelPreviousScanning(String reason) {
         if (scanResultsSink != null) {
-            onError(scanResultsSink, new BleError(BleErrorCode.OperationCancelled, "stop device scan", null));
+            endOfStreamWithError(scanResultsSink, new BleError(BleErrorCode.OperationCancelled, reason, null));
             scanResultsSink = null;
         }
         bleAdapter.stopDeviceScan();
+    }
+
+    synchronized public void stopDeviceScan(MethodChannel.Result result) {
+        cancelPreviousScanning("stop device scan");
         result.success(null);
     }
 
     @Override
     synchronized public void onListen(Object arguments, final EventChannel.EventSink eventSink) {
         Log.d("FlutterBleLibPlugin", "on native side listen: " + ChannelName.SCANNING_EVENTS);
-        // force stop prev scanning.
-        if (scanResultsSink != null) {
-            onError(scanResultsSink, new BleError(BleErrorCode.OperationCancelled, "Restart the scan", null));
-        }
-        bleAdapter.stopDeviceScan();
+        cancelPreviousScanning("Restart the scan");
         scanResultsSink = eventSink;
 
         List<String> uuids = argument(arguments, ArgumentKey.UUIDS);
@@ -84,13 +79,13 @@ public class ScanningStreamHandler implements EventChannel.StreamHandler {
                 new OnEventCallback<ScanResult>() {
                     @Override
                     public void onEvent(ScanResult data) {
-                        ScanningStreamHandler.this.onScanResult(eventSink, data);
+                        onScanResult(eventSink, data);
                     }
                 },
                 new OnErrorCallback() {
                     @Override
                     public void onError(BleError error) {
-                        ScanningStreamHandler.this.onError(eventSink, error);
+                        endOfStreamWithError(eventSink, error);
                     }
                 }
         );
@@ -107,7 +102,7 @@ public class ScanningStreamHandler implements EventChannel.StreamHandler {
         eventSink.success(scanResultJsonConverter.toJson(scanResult));
     }
 
-    private void onError(EventChannel.EventSink eventSink, BleError error) {
+    private void endOfStreamWithError(EventChannel.EventSink eventSink, BleError error) {
         eventSink.error(
                 String.valueOf(error.errorCode.code),
                 error.reason,
