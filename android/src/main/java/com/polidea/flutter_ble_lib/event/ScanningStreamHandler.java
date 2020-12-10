@@ -55,7 +55,7 @@ public class ScanningStreamHandler implements EventChannel.StreamHandler {
 
     private void cancelPreviousScanning(String reason) {
         if (scanResultsSink != null) {
-            endOfStreamWithError(scanResultsSink, new BleError(BleErrorCode.OperationCancelled, reason, null));
+            onError(scanResultsSink, new BleError(BleErrorCode.OperationCancelled, reason, null));
             scanResultsSink = null;
         }
         bleAdapter.stopDeviceScan();
@@ -85,7 +85,7 @@ public class ScanningStreamHandler implements EventChannel.StreamHandler {
                 new OnErrorCallback() {
                     @Override
                     public void onError(BleError error) {
-                        endOfStreamWithError(eventSink, error);
+                        ScanningStreamHandler.this.onError(eventSink, error);
                     }
                 }
         );
@@ -102,11 +102,10 @@ public class ScanningStreamHandler implements EventChannel.StreamHandler {
         eventSink.success(scanResultJsonConverter.toJson(scanResult));
     }
 
-    private void endOfStreamWithError(EventChannel.EventSink eventSink, BleError error) {
+    private void onError(EventChannel.EventSink eventSink, BleError error) {
         eventSink.error(
                 String.valueOf(error.errorCode.code),
                 error.reason,
                 bleErrorJsonConverter.toJson(error));
-        eventSink.endOfStream();
     }
 }
