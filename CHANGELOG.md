@@ -1,3 +1,9 @@
+## 3.0.0-beta
+
+* **BREAKING** Migrate Android implementation to RxAndroidBle2
+    This might require the user to implement a global error handler https://github.com/ReactiveX/RxJava/wiki/What's-different-in-2.0#error-handling
+    See more: https://github.com/Polidea/RxAndroidBle/wiki/FAQ:-UndeliverableException
+
 ## 2.3.1
 
 * Fix connection timeout on iOS

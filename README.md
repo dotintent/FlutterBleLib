@@ -36,9 +36,46 @@ Support for Bluetooth Low Energy has been added in API 18, hence the library req
 
 **Notice:** You don't need to add any permissions related to BLE to the `AndroidManifest.xml`, because they are already declared in the library's native module. However, you still need to request `ACCESS_FINE_LOCATION` permission at runtime to be able to scan for peripheral. See [example's code](https://github.com/Polidea/FlutterBleLib/blob/202c6fe48300be207f80567ca4bee5b6fbc83eb5/example/lib/devices_list/devices_bloc.dart#L80) and [example's pubspec](https://github.com/Polidea/FlutterBleLib/blob/202c6fe48300be207f80567ca4bee5b6fbc83eb5/example/pubspec.yaml#L20).
 
-### iOS
+This library is using RxJava 2. Because of a difference in error handling between RxJava 1 and 2, 
+your/your user's application might encounter globally rethrown errors that were encountered after their consumer has finished its lifecycle.
+[Read more here](https://github.com/ReactiveX/RxJava/wiki/What's-different-in-2.0#error-handling)
+and [specifically about RxAndroidBle2 here](https://github.com/Polidea/RxAndroidBle/wiki/FAQ:-UndeliverableException)
 
-Go to `[project]/ios` directory and run `pod install`.
+Recommended configuration is as follows.
+
+`app/build.gradle`:
+
+```groovy
+...
+dependencies {
+  ...
+  implementation 'io.reactivex.rxjava2:rxjava:2.2.17'
+  ...
+}
+```
+
+`MainActivity.java`:
+
+```dart
+...
+import io.reactivex.functions.Consumer;
+import io.reactivex.plugins.RxJavaPlugins;
+
+public class MainActivity extends FlutterActivity {
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    ...
+    RxJavaPlugins.setErrorHandler(new Consumer<Throwable>() {
+      @Override
+      public void accept(Throwable throwable) throws Exception {
+        Log.w("GlobalErrorHandler", throwable);
+      }
+    });
+  }
+}
+```
+(feel free to replace consumer with a lambda)
+### iOS
 
 Add [Privacy - Bluetooth Always Usage Description](https://developer.apple.com/documentation/bundleresources/information_property_list/nsbluetoothalwaysusagedescription) key to `[project]/ios/Runner/Info.plist` file.
 
@@ -48,6 +85,8 @@ Add [Privacy - Bluetooth Always Usage Description](https://developer.apple.com/d
 <string>Your own description of the purpose.</string>
 ...
 ```
+
+Be sure to run `pod repo update` if you have issues with fetching Multiplatform BLE Adapter's pod.
 
 ## Usage
 
