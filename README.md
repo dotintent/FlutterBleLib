@@ -49,6 +49,17 @@ Add [Privacy - Bluetooth Always Usage Description](https://developer.apple.com/d
 ...
 ```
 
+Add [The `bluetooth-central` Background Execution Mode](https://developer.apple.com/library/archive/documentation/NetworkingInternetWeb/Conceptual/CoreBluetooth_concepts/CoreBluetoothBackgroundProcessingForIOSApps/PerformingTasksWhileYourAppIsInTheBackground.html#//apple_ref/doc/uid/TP40013257-CH7-SW6) key to `[project]/ios/Runner/Info.plist` file.
+
+```xml
+...
+<key>UIBackgroundModes</key>
+<array>
+  <string>bluetooth-central</string>
+</array>
+...
+```
+
 ## Usage
 
 The library is organised around a few base entities, which are:
