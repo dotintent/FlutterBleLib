@@ -11,17 +11,14 @@ import 'package:rxdart/rxdart.dart';
 class DevicesBloc {
   final List<BleDevice> bleDevices = <BleDevice>[];
 
-  BehaviorSubject<List<BleDevice>> _visibleDevicesController =
-      BehaviorSubject<List<BleDevice>>.seeded(<BleDevice>[]);
+  BehaviorSubject<List<BleDevice>> _visibleDevicesController = BehaviorSubject<List<BleDevice>>.seeded(<BleDevice>[]);
 
-  StreamController<BleDevice> _devicePickerController =
-      StreamController<BleDevice>();
+  StreamController<BleDevice> _devicePickerController = StreamController<BleDevice>();
 
   StreamSubscription<ScanResult> _scanSubscription;
   StreamSubscription _devicePickerSubscription;
 
-  ValueObservable<List<BleDevice>> get visibleDevices =>
-      _visibleDevicesController.stream;
+  ValueObservable<List<BleDevice>> get visibleDevices => _visibleDevicesController.stream;
 
   Sink<BleDevice> get devicePicker => _devicePickerController.sink;
 
@@ -34,6 +31,8 @@ class DevicesBloc {
 
   DevicesBloc(this._deviceRepository, this._bleManager);
 
+  bool clientCreated = false;
+
   void _handlePickedDevice(BleDevice bleDevice) {
     _deviceRepository.pickDevice(bleDevice);
   }
@@ -44,24 +43,18 @@ class DevicesBloc {
     _visibleDevicesController.close();
     _devicePickerController.close();
     _scanSubscription?.cancel();
+    _bleManager.destroyClient();
   }
 
   void init() {
     Fimber.d("Init devices bloc");
     bleDevices.clear();
-    _bleManager
-        .createClient(
-            restoreStateIdentifier: "example-restore-state-identifier",
-            restoreStateAction: (peripherals) {
-              peripherals?.forEach((peripheral) {
-                Fimber.d("Restored peripheral: ${peripheral.name}");
-              });
-            })
-        .catchError((e) => Fimber.d("Couldn't create BLE client", ex: e))
-        .then((_) => _checkPermissions())
-        .catchError((e) => Fimber.d("Permission check error", ex: e))
-        .then((_) => _waitForBluetoothPoweredOn())
-        .then((_) => _startScan());
+
+    maybeCreateClient()
+      .then((_) => _checkPermissions())
+      .catchError((e) => Fimber.d("Permission check error", ex: e))
+      .then((_) => _waitForBluetoothPoweredOn())
+      .then((_) => _startScan());
 
     if (_visibleDevicesController.isClosed) {
       _visibleDevicesController =
@@ -73,8 +66,33 @@ class DevicesBloc {
     }
 
     Fimber.d(" listen to _devicePickerController.stream");
-    _devicePickerSubscription =
-        _devicePickerController.stream.listen(_handlePickedDevice);
+    _devicePickerSubscription = _devicePickerController.stream.listen(_handlePickedDevice);
+  }
+
+  Future<void> maybeCreateClient() {
+    if (clientCreated) {
+      Fimber.d("Client already exists");
+
+      return Future.value();
+    }
+
+    clientCreated = true;
+
+    Fimber.d("Create client");
+
+    return _bleManager
+        .createClient(
+          restoreStateIdentifier: "example-restore-state-identifier",
+          restoreStateAction: (peripherals) {
+            peripherals?.forEach((peripheral) {
+              Fimber.d("Restored peripheral: ${peripheral.name}");
+            });
+          }
+        )
+        .catchError((e) {
+          clientCreated = false;
+          return Fimber.d("Couldn't create BLE client", ex: e);
+        });
   }
 
   Future<void> _checkPermissions() async {
@@ -94,37 +112,37 @@ class DevicesBloc {
     Completer completer = Completer();
     StreamSubscription<BluetoothState> subscription;
     subscription = _bleManager
-        .observeBluetoothState(emitCurrentValue: true)
-        .listen((bluetoothState) async {
-      if (bluetoothState == BluetoothState.POWERED_ON &&
-          !completer.isCompleted) {
-        await subscription.cancel();
-        completer.complete();
-      }
-    });
+      .observeBluetoothState(emitCurrentValue: true)
+      .listen((bluetoothState) async {
+        if (bluetoothState == BluetoothState.POWERED_ON && !completer.isCompleted) {
+          await subscription.cancel();
+          completer.complete();
+        }
+      });
+
     return completer.future;
   }
 
   void _startScan() {
-    Fimber.d("Ble client created");
-    _scanSubscription =
-        _bleManager.startPeripheralScan().listen((ScanResult scanResult) {
-      var bleDevice = BleDevice(scanResult);
-      if (scanResult.advertisementData.localName != null &&
-          !bleDevices.contains(bleDevice)) {
-        Fimber.d(
-            'found new device ${scanResult.advertisementData.localName} ${scanResult.peripheral.identifier}');
-        bleDevices.add(bleDevice);
-        _visibleDevicesController.add(bleDevices.sublist(0));
-      }
-    });
+    Fimber.d("Ble start scan");
+    _scanSubscription = _bleManager.startPeripheralScan()
+      .listen((ScanResult scanResult) {
+        var bleDevice = BleDevice(scanResult);
+        if (scanResult.advertisementData.localName != null && !bleDevices.contains(bleDevice)) {
+          Fimber.d('found new device ${scanResult.advertisementData.localName} ${scanResult.peripheral.identifier}');
+          bleDevices.add(bleDevice);
+          _visibleDevicesController.add(bleDevices.sublist(0));
+        }
+      });
   }
 
   Future<void> refresh() async {
-    _scanSubscription.cancel();
     await _bleManager.stopPeripheralScan();
+    await _scanSubscription.cancel();
     bleDevices.clear();
+
     _visibleDevicesController.add(bleDevices.sublist(0));
+
     await _checkPermissions()
         .then((_) => _startScan())
         .catchError((e) => Fimber.d("Couldn't refresh", ex: e));
