@@ -32,7 +32,7 @@ class ScanResult {
       : peripheral = Peripheral.fromJson(json, manager),
         rssi = json[_ScanResultMetadata.rssi],
         isConnectable = json[_ScanResultMetadata.isConnectable],
-        overflowServiceUuids = json[_ScanResultMetadata.overflowServiceUuids],
+        overflowServiceUuids = _mapToListOfStringsOrNull(json[_ScanResultMetadata.overflowServiceUuids]),
         advertisementData = AdvertisementData._fromJson(json);
 }
 
@@ -78,12 +78,12 @@ class AdvertisementData {
   }
 
   static Uint8List _decodeBase64OrNull(String base64Value) {
-    if (base64Value != null)
+    if (base64Value != null) {
       return base64.decode(base64Value);
-    else
+    } else {
       return null;
+    }
   }
-
-  static List<String> _mapToListOfStringsOrNull(List<dynamic> values) =>
-      values?.cast();
 }
+
+List<String> _mapToListOfStringsOrNull(List<dynamic> values) => (values ?? []).cast();
