@@ -1,10 +1,10 @@
 part of _internal;
 
 mixin ScanningMixin on FlutterBLE {
-  Stream<ScanResult> _scanEvents;
+  Stream<ScanResult>? _scanEvents;
 
-  void _prepareScanEventsStream() {
-    _scanEvents = const EventChannel(ChannelName.scanningEvents)
+  Stream<ScanResult> _prepareScanEventsStream() {
+    return const EventChannel(ChannelName.scanningEvents)
         .receiveBroadcastStream()
         .handleError(
           (errorJson) => throw BleError.fromJson(jsonDecode(errorJson.details)),
@@ -22,11 +22,13 @@ mixin ScanningMixin on FlutterBLE {
     List<String> uuids,
     bool allowDuplicates,
   ) {
-    if (_scanEvents == null) {
-      _prepareScanEventsStream();
+    var scanEvents = _scanEvents;
+    if (scanEvents == null) {
+      scanEvents = _prepareScanEventsStream();
+      _scanEvents = scanEvents;
     }
 
-    StreamController<ScanResult> streamController = StreamController.broadcast(
+    final streamController = StreamController<ScanResult>.broadcast(
       onListen: () => _methodChannel.invokeMethod(
         MethodName.startDeviceScan,
         <String, dynamic>{
@@ -40,8 +42,8 @@ mixin ScanningMixin on FlutterBLE {
     );
 
     streamController
-        .addStream(_scanEvents, cancelOnError: true)
-        .then((_) => streamController?.close());
+        .addStream(scanEvents, cancelOnError: true)
+        .then((_) => streamController.close());
 
     return streamController.stream;
   }

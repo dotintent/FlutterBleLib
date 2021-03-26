@@ -159,7 +159,7 @@ mixin CharacteristicsMixin on FlutterBLE {
         characteristicFilter = (characteristic) =>
             characteristic._id == characteristicIdentifier &&
             equalsIgnoreAsciiCase(
-                transactionId ?? "", characteristic.transactionId ?? "");
+                transactionId ?? "", characteristic._transactionId ?? "");
 
     return _createMonitoringStream(
       startMonitoring,
@@ -190,7 +190,7 @@ mixin CharacteristicsMixin on FlutterBLE {
             equalsIgnoreAsciiCase(characteristicUuid, characteristic.uuid) &&
             equalsIgnoreAsciiCase(serviceUuid, characteristic.service.uuid) &&
             equalsIgnoreAsciiCase(
-                transactionId ?? "", characteristic.transactionId ?? "");
+                transactionId ?? "", characteristic._transactionId ?? "");
 
     return _createMonitoringStream(
       startMonitoring,
@@ -220,7 +220,7 @@ mixin CharacteristicsMixin on FlutterBLE {
             equalsIgnoreAsciiCase(characteristicUuid, characteristic.uuid) &&
             serviceIdentifier == characteristic.service._id &&
             equalsIgnoreAsciiCase(
-                transactionId ?? "", characteristic.transactionId ?? "");
+                transactionId ?? "", characteristic._transactionId ?? "");
 
     return _createMonitoringStream(
       startMonitoring,
@@ -291,7 +291,7 @@ mixin CharacteristicsMixin on FlutterBLE {
 }
 
 class CharacteristicWithValueAndTransactionId extends CharacteristicWithValue {
-  String transactionId;
+  String? _transactionId;
 
   CharacteristicWithValueAndTransactionId.fromJson(
     Map<String, dynamic> jsonObject,
@@ -301,7 +301,7 @@ class CharacteristicWithValueAndTransactionId extends CharacteristicWithValue {
 
   CharacteristicWithValueAndTransactionId setTransactionId(
       String transactionId) {
-    this.transactionId = transactionId;
+    _transactionId = transactionId;
     return this;
   }
 
@@ -311,13 +311,13 @@ class CharacteristicWithValueAndTransactionId extends CharacteristicWithValue {
       super == other &&
           other is CharacteristicWithValueAndTransactionId &&
           runtimeType == other.runtimeType &&
-          transactionId == other.transactionId;
+          _transactionId == other._transactionId;
 
   @override
-  int get hashCode => super.hashCode ^ transactionId.hashCode;
+  int get hashCode => super.hashCode ^ _transactionId.hashCode;
 
   @override
   String toString() =>
       super.toString() +
-      ' CharacteristicWithValueAndTransactionId{transactionId: $transactionId}';
+      ' CharacteristicWithValueAndTransactionId{transactionId: $_transactionId}';
 }

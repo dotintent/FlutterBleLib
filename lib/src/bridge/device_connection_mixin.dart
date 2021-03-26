@@ -5,8 +5,13 @@ mixin DeviceConnectionMixin on FlutterBLE {
       const EventChannel(ChannelName.connectionStateChangeEvents)
           .receiveBroadcastStream();
 
-  Future<void> connectToPeripheral(String deviceIdentifier, bool isAutoConnect,
-      int requestMtu, bool refreshGatt, Duration timeout) async {
+  Future<void> connectToPeripheral(
+    String deviceIdentifier, 
+    bool isAutoConnect,
+    int requestMtu, 
+    bool refreshGatt,
+    Duration? timeout
+  ) async {
     return await _methodChannel.invokeMethod(
       MethodName.connectToDevice,
       <String, dynamic>{

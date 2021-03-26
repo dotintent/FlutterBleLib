@@ -3,6 +3,7 @@ part of flutter_ble_lib;
 abstract class _BleErrorMetadata {
   static const String errorCode = "errorCode";
   static const String attErrorCode = "attErrorCode";
+  static const String iosErrorCode = "iosErrorCode";
   static const String androidErrorCode = "androidErrorCode";
   static const String reason = "reason";
   static const String deviceId = "deviceID";
@@ -28,6 +29,7 @@ class BleError {
   BleError.fromJson(Map<String, dynamic> json)
       : errorCode = BleErrorCode(json[_BleErrorMetadata.errorCode]),
         attErrorCode = json[_BleErrorMetadata.attErrorCode],
+        iosErrorCode = json[_BleErrorMetadata.iosErrorCode],
         androidErrorCode = json[_BleErrorMetadata.androidErrorCode],
         reason = json[_BleErrorMetadata.reason],
         deviceID = json[_BleErrorMetadata.deviceId],

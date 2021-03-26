@@ -40,13 +40,13 @@ class ScanResult {
 /// manufacturer's data, advertised [Service]s
 class AdvertisementData {
   /// The manufacturer data of the peripheral.
-  Uint8List manufacturerData;
+  Uint8List? manufacturerData;
 
   /// A dictionary that contains service-specific advertisement data.
-  Map<String, Uint8List> serviceData;
+  Map<String, Uint8List>? serviceData;
 
   /// A list of service UUIDs.
-  List<String> serviceUuids;
+  List<String>? serviceUuids;
 
   /// The local name of the [Peripheral]. Might be different than
   /// [Peripheral.name].
@@ -56,7 +56,7 @@ class AdvertisementData {
   int txPowerLevel;
 
   /// A list of solicited service UUIDs.
-  List<String> solicitedServiceUuids;
+  List<String>? solicitedServiceUuids;
 
   AdvertisementData._fromJson(Map<String, dynamic> json)
       : manufacturerData =
@@ -70,20 +70,20 @@ class AdvertisementData {
         solicitedServiceUuids = _mapToListOfStringsOrNull(
             json[_ScanResultMetadata.solicitedServiceUuids]);
 
-  static Map<String, Uint8List> _getServiceDataOrNull(
-      Map<String, dynamic> serviceData) {
+  static Map<String, Uint8List>? _getServiceDataOrNull(
+      Map<String, dynamic>? serviceData) {
     return serviceData?.map(
       (key, value) => MapEntry(key, base64Decode(value)),
     );
   }
 
-  static Uint8List _decodeBase64OrNull(String base64Value) {
+  static Uint8List? _decodeBase64OrNull(String? base64Value) {
     if (base64Value != null)
       return base64.decode(base64Value);
     else
       return null;
   }
 
-  static List<String> _mapToListOfStringsOrNull(List<dynamic> values) =>
-      values?.cast();
+  static List<String>? _mapToListOfStringsOrNull(List<dynamic>? values) =>
+      values?.cast<String>();
 }
