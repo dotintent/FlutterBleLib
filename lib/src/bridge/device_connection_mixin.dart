@@ -30,7 +30,7 @@ mixin DeviceConnectionMixin on FlutterBLE {
 
   Stream<PeripheralConnectionState> observePeripheralConnectionState(
       String identifier, bool emitCurrentValue) {
-    var controller = StreamController<PeripheralConnectionState>(
+    final controller = StreamController<PeripheralConnectionState>(
       onListen: () => _methodChannel.invokeMethod(
         MethodName.observeConnectionState,
         <String, dynamic>{
@@ -42,7 +42,7 @@ mixin DeviceConnectionMixin on FlutterBLE {
       ),
     );
 
-    var sourceStream = _peripheralConnectionStateChanges
+    final sourceStream = _peripheralConnectionStateChanges
         .map((jsonString) =>
             ConnectionStateContainer.fromJson(jsonDecode(jsonString)))
         .where((connectionStateContainer) =>
@@ -71,7 +71,7 @@ mixin DeviceConnectionMixin on FlutterBLE {
           sourceStream,
           cancelOnError: true,
         )
-        .then((value) => controller?.close());
+        .then((value) => controller.close());
 
     return controller.stream;
   }

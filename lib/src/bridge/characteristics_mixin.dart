@@ -159,7 +159,7 @@ mixin CharacteristicsMixin on FlutterBLE {
         characteristicFilter = (characteristic) =>
             characteristic._id == characteristicIdentifier &&
             equalsIgnoreAsciiCase(
-                transactionId ?? "", characteristic._transactionId ?? "");
+                transactionId, characteristic._transactionId ?? "");
 
     return _createMonitoringStream(
       startMonitoring,
@@ -190,7 +190,7 @@ mixin CharacteristicsMixin on FlutterBLE {
             equalsIgnoreAsciiCase(characteristicUuid, characteristic.uuid) &&
             equalsIgnoreAsciiCase(serviceUuid, characteristic.service.uuid) &&
             equalsIgnoreAsciiCase(
-                transactionId ?? "", characteristic._transactionId ?? "");
+                transactionId, characteristic._transactionId ?? "");
 
     return _createMonitoringStream(
       startMonitoring,
@@ -220,7 +220,7 @@ mixin CharacteristicsMixin on FlutterBLE {
             equalsIgnoreAsciiCase(characteristicUuid, characteristic.uuid) &&
             serviceIdentifier == characteristic.service._id &&
             equalsIgnoreAsciiCase(
-                transactionId ?? "", characteristic._transactionId ?? "");
+                transactionId, characteristic._transactionId ?? "");
 
     return _createMonitoringStream(
       startMonitoring,
@@ -255,7 +255,7 @@ mixin CharacteristicsMixin on FlutterBLE {
 
     streamController
         .addStream(stream, cancelOnError: true)
-        .then((_) => streamController?.close());
+        .then((_) => streamController.close());
 
     return streamController.stream;
   }
@@ -283,10 +283,11 @@ mixin CharacteristicsMixin on FlutterBLE {
 
   void _throwErrorIfMatchesWithTransactionId(errorJson, transactionId) {
     var errorDetails = jsonDecode(errorJson.details);
-    if (transactionId == errorDetails["transactionId"])
+    if (transactionId == errorDetails["transactionId"]) {
       throw BleError.fromJson(errorDetails);
-    else
+    } else {
       return;
+    }
   }
 }
 

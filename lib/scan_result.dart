@@ -78,10 +78,11 @@ class AdvertisementData {
   }
 
   static Uint8List? _decodeBase64OrNull(String? base64Value) {
-    if (base64Value != null)
+    if (base64Value != null) {
       return base64.decode(base64Value);
-    else
+    } else {
       return null;
+    }
   }
 
   static List<String>? _mapToListOfStringsOrNull(List<dynamic>? values) =>

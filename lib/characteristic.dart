@@ -20,7 +20,7 @@ class Characteristic extends InternalCharacteristic {
   /// The [Service] containing this characteristic.
   Service service;
 
-  ManagerForCharacteristic _manager;
+  final ManagerForCharacteristic _manager;
 
   /// The UUID of this characteristic.
   String uuid;

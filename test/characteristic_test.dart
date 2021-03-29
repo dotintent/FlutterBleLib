@@ -5,7 +5,7 @@ import 'dart:typed_data';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 import 'package:flutter_ble_lib/src/_managers_for_classes.dart';
 import 'package:mockito/mockito.dart';
-import 'package:test/test.dart';
+import 'package:flutter_test';
 
 import 'mock/mocks.dart';
 import 'test_util/characteristic_generator.dart';

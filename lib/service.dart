@@ -10,7 +10,7 @@ class Service extends InternalService {
   /// [Peripheral] containing this service.
   Peripheral peripheral;
 
-  ManagerForService _manager;
+  final ManagerForService _manager;
 
   /// The UUID of this service.
   String uuid;
