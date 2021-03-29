@@ -13,16 +13,16 @@ class DeviceDetailsBloc {
 
   BehaviorSubject<BleDevice> _deviceController;
 
-  ValueObservable<BleDevice> get device => _deviceController.stream;
+  ValueStream<BleDevice> get device => _deviceController.stream;
 
   BehaviorSubject<PeripheralConnectionState> _connectionStateController;
 
-  ValueObservable<PeripheralConnectionState> get connectionState =>
+  ValueStream<PeripheralConnectionState> get connectionState =>
       _connectionStateController.stream;
 
   Subject<List<DebugLog>> _logsController;
 
-  Observable<List<DebugLog>> get logs => _logsController.stream;
+  Stream<List<DebugLog>> get logs => _logsController.stream;
 
   Stream<BleDevice> get disconnectedDevice => _deviceRepository.pickedDevice
       .skipWhile((bleDevice) => bleDevice != null);

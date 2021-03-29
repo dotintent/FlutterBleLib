@@ -3,7 +3,7 @@ import 'package:flutter_ble_lib_example/device_details/device_details_bloc.dart'
 import 'package:rxdart/rxdart.dart';
 
 class LogsContainerView extends StatelessWidget {
-  final Observable<List<DebugLog>> _logs;
+  final Stream<List<DebugLog>> _logs;
 
   LogsContainerView(this._logs);
 

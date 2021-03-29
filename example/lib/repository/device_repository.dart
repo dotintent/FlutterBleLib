@@ -23,7 +23,7 @@ class DeviceRepository {
     _deviceController.add(_bleDevice);
   }
 
-  ValueObservable<BleDevice> get pickedDevice =>
+  ValueStream<BleDevice> get pickedDevice =>
       _deviceController.stream.shareValueSeeded(_bleDevice);
 
   bool get hasPickedDevice => _bleDevice != null;

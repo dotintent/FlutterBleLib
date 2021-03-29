@@ -18,13 +18,12 @@ class DevicesBloc {
   StreamSubscription<ScanResult> _scanSubscription;
   StreamSubscription _devicePickerSubscription;
 
-  ValueObservable<List<BleDevice>> get visibleDevices => _visibleDevicesController.stream;
+  ValueStream<List<BleDevice>> get visibleDevices => _visibleDevicesController.stream;
 
   Sink<BleDevice> get devicePicker => _devicePickerController.sink;
 
   DeviceRepository _deviceRepository;
   BleManager _bleManager;
-  PermissionStatus _locationPermissionStatus = PermissionStatus.unknown;
 
   Stream<BleDevice> get pickedDevice => _deviceRepository.pickedDevice
       .skipWhile((bleDevice) => bleDevice == null);
@@ -97,12 +96,7 @@ class DevicesBloc {
 
   Future<void> _checkPermissions() async {
     if (Platform.isAndroid) {
-      var permissionStatus = await PermissionHandler()
-          .requestPermissions([PermissionGroup.location]);
-
-      _locationPermissionStatus = permissionStatus[PermissionGroup.location];
-
-      if (_locationPermissionStatus != PermissionStatus.granted) {
+      if (await Permission.location.isGranted) {
         return Future.error(Exception("Location permission not granted"));
       }
     }
