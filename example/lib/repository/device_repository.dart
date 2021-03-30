@@ -10,7 +10,7 @@ class DeviceRepository {
   static final DeviceRepository _deviceRepository =
       DeviceRepository._internal();
 
-  factory DeviceRepository() {
+   factory DeviceRepository() {
     return _deviceRepository;
   }
 

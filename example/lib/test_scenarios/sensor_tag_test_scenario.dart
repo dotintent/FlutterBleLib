@@ -4,10 +4,9 @@ class SensorTagTestScenario {
   PeripheralTestOperations _peripheralTestOperations;
 
   SensorTagTestScenario(BleManager bleManager, Peripheral peripheral,
-      Logger log, Logger logError) {
-    _peripheralTestOperations =
+      Logger log, Logger logError)
+  : _peripheralTestOperations =
         PeripheralTestOperations(bleManager, peripheral, log, logError);
-  }
 
   Future<void> runTestScenario() async {
     _peripheralTestOperations

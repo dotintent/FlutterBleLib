@@ -7,11 +7,14 @@ import 'package:flutter_ble_lib_example/repository/device_repository.dart';
 import 'package:flutter_ble_lib_example/test_scenarios/test_scenarios.dart';
 import 'package:rxdart/rxdart.dart';
 
+import '../model/ble_device.dart';
+import '../repository/device_repository.dart';
+
 class DeviceDetailsBloc {
   final BleManager _bleManager;
   final DeviceRepository _deviceRepository;
 
-  final BleDevice _bleDevice;
+  late final BleDevice _bleDevice;
 
   BehaviorSubject<PeripheralConnectionState> _connectionStateController;
 
@@ -29,15 +32,18 @@ class DeviceDetailsBloc {
   late Logger log;
   late Logger logError;
 
-  DeviceDetailsBloc(
-    this._deviceRepository, 
-    this._bleManager
-  ) 
-  : _connectionStateController =
+  DeviceDetailsBloc({
+    DeviceRepository? deviceRepository, 
+    BleManager? bleManager
+  }) 
+  : _deviceRepository = deviceRepository ?? DeviceRepository(),
+    _bleManager = bleManager ?? BleManager(),
+    _connectionStateController =
       BehaviorSubject<PeripheralConnectionState>.seeded(
         PeripheralConnectionState.disconnected
       ),
     _logsController = PublishSubject<List<DebugLog>>() {
+    _bleDevice = _deviceRepository.pickedDevice.value!;
 
     log = (text) {
       var now = DateTime.now();

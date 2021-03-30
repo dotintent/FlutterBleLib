@@ -15,20 +15,27 @@ class DevicesBloc {
 
   StreamController<BleDevice> _devicePickerController = StreamController<BleDevice>();
 
-  StreamSubscription<ScanResult> _scanSubscription;
-  StreamSubscription _devicePickerSubscription;
+  StreamSubscription<ScanResult>? _scanSubscription;
+  StreamSubscription<BleDevice>? _devicePickerSubscription;
 
   ValueStream<List<BleDevice>> get visibleDevices => _visibleDevicesController.stream;
 
   Sink<BleDevice> get devicePicker => _devicePickerController.sink;
 
-  DeviceRepository _deviceRepository;
-  BleManager _bleManager;
+  final DeviceRepository _deviceRepository;
+  final BleManager _bleManager;
 
   Stream<BleDevice> get pickedDevice => _deviceRepository.pickedDevice
-      .skipWhile((bleDevice) => bleDevice == null);
+      .skipWhile((bleDevice) => bleDevice == null).cast<BleDevice>();
 
-  DevicesBloc(this._deviceRepository, this._bleManager);
+  DevicesBloc({
+    DeviceRepository? deviceRepository, 
+    BleManager? bleManager
+  }) 
+  : _deviceRepository = deviceRepository ?? DeviceRepository(),
+    _bleManager = bleManager ?? BleManager() {
+
+  }
 
   bool clientCreated = false;
 
@@ -38,7 +45,7 @@ class DevicesBloc {
 
   void dispose() {
     Fimber.d("cancel _devicePickerSubscription");
-    _devicePickerSubscription.cancel();
+    _devicePickerSubscription?.cancel();
     _visibleDevicesController.close();
     _devicePickerController.close();
     _scanSubscription?.cancel();
@@ -83,7 +90,7 @@ class DevicesBloc {
         .createClient(
           restoreStateIdentifier: "example-restore-state-identifier",
           restoreStateAction: (peripherals) {
-            peripherals?.forEach((peripheral) {
+            peripherals.forEach((peripheral) {
               Fimber.d("Restored peripheral: ${peripheral.name}");
             });
           }
@@ -104,12 +111,12 @@ class DevicesBloc {
 
   Future<void> _waitForBluetoothPoweredOn() async {
     Completer completer = Completer();
-    StreamSubscription<BluetoothState> subscription;
+    StreamSubscription<BluetoothState>? subscription;
     subscription = _bleManager
       .observeBluetoothState(emitCurrentValue: true)
       .listen((bluetoothState) async {
         if (bluetoothState == BluetoothState.POWERED_ON && !completer.isCompleted) {
-          await subscription.cancel();
+          await subscription?.cancel();
           completer.complete();
         }
       });
@@ -120,9 +127,9 @@ class DevicesBloc {
   void _startScan() {
     Fimber.d("Ble start scan");
     _scanSubscription = _bleManager.startPeripheralScan()
-      .listen((ScanResult scanResult) {
+      .listen((scanResult) {
         var bleDevice = BleDevice(scanResult);
-        if (scanResult.advertisementData.localName != null && !bleDevices.contains(bleDevice)) {
+        if (!bleDevices.contains(bleDevice)) {
           Fimber.d('found new device ${scanResult.advertisementData.localName} ${scanResult.peripheral.identifier}');
           bleDevices.add(bleDevice);
           _visibleDevicesController.add(bleDevices.sublist(0));
@@ -132,7 +139,7 @@ class DevicesBloc {
 
   Future<void> refresh() async {
     await _bleManager.stopPeripheralScan();
-    await _scanSubscription.cancel();
+    await _scanSubscription?.cancel();
     bleDevices.clear();
 
     _visibleDevicesController.add(bleDevices.sublist(0));
