@@ -11,9 +11,7 @@ class DeviceDetailsBloc {
   final BleManager _bleManager;
   final DeviceRepository _deviceRepository;
 
-  BehaviorSubject<BleDevice> _deviceController;
-
-  ValueStream<BleDevice> get device => _deviceController.stream;
+  final BleDevice _bleDevice;
 
   BehaviorSubject<PeripheralConnectionState> _connectionStateController;
 
@@ -24,22 +22,22 @@ class DeviceDetailsBloc {
 
   Stream<List<DebugLog>> get logs => _logsController.stream;
 
-  Stream<BleDevice> get disconnectedDevice => _deviceRepository.pickedDevice
-      .skipWhile((bleDevice) => bleDevice != null);
+  Stream<Null?> get disconnectedDevice => _deviceRepository.pickedDevice
+      .skipWhile((bleDevice) => bleDevice != null).cast<Null>();
 
   List<DebugLog> _logs = [];
-  Logger log;
-  Logger logError;
+  late Logger log;
+  late Logger logError;
 
-  DeviceDetailsBloc(this._deviceRepository, this._bleManager) {
-    var device = _deviceRepository.pickedDevice.value;
-    _deviceController = BehaviorSubject<BleDevice>.seeded(device);
-
-    _connectionStateController =
-        BehaviorSubject<PeripheralConnectionState>.seeded(
-            PeripheralConnectionState.disconnected);
-
-    _logsController = PublishSubject<List<DebugLog>>();
+  DeviceDetailsBloc(
+    this._deviceRepository, 
+    this._bleManager
+  ) 
+  : _connectionStateController =
+      BehaviorSubject<PeripheralConnectionState>.seeded(
+        PeripheralConnectionState.disconnected
+      ),
+    _logsController = PublishSubject<List<DebugLog>>() {
 
     log = (text) {
       var now = DateTime.now();
@@ -73,146 +71,150 @@ class DeviceDetailsBloc {
 
   Future<void> disconnectManual() async {
     _clearLogs();
-    if (await _deviceController.stream.value.peripheral.isConnected()) {
+    final bleDevice = _bleDevice;
+    // if (bleDevice == null) {
+    //   log("No device to Disconnect!");
+    //   return;
+    // }
+    if (await bleDevice.peripheral.isConnected()) {
       log("DISCONNECTING...");
-      await _deviceController.stream.value.peripheral
-          .disconnectOrCancelConnection();
+      await bleDevice.peripheral.disconnectOrCancelConnection();
     }
     log("Disconnected!");
   }
 
   void readRssi() {
     _clearLogs();
-    _deviceController.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+    // _bleDevice.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
           .testReadingRssi();
-    });
+    // });
   }
 
   void discovery() {
     _clearLogs();
-    _deviceController.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+    // _bleDevice.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
           .discovery();
-    });
+    // });
   }
 
   void fetchConnectedDevices() {
     _clearLogs();
-    _deviceController.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+    // _bleDevice.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
           .fetchConnectedDevice();
-    });
+    // });
   }
 
   void fetchKnownDevices() {
     _clearLogs();
-    _deviceController.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+    // _bleDevice.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
           .fetchKnownDevice();
-    });
+    // });
   }
 
   void readCharacteristicForPeripheral() {
     _clearLogs();
-    _deviceController.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+    // _bleDevice.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
           .readCharacteristicForPeripheral();
-    });
+    // });
   }
 
   void readCharacteristicForService() {
     _clearLogs();
-    _deviceController.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+    // _bleDevice.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
           .readCharacteristicForService();
-    });
+    // });
   }
 
   void readCharacteristicDirectly() {
     _clearLogs();
-    _deviceController.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+    // _bleDevice.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
           .readCharacteristic();
-    });
+    // });
   }
 
   void writeCharacteristicForPeripheral() {
     _clearLogs();
-    _deviceController.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+    // _bleDevice.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
           .writeCharacteristicForPeripheral();
-    });
+    // });
   }
 
   void writeCharacteristicForService() {
     _clearLogs();
-    _deviceController.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+    // _bleDevice.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
           .writeCharacteristicForService();
-    });
+    // });
   }
 
   void writeCharacteristicDirectly() {
     _clearLogs();
-    _deviceController.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+    // _bleDevice.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
           .writeCharacteristic();
-    });
+    // });
   }
 
   void monitorCharacteristicForPeripheral() {
     _clearLogs();
-    _deviceController.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+    // _bleDevice.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
           .monitorCharacteristicForPeripheral();
-    });
+    // });
   }
 
   void monitorCharacteristicForService() {
     _clearLogs();
-    _deviceController.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+    // _bleDevice.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
           .monitorCharacteristicForService();
-    });
+    // });
   }
 
   void monitorCharacteristicDirectly() {
     _clearLogs();
-    _deviceController.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+    // _bleDevice.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
           .monitorCharacteristic();
-    });
+    // });
   }
 
   void disableBluetooth() {
     _clearLogs();
-    _deviceController.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+    // _bleDevice.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
           .disableBluetooth();
-    });
+    // });
   }
 
   void enableBluetooth() {
     _clearLogs();
-    _deviceController.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+    // _bleDevice.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
           .enableBluetooth();
-    });
+    // });
   }
 
   void fetchBluetoothState() {
     _clearLogs();
-    _deviceController.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, bleDevice.peripheral, log, logError)
+    // _bleDevice.stream.listen((bleDevice) async {
+      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
           .fetchBluetoothState();
-    });
+    // });
   }
 
   Future<void> connect() async {
     _clearLogs();
-    _deviceController.stream.listen((bleDevice) async {
-      var peripheral = bleDevice.peripheral;
+    // _bleDevice.stream.listen((bleDevice) async {
+      var peripheral = _bleDevice.peripheral;
 
       peripheral
           .observeConnectionState(
@@ -229,12 +231,12 @@ class DeviceDetailsBloc {
       } on BleError catch (e) {
         logError(e.toString());
       }
-    });
+    // });
   }
 
   void dispose() async {
-    await _deviceController.drain();
-    _deviceController.close();
+    // await _bleDevice.drain();
+    // _bleDevice.close();
 
     await _connectionStateController.drain();
     _connectionStateController.close();
@@ -268,17 +270,17 @@ class DeviceDetailsBloc {
   void startAutoTest() {
     _clearLogs();
 
-    _deviceController.stream.listen((bleDevice) {
-      Fimber.d("got bleDevice: $bleDevice");
-      bleDevice.peripheral.isConnected().then((isConnected) {
+    // _bleDevice.stream.listen((bleDevice) {
+      Fimber.d("got bleDevice: $_bleDevice");
+      _bleDevice.peripheral.isConnected().then((isConnected) {
         Fimber.d('The device is connected: $isConnected');
         if (!isConnected) {
-          _connectTo(bleDevice);
+          _connectTo(_bleDevice);
         }
       }).catchError((error) {
         logError('Connection problem: ${error.toString()}');
       });
-    });
+    // });
   }
 
   void _clearLogs() {

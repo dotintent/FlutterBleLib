@@ -8,9 +8,9 @@ class DeviceDetailsBlocProvider extends InheritedWidget {
   final DeviceDetailsBloc deviceDetailsBloc;
 
   DeviceDetailsBlocProvider({
-    Key key,
-    DeviceDetailsBloc deviceDetailsBloc,
-    Widget child,
+    Key? key,
+    DeviceDetailsBloc? deviceDetailsBloc,
+    required Widget child,
   })  : deviceDetailsBloc = deviceDetailsBloc ??
             DeviceDetailsBloc(DeviceRepository(), BleManager()),
         super(key: key, child: child);
