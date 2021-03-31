@@ -5,25 +5,26 @@ import 'dart:typed_data';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 import 'package:flutter_ble_lib/src/_managers_for_classes.dart';
 import 'package:mockito/mockito.dart';
-import 'package:flutter_test';
+import 'package:flutter_test/flutter_test.dart';
 
-import 'mock/mocks.dart';
+import 'package:mockito/annotations.dart';
+import './characteristic_test.mocks.dart';
+
 import 'test_util/characteristic_generator.dart';
 import 'test_util/descriptor_generator.dart';
 
-class ServiceMock extends Mock implements Service {}
-
+@GenerateMocks([Peripheral, ManagerForCharacteristic, ManagerForDescriptor, Service])
 void main() {
-  Peripheral peripheral = PeripheralMock();
+  Peripheral peripheral = MockPeripheral();
   ManagerForCharacteristic managerForCharacteristic =
-      ManagerForCharacteristicMock();
+      MockManagerForCharacteristic();
   CharacteristicGenerator characteristicGenerator =
       CharacteristicGenerator(managerForCharacteristic);
   DescriptorGenerator descriptorGenerator =
-      DescriptorGenerator(ManagerForDescriptorMock());
+      DescriptorGenerator(MockManagerForDescriptor());
 
   Characteristic characteristic =
-      characteristicGenerator.create(123, ServiceMock());
+      characteristicGenerator.create(123, MockService());
 
   DescriptorWithValue createDescriptor(int seed) =>
       descriptorGenerator.create(seed, characteristic);
@@ -92,7 +93,7 @@ void main() {
     //then
     verify(
       managerForCharacteristic.readCharacteristicForIdentifier(
-          any, characteristic, argThat(isNotNull)),
+          MockPeripheral(), characteristic, argThat(isNotNull)),
     );
   });
 

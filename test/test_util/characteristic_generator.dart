@@ -8,7 +8,7 @@ class CharacteristicGenerator {
 
   CharacteristicGenerator(this.managerForCharacteristic);
 
-  Map<dynamic, dynamic> _createRawCharacteristic(int seed) => <String, dynamic>{
+  Map<String, dynamic> _createRawCharacteristic(int seed) => <String, dynamic>{
         "characteristicUuid": seed.toString(),
         "id": seed,
         "isReadable": seed % 2 == 0,

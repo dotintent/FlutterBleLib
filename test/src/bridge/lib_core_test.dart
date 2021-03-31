@@ -7,69 +7,72 @@ import 'package:flutter/services.dart';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 import 'package:flutter_ble_lib/src/_internal.dart';
 import 'package:flutter_ble_lib/src/_constants.dart';
+import 'package:flutter_ble_lib/src/_managers_for_classes.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import 'package:mockito/annotations.dart';
+import './lib_core_test.mocks.dart';
 
 import '../../json/ble_error_jsons.dart';
-import '../../mock/mocks.dart';
 
 const flutterBleLibMethodChannelName = 'flutter_ble_lib';
 const monitorCharacteristicEventChannelName =
     flutterBleLibMethodChannelName + '/monitorCharacteristic';
 
+@GenerateMocks([Peripheral, ManagerForService, ManagerForCharacteristic])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  FlutterBleLib bleLib;
-  Peripheral peripheral = PeripheralMock();
+  late FlutterBleLib bleLib;
+  Peripheral peripheral = MockPeripheral();
   MethodChannel methodChannel = MethodChannel(flutterBleLibMethodChannelName);
   MethodChannel eventMethodChannel =
       MethodChannel(monitorCharacteristicEventChannelName);
 
   setUp(() {
-    bleLib = FlutterBleLib();
+    bleLib = FlutterBleLib(InternalBleManager());
     when(peripheral.identifier).thenReturn("4B:99:4C:34:DE:77");
     methodChannel.setMockMethodCallHandler((call) => Future.value(""));
     eventMethodChannel.setMockMethodCallHandler((call) => Future.value(""));
   });
 
   Future<void> emitPlatformError(String errorJson) =>
-      ServicesBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
+      ServicesBinding.instance!.defaultBinaryMessenger.handlePlatformMessage(
           monitorCharacteristicEventChannelName,
           const StandardMethodCodec()
               .encodeErrorEnvelope(code: "irrelevant", details: errorJson),
-          (ByteData data) {});
+          (data) {});
 
   Future<void> emitMonitoringEvent(String eventJson) =>
-      ServicesBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
+      ServicesBinding.instance!.defaultBinaryMessenger.handlePlatformMessage(
           monitorCharacteristicEventChannelName,
           const StandardMethodCodec().encodeSuccessEnvelope(eventJson),
-          (ByteData data) {});
+          (data) {});
 
   Future<void> emitStreamCompletion() =>
-      ServicesBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
+      ServicesBinding.instance!.defaultBinaryMessenger.handlePlatformMessage(
         monitorCharacteristicEventChannelName,
         null,
-        (ByteData data) {},
+        (data) {},
       );
 
   CharacteristicWithValueAndTransactionId createCharacteristicFromDecodedJson(
-      Map<dynamic, dynamic> decodedRoot) {
-    Map<dynamic, dynamic> decodedCharacteristic = decodedRoot["characteristic"];
+      Map<String, dynamic> decodedRoot) {
+    Map<String, dynamic> decodedCharacteristic = decodedRoot["characteristic"];
     String transactionId = decodedRoot["transactionId"];
     return CharacteristicWithValueAndTransactionId.fromJson(
       decodedCharacteristic,
-      Service.fromJson(decodedRoot, peripheral, null),
-      null,
+      Service.fromJson(decodedRoot, peripheral, MockManagerForService()),
+      MockManagerForCharacteristic(),
     ).setTransactionId(transactionId);
   }
 
-  Map<dynamic, dynamic> createRawCharacteristic(
-          {int id,
-          int serviceId,
-          String serviceUuid,
-          String characteristicUuid,
-          String transactionId,
-          String base64value}) =>
+  Map<String, dynamic> createRawCharacteristic(
+          {int? id,
+          int? serviceId,
+          String? serviceUuid,
+          String? characteristicUuid,
+          String? transactionId,
+          String? base64value}) =>
       <String, dynamic>{
         "serviceUuid": serviceUuid,
         "serviceId": serviceId,
@@ -87,19 +90,22 @@ void main() {
       };
 
   test('monitorCharacteristicForIdentifier cancels on stream error', () async {
-    expectLater(
-        bleLib.monitorCharacteristicForIdentifier(peripheral, 123, null),
-        emitsInOrder([
-          emitsError(isInstanceOf<BleError>()),
-          emitsDone,
-        ]));
+    final fut = expectLater(
+      bleLib.monitorCharacteristicForIdentifier(peripheral, 123, "asdasd"),
+      emitsInOrder([
+        emitsError(isInstanceOf<BleError>()),
+        emitsDone,
+      ])
+    );
     await emitPlatformError(cancellationErrorJson);
+    await fut;
   });
 
   test('monitorCharacteristicForDevice cancels on stream error', () async {
+    String nullStr = "";
     expectLater(
         bleLib.monitorCharacteristicForDevice(
-            peripheral, "serviceUuid", "characteristicUuid", null),
+            peripheral, "serviceUuid", "characteristicUuid", nullStr),
         emitsInOrder([
           emitsError(isInstanceOf<BleError>()),
           emitsDone,
@@ -108,9 +114,10 @@ void main() {
   });
 
   test('monitorCharacteristicForService cancels on stream error', () async {
+    String nullStr = "";
     expectLater(
         bleLib.monitorCharacteristicForService(
-            peripheral, 123, "characteristicUuid", null),
+            peripheral, 123, "characteristicUuid", nullStr),
         emitsInOrder([
           emitsError(isInstanceOf<BleError>()),
           emitsDone,
@@ -143,16 +150,27 @@ void main() {
       'monitorCharacteristicForDevice streams events with matching characteristic uuid, service uuid and transaction id',
       () async {
     expectLater(
-        bleLib.monitorCharacteristicForDevice(
-            peripheral, "serviceUuid", "characteristicUuid", "1"),
-        emitsInOrder([
-          emits(equals(createCharacteristicFromDecodedJson(
+      bleLib.monitorCharacteristicForDevice(
+        peripheral, 
+        "serviceUuid", 
+        "characteristicUuid", 
+        "1"
+      ),
+      emitsInOrder([
+        emits(
+          equals(
+            createCharacteristicFromDecodedJson(
               createRawCharacteristic(
-                  serviceUuid: "serviceUuid",
-                  characteristicUuid: "characteristicUuid",
-                  transactionId: "1")))),
-          emitsDone
-        ]));
+                serviceUuid: "serviceUuid",
+                characteristicUuid: "characteristicUuid",
+                transactionId: "1"
+              )
+            )
+          )
+        ),
+        emitsDone
+      ])
+    );
 
     await emitMonitoringEvent(jsonEncode(createRawCharacteristic(
         serviceUuid: "serviceUuid",

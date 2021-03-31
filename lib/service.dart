@@ -18,10 +18,9 @@ class Service extends InternalService {
   Service.fromJson(
     Map<String, dynamic> jsonObject,
     Peripheral peripheral,
-    ManagerForService managerForService,
+    this._manager,
   ) : peripheral = peripheral,
       uuid = jsonObject[_ServiceMetadata.uuid],
-      _manager = managerForService,
       super(jsonObject[_ServiceMetadata.id]);
 
   /// Returns a list of [Characteristic]s of this service.

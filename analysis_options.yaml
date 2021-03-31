@@ -4,3 +4,4 @@ linter:
   rules:
     prefer_single_quotes: false
     omit_local_variable_types: false
+    unawaited_futures: false

@@ -4,18 +4,20 @@ import 'dart:typed_data';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 import 'package:flutter_ble_lib/src/_managers_for_classes.dart';
 import 'package:mockito/mockito.dart';
-import 'package:test/test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:flutter_test/flutter_test.dart';
 
-import 'mock/mocks.dart';
+import './service_test.mocks.dart';
 import 'test_util/characteristic_generator.dart';
 import 'test_util/descriptor_generator.dart';
 
+@GenerateMocks([Peripheral, ManagerForService, ManagerForCharacteristic, ManagerForDescriptor])
 void main() {
-  Peripheral peripheral = PeripheralMock();
-  ManagerForService managerForService = ManagerForServiceMock();
+  Peripheral peripheral = MockPeripheral();
+  ManagerForService managerForService = MockManagerForService();
   ManagerForCharacteristic managerForCharacteristic =
-      ManagerForCharacteristicMock();
-  ManagerForDescriptor managerForDescriptor = ManagerForDescriptorMock();
+      MockManagerForCharacteristic();
+  ManagerForDescriptor managerForDescriptor = MockManagerForDescriptor();
   CharacteristicGenerator characteristicGenerator =
       CharacteristicGenerator(managerForCharacteristic);
   DescriptorGenerator descriptorGenerator =
