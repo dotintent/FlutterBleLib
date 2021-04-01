@@ -14,26 +14,43 @@ abstract class _ScanResultMetadata {
 
 /// A scan result emitted by the scanning operation, containing [Peripheral] and [AdvertisementData].
 class ScanResult {
-  Peripheral peripheral;
+  final Peripheral peripheral;
 
   /// Signal strength of the peripheral in dBm.
-  int rssi;
+  final int rssi;
 
   /// An indicator whether the peripheral is connectable (iOS only).
-  bool isConnectable;
+  late final bool isConnectable;
 
   /// A list of UUIDs found in the overflow area of the advertisement data (iOS only).
-  List<String> overflowServiceUuids;
+  late final List<String> overflowServiceUuids;
 
   /// A packet of data advertised by the peripheral.
-  AdvertisementData advertisementData;
+  final AdvertisementData advertisementData;
+  
+  ScanResult._(
+    this.peripheral, 
+    this.rssi,
+    this.advertisementData,
+    {bool? isConnectable, 
+    List<String>? overflowServiceUuids, 
+  }) : isConnectable = isConnectable ?? false,
+       overflowServiceUuids = overflowServiceUuids ?? <String>[];
 
-  ScanResult.fromJson(Map<String, dynamic> json, ManagerForPeripheral manager)
-      : peripheral = Peripheral.fromJson(json, manager),
-        rssi = json[_ScanResultMetadata.rssi],
-        isConnectable = json[_ScanResultMetadata.isConnectable],
-        overflowServiceUuids = json[_ScanResultMetadata.overflowServiceUuids],
-        advertisementData = AdvertisementData._fromJson(json);
+
+  factory ScanResult.fromJson(
+    Map<String, dynamic?> json, 
+    ManagerForPeripheral manager
+  ) {
+    assert(json[_ScanResultMetadata.rssi] is int);
+    return ScanResult._(
+      Peripheral.fromJson(json, manager), 
+      json[_ScanResultMetadata.rssi],
+      AdvertisementData._fromJson(json),
+      isConnectable: json[_ScanResultMetadata.isConnectable],
+      overflowServiceUuids: json[_ScanResultMetadata.overflowServiceUuids]
+    );
+  }
 }
 
 /// Data advertised by the [Peripheral]: power level, local name,
@@ -50,10 +67,10 @@ class AdvertisementData {
 
   /// The local name of the [Peripheral]. Might be different than
   /// [Peripheral.name].
-  String localName;
+  String? localName;
 
   /// The transmit power of the peripheral.
-  int txPowerLevel;
+  int? txPowerLevel;
 
   /// A list of solicited service UUIDs.
   List<String>? solicitedServiceUuids;
@@ -67,8 +84,10 @@ class AdvertisementData {
             _mapToListOfStringsOrNull(json[_ScanResultMetadata.serviceUuids]),
         localName = json[_ScanResultMetadata.localName],
         txPowerLevel = json[_ScanResultMetadata.txPowerLevel],
-        solicitedServiceUuids = _mapToListOfStringsOrNull(
-            json[_ScanResultMetadata.solicitedServiceUuids]);
+        solicitedServiceUuids =
+          _mapToListOfStringsOrNull(
+            json[_ScanResultMetadata.solicitedServiceUuids]
+          );
 
   static Map<String, Uint8List>? _getServiceDataOrNull(
       Map<String, dynamic>? serviceData) {

@@ -81,9 +81,14 @@ mixin DeviceConnectionMixin on FlutterBLE {
         .invokeMethod(MethodName.isDeviceConnected, <String, dynamic>{
       ArgumentName.deviceIdentifier: peripheralIdentifier,
     }).catchError(
-      (errorJson) => Future.error(
-        BleError.fromJson(jsonDecode(errorJson.details)),
-      ),
+      (errorJson) {
+        if (errorJson is MissingPluginException) {
+          return Future.error(errorJson);
+        }
+        return Future.error(
+          BleError.fromJson(jsonDecode(errorJson.details))
+        );
+      }
     );
   }
 

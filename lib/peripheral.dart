@@ -17,7 +17,7 @@ class Peripheral {
   static const int NO_MTU_NEGOTIATION = 0;
   final ManagerForPeripheral _manager;
 
-  String name;
+  String? name;
   String identifier;
 
   Peripheral.fromJson(Map<String, dynamic> json, ManagerForPeripheral manager)

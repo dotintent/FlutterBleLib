@@ -33,9 +33,7 @@ class DevicesBloc {
     BleManager? bleManager
   }) 
   : _deviceRepository = deviceRepository ?? DeviceRepository(),
-    _bleManager = bleManager ?? BleManager() {
-
-  }
+    _bleManager = bleManager ?? BleManager();
 
   bool clientCreated = false;
 
@@ -49,7 +47,7 @@ class DevicesBloc {
     _visibleDevicesController.close();
     _devicePickerController.close();
     _scanSubscription?.cancel();
-    _bleManager.destroyClient();
+    // _bleManager.destroyClient();
   }
 
   void init() {
@@ -103,7 +101,11 @@ class DevicesBloc {
 
   Future<void> _checkPermissions() async {
     if (Platform.isAndroid) {
-      if (await Permission.location.isGranted) {
+      var locGranted = await Permission.location.isGranted;
+      if (locGranted == false) {
+        locGranted = (await Permission.location.request()).isGranted;
+      }
+      if (locGranted == false) {
         return Future.error(Exception("Location permission not granted"));
       }
     }

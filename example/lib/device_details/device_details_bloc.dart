@@ -91,159 +91,122 @@ class DeviceDetailsBloc {
 
   void readRssi() {
     _clearLogs();
-    // _bleDevice.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
-          .testReadingRssi();
-    // });
+    PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
+        .testReadingRssi();
   }
 
   void discovery() {
     _clearLogs();
-    // _bleDevice.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
-          .discovery();
-    // });
+    PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
+        .discovery();
   }
 
   void fetchConnectedDevices() {
     _clearLogs();
-    // _bleDevice.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
-          .fetchConnectedDevice();
-    // });
+    PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
+        .fetchConnectedDevice();
   }
 
   void fetchKnownDevices() {
     _clearLogs();
-    // _bleDevice.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
-          .fetchKnownDevice();
-    // });
+    PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
+        .fetchKnownDevice();
   }
 
   void readCharacteristicForPeripheral() {
     _clearLogs();
-    // _bleDevice.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
-          .readCharacteristicForPeripheral();
-    // });
+    PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
+        .readCharacteristicForPeripheral();
   }
 
   void readCharacteristicForService() {
     _clearLogs();
-    // _bleDevice.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
-          .readCharacteristicForService();
-    // });
+    PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
+        .readCharacteristicForService();
   }
 
   void readCharacteristicDirectly() {
     _clearLogs();
-    // _bleDevice.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
-          .readCharacteristic();
-    // });
+    PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
+        .readCharacteristic();
   }
 
   void writeCharacteristicForPeripheral() {
     _clearLogs();
-    // _bleDevice.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
-          .writeCharacteristicForPeripheral();
-    // });
+    PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
+        .writeCharacteristicForPeripheral();
   }
 
   void writeCharacteristicForService() {
     _clearLogs();
-    // _bleDevice.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
-          .writeCharacteristicForService();
-    // });
+    PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
+        .writeCharacteristicForService();
   }
 
   void writeCharacteristicDirectly() {
     _clearLogs();
-    // _bleDevice.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
-          .writeCharacteristic();
-    // });
+    PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
+        .writeCharacteristic();
   }
 
   void monitorCharacteristicForPeripheral() {
     _clearLogs();
-    // _bleDevice.stream.listen((bleDevice) async {
       PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
           .monitorCharacteristicForPeripheral();
-    // });
   }
 
   void monitorCharacteristicForService() {
     _clearLogs();
-    // _bleDevice.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
-          .monitorCharacteristicForService();
-    // });
+    PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
+        .monitorCharacteristicForService();
   }
 
   void monitorCharacteristicDirectly() {
     _clearLogs();
-    // _bleDevice.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
-          .monitorCharacteristic();
-    // });
+    PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
+        .monitorCharacteristic();
   }
 
   void disableBluetooth() {
     _clearLogs();
-    // _bleDevice.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
-          .disableBluetooth();
-    // });
+    PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
+        .disableBluetooth();
   }
 
   void enableBluetooth() {
     _clearLogs();
-    // _bleDevice.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
-          .enableBluetooth();
-    // });
+    PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
+        .enableBluetooth();
   }
 
   void fetchBluetoothState() {
     _clearLogs();
-    // _bleDevice.stream.listen((bleDevice) async {
-      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
-          .fetchBluetoothState();
-    // });
+    PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
+        .fetchBluetoothState();
   }
 
   Future<void> connect() async {
     _clearLogs();
-    // _bleDevice.stream.listen((bleDevice) async {
-      var peripheral = _bleDevice.peripheral;
+    var peripheral = _bleDevice.peripheral;
 
-      peripheral
-          .observeConnectionState(
-              emitCurrentValue: true, completeOnDisconnect: true)
-          .listen((connectionState) {
-        log('Observed new connection state: \n$connectionState');
-        _connectionStateController.add(connectionState);
-      });
+    peripheral
+        .observeConnectionState(
+            emitCurrentValue: true, completeOnDisconnect: true)
+        .listen((connectionState) {
+      log('Observed new connection state: \n$connectionState');
+      _connectionStateController.add(connectionState);
+    });
 
-      try {
-        log("Connecting to ${peripheral.name}");
-        await peripheral.connect();
-        log("Connected!");
-      } on BleError catch (e) {
-        logError(e.toString());
-      }
-    // });
+    try {
+      log("Connecting to ${peripheral.name}");
+      await peripheral.connect();
+      log("Connected!");
+    } on BleError catch (e) {
+      logError(e.toString());
+    }
   }
 
   void dispose() async {
-    // await _bleDevice.drain();
-    // _bleDevice.close();
-
     await _connectionStateController.drain();
     _connectionStateController.close();
   }
@@ -276,17 +239,15 @@ class DeviceDetailsBloc {
   void startAutoTest() {
     _clearLogs();
 
-    // _bleDevice.stream.listen((bleDevice) {
-      Fimber.d("got bleDevice: $_bleDevice");
-      _bleDevice.peripheral.isConnected().then((isConnected) {
-        Fimber.d('The device is connected: $isConnected');
-        if (!isConnected) {
-          _connectTo(_bleDevice);
-        }
-      }).catchError((error) {
-        logError('Connection problem: ${error.toString()}');
-      });
-    // });
+    Fimber.d("got bleDevice: $_bleDevice");
+    _bleDevice.peripheral.isConnected().then((isConnected) {
+      Fimber.d('The device is connected: $isConnected');
+      if (!isConnected) {
+        _connectTo(_bleDevice);
+      }
+    }).catchError((error) {
+      logError('Connection problem: ${error.toString()}');
+    });
   }
 
   void _clearLogs() {
