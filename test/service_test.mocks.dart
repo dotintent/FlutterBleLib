@@ -34,12 +34,6 @@ class MockPeripheral extends _i1.Mock implements _i2.Peripheral {
   }
 
   @override
-  String get name =>
-      (super.noSuchMethod(Invocation.getter(#name), returnValue: '') as String);
-  @override
-  set name(String? _name) => super.noSuchMethod(Invocation.setter(#name, _name),
-      returnValueForMissingStub: null);
-  @override
   String get identifier =>
       (super.noSuchMethod(Invocation.getter(#identifier), returnValue: '')
           as String);
