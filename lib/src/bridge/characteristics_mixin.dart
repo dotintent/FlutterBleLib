@@ -155,11 +155,17 @@ mixin CharacteristicsMixin on FlutterBLE {
           },
         );
 
-    bool Function(CharacteristicWithValueAndTransactionId)
-        characteristicFilter = (characteristic) =>
-            characteristic._id == characteristicIdentifier &&
-            equalsIgnoreAsciiCase(
-                transactionId, characteristic._transactionId ?? "");
+    bool characteristicFilter(
+      CharacteristicWithValueAndTransactionId characteristic,
+    ) {
+      if (characteristic._id != characteristicIdentifier) {
+        return false;
+      }
+      return equalsIgnoreAsciiCase(
+        transactionId,
+        characteristic._transactionId ?? "",
+      );
+    };
 
     return _createMonitoringStream(
       startMonitoring,
@@ -169,7 +175,7 @@ mixin CharacteristicsMixin on FlutterBLE {
     ).map((characteristicWithValue) => characteristicWithValue.value);
   }
 
-  Stream<CharacteristicWithValue> monitorCharacteristicForDevice(
+  Stream<CharacteristicWithValueAndTransactionId> monitorCharacteristicForDevice(
     Peripheral peripheral,
     String serviceUuid,
     String characteristicUuid,
@@ -230,13 +236,14 @@ mixin CharacteristicsMixin on FlutterBLE {
     );
   }
 
-  Stream<CharacteristicWithValue> _createMonitoringStream(
+  Stream<CharacteristicWithValueAndTransactionId> _createMonitoringStream(
     void Function() onListen,
     bool Function(CharacteristicWithValueAndTransactionId) filter,
     Peripheral peripheral,
     String transactionId,
   ) {
-    Stream<CharacteristicWithValue> stream = _characteristicsMonitoringEvents
+    Stream<CharacteristicWithValueAndTransactionId> stream =
+      _characteristicsMonitoringEvents
         .map(
           (rawJsonValue) =>
               _parseCharacteristicWithValueWithTransactionIdResponse(
@@ -245,9 +252,11 @@ mixin CharacteristicsMixin on FlutterBLE {
         .where(filter)
         .handleError((errorJson) =>
             _throwErrorIfMatchesWithTransactionId(errorJson, transactionId))
-        .transform(CancelOnErrorStreamTransformer());
+        .transform<CharacteristicWithValueAndTransactionId>(
+          CancelOnErrorStreamTransformer()
+        );
 
-    StreamController<CharacteristicWithValue> streamController =
+    StreamController<CharacteristicWithValueAndTransactionId> streamController =
         StreamController.broadcast(
       onListen: onListen,
       onCancel: () => cancelTransaction(transactionId),
@@ -262,8 +271,12 @@ mixin CharacteristicsMixin on FlutterBLE {
 
   CharacteristicWithValueAndTransactionId
       _parseCharacteristicWithValueWithTransactionIdResponse(
-          Peripheral peripheral, rawJsonValue) {
-    Map<String, dynamic> rootObject = jsonDecode(rawJsonValue);
+          Peripheral peripheral, dynamic? rawJsonValue) {
+    var jsonString = "";
+    if (rawJsonValue is String) {
+      jsonString = rawJsonValue;
+    }
+    Map<String, dynamic> rootObject = jsonDecode(jsonString);
     Service service = Service.fromJson(rootObject, peripheral, _manager);
 
     var transactionId = rootObject["transactionId"];
@@ -281,13 +294,15 @@ mixin CharacteristicsMixin on FlutterBLE {
         rootObject["characteristic"], service, _manager);
   }
 
-  void _throwErrorIfMatchesWithTransactionId(errorJson, transactionId) {
-    var errorDetails = jsonDecode(errorJson.details);
-    if (transactionId == errorDetails["transactionId"]) {
-      throw BleError.fromJson(errorDetails);
-    } else {
+  void _throwErrorIfMatchesWithTransactionId(PlatformException errorJson, String transactionId) {
+    if (errorJson is PlatformException == false) {
       return;
     }
+    final errorDetails = jsonDecode(errorJson.details);
+    if (transactionId != errorDetails["transactionId"]) {
+      return;
+    }
+    throw BleError.fromJson(errorDetails);
   }
 }
 
