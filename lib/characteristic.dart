@@ -131,7 +131,6 @@ class Characteristic extends InternalCharacteristic {
       other is Characteristic &&
           runtimeType == other.runtimeType &&
           service == other.service &&
-          _manager == other._manager &&
           uuid == other.uuid &&
           isReadable == other.isReadable &&
           isWritableWithResponse == other.isWritableWithResponse &&
