@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 import 'package:flutter_ble_lib/src/_internal.dart';
 import 'package:flutter_ble_lib/src/_constants.dart';
-import 'package:flutter_ble_lib/src/_managers_for_classes.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
@@ -29,7 +28,7 @@ const mockTransactionId = "asdasd123asd";
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   late FlutterBleLib bleLib;
-  Peripheral peripheral = MockPeripheral();
+  final peripheral = MockPeripheral();
   MethodChannel methodChannel = MethodChannel(flutterBleLibMethodChannelName);
   MethodChannel eventMethodChannel =
       MethodChannel(monitorCharacteristicEventChannelName);
@@ -248,17 +247,6 @@ void main() {
         characteristicUuid: "characteristicUuid",
         transactionId: "1"
       );
-    // final a = bleLib.monitorCharacteristicForDevice(
-    //   peripheral, 
-    //   "serviceUuid", 
-    //   "characteristicUuid", 
-    //   "1"
-    // ).listen((event) {
-    //   final expEvent = createCharacteristicFromDecodedJson(expected);
-    //   print(event == expEvent);
-    // }, onDone: () {
-    //   print("done");
-    // });
     final fut = expectLater(
       bleLib.monitorCharacteristicForDevice(
         peripheral, 

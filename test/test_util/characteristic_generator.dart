@@ -1,10 +1,19 @@
 import 'dart:convert';
 
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
+import 'package:mockito/annotations.dart';
 import 'package:flutter_ble_lib/src/_managers_for_classes.dart';
+import './characteristic_generator.mocks.dart';
 
+export './characteristic_generator.mocks.dart';
+
+@GenerateMocks(
+  [],
+  customMocks:[
+    MockSpec<ManagerForCharacteristic>(returnNullOnMissingStub: true),
+])
 class CharacteristicGenerator {
-  ManagerForCharacteristic managerForCharacteristic;
+  MockManagerForCharacteristic managerForCharacteristic;
 
   CharacteristicGenerator(this.managerForCharacteristic);
 

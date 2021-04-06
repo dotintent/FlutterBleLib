@@ -6,7 +6,6 @@ import 'dart:async' as _i4;
 import 'dart:typed_data' as _i3;
 
 import 'package:flutter_ble_lib/flutter_ble_lib.dart' as _i2;
-import 'package:flutter_ble_lib/src/_internal.dart' as _i6;
 import 'package:flutter_ble_lib/src/_managers_for_classes.dart' as _i5;
 import 'package:mockito/mockito.dart' as _i1;
 
@@ -178,78 +177,6 @@ class MockPeripheral extends _i1.Mock implements _i2.Peripheral {
           as String);
 }
 
-/// A class which mocks [ManagerForCharacteristic].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockManagerForCharacteristic extends _i1.Mock
-    implements _i5.ManagerForCharacteristic {
-  MockManagerForCharacteristic() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  _i4.Future<_i3.Uint8List> readCharacteristicForIdentifier(
-          _i2.Peripheral? peripheral,
-          _i6.InternalCharacteristic? characteristic,
-          String? transactionId) =>
-      (super.noSuchMethod(
-              Invocation.method(#readCharacteristicForIdentifier,
-                  [peripheral, characteristic, transactionId]),
-              returnValue: Future.value(_FakeUint8List()))
-          as _i4.Future<_i3.Uint8List>);
-  @override
-  _i4.Future<void> writeCharacteristicForIdentifier(
-          _i2.Peripheral? peripheral,
-          _i6.InternalCharacteristic? characteristic,
-          _i3.Uint8List? value,
-          bool? withResponse,
-          String? transactionId) =>
-      (super.noSuchMethod(
-          Invocation.method(#writeCharacteristicForIdentifier,
-              [peripheral, characteristic, value, withResponse, transactionId]),
-          returnValue: Future.value(null),
-          returnValueForMissingStub: Future.value()) as _i4.Future<void>);
-  @override
-  _i4.Stream<_i3.Uint8List> monitorCharacteristicForIdentifier(
-          _i2.Peripheral? peripheral,
-          _i6.InternalCharacteristic? characteristic,
-          String? transactionId) =>
-      (super.noSuchMethod(
-              Invocation.method(#monitorCharacteristicForIdentifier,
-                  [peripheral, characteristic, transactionId]),
-              returnValue: Stream<_i3.Uint8List>.empty())
-          as _i4.Stream<_i3.Uint8List>);
-  @override
-  _i4.Future<List<_i2.Descriptor>> descriptorsForCharacteristic(
-          _i2.Characteristic? characteristic) =>
-      (super.noSuchMethod(
-          Invocation.method(#descriptorsForCharacteristic, [characteristic]),
-          returnValue:
-              Future.value(<_i2.Descriptor>[])) as _i4
-          .Future<List<_i2.Descriptor>>);
-  @override
-  _i4.Future<_i2.DescriptorWithValue> readDescriptorForCharacteristic(
-          _i2.Characteristic? characteristic,
-          String? descriptorUuid,
-          String? transactionId) =>
-      (super.noSuchMethod(
-              Invocation.method(#readDescriptorForCharacteristic,
-                  [characteristic, descriptorUuid, transactionId]),
-              returnValue: Future.value(_FakeDescriptorWithValue()))
-          as _i4.Future<_i2.DescriptorWithValue>);
-  @override
-  _i4.Future<_i2.Descriptor> writeDescriptorForCharacteristic(
-          _i2.Characteristic? characteristic,
-          String? descriptorUuid,
-          _i3.Uint8List? value,
-          String? transactionId) =>
-      (super.noSuchMethod(
-              Invocation.method(#writeDescriptorForCharacteristic,
-                  [characteristic, descriptorUuid, value, transactionId]),
-              returnValue: Future.value(_FakeDescriptor()))
-          as _i4.Future<_i2.Descriptor>);
-}
-
 /// A class which mocks [ManagerForDescriptor].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -277,14 +204,54 @@ class MockManagerForDescriptor extends _i1.Mock
           returnValueForMissingStub: Future.value()) as _i4.Future<void>);
 }
 
+/// A class which mocks [DescriptorWithValue].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockDescriptorWithValue extends _i1.Mock
+    implements _i2.DescriptorWithValue {
+  MockDescriptorWithValue() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i3.Uint8List get value => (super.noSuchMethod(Invocation.getter(#value),
+      returnValue: _FakeUint8List()) as _i3.Uint8List);
+  @override
+  set value(_i3.Uint8List? _value) =>
+      super.noSuchMethod(Invocation.setter(#value, _value),
+          returnValueForMissingStub: null);
+  @override
+  _i2.Characteristic get characteristic =>
+      (super.noSuchMethod(Invocation.getter(#characteristic),
+          returnValue: _FakeCharacteristic()) as _i2.Characteristic);
+  @override
+  String get uuid =>
+      (super.noSuchMethod(Invocation.getter(#uuid), returnValue: '') as String);
+  @override
+  int get hashCode =>
+      (super.noSuchMethod(Invocation.getter(#hashCode), returnValue: 0) as int);
+  @override
+  _i4.Future<_i3.Uint8List> read({String? transactionId}) =>
+      (super.noSuchMethod(
+              Invocation.method(#read, [], {#transactionId: transactionId}),
+              returnValue: Future.value(_FakeUint8List()))
+          as _i4.Future<_i3.Uint8List>);
+  @override
+  _i4.Future<void> write(_i3.Uint8List? value, {String? transactionId}) =>
+      (super.noSuchMethod(
+          Invocation.method(#write, [value], {#transactionId: transactionId}),
+          returnValue: Future.value(null),
+          returnValueForMissingStub: Future.value()) as _i4.Future<void>);
+  @override
+  bool operator ==(Object? other) =>
+      (super.noSuchMethod(Invocation.method(#==, [other]), returnValue: false)
+          as bool);
+}
+
 /// A class which mocks [Service].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockService extends _i1.Mock implements _i2.Service {
-  MockService() {
-    _i1.throwOnMissingStub(this);
-  }
-
   @override
   _i2.Peripheral get peripheral =>
       (super.noSuchMethod(Invocation.getter(#peripheral),

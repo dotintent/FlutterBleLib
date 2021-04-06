@@ -13,18 +13,47 @@ import './characteristic_test.mocks.dart';
 import 'test_util/characteristic_generator.dart';
 import 'test_util/descriptor_generator.dart';
 
-@GenerateMocks([Peripheral, ManagerForCharacteristic, ManagerForDescriptor, Service])
+@GenerateMocks(
+  [Peripheral, ManagerForDescriptor, DescriptorWithValue],
+  customMocks: [
+    MockSpec<Service>(returnNullOnMissingStub: true),
+  ]
+)
 void main() {
-  Peripheral peripheral = MockPeripheral();
-  ManagerForCharacteristic managerForCharacteristic =
+  final peripheral = MockPeripheral();
+  when(peripheral.toString()).thenReturn("mocked peripheral toString()");
+  final managerForCharacteristic =
       MockManagerForCharacteristic();
-  CharacteristicGenerator characteristicGenerator =
+  when(
+    managerForCharacteristic.readCharacteristicForIdentifier(any, any, any)
+  ).thenAnswer(
+    (_) async => Uint8List.fromList([])
+  );
+  when(
+    managerForCharacteristic.monitorCharacteristicForIdentifier(any, any, any)
+  ).thenAnswer(
+    (_) => Stream.value(Uint8List.fromList([]))
+  );
+  when(
+    managerForCharacteristic.readDescriptorForCharacteristic(any, any, any)
+  ).thenAnswer(
+    (_) async => MockDescriptorWithValue()
+  );
+  when(
+    managerForCharacteristic.writeDescriptorForCharacteristic(any, any, any, any)
+  ).thenAnswer(
+    (_) async => MockDescriptorWithValue()
+  );
+  final characteristicGenerator =
       CharacteristicGenerator(managerForCharacteristic);
-  DescriptorGenerator descriptorGenerator =
+  final descriptorGenerator =
       DescriptorGenerator(MockManagerForDescriptor());
+  final service = MockService();
+  when(service.peripheral).thenReturn(peripheral);
+  when(service.toString()).thenReturn("mocked service toString()");
 
-  Characteristic characteristic =
-      characteristicGenerator.create(123, MockService());
+  final characteristic =
+      characteristicGenerator.create(123, service);
 
   DescriptorWithValue createDescriptor(int seed) =>
       descriptorGenerator.create(seed, characteristic);
@@ -93,7 +122,7 @@ void main() {
     //then
     verify(
       managerForCharacteristic.readCharacteristicForIdentifier(
-          MockPeripheral(), characteristic, argThat(isNotNull)),
+          any, characteristic, argThat(isNotNull)),
     );
   });
 
@@ -105,7 +134,7 @@ void main() {
     characteristic.read();
 
     //then
-    var transactionIds = verify(
+    final transactionIds = verify(
       managerForCharacteristic.readCharacteristicForIdentifier(
           any, characteristic, captureThat(isNotNull)),
     ).captured;

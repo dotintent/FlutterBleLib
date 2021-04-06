@@ -9,9 +9,16 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'test_util/descriptor_generator.dart';
 
+import './descriptor_test.mocks.dart';
+
 @GenerateMocks([ManagerForDescriptor, Characteristic])
 void main() {
-  ManagerForDescriptor managerForDescriptor = MockManagerForDescriptor();
+  final managerForDescriptor = MockManagerForDescriptor();
+  when(
+    managerForDescriptor.readDescriptorForIdentifier(any, any)
+  ).thenAnswer(
+    (_) async => Uint8List.fromList([])
+  );
   DescriptorGenerator descriptorGenerator =
       DescriptorGenerator(managerForDescriptor);
 
