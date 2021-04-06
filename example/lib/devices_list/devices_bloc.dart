@@ -47,7 +47,6 @@ class DevicesBloc {
     _visibleDevicesController.close();
     _devicePickerController.close();
     _scanSubscription?.cancel();
-    // _bleManager.destroyClient();
   }
 
   void init() {

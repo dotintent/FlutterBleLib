@@ -78,10 +78,6 @@ class DeviceDetailsBloc {
   Future<void> disconnectManual() async {
     _clearLogs();
     final bleDevice = _bleDevice;
-    // if (bleDevice == null) {
-    //   log("No device to Disconnect!");
-    //   return;
-    // }
     if (await bleDevice.peripheral.isConnected()) {
       log("DISCONNECTING...");
       await bleDevice.peripheral.disconnectOrCancelConnection();
