@@ -55,6 +55,7 @@ _ios_job_template: &ios_job_template
     - export PATH=`pwd`/flutter/bin:`pwd`/flutter/bin/cache/dart-sdk/bin:$PATH
   script:
     - cd example
+    - flutter pub get
     - cd ios
     - pod update
     - cd ..
