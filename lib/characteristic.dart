@@ -18,7 +18,7 @@ abstract class _CharacteristicMetadata {
 /// a characteristic’s value, and how you access the descriptors.
 class Characteristic extends InternalCharacteristic {
   /// The [Service] containing this characteristic.
-  Service service;
+  final Service service;
 
   final ManagerForCharacteristic _manager;
 
