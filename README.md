@@ -49,7 +49,9 @@ Add [Privacy - Bluetooth Always Usage Description](https://developer.apple.com/d
 ...
 ```
 
-Add [The `bluetooth-central` Background Execution Mode](https://developer.apple.com/library/archive/documentation/NetworkingInternetWeb/Conceptual/CoreBluetooth_concepts/CoreBluetoothBackgroundProcessingForIOSApps/PerformingTasksWhileYourAppIsInTheBackground.html#//apple_ref/doc/uid/TP40013257-CH7-SW6) key to `[project]/ios/Runner/Info.plist` file.
+#### Background mode
+
+To support background capabilities add [The `bluetooth-central` Background Execution Mode](https://developer.apple.com/library/archive/documentation/NetworkingInternetWeb/Conceptual/CoreBluetooth_concepts/CoreBluetoothBackgroundProcessingForIOSApps/PerformingTasksWhileYourAppIsInTheBackground.html#//apple_ref/doc/uid/TP40013257-CH7-SW6) key to `[project]/ios/Runner/Info.plist` file.
 
 ```xml
 ...
