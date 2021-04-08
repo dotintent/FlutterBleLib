@@ -143,8 +143,6 @@ void main() {
     );
     await _emitPlatformError(cancellationErrorJson(mockTransId));
 
-    // await fut;
-    print("anyad");
     await fut;
   });
 
