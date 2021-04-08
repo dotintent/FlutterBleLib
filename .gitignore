@@ -16,3 +16,6 @@ example/.flutter-plugins-dependencies
 .dart_tool/
 example/ios/Podfile.lock
 .vscode/settings.json
+org.eclipse.buildship.core.prefs
+.project
+.classpath
