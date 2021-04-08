@@ -20,10 +20,10 @@ class ScanResult {
   final int rssi;
 
   /// An indicator whether the peripheral is connectable (iOS only).
-  late final bool isConnectable;
+  final bool? isConnectable;
 
   /// A list of UUIDs found in the overflow area of the advertisement data (iOS only).
-  late final List<String> overflowServiceUuids;
+  final List<String> overflowServiceUuids;
 
   /// A packet of data advertised by the peripheral.
   final AdvertisementData advertisementData;
@@ -32,10 +32,9 @@ class ScanResult {
     this.peripheral, 
     this.rssi,
     this.advertisementData,
-    {bool? isConnectable, 
+    {this.isConnectable, 
     List<String>? overflowServiceUuids, 
-  }) : isConnectable = isConnectable ?? false,
-       overflowServiceUuids = overflowServiceUuids ?? <String>[];
+  }) : overflowServiceUuids = overflowServiceUuids ?? <String>[];
 
 
   factory ScanResult.fromJson(
@@ -57,23 +56,23 @@ class ScanResult {
 /// manufacturer's data, advertised [Service]s
 class AdvertisementData {
   /// The manufacturer data of the peripheral.
-  Uint8List? manufacturerData;
+  final Uint8List? manufacturerData;
 
   /// A dictionary that contains service-specific advertisement data.
-  Map<String, Uint8List>? serviceData;
+  final Map<String, Uint8List>? serviceData;
 
   /// A list of service UUIDs.
-  List<String>? serviceUuids;
+  final List<String>? serviceUuids;
 
   /// The local name of the [Peripheral]. Might be different than
   /// [Peripheral.name].
-  String? localName;
+  final String? localName;
 
   /// The transmit power of the peripheral.
-  int? txPowerLevel;
+  final int? txPowerLevel;
 
   /// A list of solicited service UUIDs.
-  List<String>? solicitedServiceUuids;
+  final List<String>? solicitedServiceUuids;
 
   AdvertisementData._fromJson(Map<String, dynamic> json)
       : manufacturerData =
