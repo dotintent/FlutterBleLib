@@ -31,7 +31,7 @@ class BleError {
         attErrorCode = json[_BleErrorMetadata.attErrorCode],
         iosErrorCode = json[_BleErrorMetadata.iosErrorCode],
         androidErrorCode = json[_BleErrorMetadata.androidErrorCode],
-        reason = json[_BleErrorMetadata.reason] ?? "",
+        reason = json[_BleErrorMetadata.reason] ?? "Reason not provided",
         deviceID = json[_BleErrorMetadata.deviceId],
         serviceUuid = json[_BleErrorMetadata.serviceUuid],
         characteristicUuid = json[_BleErrorMetadata.characteristicUuid],
