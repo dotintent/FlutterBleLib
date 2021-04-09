@@ -49,6 +49,9 @@ abstract class BleManager {
   /// for example, the result is no longer useful due to user's actions.
   Future<void> cancelTransaction(String transactionId);
 
+  /// Checks whether the native client exists.
+  Future<bool> isClientCreated();
+
   /// Allocates native resources.
   ///
   /// [restoreStateIdentifier] and [restoreStateAction] are iOS-specific.

@@ -116,12 +116,22 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
             case MethodName.CANCEL_TRANSACTION:
                 cancelTransaction(call, result);
                 break;
+            case MethodName.IS_CLIENT_CREATED:
+                isClientCreated(result);
+                break;
             default:
                 result.notImplemented();
         }
     }
 
+    private void isClientCreated(Result result) {
+        result.success(bleAdapter != null);
+    }
+
     private void createClient(MethodCall call, Result result) {
+        if (bleAdapter != null) {
+            Log.w(TAG, "Overwriting existing native client. Use BleManager#isClientCreated to check whether a client already exists.");
+        }
         setupAdapter(context);
         bleAdapter.createClient(call.<String>argument(ArgumentKey.RESTORE_STATE_IDENTIFIER),
                 new OnEventCallback<String>() {

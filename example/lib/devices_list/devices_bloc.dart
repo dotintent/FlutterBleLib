@@ -31,8 +31,6 @@ class DevicesBloc {
 
   DevicesBloc(this._deviceRepository, this._bleManager);
 
-  bool clientCreated = false;
-
   void _handlePickedDevice(BleDevice bleDevice) {
     _deviceRepository.pickDevice(bleDevice);
   }
@@ -43,7 +41,6 @@ class DevicesBloc {
     _visibleDevicesController.close();
     _devicePickerController.close();
     _scanSubscription?.cancel();
-    _bleManager.destroyClient();
   }
 
   void init() {
@@ -69,14 +66,15 @@ class DevicesBloc {
     _devicePickerSubscription = _devicePickerController.stream.listen(_handlePickedDevice);
   }
 
-  Future<void> maybeCreateClient() {
-    if (clientCreated) {
-      Fimber.d("Client already exists");
+  Future<void> maybeCreateClient() async {
+    Fimber.d('Checking if client exists...');
+    final clientAlreadyExists = await _bleManager.isClientCreated();
+    Fimber.d('Client exists: $clientAlreadyExists');
 
+    if (clientAlreadyExists) {
+      Fimber.d("Client already exists");
       return Future.value();
     }
-
-    clientCreated = true;
 
     Fimber.d("Create client");
 
@@ -90,7 +88,6 @@ class DevicesBloc {
           }
         )
         .catchError((e) {
-          clientCreated = false;
           return Fimber.d("Couldn't create BLE client", ex: e);
         });
   }
