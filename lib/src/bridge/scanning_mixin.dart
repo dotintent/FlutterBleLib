@@ -1,19 +1,29 @@
 part of _internal;
 
 mixin ScanningMixin on FlutterBLE {
-  Stream<ScanResult>? _scanEvents;
-
-  Stream<ScanResult> _prepareScanEventsStream() {
-    return const EventChannel(ChannelName.scanningEvents)
-        .receiveBroadcastStream()
-        .handleError(
-          (errorJson) => throw BleError.fromJson(jsonDecode(errorJson.details)),
+  Stream<ScanResult>? __scanEvents;
+  Stream<ScanResult> get _scanEvents {
+    var scanEvents = __scanEvents;
+    if (scanEvents == null) {
+      scanEvents = 
+        const EventChannel(
+          ChannelName.scanningEvents
+        ).receiveBroadcastStream(
+        ).handleError(
+          (errorJson) => throw BleError.fromJson(
+            jsonDecode(errorJson.details)
+          ),
           test: (error) => error is PlatformException,
-        )
-        .map(
+        ).map(
           (scanResultJson) =>
               ScanResult.fromJson(jsonDecode(scanResultJson), _manager),
         );
+      __scanEvents = scanEvents;
+    }
+    return scanEvents;
+  }
+  void _resetScanEvents() {
+    __scanEvents = null;
   }
 
   Stream<ScanResult> startDeviceScan(
@@ -22,12 +32,6 @@ mixin ScanningMixin on FlutterBLE {
     List<String> uuids,
     bool allowDuplicates,
   ) {
-    var scanEvents = _scanEvents;
-    if (scanEvents == null) {
-      scanEvents = _prepareScanEventsStream();
-      _scanEvents = scanEvents;
-    }
-
     final streamController = StreamController<ScanResult>.broadcast(
       onListen: () => _methodChannel.invokeMethod(
         MethodName.startDeviceScan,
@@ -42,7 +46,7 @@ mixin ScanningMixin on FlutterBLE {
     );
 
     streamController
-        .addStream(scanEvents, cancelOnError: true)
+        .addStream(_scanEvents, cancelOnError: true)
         .then((_) => streamController.close());
 
     return streamController.stream;
@@ -50,7 +54,7 @@ mixin ScanningMixin on FlutterBLE {
 
   Future<void> stopDeviceScan() async {
     await _methodChannel.invokeMethod(MethodName.stopDeviceScan);
-    _scanEvents = null;
+    _resetScanEvents();
     return;
   }
 }
