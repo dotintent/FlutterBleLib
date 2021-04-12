@@ -1,15 +1,14 @@
 part of _internal;
 
 mixin ScanningMixin on FlutterBLE {
-  Stream<ScanResult>? __scanEvents;
+  Stream<ScanResult>? _activeScanEvents;
   Stream<ScanResult> get _scanEvents {
-    var scanEvents = __scanEvents;
+    var scanEvents = _activeScanEvents;
     if (scanEvents == null) {
       scanEvents = 
         const EventChannel(
           ChannelName.scanningEvents
-        ).receiveBroadcastStream(
-        ).handleError(
+        ).receiveBroadcastStream().handleError(
           (errorJson) => throw BleError.fromJson(
             jsonDecode(errorJson.details)
           ),
@@ -18,12 +17,12 @@ mixin ScanningMixin on FlutterBLE {
           (scanResultJson) =>
               ScanResult.fromJson(jsonDecode(scanResultJson), _manager),
         );
-      __scanEvents = scanEvents;
+      _activeScanEvents = scanEvents;
     }
     return scanEvents;
   }
   void _resetScanEvents() {
-    __scanEvents = null;
+    _activeScanEvents = null;
   }
 
   Stream<ScanResult> startDeviceScan(
