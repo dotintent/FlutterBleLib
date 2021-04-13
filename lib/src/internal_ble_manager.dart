@@ -233,7 +233,7 @@ class InternalBleManager
       );
 
   @override
-  Future<Characteristic?> writeCharacteristicForIdentifier(
+  Future<void> writeCharacteristicForIdentifier(
           Peripheral peripheral,
           InternalCharacteristic characteristic,
           Uint8List value,
@@ -248,7 +248,7 @@ class InternalBleManager
       );
 
   @override
-  Future<Characteristic?> writeCharacteristicForDevice(
+  Future<Characteristic> writeCharacteristicForDevice(
           Peripheral peripheral,
           String serviceUuid,
           String characteristicUuid,
@@ -265,7 +265,7 @@ class InternalBleManager
       );
 
   @override
-  Future<Characteristic?> writeCharacteristicForService(
+  Future<Characteristic> writeCharacteristicForService(
           Peripheral peripheral,
           InternalService service,
           String characteristicUuid,

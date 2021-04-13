@@ -37,7 +37,7 @@ class Service extends InternalService {
   /// [Characteristic.isWritableWithResponse] or
   /// [Characteristic.isWritableWithoutResponse] is `true` and
   /// [withResponse] is specified accordingly can be written to.
-  Future<Characteristic?> writeCharacteristic(
+  Future<Characteristic> writeCharacteristic(
     String characteristicUuid,
     Uint8List value,
     bool withResponse, {

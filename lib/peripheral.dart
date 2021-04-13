@@ -143,7 +143,7 @@ class Peripheral {
   /// [serviceUuid]. Optional [transactionId] could be used to cancel operation.
   ///
   /// Will result in error if discovery was not done during this connection.
-  Future<Characteristic?> writeCharacteristic(
+  Future<Characteristic> writeCharacteristic(
     String serviceUuid,
     String characteristicUuid,
     Uint8List value,

@@ -69,7 +69,7 @@ class Characteristic extends InternalCharacteristic {
   /// The value can be written only if [isWritableWithResponse] or
   /// [isWritableWithoutResponse] is `true` and argument [withResponse] is
   /// set accordingly.
-  Future<Characteristic?> write(
+  Future<void> write(
     Uint8List value,
     bool withResponse, {
     String? transactionId,

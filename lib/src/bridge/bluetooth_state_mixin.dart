@@ -1,11 +1,9 @@
 part of _internal;
 
 mixin BluetoothStateMixin on FlutterBLE {
-  final Stream<String> _adapterStateChanges =
-    const EventChannel(ChannelName.adapterStateChanges)
-      .receiveBroadcastStream()
-      .where((event) => event is String)
-      .cast<String>();
+  final Stream<dynamic> _adapterStateChanges =
+      const EventChannel(ChannelName.adapterStateChanges)
+          .receiveBroadcastStream();
 
   Future<void> enableRadio(String transactionId) async {
     await _methodChannel.invokeMethod(
@@ -28,7 +26,7 @@ mixin BluetoothStateMixin on FlutterBLE {
   }
 
   Future<BluetoothState> state() => _methodChannel
-      .invokeMethod<String>(MethodName.getState)
+      .invokeMethod(MethodName.getState)
       .then(_mapToBluetoothState);
 
   Stream<BluetoothState> observeBluetoothState(bool emitCurrentValue) async* {
@@ -39,7 +37,7 @@ mixin BluetoothStateMixin on FlutterBLE {
     yield* _adapterStateChanges.map(_mapToBluetoothState);
   }
 
-  BluetoothState _mapToBluetoothState(String? rawValue) {
+  BluetoothState _mapToBluetoothState(dynamic rawValue) {
     switch (rawValue) {
       case "Unknown":
         return BluetoothState.UNKNOWN;

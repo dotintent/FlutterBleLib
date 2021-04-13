@@ -14,10 +14,10 @@ import 'test_util/characteristic_generator.dart';
 import 'test_util/descriptor_generator.dart';
 
 @GenerateMocks(
-  [Peripheral, ManagerForDescriptor, DescriptorWithValue, Service],
-  // customMocks: [
-  //   MockSpec<Service>(returnNullOnMissingStub: true),
-  // ]
+  [Peripheral, ManagerForDescriptor, DescriptorWithValue],
+  customMocks: [
+    MockSpec<Service>(returnNullOnMissingStub: true),
+  ]
 )
 void main() {
   final peripheral = MockPeripheral();
@@ -44,9 +44,6 @@ void main() {
   ).thenAnswer(
     (_) async => MockDescriptorWithValue()
   );
-  when(
-    managerForCharacteristic.writeCharacteristicForIdentifier(any, any, any, any, any)
-  ).thenAnswer((_) async => null);
   final characteristicGenerator =
       CharacteristicGenerator(managerForCharacteristic);
   final descriptorGenerator =

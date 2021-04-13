@@ -52,7 +52,7 @@ abstract class ManagerForPeripheral {
     String transactionId,
   );
 
-  Future<Characteristic?> writeCharacteristicForDevice(
+  Future<Characteristic> writeCharacteristicForDevice(
       Peripheral peripheral,
       String serviceUuid,
       String characteristicUuid,
@@ -101,7 +101,7 @@ abstract class ManagerForService {
     String transactionId,
   );
 
-  Future<Characteristic?> writeCharacteristicForService(
+  Future<Characteristic> writeCharacteristicForService(
     Peripheral peripheral,
     InternalService service,
     String characteristicUuid,
@@ -145,7 +145,7 @@ abstract class ManagerForCharacteristic {
     String transactionId,
   );
 
-  Future<Characteristic?> writeCharacteristicForIdentifier(
+  Future<void> writeCharacteristicForIdentifier(
     Peripheral peripheral,
     InternalCharacteristic characteristic,
     Uint8List value,
