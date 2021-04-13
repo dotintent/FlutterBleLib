@@ -14,6 +14,9 @@ class InternalBleManager
   }
 
   @override
+  Future<bool> isClientCreated() => _bleLib.isClientCreated();
+
+  @override
   Future<void> createClient({
     String? restoreStateIdentifier,
     RestoreStateAction? restoreStateAction,

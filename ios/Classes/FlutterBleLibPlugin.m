@@ -71,6 +71,8 @@
         [self createClient:call result:result];
     } else if ([METHOD_NAME_DESTROY_CLIENT isEqualToString:call.method]) {
         [self destroyClient];
+    } else if ([METHOD_NAME_IS_CLIENT_CREATED isEqualToString:call.method]) {
+        [self isClientCreated:call result:result];
     } else if ([METHOD_NAME_ENABLE_RADIO isEqualToString:call.method]) {
         [self enable:call result:result];
     } else if ([METHOD_NAME_DISABLE_RADIO isEqualToString:call.method]) {
@@ -158,7 +160,14 @@
 
 // MARK: - MBA Methods - BleClient lifecycle
 
+- (void)isClientCreated:(FlutterMethodCall *)call result:(FlutterResult)result {
+    result([NSNumber numberWithBool:_adapter != nil]);
+}
+
 - (void)createClient:(FlutterMethodCall *)call result:(FlutterResult)result {
+    if (_adapter != nil) {
+        NSLog(@"Overwriting existing native client. Use BleManager#isClientCreated to check whether a client already exists.");
+    }
     _adapter = [BleAdapterFactory getNewAdapterWithQueue:dispatch_get_main_queue()
                                     restoreIdentifierKey:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_RESTORE_STATE_IDENTIFIER]]];
     _adapter.delegate = self;

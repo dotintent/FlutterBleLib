@@ -56,15 +56,17 @@ class FlutterBleLib extends FlutterBLE
     return peripherals ?? <Peripheral>[];
   }
 
+  Future<bool> isClientCreated() =>
+    _methodChannel.invokeMethod<bool>(MethodName.isClientCreated)
+      .then((value) => value!);
+
   Future<void> createClient(String? restoreStateIdentifier) async {
     await _methodChannel.invokeMethod(MethodName.createClient, <String, String?>{
       ArgumentName.restoreStateIdentifier: restoreStateIdentifier
     });
-    return;
   }
 
   Future<void> destroyClient() async {
     await _methodChannel.invokeMethod(MethodName.destroyClient);
-    return;
   }
 }
