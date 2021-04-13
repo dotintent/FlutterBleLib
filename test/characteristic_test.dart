@@ -5,25 +5,55 @@ import 'dart:typed_data';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 import 'package:flutter_ble_lib/src/_managers_for_classes.dart';
 import 'package:mockito/mockito.dart';
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 
-import 'mock/mocks.dart';
+import 'package:mockito/annotations.dart';
+import './characteristic_test.mocks.dart';
+
 import 'test_util/characteristic_generator.dart';
 import 'test_util/descriptor_generator.dart';
 
-class ServiceMock extends Mock implements Service {}
-
+@GenerateMocks(
+  [Peripheral, ManagerForDescriptor, DescriptorWithValue],
+  customMocks: [
+    MockSpec<Service>(returnNullOnMissingStub: true),
+  ]
+)
 void main() {
-  Peripheral peripheral = PeripheralMock();
-  ManagerForCharacteristic managerForCharacteristic =
-      ManagerForCharacteristicMock();
-  CharacteristicGenerator characteristicGenerator =
+  final peripheral = MockPeripheral();
+  when(peripheral.toString()).thenReturn("mocked peripheral toString()");
+  final managerForCharacteristic =
+      MockManagerForCharacteristic();
+  when(
+    managerForCharacteristic.readCharacteristicForIdentifier(any, any, any)
+  ).thenAnswer(
+    (_) async => Uint8List.fromList([])
+  );
+  when(
+    managerForCharacteristic.monitorCharacteristicForIdentifier(any, any, any)
+  ).thenAnswer(
+    (_) => Stream.value(Uint8List.fromList([]))
+  );
+  when(
+    managerForCharacteristic.readDescriptorForCharacteristic(any, any, any)
+  ).thenAnswer(
+    (_) async => MockDescriptorWithValue()
+  );
+  when(
+    managerForCharacteristic.writeDescriptorForCharacteristic(any, any, any, any)
+  ).thenAnswer(
+    (_) async => MockDescriptorWithValue()
+  );
+  final characteristicGenerator =
       CharacteristicGenerator(managerForCharacteristic);
-  DescriptorGenerator descriptorGenerator =
-      DescriptorGenerator(ManagerForDescriptorMock());
+  final descriptorGenerator =
+      DescriptorGenerator(MockManagerForDescriptor());
+  final service = MockService();
+  when(service.peripheral).thenReturn(peripheral);
+  when(service.toString()).thenReturn("mocked service toString()");
 
-  Characteristic characteristic =
-      characteristicGenerator.create(123, ServiceMock());
+  final characteristic =
+      characteristicGenerator.create(123, service);
 
   DescriptorWithValue createDescriptor(int seed) =>
       descriptorGenerator.create(seed, characteristic);
@@ -104,7 +134,7 @@ void main() {
     characteristic.read();
 
     //then
-    var transactionIds = verify(
+    final transactionIds = verify(
       managerForCharacteristic.readCharacteristicForIdentifier(
           any, characteristic, captureThat(isNotNull)),
     ).captured;

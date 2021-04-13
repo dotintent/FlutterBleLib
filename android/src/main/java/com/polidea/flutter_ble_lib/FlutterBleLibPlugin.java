@@ -149,7 +149,9 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
     }
 
     private void destroyClient(Result result) {
-        bleAdapter.destroyClient();
+        if (bleAdapter != null) {
+            bleAdapter.destroyClient();
+        }
         scanningStreamHandler.onComplete();
         connectionStateStreamHandler.onComplete();
         bleAdapter = null;
@@ -177,13 +179,17 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
     }
 
     private void stopDeviceScan(Result result) {
-        bleAdapter.stopDeviceScan();
+        if (bleAdapter != null) {
+            bleAdapter.stopDeviceScan();
+        }
         scanningStreamHandler.onComplete();
         result.success(null);
     }
 
     private void cancelTransaction(MethodCall call, Result result) {
-        bleAdapter.cancelTransaction(call.<String>argument(ArgumentKey.TRANSACTION_ID));
+        if (bleAdapter != null) {
+            bleAdapter.cancelTransaction(call.<String>argument(ArgumentKey.TRANSACTION_ID));
+        }
         result.success(null);
     }
 }

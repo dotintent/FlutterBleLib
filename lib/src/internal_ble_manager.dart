@@ -7,11 +7,10 @@ class InternalBleManager
         ManagerForService,
         ManagerForCharacteristic,
         ManagerForDescriptor {
-  FlutterBleLib _bleLib;
-
+  late FlutterBleLib _bleLib;
+  
   InternalBleManager() {
-    _bleLib = FlutterBleLib();
-    _bleLib.registerManager(this);
+    _bleLib = FlutterBleLib(this);
   }
 
   @override
@@ -19,8 +18,8 @@ class InternalBleManager
 
   @override
   Future<void> createClient({
-    String restoreStateIdentifier,
-    RestoreStateAction restoreStateAction,
+    String? restoreStateIdentifier,
+    RestoreStateAction? restoreStateAction,
   }) {
     if (restoreStateAction != null) {
       _bleLib.restoredState().then((devices) {
@@ -38,11 +37,11 @@ class InternalBleManager
       _bleLib.cancelTransaction(transactionId);
 
   @override
-  Future<void> enableRadio({String transactionId}) =>
+  Future<void> enableRadio({String? transactionId}) =>
       _bleLib.enableRadio(transactionId ?? TransactionIdGenerator.getNextId());
 
   @override
-  Future<void> disableRadio({String transactionId}) =>
+  Future<void> disableRadio({String? transactionId}) =>
       _bleLib.disableRadio(transactionId ?? TransactionIdGenerator.getNextId());
 
   @override
@@ -66,7 +65,7 @@ class InternalBleManager
   Future<void> stopPeripheralScan() => _bleLib.stopDeviceScan();
 
   @override
-  Peripheral createUnsafePeripheral(String peripheralId, {String name}) {
+  Peripheral createUnsafePeripheral(String peripheralId, {String? name}) {
     const nameField = 'name';
     const identifierField = 'id';
     return Peripheral.fromJson({
@@ -78,10 +77,10 @@ class InternalBleManager
   @override
   Future<void> connectToPeripheral(
     String identifier, {
-    bool isAutoConnect,
-    int requestMtu,
-    bool refreshGatt,
-    Duration timeout,
+    required bool isAutoConnect,
+    required int requestMtu,
+    required bool refreshGatt,
+    Duration? timeout,
   }) async =>
       _bleLib.connectToPeripheral(
           identifier, isAutoConnect, requestMtu, refreshGatt, timeout);
@@ -185,7 +184,7 @@ class InternalBleManager
   }
 
   @override
-  Future<void> requestMtu(
+  Future<int> requestMtu(
       Peripheral peripheral, int mtu, String transactionId) {
     return _bleLib.requestMtu(peripheral, mtu, transactionId);
   }
@@ -193,12 +192,12 @@ class InternalBleManager
   @override
   Future<List<Peripheral>> knownPeripherals(
       List<String> peripheralIdentifiers) {
-    return _bleLib.knownDevices(peripheralIdentifiers ?? []);
+    return _bleLib.knownDevices(peripheralIdentifiers);
   }
 
   @override
   Future<List<Peripheral>> connectedPeripherals(List<String> serviceUuids) {
-    return _bleLib.connectedDevices(serviceUuids ?? []);
+    return _bleLib.connectedDevices(serviceUuids);
   }
 
   @override

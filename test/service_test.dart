@@ -4,21 +4,56 @@ import 'dart:typed_data';
 import 'package:flutter_ble_lib/flutter_ble_lib.dart';
 import 'package:flutter_ble_lib/src/_managers_for_classes.dart';
 import 'package:mockito/mockito.dart';
-import 'package:test/test.dart';
+import 'package:mockito/annotations.dart';
+import 'package:flutter_test/flutter_test.dart';
 
-import 'mock/mocks.dart';
+import './service_test.mocks.dart';
 import 'test_util/characteristic_generator.dart';
 import 'test_util/descriptor_generator.dart';
 
+@GenerateMocks([
+  Peripheral,
+  ManagerForService,
+  ManagerForDescriptor,
+  CharacteristicWithValue,
+  DescriptorWithValue
+])
 void main() {
-  Peripheral peripheral = PeripheralMock();
-  ManagerForService managerForService = ManagerForServiceMock();
-  ManagerForCharacteristic managerForCharacteristic =
-      ManagerForCharacteristicMock();
-  ManagerForDescriptor managerForDescriptor = ManagerForDescriptorMock();
-  CharacteristicGenerator characteristicGenerator =
+  final peripheral = MockPeripheral();
+  when(peripheral.toString()).thenReturn("mocked peripheral toString()");
+  when(peripheral.identifier).thenReturn("mocked peripheral id");
+  final managerForService = MockManagerForService();
+  when(
+    managerForService.readCharacteristicForService(any, any, any, any)
+  ).thenAnswer(
+    (_) async => MockCharacteristicWithValue()
+  );
+  when(
+    managerForService.readDescriptorForService(any, any, any, any)
+  ).thenAnswer(
+    (_) async => MockDescriptorWithValue()
+  );
+  when(
+    managerForService.writeCharacteristicForService(any, any, any, any, any, any)
+  ).thenAnswer(
+    (_) async => MockCharacteristicWithValue()
+  );
+  when(
+    managerForService.writeDescriptorForService(any, any, any, any, any)
+  ).thenAnswer(
+    (_) async => MockDescriptorWithValue()
+  );
+  when(
+    managerForService.monitorCharacteristicForService(any, any, any, any)
+  ).thenAnswer(
+    (_) => Stream.value(MockCharacteristicWithValue())
+  );
+  final managerForCharacteristic =
+      MockManagerForCharacteristic();
+  final managerForDescriptor = MockManagerForDescriptor();
+  final characteristicGenerator =
       CharacteristicGenerator(managerForCharacteristic);
-  DescriptorGenerator descriptorGenerator =
+  final descriptorGenerator =
       DescriptorGenerator(managerForDescriptor);
 
   Service service = Service.fromJson({
