@@ -22,9 +22,9 @@ mixin DescriptorsMixin on FlutterBLE {
           .catchError(_handleError)
           .then((jsonResponse) {
             Map<String, dynamic> jsonObject = jsonDecode(jsonResponse);
-            Service service =
+            final service =
                 Service.fromJson(jsonObject, peripheral, _manager);
-            Characteristic characteristic =
+            final characteristic =
                 Characteristic.fromJson(jsonObject, service, _manager);
             return DescriptorWithValue.fromJson(
                 jsonObject, characteristic, _manager);
@@ -49,7 +49,7 @@ mixin DescriptorsMixin on FlutterBLE {
           .catchError(_handleError)
           .then((jsonResponse) {
             Map<String, dynamic> jsonObject = jsonDecode(jsonResponse);
-            Characteristic characteristic =
+            final characteristic =
                 Characteristic.fromJson(jsonObject, service, _manager);
             return DescriptorWithValue.fromJson(
                 jsonObject, characteristic, _manager);
@@ -120,9 +120,9 @@ mixin DescriptorsMixin on FlutterBLE {
           .catchError(_handleError)
           .then((jsonResponse) {
             Map<String, dynamic> jsonObject = jsonDecode(jsonResponse);
-            Service service =
+            final service =
                 Service.fromJson(jsonObject, peripheral, _manager);
-            Characteristic characteristic =
+            final characteristic =
                 Characteristic.fromJson(jsonObject, service, _manager);
             return Descriptor.fromJson(jsonObject, characteristic, _manager);
           });
@@ -148,7 +148,7 @@ mixin DescriptorsMixin on FlutterBLE {
           .catchError(_handleError)
           .then((jsonResponse) {
             Map<String, dynamic> jsonObject = jsonDecode(jsonResponse);
-            Characteristic characteristic =
+            final characteristic =
                 Characteristic.fromJson(jsonObject, service, _manager);
             return Descriptor.fromJson(jsonObject, characteristic, _manager);
           });

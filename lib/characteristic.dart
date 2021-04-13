@@ -1,14 +1,14 @@
 part of flutter_ble_lib;
 
 abstract class _CharacteristicMetadata {
-  static const String uuid = "characteristicUuid";
-  static const String id = "id";
-  static const String isReadable = "isReadable";
-  static const String isWritableWithResponse = "isWritableWithResponse";
-  static const String isWritableWithoutResponse = "isWritableWithoutResponse";
-  static const String isNotifiable = "isNotifiable";
-  static const String isIndicatable = "isIndicatable";
-  static const String value = "value";
+  static const String uuid = 'characteristicUuid';
+  static const String id = 'id';
+  static const String isReadable = 'isReadable';
+  static const String isWritableWithResponse = 'isWritableWithResponse';
+  static const String isWritableWithoutResponse = 'isWritableWithoutResponse';
+  static const String isNotifiable = 'isNotifiable';
+  static const String isIndicatable = 'isIndicatable';
+  static const String value = 'value';
 }
 
 /// Representation of a single GATT Characteristic nested inside a [Service].

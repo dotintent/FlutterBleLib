@@ -179,7 +179,7 @@ class InternalBleManager
     Peripheral peripheral,
     String transactionId,
   ) {
-    print("call channel read RSSI");
+    print('call channel read RSSI');
     return _bleLib.rssi(peripheral, transactionId);
   }
 

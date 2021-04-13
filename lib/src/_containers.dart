@@ -1,6 +1,6 @@
 abstract class _ConnectionStateContainerMetadata {
-  static const String peripheralIdentifier = "peripheralIdentifier";
-  static const String connectionState = "connectionState";
+  static const String peripheralIdentifier = 'peripheralIdentifier';
+  static const String connectionState = 'connectionState';
 }
 
 class ConnectionStateContainer {

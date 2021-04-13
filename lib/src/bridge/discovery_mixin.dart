@@ -22,8 +22,8 @@ mixin DiscoveryMixin on FlutterBLE {
     ).catchError((errorJson) =>
         Future.error(BleError.fromJson(jsonDecode(errorJson.details))));
 
-    List<Map<String, dynamic>> decodedJson =
-        (jsonDecode(jsonString) as List<dynamic>).cast();
+    final decodedJson =
+        (jsonDecode(jsonString) as List<dynamic>).cast<Map<String, dynamic>>();
 
     return decodedJson
         .map((serviceJson) =>
@@ -43,9 +43,9 @@ mixin DiscoveryMixin on FlutterBLE {
         Future.error(BleError.fromJson(jsonDecode(errorJson.details))));
 
     Map<String, dynamic> jsonObject = jsonDecode(jsonString);
-    List<Map<String, dynamic>> jsonCharacteristics =
-        (jsonObject["characteristics"] as List<dynamic>).cast();
-    Service service = Service.fromJson(jsonObject, peripheral, _manager);
+    final jsonCharacteristics = (jsonObject['characteristics'] as List<dynamic>)
+        .cast<Map<String, dynamic>>();
+    final service = Service.fromJson(jsonObject, peripheral, _manager);
 
     return jsonCharacteristics.map((characteristicJson) {
       return Characteristic.fromJson(characteristicJson, service, _manager);
@@ -62,8 +62,8 @@ mixin DiscoveryMixin on FlutterBLE {
     ).catchError((errorJson) =>
         Future.error(BleError.fromJson(jsonDecode(errorJson.details))));
 
-    List<Map<String, dynamic>> jsonList =
-        (jsonDecode(jsonString) as List<dynamic>).cast();
+    final jsonList =
+        (jsonDecode(jsonString) as List<dynamic>).cast<Map<String, dynamic>>();
 
     return jsonList.map((characteristicJson) {
       return Characteristic.fromJson(characteristicJson, service, _manager);
@@ -88,12 +88,12 @@ mixin DiscoveryMixin on FlutterBLE {
 
     Map<String, dynamic> jsonObject = jsonDecode(jsonString);
 
-    Service service = Service.fromJson(jsonObject, peripheral, _manager);
-    Characteristic characteristic =
+    final service = Service.fromJson(jsonObject, peripheral, _manager);
+    final characteristic =
         Characteristic.fromJson(jsonObject, service, _manager);
 
-    List<Map<String, dynamic>> jsonDescriptors =
-        (jsonObject["descriptors"] as List<dynamic>).cast();
+    final jsonDescriptors = (jsonObject['descriptors'] as List<dynamic>)
+        .cast<Map<String, dynamic>>();
 
     return jsonDescriptors
         .map((jsonDescriptor) =>
@@ -117,11 +117,11 @@ mixin DiscoveryMixin on FlutterBLE {
 
     Map<String, dynamic> jsonObject = jsonDecode(jsonString);
 
-    Characteristic characteristic =
+    final characteristic =
         Characteristic.fromJson(jsonObject, service, _manager);
 
-    List<Map<String, dynamic>> jsonDescriptors =
-        (jsonObject["descriptors"] as List<dynamic>).cast();
+    final jsonDescriptors = (jsonObject['descriptors'] as List<dynamic>)
+        .cast<Map<String, dynamic>>();
 
     return jsonDescriptors
         .map((jsonDescriptor) =>
@@ -143,8 +143,8 @@ mixin DiscoveryMixin on FlutterBLE {
 
     Map<String, dynamic> json = jsonDecode(jsonString);
 
-    List<Map<String, dynamic>> jsonDescriptors =
-        (json["descriptors"] as List<dynamic>).cast();
+    final jsonDescriptors =
+        (json['descriptors'] as List<dynamic>).cast<Map<String, dynamic>>();
     return jsonDescriptors
         .map((jsonDescriptor) =>
             Descriptor.fromJson(jsonDescriptor, characteristic, _manager))

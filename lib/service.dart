@@ -1,8 +1,8 @@
 part of flutter_ble_lib;
 
 abstract class _ServiceMetadata {
-  static const String uuid = "serviceUuid";
-  static const String id = "serviceId";
+  static const String uuid = 'serviceUuid';
+  static const String id = 'serviceId';
 }
 
 /// A collection of [Characteristic]s and associated behaviors.

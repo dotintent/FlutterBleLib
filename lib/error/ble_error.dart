@@ -1,16 +1,16 @@
 part of flutter_ble_lib;
 
 abstract class _BleErrorMetadata {
-  static const String errorCode = "errorCode";
-  static const String attErrorCode = "attErrorCode";
-  static const String iosErrorCode = "iosErrorCode";
-  static const String androidErrorCode = "androidErrorCode";
-  static const String reason = "reason";
-  static const String deviceId = "deviceID";
-  static const String serviceUuid = "serviceUUID";
-  static const String characteristicUuid = "characteristicUUID";
-  static const String descriptorUuid = "descriptorUUID";
-  static const String internalMessage = "internalMessage";
+  static const String errorCode = 'errorCode';
+  static const String attErrorCode = 'attErrorCode';
+  static const String iosErrorCode = 'iosErrorCode';
+  static const String androidErrorCode = 'androidErrorCode';
+  static const String reason = 'reason';
+  static const String deviceId = 'deviceID';
+  static const String serviceUuid = 'serviceUUID';
+  static const String characteristicUuid = 'characteristicUUID';
+  static const String descriptorUuid = 'descriptorUUID';
+  static const String internalMessage = 'internalMessage';
 }
 
 class BleError {
@@ -31,7 +31,7 @@ class BleError {
         attErrorCode = json[_BleErrorMetadata.attErrorCode],
         iosErrorCode = json[_BleErrorMetadata.iosErrorCode],
         androidErrorCode = json[_BleErrorMetadata.androidErrorCode],
-        reason = json[_BleErrorMetadata.reason] ?? "Reason not provided",
+        reason = json[_BleErrorMetadata.reason] ?? 'Reason not provided',
         deviceID = json[_BleErrorMetadata.deviceId],
         serviceUuid = json[_BleErrorMetadata.serviceUuid],
         characteristicUuid = json[_BleErrorMetadata.characteristicUuid],
@@ -39,17 +39,17 @@ class BleError {
         internalMessage = json[_BleErrorMetadata.internalMessage];
 
   @override
-  String toString() => "BleError ("
-      "Error code: ${errorCode.value}, "
-      "ATT error code: $attErrorCode, "
-      "iOS error code: $iosErrorCode, "
-      "Android error code: $androidErrorCode, "
-      "reason: $reason, "
-      "internal message: $internalMessage, "
-      "device ID: $deviceID, "
-      "service UUID: $serviceUuid, "
-      "characteristic UUID: $characteristicUuid, "
-      "descriptor UUID: $descriptorUuid)";
+  String toString() => 'BleError ('
+      'Error code: ${errorCode.value}, '
+      'ATT error code: $attErrorCode, '
+      'iOS error code: $iosErrorCode, '
+      'Android error code: $androidErrorCode, '
+      'reason: $reason, '
+      'internal message: $internalMessage, '
+      'device ID: $deviceID, '
+      'service UUID: $serviceUuid, '
+      'characteristic UUID: $characteristicUuid, '
+      'descriptor UUID: $descriptorUuid)';
 }
 
 class BleErrorCode {

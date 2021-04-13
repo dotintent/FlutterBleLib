@@ -10,7 +10,7 @@ const NSString *keyDescriptorResponseValue = @"value";
 const NSString *keyDescriptorResponseServiceId = @"serviceId";
 const NSString *keyDescriptorResponseServiceUuid = @"serviceUuid";
 const NSString *keyDescriptorResponseCharacteristicId = @"id";
-const NSString *keyDescriptorResponseCharacteristicUuid = @"uuid";
+const NSString *keyDescriptorResponseCharacteristicUuid = @"characteristicUuid";
 const NSString *keyDescriptorResponseDescriptors = @"descriptors";
 
 + (NSString *)jsonStringFromDescriptorResponse:(NSDictionary *)response {

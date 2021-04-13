@@ -1,8 +1,8 @@
 part of flutter_ble_lib;
 
 abstract class _PeripheralMetadata {
-  static const name = "name";
-  static const identifier = "id";
+  static const name = 'name';
+  static const identifier = 'id';
 }
 
 /// Representation of a unique peripheral

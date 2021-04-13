@@ -2,7 +2,7 @@ part of _internal;
 
 mixin LogLevelMixin on FlutterBLE {
   Future<void> setLogLevel(LogLevel logLevel) async {
-    print("set log level to ${describeEnum(logLevel)}");
+    print('set log level to ${describeEnum(logLevel)}');
     return await _methodChannel.invokeMethod(
       MethodName.setLogLevel,
       <String, dynamic>{
@@ -19,7 +19,7 @@ mixin LogLevelMixin on FlutterBLE {
   }
 
   LogLevel _logLevelFromString(String logLevelName) {
-    print("try to get log level from: $logLevelName");
+    print('try to get log level from: $logLevelName');
     return LogLevel.values.firstWhere(
         (e) => e.toString() == 'LogLevel.' + logLevelName.toLowerCase());
   }
