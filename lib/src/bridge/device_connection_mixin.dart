@@ -5,8 +5,13 @@ mixin DeviceConnectionMixin on FlutterBLE {
       const EventChannel(ChannelName.connectionStateChangeEvents)
           .receiveBroadcastStream();
 
-  Future<void> connectToPeripheral(String deviceIdentifier, bool isAutoConnect,
-      int requestMtu, bool refreshGatt, Duration timeout) async {
+  Future<void> connectToPeripheral(
+    String deviceIdentifier, 
+    bool isAutoConnect,
+    int requestMtu, 
+    bool refreshGatt,
+    Duration? timeout
+  ) async {
     return await _methodChannel.invokeMethod(
       MethodName.connectToDevice,
       <String, dynamic>{
@@ -25,7 +30,7 @@ mixin DeviceConnectionMixin on FlutterBLE {
 
   Stream<PeripheralConnectionState> observePeripheralConnectionState(
       String identifier, bool emitCurrentValue) {
-    var controller = StreamController<PeripheralConnectionState>(
+    final controller = StreamController<PeripheralConnectionState>(
       onListen: () => _methodChannel.invokeMethod(
         MethodName.observeConnectionState,
         <String, dynamic>{
@@ -37,7 +42,7 @@ mixin DeviceConnectionMixin on FlutterBLE {
       ),
     );
 
-    var sourceStream = _peripheralConnectionStateChanges
+    final sourceStream = _peripheralConnectionStateChanges
         .map((jsonString) =>
             ConnectionStateContainer.fromJson(jsonDecode(jsonString)))
         .where((connectionStateContainer) =>
@@ -66,7 +71,7 @@ mixin DeviceConnectionMixin on FlutterBLE {
           sourceStream,
           cancelOnError: true,
         )
-        .then((value) => controller?.close());
+        .then((value) => controller.close());
 
     return controller.stream;
   }
@@ -76,9 +81,14 @@ mixin DeviceConnectionMixin on FlutterBLE {
         .invokeMethod(MethodName.isDeviceConnected, <String, dynamic>{
       ArgumentName.deviceIdentifier: peripheralIdentifier,
     }).catchError(
-      (errorJson) => Future.error(
-        BleError.fromJson(jsonDecode(errorJson.details)),
-      ),
+      (errorJson) {
+        if (errorJson is MissingPluginException) {
+          return Future.error(errorJson);
+        }
+        return Future.error(
+          BleError.fromJson(jsonDecode(errorJson.details))
+        );
+      }
     );
   }
 

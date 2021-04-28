@@ -13,8 +13,8 @@ class DeviceDetailsView extends StatefulWidget {
 }
 
 class DeviceDetailsViewState extends State<DeviceDetailsView> {
-  DeviceDetailsBloc _deviceDetailsBloc;
-  StreamSubscription _appStateSubscription;
+  DeviceDetailsBloc? _deviceDetailsBloc;
+  StreamSubscription? _appStateSubscription;
 
   bool _shouldRunOnResume = true;
 
@@ -33,9 +33,9 @@ class DeviceDetailsViewState extends State<DeviceDetailsView> {
 
   void _onResume() {
     Fimber.d("onResume");
-    _deviceDetailsBloc.init();
+    _deviceDetailsBloc?.init();
     _appStateSubscription =
-        _deviceDetailsBloc.disconnectedDevice.listen((bleDevice) async {
+        _deviceDetailsBloc?.disconnectedDevice.listen((bleDevice) async {
       Fimber.d("navigate to details");
       _onPause();
       Navigator.pop(context);
@@ -46,8 +46,8 @@ class DeviceDetailsViewState extends State<DeviceDetailsView> {
 
   void _onPause() {
     Fimber.d("onPause");
-    _appStateSubscription.cancel();
-    _deviceDetailsBloc.dispose();
+    _appStateSubscription?.cancel();
+    _deviceDetailsBloc?.dispose();
   }
 
   @override
@@ -59,9 +59,13 @@ class DeviceDetailsViewState extends State<DeviceDetailsView> {
 
   @override
   Widget build(BuildContext context) {
+    final deviceDetailsBloc = _deviceDetailsBloc;
     return WillPopScope(
       onWillPop: () {
-        return _deviceDetailsBloc.disconnect().then((_) {
+        if (deviceDetailsBloc == null) {
+          return Future<bool>.value(true);
+        }
+        return deviceDetailsBloc.disconnect().then((_) {
           return false;
         });
       },
@@ -86,8 +90,10 @@ class DeviceDetailsViewState extends State<DeviceDetailsView> {
             ),
             body: TabBarView(
               children: <Widget>[
-                AutoTestView(_deviceDetailsBloc),
-                ManualTestView(_deviceDetailsBloc),
+                if (deviceDetailsBloc != null)
+                  AutoTestView(deviceDetailsBloc),
+                if (deviceDetailsBloc != null)
+                  ManualTestView(deviceDetailsBloc),
               ],
             )),
       ),

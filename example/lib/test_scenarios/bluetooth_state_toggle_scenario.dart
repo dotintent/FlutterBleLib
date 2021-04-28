@@ -1,7 +1,7 @@
 part of test_scenarios;
 
 class BluetoothStateTestScenario implements TestScenario {
-  StreamSubscription _radioStateSubscription;
+  StreamSubscription<BluetoothState>? _radioStateSubscription;
 
   @override
   Future<void> runTestScenario(Logger log, Logger errorLogger) async {
@@ -24,7 +24,7 @@ class BluetoothStateTestScenario implements TestScenario {
     try {
       await bleManager.enableRadio();
     } catch (e) {
-      errorLogger(e);
+      errorLogger(e.toString());
     }
 
     log("Enabled radio!");

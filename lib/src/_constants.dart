@@ -1,4 +1,5 @@
 abstract class MethodName {
+  static const String isClientCreated = "isClientCreated";
   static const String createClient = "createClient";
   static const String destroyClient = "destroyClient";
 

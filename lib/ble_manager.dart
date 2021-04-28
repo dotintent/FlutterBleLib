@@ -31,12 +31,16 @@ enum LogLevel { none, verbose, debug, info, warning, error }
 ///});
 ///```
 abstract class BleManager {
-  static BleManager _instance;
+  static BleManager? _instance;
 
   factory BleManager() {
-    _instance ??= InternalBleManager();
+    var instance = _instance;
+    if (instance == null) {
+      instance = InternalBleManager();
+      _instance = instance;
+    }
 
-    return _instance;
+    return instance;
   }
 
   /// Cancels transaction's return, resulting in [BleError] with
@@ -49,6 +53,9 @@ abstract class BleManager {
   /// for example, the result is no longer useful due to user's actions.
   Future<void> cancelTransaction(String transactionId);
 
+  /// Checks whether the native client exists.
+  Future<bool> isClientCreated();
+
   /// Allocates native resources.
   ///
   /// [restoreStateIdentifier] and [restoreStateAction] are iOS-specific.
@@ -59,8 +66,8 @@ abstract class BleManager {
   /// await BleManager().createClient();
   /// ```
   Future<void> createClient({
-    String restoreStateIdentifier,
-    RestoreStateAction restoreStateAction,
+    String? restoreStateIdentifier,
+    RestoreStateAction? restoreStateAction,
   });
 
   /// Frees native resources.
@@ -147,7 +154,7 @@ abstract class BleManager {
   /// On Android [peripheralId] scanned on one  device may or may not be
   /// recognized on a different Android device depending on peripheral’s
   /// implementation and changes in future OS releases.
-  Peripheral createUnsafePeripheral(String peripheralId, {String name});
+  Peripheral createUnsafePeripheral(String peripheralId, {String? name});
 }
 
 /// State of the Bluetooth Adapter.

@@ -15,23 +15,25 @@ class DevicesBloc {
 
   StreamController<BleDevice> _devicePickerController = StreamController<BleDevice>();
 
-  StreamSubscription<ScanResult> _scanSubscription;
-  StreamSubscription _devicePickerSubscription;
+  StreamSubscription<ScanResult>? _scanSubscription;
+  StreamSubscription<BleDevice>? _devicePickerSubscription;
 
-  ValueObservable<List<BleDevice>> get visibleDevices => _visibleDevicesController.stream;
+  ValueStream<List<BleDevice>> get visibleDevices => _visibleDevicesController.stream;
 
   Sink<BleDevice> get devicePicker => _devicePickerController.sink;
 
-  DeviceRepository _deviceRepository;
-  BleManager _bleManager;
-  PermissionStatus _locationPermissionStatus = PermissionStatus.unknown;
+  final DeviceRepository _deviceRepository;
+  final BleManager _bleManager;
 
   Stream<BleDevice> get pickedDevice => _deviceRepository.pickedDevice
-      .skipWhile((bleDevice) => bleDevice == null);
+      .skipWhile((bleDevice) => bleDevice == null).cast<BleDevice>();
 
-  DevicesBloc(this._deviceRepository, this._bleManager);
-
-  bool clientCreated = false;
+  DevicesBloc({
+    DeviceRepository? deviceRepository, 
+    BleManager? bleManager
+  }) 
+  : _deviceRepository = deviceRepository ?? DeviceRepository(),
+    _bleManager = bleManager ?? BleManager();
 
   void _handlePickedDevice(BleDevice bleDevice) {
     _deviceRepository.pickDevice(bleDevice);
@@ -39,11 +41,10 @@ class DevicesBloc {
 
   void dispose() {
     Fimber.d("cancel _devicePickerSubscription");
-    _devicePickerSubscription.cancel();
+    _devicePickerSubscription?.cancel();
     _visibleDevicesController.close();
     _devicePickerController.close();
     _scanSubscription?.cancel();
-    _bleManager.destroyClient();
   }
 
   void init() {
@@ -69,14 +70,15 @@ class DevicesBloc {
     _devicePickerSubscription = _devicePickerController.stream.listen(_handlePickedDevice);
   }
 
-  Future<void> maybeCreateClient() {
-    if (clientCreated) {
-      Fimber.d("Client already exists");
+  Future<void> maybeCreateClient() async {
+    Fimber.d('Checking if client exists...');
+    final clientAlreadyExists = await _bleManager.isClientCreated();
+    Fimber.d('Client exists: $clientAlreadyExists');
 
+    if (clientAlreadyExists) {
+      Fimber.d("Client already exists");
       return Future.value();
     }
-
-    clientCreated = true;
 
     Fimber.d("Create client");
 
@@ -84,25 +86,23 @@ class DevicesBloc {
         .createClient(
           restoreStateIdentifier: "example-restore-state-identifier",
           restoreStateAction: (peripherals) {
-            peripherals?.forEach((peripheral) {
+            peripherals.forEach((peripheral) {
               Fimber.d("Restored peripheral: ${peripheral.name}");
             });
           }
         )
         .catchError((e) {
-          clientCreated = false;
           return Fimber.d("Couldn't create BLE client", ex: e);
         });
   }
 
   Future<void> _checkPermissions() async {
     if (Platform.isAndroid) {
-      var permissionStatus = await PermissionHandler()
-          .requestPermissions([PermissionGroup.location]);
-
-      _locationPermissionStatus = permissionStatus[PermissionGroup.location];
-
-      if (_locationPermissionStatus != PermissionStatus.granted) {
+      var locGranted = await Permission.location.isGranted;
+      if (locGranted == false) {
+        locGranted = (await Permission.location.request()).isGranted;
+      }
+      if (locGranted == false) {
         return Future.error(Exception("Location permission not granted"));
       }
     }
@@ -110,12 +110,12 @@ class DevicesBloc {
 
   Future<void> _waitForBluetoothPoweredOn() async {
     Completer completer = Completer();
-    StreamSubscription<BluetoothState> subscription;
+    StreamSubscription<BluetoothState>? subscription;
     subscription = _bleManager
       .observeBluetoothState(emitCurrentValue: true)
       .listen((bluetoothState) async {
         if (bluetoothState == BluetoothState.POWERED_ON && !completer.isCompleted) {
-          await subscription.cancel();
+          await subscription?.cancel();
           completer.complete();
         }
       });
@@ -126,9 +126,9 @@ class DevicesBloc {
   void _startScan() {
     Fimber.d("Ble start scan");
     _scanSubscription = _bleManager.startPeripheralScan()
-      .listen((ScanResult scanResult) {
+      .listen((scanResult) {
         var bleDevice = BleDevice(scanResult);
-        if (scanResult.advertisementData.localName != null && !bleDevices.contains(bleDevice)) {
+        if (!bleDevices.contains(bleDevice)) {
           Fimber.d('found new device ${scanResult.advertisementData.localName} ${scanResult.peripheral.identifier}');
           bleDevices.add(bleDevice);
           _visibleDevicesController.add(bleDevices.sublist(0));
@@ -138,7 +138,7 @@ class DevicesBloc {
 
   Future<void> refresh() async {
     await _bleManager.stopPeripheralScan();
-    await _scanSubscription.cancel();
+    await _scanSubscription?.cancel();
     bleDevices.clear();
 
     _visibleDevicesController.add(bleDevices.sublist(0));
