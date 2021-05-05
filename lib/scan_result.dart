@@ -103,5 +103,5 @@ class AdvertisementData {
       values?.cast<String>();
 }
 
-List<String> _mapToListOfStringsOrNull(List<dynamic> values) =>
+List<String> _mapToListOfStringsOrNull(List<dynamic>? values) =>
     (values ?? []).cast();
