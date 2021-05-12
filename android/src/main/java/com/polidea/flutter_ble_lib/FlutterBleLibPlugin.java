@@ -12,8 +12,8 @@ import com.polidea.flutter_ble_lib.delegate.CharacteristicsDelegate;
 import com.polidea.flutter_ble_lib.delegate.DescriptorsDelegate;
 import com.polidea.flutter_ble_lib.delegate.DeviceConnectionDelegate;
 import com.polidea.flutter_ble_lib.delegate.DevicesDelegate;
-import com.polidea.flutter_ble_lib.delegate.LogLevelDelegate;
 import com.polidea.flutter_ble_lib.delegate.DiscoveryDelegate;
+import com.polidea.flutter_ble_lib.delegate.LogLevelDelegate;
 import com.polidea.flutter_ble_lib.delegate.MtuDelegate;
 import com.polidea.flutter_ble_lib.delegate.RssiDelegate;
 import com.polidea.flutter_ble_lib.event.AdapterStateStreamHandler;
@@ -23,15 +23,11 @@ import com.polidea.flutter_ble_lib.event.RestoreStateStreamHandler;
 import com.polidea.flutter_ble_lib.event.ScanningStreamHandler;
 import com.polidea.multiplatformbleadapter.BleAdapter;
 import com.polidea.multiplatformbleadapter.BleAdapterFactory;
-import com.polidea.multiplatformbleadapter.OnErrorCallback;
 import com.polidea.multiplatformbleadapter.OnEventCallback;
-import com.polidea.multiplatformbleadapter.ScanResult;
-import com.polidea.multiplatformbleadapter.errors.BleError;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import androidx.annotation.NonNull;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -88,6 +84,7 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
         delegates.add(new CharacteristicsDelegate(bleAdapter, characteristicsMonitorStreamHandler));
         delegates.add(new DevicesDelegate(bleAdapter));
         delegates.add(new DescriptorsDelegate(bleAdapter));
+        scanningStreamHandler.attachAdapter(bleAdapter);
     }
 
     @Override
@@ -107,11 +104,8 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
             case MethodName.DESTROY_CLIENT:
                 destroyClient(result);
                 break;
-            case MethodName.START_DEVICE_SCAN:
-                startDeviceScan(call, result);
-                break;
             case MethodName.STOP_DEVICE_SCAN:
-                stopDeviceScan(result);
+                scanningStreamHandler.stopDeviceScan(result);
                 break;
             case MethodName.CANCEL_TRANSACTION:
                 cancelTransaction(call, result);
@@ -140,35 +134,10 @@ public class FlutterBleLibPlugin implements MethodCallHandler {
 
     private void destroyClient(Result result) {
         bleAdapter.destroyClient();
-        scanningStreamHandler.onComplete();
+        scanningStreamHandler.detachAdapter();
         connectionStateStreamHandler.onComplete();
         bleAdapter = null;
         delegates.clear();
-        result.success(null);
-    }
-
-    private void startDeviceScan(@NonNull MethodCall call, Result result) {
-        List<String> uuids = call.<List<String>>argument(ArgumentKey.UUIDS);
-        bleAdapter.startDeviceScan(uuids.toArray(new String[uuids.size()]),
-                call.<Integer>argument(ArgumentKey.SCAN_MODE),
-                call.<Integer>argument(ArgumentKey.CALLBACK_TYPE),
-                new OnEventCallback<ScanResult>() {
-                    @Override
-                    public void onEvent(ScanResult data) {
-                        scanningStreamHandler.onScanResult(data);
-                    }
-                }, new OnErrorCallback() {
-                    @Override
-                    public void onError(BleError error) {
-                        scanningStreamHandler.onError(error);
-                    }
-                });
-        result.success(null);
-    }
-
-    private void stopDeviceScan(Result result) {
-        bleAdapter.stopDeviceScan();
-        scanningStreamHandler.onComplete();
         result.success(null);
     }
 

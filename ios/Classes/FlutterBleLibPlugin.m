@@ -77,10 +77,8 @@
         [self disable:call result:result];
     } else if ([METHOD_NAME_GET_STATE isEqualToString:call.method]) {
         [self state:call result:result];
-    } else if ([METHOD_NAME_START_DEVICE_SCAN isEqualToString:call.method]) {
-        [self startDeviceScan:call result:result];
     } else if ([METHOD_NAME_STOP_DEVICE_SCAN isEqualToString:call.method]) {
-        [self stopDeviceScan:result];
+        [self.scanningStreamHandler stopDeviceScan:result];
     } else if ([METHOD_NAME_CONNECT_TO_DEVICE isEqualToString:call.method]) {
         [self connectToDevice:call result:result];
     } else if ([METHOD_NAME_CANCEL_CONNECTION isEqualToString:call.method]) {
@@ -162,10 +160,12 @@
     _adapter = [BleAdapterFactory getNewAdapterWithQueue:dispatch_get_main_queue()
                                     restoreIdentifierKey:[ArgumentHandler stringOrNil:call.arguments[ARGUMENT_KEY_RESTORE_STATE_IDENTIFIER]]];
     _adapter.delegate = self;
+    [self.scanningStreamHandler attachAdatper:_adapter];
     result(nil);
 }
 
 - (void)destroyClient {
+    [self.scanningStreamHandler detachAdapter];
     [_adapter invalidate];
     _adapter = nil;
 }
@@ -191,21 +191,6 @@
 - (void)state:(FlutterMethodCall *)call result:(FlutterResult)result {
     [_adapter state:result
              reject:[self rejectForFlutterResult:result]];
-}
-
-// MARK: - MBA Methods - Scanning
-
-- (void)startDeviceScan:(FlutterMethodCall *)call result:(FlutterResult)result {
-    NSArray* expectedArguments = [NSArray arrayWithObjects:ARGUMENT_KEY_ALLOW_DUPLICATES, nil];
-    [_adapter startDeviceScan:[ArgumentHandler stringArrayOrNil:call.arguments[ARGUMENT_KEY_UUIDS]]
-                      options:[ArgumentHandler dictionaryOrNil:expectedArguments in:call.arguments]];
-    result(nil);
-}
-
-- (void)stopDeviceScan:(FlutterResult)result {
-    [_adapter stopDeviceScan];
-    [self.scanningStreamHandler onComplete];
-    result(nil);
 }
 
 // MARK: - MBA Methods - Connection
