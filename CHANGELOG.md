@@ -1,3 +1,7 @@
+## 2.3.2
+
+* Fix lack of disconnection event on iOS if connection failed to be established
+
 ## 2.3.1
 
 * Fix connection timeout on iOS
