@@ -25,24 +25,22 @@ class DeviceDetailsBloc {
 
   Stream<List<DebugLog>> get logs => _logsController.stream;
 
-  Stream<Null?> get disconnectedDevice => _deviceRepository.pickedDevice
-      .skipWhile((bleDevice) => bleDevice != null).cast<Null>();
+  Stream<Null> get disconnectedDevice => _deviceRepository.pickedDevice
+      .skipWhile((bleDevice) => bleDevice != null)
+      .cast<Null>();
 
   List<DebugLog> _logs = [];
   late Logger log;
   late Logger logError;
 
-  DeviceDetailsBloc({
-    DeviceRepository? deviceRepository, 
-    BleManager? bleManager
-  }) 
-  : _deviceRepository = deviceRepository ?? DeviceRepository(),
-    _bleManager = bleManager ?? BleManager(),
-    _connectionStateController =
-      BehaviorSubject<PeripheralConnectionState>.seeded(
-        PeripheralConnectionState.disconnected
-      ),
-    _logsController = PublishSubject<List<DebugLog>>() {
+  DeviceDetailsBloc(
+      {DeviceRepository? deviceRepository, BleManager? bleManager})
+      : _deviceRepository = deviceRepository ?? DeviceRepository(),
+        _bleManager = bleManager ?? BleManager(),
+        _connectionStateController =
+            BehaviorSubject<PeripheralConnectionState>.seeded(
+                PeripheralConnectionState.disconnected),
+        _logsController = PublishSubject<List<DebugLog>>() {
     _bleDevice = _deviceRepository.pickedDevice.value!;
 
     log = (text) {
@@ -147,8 +145,8 @@ class DeviceDetailsBloc {
 
   void monitorCharacteristicForPeripheral() {
     _clearLogs();
-      PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
-          .monitorCharacteristicForPeripheral();
+    PeripheralTestOperations(_bleManager, _bleDevice.peripheral, log, logError)
+        .monitorCharacteristicForPeripheral();
   }
 
   void monitorCharacteristicForService() {

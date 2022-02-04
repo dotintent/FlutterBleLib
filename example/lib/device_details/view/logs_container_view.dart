@@ -34,43 +34,71 @@ class LogsContainerView extends StatelessWidget {
     return ListView.builder(
       itemCount: data?.length,
       shrinkWrap: true,
-      itemBuilder: (buildContext, index) => Container(
-        decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(
-              color: Colors.grey,
-              width: 0.5,
-            ),
-            bottom: BorderSide(
-              color: Colors.grey,
-              width: 0.5,
-            ),
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.only(top: 2.0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: Text(
-                  data?[index].time ?? "",
-                  style: TextStyle(fontSize: 9),
+      itemBuilder: (buildContext, index) {
+        Widget body([TextOverflow overflow = TextOverflow.ellipsis]) {
+          return Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Text(
+                    data?[index].time ?? "",
+                    style: TextStyle(fontSize: 9),
+                  ),
                 ),
-              ),
-              Flexible(
-                child: Text(
+                Text(
                   data?[index].content ?? "",
-                  overflow: TextOverflow.ellipsis,
+                  overflow: overflow,
                   softWrap: true,
-                  style: TextStyle(fontSize: 13)
+                  style: TextStyle(fontSize: 13),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return InkWell(
+          onTap: () {
+            showBottomSheet(
+              context: context,
+              builder: (context) {
+                return Container(
+                  width: double.infinity,
+                  height: MediaQuery.of(context).size.height * 0.6,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        IconButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: Icon(Icons.close),
+                        ),
+                        body(TextOverflow.visible),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border(
+                top: BorderSide(
+                  color: Colors.grey,
+                  width: 0.5,
+                ),
+                bottom: BorderSide(
+                  color: Colors.grey,
+                  width: 0.5,
                 ),
               ),
-            ],
+            ),
+            child: body(),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

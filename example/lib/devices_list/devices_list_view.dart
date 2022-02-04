@@ -52,26 +52,26 @@ class DeviceListScreenState extends State<DevicesListScreen> {
     });
   }
 
+  void _runOnResume() {
+    if (!_shouldRunOnResume) return;
+    _shouldRunOnResume = false;
+    _onResume();
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     Fimber.d("DeviceListScreenState didChangeDependencies");
     if (_devicesBloc == null) {
       _devicesBloc = DevicesBlocProvider.of(context);
-      if (_shouldRunOnResume) {
-        _shouldRunOnResume = false;
-        _onResume();
-      }
+      _runOnResume();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     Fimber.d("build DeviceListScreenState");
-    if (_shouldRunOnResume) {
-      _shouldRunOnResume = false;
-      _onResume();
-    }
+    _runOnResume();
     final devicesBloc = _devicesBloc;
     if (devicesBloc == null) {
       throw Exception();
@@ -81,10 +81,10 @@ class DeviceListScreenState extends State<DevicesListScreen> {
         title: Text('Bluetooth devices'),
       ),
       body: StreamBuilder<List<BleDevice>>(
-        initialData: devicesBloc.visibleDevices.valueWrapper?.value ?? <BleDevice>[],
+        initialData: devicesBloc.visibleDevices.valueOrNull ?? <BleDevice>[],
         stream: devicesBloc.visibleDevices,
         builder: (context, snapshot) => RefreshIndicator(
-          onRefresh: devicesBloc.refresh ,
+          onRefresh: devicesBloc.refresh,
           child: DevicesList(devicesBloc, snapshot.data),
         ),
       ),
@@ -122,8 +122,9 @@ class DevicesList extends ListView {
             itemCount: devices?.length ?? 0,
             itemBuilder: (context, i) {
               Fimber.d("Build row for $i");
-              return _buildRow(context, devices![i],
-                  _createTapListener(devicesBloc, devices[i]));
+              final device = devices![i];
+              return _buildRow(
+                  context, device, _createTapListener(devicesBloc, device));
             });
 
   static DeviceTapListener _createTapListener(
@@ -142,7 +143,7 @@ class DevicesList extends ListView {
               padding: const EdgeInsets.all(8.0),
               child: Image.asset('assets/ti_logo.png'),
             ),
-            backgroundColor: Theme.of(context).accentColor);
+            backgroundColor: Theme.of(context).colorScheme.secondary);
       case DeviceCategory.hex:
         return CircleAvatar(
             child: CustomPaint(painter: HexPainter(), size: Size(20, 24)),
