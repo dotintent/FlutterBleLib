@@ -18,9 +18,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'FlutterBleLib example',
-      theme: new ThemeData(
-        primaryColor: new Color(0xFF0A3D91),
-        accentColor: new Color(0xFFCC0000),
+      theme: ThemeData(
+        primaryColor: Color(0xFF0A3D91),
+        colorScheme: ColorScheme.light(
+          primary: Color(0xFF0A3D91),
+          secondary: Color(0xFFCC0000),
+        ),
       ),
       initialRoute: "/",
       routes: <String, WidgetBuilder>{
